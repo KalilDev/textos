@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:textos/favorites.dart';
 
 import 'individualView.dart';
 
@@ -13,11 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: new Scaffold(
-            //drawer: Drawer(
-            //  child: Container(
-            //    color: Colors.lightBlueAccent,
-            //  ),
-            //),
+            drawer: favoritesDrawer(),
             body: FirestoreSlideshow()));
   }
 }
@@ -27,9 +24,14 @@ class FirestoreSlideshow extends StatefulWidget {
 }
 
 class FirestoreSlideshowState extends State<FirestoreSlideshow> {
+  static final Set<String> favorites = new Set<String>();
+  static final Map<String, int> all = {};
+
+  // Make a Query
+  static Query query;
+
   Stream _queryDb({String tag = 'Todos'}) {
-    // Make a Query
-    Query query;
+    FirestoreSlideshowState.all.clear();
     if (tag == 'Todos') {
       print(tag);
       query = db.collection('stories');
@@ -47,7 +49,7 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
     });
   }
 
-  final PageController ctrl = PageController(viewportFraction: 0.8);
+  static final PageController ctrl = PageController(viewportFraction: 0.8);
 
   final Firestore db = Firestore.instance;
   Stream slides;
@@ -74,6 +76,19 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
   }
 
   // Builder Functions
+  TextStyle textStyle(String arg) {
+    switch (arg) {
+      case 'title':
+        {
+          return TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontFamily: 'Merriweather');
+        }
+        break;
+    }
+  }
 
   _buildStoryPage(Map data, bool active, int index) {
     // Animated Properties
@@ -82,6 +97,8 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
     final double top = active ? 100 : 200;
 
     ImageProvider img;
+
+    FirestoreSlideshowState.all[data['title']] = index;
 
     if (data['img'].contains('http')) {
       img = CachedNetworkImageProvider(data['img']);
@@ -112,13 +129,13 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
                   ]),
               child: Center(
                   child: Material(
-                child: Text(data['title'],
-                    style: TextStyle(
-                        fontSize: 40,
-                        color: Colors.white,
-                        fontFamily: 'Merriweather')),
-                color: Colors.transparent,
-              )),
+                    child: Text(data['title'],
+                        style: TextStyle(
+                            fontSize: 40,
+                            color: Colors.white,
+                            fontFamily: 'Merriweather')),
+                    color: Colors.transparent,
+                  )),
             )),
         onTap: () {
           if (!active) {
@@ -129,7 +146,7 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => new IndividualView(map: data)),
+                  builder: (context) => new TextCard(map: data)),
             );
           }
         });
@@ -147,46 +164,38 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
     var texto = 'do Kalil';
     return Container(
         child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: <Widget>[
-            Text(
-              'Textos ',
-              style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontFamily: 'Merriweather'),
-            ),
-            GestureDetector(
-              child: Container(
-                constraints: BoxConstraints.expand(height: 45.0, width: 200.0),
-                child: Text(
-                  '$texto',
-                  style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontFamily: 'Merriweather'),
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: <Widget>[
+                Text(
+                  'Textos ',
+                  style: textStyle('title'),
                 ),
-              ),
-              onTap: () {
-                //TODO
-              },
+                GestureDetector(
+                  child: Container(
+                    constraints: BoxConstraints.expand(height: 45.0, width: 200.0),
+                    child: Text(
+                      '$texto',
+                      style: textStyle('title'),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-        Text('FILTRO',
-            style:
+            Text('FILTRO',
+                style:
                 TextStyle(color: Colors.black26, fontFamily: 'Merriweather')),
-        _buildButton('Todos'),
-        _buildButton('Crônicas'),
-        _buildButton('Reflexões'),
-        _buildButton('Desabafos')
-      ],
-    ));
+            _buildButton('Todos'),
+            _buildButton('Crônicas'),
+            _buildButton('Reflexões'),
+            _buildButton('Desabafos')
+          ],
+        ));
   }
 
   @override
