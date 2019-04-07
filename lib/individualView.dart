@@ -31,38 +31,23 @@ class TextCard extends StatefulWidget {
 }
 
 class TextCardState extends State<TextCard> {
-  // Declare a field that holds the Todo
+  // Declare a field that holds the data map, and a field that holds the index
   final Map map;
   final int index;
 
-  // In the constructor, require a Todo
+  // In the constructor, require the data map and index
   TextCardState({Key key, @required this.map, this.index});
 
   @override
   Widget build(BuildContext context) {
     // Sanitize input
-    var title;
-    var text;
-    var date;
-    if (map['title'] == null) {
-      title = 'Texto';
-    } else {
-      title = map['title'];
-    }
-    if (map['text'] == null) {
-      text = 'PLACEHOLDER';
-    } else {
-      text = '  ' + map['text'];
-    }
-    if (map['date'] == null) {
-      date = '01/01/1970';
-    } else {
-      date = map['date'];
-    }
+    final title = map['title'] ?? 'Titulo';
+    final text = map['text'] ?? 'Texto';
+    final date = map['date'] ?? '01/01/1970';
+    final img = map['img'] ?? 'https://i.imgur.com/H6i4c32.jpg';
+
     final double blur = 30;
     final double offset = 10;
-
-    final img = map['img'] ?? 'https://i.imgur.com/H6i4c32.jpg';
 
     final favorite = Favorites().isFavorite(title);
     return MaterialApp(home: new Scaffold(body: GestureDetector(
