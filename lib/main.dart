@@ -96,16 +96,9 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
     final double offset = active ? 20 : 0;
     final double top = active ? 100 : 200;
 
-    ImageProvider img;
-
     FirestoreSlideshowState.all[data['title']] = index;
 
-    if (data['img'].contains('http')) {
-      img = CachedNetworkImageProvider(data['img']);
-    } else {
-      img = CachedNetworkImageProvider(
-          'https://i.pinimg.com/originals/9d/66/da/9d66da266df9f8f8edbc14db92efbe30.jpg');
-    }
+    final img = data['img'] ?? 'https://i.imgur.com/H6i4c32.jpg';
 
     return GestureDetector(
         child: Hero(
@@ -119,7 +112,7 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
                   color: Colors.white,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: img,
+                    image: CachedNetworkImageProvider(img),
                   ),
                   boxShadow: [
                     BoxShadow(

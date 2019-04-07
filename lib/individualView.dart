@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -63,15 +62,7 @@ class TextCardState extends State<TextCard> {
     final double blur = 30;
     final double offset = 10;
 
-    ImageProvider img;
-    if (map['img'].contains('http')) {
-      img = CachedNetworkImageProvider(map['img']);
-    } else if (map['img'].toString().length > 10) {
-      img = MemoryImage(Base64Decoder().convert(map['img']));
-    } else {
-      img = CachedNetworkImageProvider(
-          'https://i.pinimg.com/originals/9d/66/da/9d66da266df9f8f8edbc14db92efbe30.jpg');
-    }
+    final img = map['img'] ?? 'https://i.imgur.com/H6i4c32.jpg';
 
     final favorite = Favorites().isFavorite(title);
     return MaterialApp(home: new Scaffold(body: GestureDetector(
@@ -84,7 +75,7 @@ class TextCardState extends State<TextCard> {
                   color: Colors.white,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: img,
+                    image: CachedNetworkImageProvider(img),
                   ),
                   boxShadow: [
                     BoxShadow(
