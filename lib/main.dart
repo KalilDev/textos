@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:textos/favorites.dart';
 
+import 'constants.dart';
 import 'individualView.dart';
 
 void main() => runApp(MyApp());
@@ -12,31 +13,62 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: new Scaffold(
-            drawer: favoritesDrawer(),
-            body: FirestoreSlideshow()));
+    return ScaffoldApp();
   }
 }
 
+class ScaffoldApp extends StatefulWidget {
+  createState() => ScaffoldAppState();
+}
+
+class ScaffoldAppState extends State<ScaffoldApp> {
+  refresh() {
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: new Scaffold(
+        drawer: FavoritesDrawer(),
+        body: FirestoreSlideshow(notifyParent: refresh),
+      ),
+      theme: Constants.themeData,);
+  }
+}
 class FirestoreSlideshow extends StatefulWidget {
-  createState() => FirestoreSlideshowState();
+  final Function() notifyParent;
+
+  FirestoreSlideshow({Key key, @required this.notifyParent}) : super(key: key);
+
+  createState() => FirestoreSlideshowState(notifyParent: notifyParent);
 }
 
 class FirestoreSlideshowState extends State<FirestoreSlideshow> {
+  final Function() notifyParent;
+
+  FirestoreSlideshowState({Key key, @required this.notifyParent});
+
   static final Set<String> favorites = new Set<String>();
   static final Map<String, int> all = {};
 
   // Make a Query
   static Query query;
 
-  Stream _queryDb({String tag = 'Todos'}) {
+  Stream _queryDb({int tag = 0}) {
     FirestoreSlideshowState.all.clear();
-    if (tag == 'Todos') {
-      print(tag);
-      query = db.collection('stories');
-    } else {
-      query = db.collection('stories').where('tags', arrayContains: tag);
+    switch (tag) {
+      case 0:
+        {
+          query = db.collection('stories');
+        }
+        break;
+
+      default:
+        {
+          query = db.collection('stories').where(
+              'tags', arrayContains: Constants.textTag[tag]);
+        }
     }
 
     // Map the documents to the data payload
@@ -54,7 +86,7 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
   final Firestore db = Firestore.instance;
   Stream slides;
 
-  String activeTag = 'Todos';
+  int activeTag = 0;
 
   // Keep track of current page to avoid unnecessary renders
   int currentPage = 0;
@@ -75,21 +107,6 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
     });
   }
 
-  // Builder Functions
-  TextStyle textStyle(String arg) {
-    switch (arg) {
-      case 'title':
-        {
-          return TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontFamily: 'Merriweather');
-        }
-        break;
-    }
-  }
-
   _buildStoryPage(Map data, bool active, int index) {
     // Animated Properties
     final double blur = active ? 30 : 0;
@@ -98,35 +115,39 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
 
     FirestoreSlideshowState.all[data['title']] = index;
 
-    final img = data['img'] ?? 'https://i.imgur.com/H6i4c32.jpg';
+    final title = data['title'] ?? Constants.placeholderTitle;
+    final img = data['img'] ?? Constants.placeholderImg;
 
     return GestureDetector(
         child: Hero(
-            tag: data['title'],
+            tag: title,
             child: AnimatedContainer(
               duration: Duration(milliseconds: 500),
               curve: Curves.decelerate,
               margin: EdgeInsets.only(top: top, bottom: 50, right: 30),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
+                  color: Constants.themeBackground,
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: CachedNetworkImageProvider(img),
                   ),
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.black87,
+                        color: Constants.themeForeground.withAlpha(80),
                         blurRadius: blur,
                         offset: Offset(offset, offset))
                   ]),
               child: Center(
                   child: Material(
-                    child: Text(data['title'],
-                        style: TextStyle(
-                            fontSize: 40,
-                            color: Colors.white,
-                            fontFamily: 'Merriweather')),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                              20),
+                          color: Constants.themeForeground.withAlpha(125)),
+                      child: Text(title,
+                          style: Constants.textstyleStoryTitle),
+                    ),
                     color: Colors.transparent,
                   )),
             )),
@@ -145,16 +166,33 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
         });
   }
 
-  Widget _buildButton(tag) {
-    Color color = tag == activeTag ? Colors.lightBlueAccent : Colors.white;
+  Widget _buildButton(int id) {
+    Color color = id == activeTag ? Constants.themeAccent : Constants
+        .themeBackground;
     return FlatButton(
         color: color,
-        child: Text('#$tag'),
-        onPressed: () => _queryDb(tag: tag));
+        child: Text('#' + Constants.textTag[id],
+          style: TextStyle(color: Constants.themeForeground),),
+        onPressed: () => _queryDb(tag: id));
+  }
+
+  Widget _buildThemeButton() {
+    Color color = Constants.themeForeground;
+    return FlatButton(
+        color: color,
+        child: Text(Constants.textTema,
+          style: TextStyle(color: Constants.themeBackground),),
+        onPressed: () {
+          setState(() {
+            Constants().changeTheme();
+          });
+          notifyParent();
+        }
+    );
   }
 
   _buildTagPage() {
-    var texto = 'do Kalil';
+    var texto = Constants.textKalil;
     return Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -163,15 +201,15 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
             Row(
               children: <Widget>[
                 Text(
-                  'Textos ',
-                  style: textStyle('title'),
+                  Constants.textTextos,
+                  style: Constants.textstyleTitle,
                 ),
                 GestureDetector(
                   child: Container(
                     constraints: BoxConstraints.expand(height: 45.0, width: 200.0),
                     child: Text(
-                      '$texto',
-                      style: textStyle('title'),
+                      texto,
+                      style: Constants.textstyleTitle,
                     ),
                   ),
                   onTap: () {
@@ -180,13 +218,13 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
                 ),
               ],
             ),
-            Text('FILTRO',
-                style:
-                TextStyle(color: Colors.black26, fontFamily: 'Merriweather')),
-            _buildButton('Todos'),
-            _buildButton('Crônicas'),
-            _buildButton('Reflexões'),
-            _buildButton('Desabafos')
+            Text(Constants.textFilter,
+                style: Constants.textstyleFilter),
+            _buildButton(0),
+            _buildButton(1),
+            _buildButton(2),
+            _buildButton(3),
+            _buildThemeButton()
           ],
         ));
   }

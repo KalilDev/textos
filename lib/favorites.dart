@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
+import 'package:textos/constants.dart';
 import 'package:textos/main.dart';
 
 class Favorites {
@@ -30,14 +31,14 @@ class Favorites {
       txt = Container(
           child: Marquee(
               text: text,
-              style: FirestoreSlideshowState().textStyle('title'),
+              style: Constants.textstyleTitle,
               blankSpace: 15.0,
               velocity: 35.0),
           height: 50.0);
     } else {
       txt = Text(
         text,
-        style: FirestoreSlideshowState().textStyle('title'),
+        style: Constants.textstyleTitle,
       );
     }
     return ListTile(
@@ -50,11 +51,11 @@ class Favorites {
   }
 }
 
-class favoritesDrawer extends StatefulWidget {
-  createState() => new favoritesDrawerState();
+class FavoritesDrawer extends StatefulWidget {
+  createState() => new FavoritesDrawerState();
 }
 
-class favoritesDrawerState extends State<favoritesDrawer> {
+class FavoritesDrawerState extends State<FavoritesDrawer> {
   @override
   Widget build(BuildContext context) {
     Widget Separator() {
