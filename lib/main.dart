@@ -1,12 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/favorites.dart';
 
 import 'constants.dart';
 import 'individualView.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (prefs.getBool("isDark") == true) {
+    Constants().setDarkTheme();
+  } else {
+    Constants().setWhiteTheme();
+  }
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
   final PageController ctrl = PageController();
@@ -144,9 +153,9 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(
                               20),
-                          color: Constants.themeForeground.withAlpha(125)),
-                      child: Text(title,
-                          style: Constants.textstyleStoryTitle),
+                          color: Constants.themeBackground.withAlpha(125)),
+                      child: Text(title, textAlign: TextAlign.center,
+                          style: Constants().textstyleTitle()),
                     ),
                     color: Colors.transparent,
                   )),
@@ -187,6 +196,10 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
             Constants().changeTheme();
           });
           notifyParent();
+          SharedPreferences.getInstance().then((pref) {
+            var isDark = pref?.getBool('isDark') ?? false;
+            pref.setBool('isDark', !isDark);
+          });
         }
     );
   }
@@ -202,14 +215,14 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
               children: <Widget>[
                 Text(
                   Constants.textTextos,
-                  style: Constants.textstyleTitle,
+                  style: Constants().textstyleTitle(),
                 ),
                 GestureDetector(
                   child: Container(
                     constraints: BoxConstraints.expand(height: 45.0, width: 200.0),
                     child: Text(
                       texto,
-                      style: Constants.textstyleTitle,
+                      style: Constants().textstyleTitle(),
                     ),
                   ),
                   onTap: () {
@@ -219,7 +232,7 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
               ],
             ),
             Text(Constants.textFilter,
-                style: Constants.textstyleFilter),
+                style: Constants().textstyleFilter()),
             _buildButton(0),
             _buildButton(1),
             _buildButton(2),

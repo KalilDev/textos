@@ -59,7 +59,7 @@ class TextCardState extends State<TextCard> {
               margin: EdgeInsets.only(top: 40, bottom: 50, right: 30, left: 10),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Constants.themeBackground,
+                  color: Constants.themeForeground,
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: CachedNetworkImageProvider(img),
@@ -73,7 +73,7 @@ class TextCardState extends State<TextCard> {
               child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Constants.themeForeground.withAlpha(115)),
+                      color: Constants.themeBackground.withAlpha(115)),
                   child:
                   /*new ClipRect(child: new BackdropFilter(
                   filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
@@ -88,23 +88,19 @@ class TextCardState extends State<TextCard> {
                               child: SingleChildScrollView(
                                 child: Column(
                                   children: <Widget>[
-                                    Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                20),
-                                            color: Constants.themeForeground
-                                                .withAlpha(115)),
-                                        child: Text(title, style: Constants
-                                            .textstyleStoryTitle)),
+                                    Text(title, textAlign: TextAlign.center,
+                                        style: Constants()
+                                            .textstyleTitle()),
                                     SizedBox(height: 10,),
-                                    Text(text, style: Constants.textstyleText),
+                                    Text(text,
+                                        style: Constants().textstyleText()),
                                   ],
                                 ),
                               )),
                           Row(
                             children: <Widget>[
                               Text(date,
-                                  style: Constants.textstyleDate),
+                                  style: Constants().textstyleDate()),
                               Spacer(),
                               FloatingActionButton(
                                   child: Icon(

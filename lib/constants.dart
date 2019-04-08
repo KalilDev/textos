@@ -26,7 +26,8 @@ class Constants {
   // Theme Light
   static const themeBackgroundLight = Colors.white;
   static const themeForegroundLight = Colors.black;
-  static final themeDataLight = ThemeData(accentColor: themeAccent);
+  static final themeDataLight = ThemeData(accentColor: themeAccent,
+      dividerColor: themeForegroundLight.withAlpha(70));
 
   // Theme Dark
   static const themeBackgroundDark = Colors.black;
@@ -34,28 +35,45 @@ class Constants {
   static final themeDataDark = ThemeData(
       accentColor: themeAccent,
       scaffoldBackgroundColor: themeBackgroundDark,
-      canvasColor: themeBackgroundDark);
+      canvasColor: themeBackgroundDark,
+      dividerColor: themeForegroundDark.withAlpha(70));
 
   // Themes
   static const themeAccent = Colors.indigo;
-  static var themeBackground = themeBackgroundLight;
-  static var themeForeground = themeForegroundLight;
-  static var themeData = themeDataLight;
+  static var themeBackground;
+  static var themeForeground;
+  static var themeData;
+
+  void setDarkTheme() {
+    themeBackground = themeBackgroundDark;
+    themeForeground = themeForegroundDark;
+    themeData = themeDataDark;
+  }
+
+  void setWhiteTheme() {
+    themeBackground = themeBackgroundLight;
+    themeForeground = themeForegroundLight;
+    themeData = themeDataLight;
+  }
 
   // TextStyles
-  static var textstyleTitle = TextStyle(
+  TextStyle textstyleTitle() =>
+      TextStyle(
       fontSize: 40,
       fontWeight: FontWeight.bold,
       color: themeForeground,
       fontFamily: 'Merriweather');
-  static var textstyleFilter = TextStyle(
+
+  TextStyle textstyleFilter() =>
+      TextStyle(
       color: themeForeground.withAlpha(150), fontFamily: 'Merriweather');
-  static var textstyleStoryTitle =
-      textstyleTitle.copyWith(color: themeBackground);
-  static var textstyleText =
-      TextStyle(fontSize: 20, color: themeBackground, fontFamily: 'Muli');
-  static var textstyleDate = TextStyle(
-      fontSize: 25, color: themeBackground, fontFamily: 'Merriweather');
+
+  TextStyle textstyleText() =>
+      TextStyle(fontSize: 20, color: themeForeground, fontFamily: 'Muli');
+
+  TextStyle textstyleDate() =>
+      TextStyle(
+          fontSize: 25, color: themeForeground, fontFamily: 'Merriweather');
 
   // Placeholders
   static const placeholderTitle = 'Titulo';

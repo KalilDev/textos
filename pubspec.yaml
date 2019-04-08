@@ -23,6 +23,7 @@ dependencies:
   cached_network_image: ^0.7.0
   flutter_cache_manager: ^0.3.2
   marquee: ^1.1.0
+  shared_preferences: ^0.5.1+2
 
 dev_dependencies:
   flutter_test:

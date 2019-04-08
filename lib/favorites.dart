@@ -31,14 +31,14 @@ class Favorites {
       txt = Container(
           child: Marquee(
               text: text,
-              style: Constants.textstyleTitle,
+              style: Constants().textstyleTitle(),
               blankSpace: 15.0,
               velocity: 35.0),
           height: 50.0);
     } else {
       txt = Text(
         text,
-        style: Constants.textstyleTitle,
+        style: Constants().textstyleTitle(),
       );
     }
     return ListTile(
