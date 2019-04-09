@@ -114,11 +114,7 @@ class TextCardState extends State<TextCard> {
                                       : Constants.themeAccent,
                                   onPressed: () {
                                     setState(() {
-                                      print(
-                                          Favorites().list.toString() + '   ' +
-                                              title);
                                       Favorites().setFavorite(title);
-                                      print(Favorites().list);
                                     });
                                   })
                             ],

@@ -19,7 +19,6 @@ class Favorites {
   }
 
   void setFavorite(String id) {
-    print(list);
     if (isFavorite(id)) {
       list.remove(id);
       updateFavorites();
