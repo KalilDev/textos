@@ -7,12 +7,14 @@ import 'package:textos/slideshow.dart';
 
 void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (prefs.getBool("isDark") == true) {
+  if (prefs.getBool('isDark') == true) {
     Constants().setDarkTheme();
   } else {
     Constants().setWhiteTheme();
   }
   runApp(new MyApp());
+  FirestoreSlideshowState.favorites =
+      prefs?.getStringList('favorites')?.toSet() ?? Set<String>();
 }
 
 class MyApp extends StatelessWidget {

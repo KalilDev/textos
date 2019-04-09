@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/individualView.dart';
 import 'package:textos/slideshow.dart';
@@ -11,12 +12,20 @@ class Favorites {
     return list.contains(id);
   }
 
+  void updateFavorites() {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setStringList('favorites', list.toList());
+    });
+  }
+
   void setFavorite(String id) {
     print(list);
     if (isFavorite(id)) {
       list.remove(id);
+      updateFavorites();
     } else {
       list.add(id);
+      updateFavorites();
     }
   }
 

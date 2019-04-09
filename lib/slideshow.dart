@@ -19,7 +19,7 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
 
   FirestoreSlideshowState({Key key, @required this.notifyParent});
 
-  static final Set<String> favorites = new Set<String>();
+  static Set<String> favorites = new Set<String>();
 
   // Make a Query
   static Query query;
