@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:textos/Settings.dart';
 
 import 'constants.dart';
 import 'individualView.dart';
@@ -154,14 +154,8 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
               color: Constants.themeBackground),
         ),
         onPressed: () {
-          setState(() {
-            Constants().changeTheme();
-          });
-          notifyParent();
-          SharedPreferences.getInstance().then((pref) {
-            var isDark = pref?.getBool('isDark') ?? false;
-            pref.setBool('isDark', !isDark);
-          });
+          Constants().changeTheme();
+          DrawerSettingsState(notifyParent: notifyParent).updateTheme();
         });
   }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
+import 'favorites.dart';
+import 'slideshow.dart';
 
 class DrawerSettings extends StatefulWidget {
   final Function() notifyParent;
@@ -25,8 +27,17 @@ class DrawerSettingsState extends State<DrawerSettings> {
   DrawerSettingsState({Key key, @required this.notifyParent});
 
   void updateText() {
+    notifyParent();
     SharedPreferences.getInstance().then((prefs) {
       prefs.setDouble('textSize', Constants.textInt);
+    });
+  }
+
+  void updateTheme() {
+    notifyParent();
+    SharedPreferences.getInstance().then((pref) {
+      var isDark = pref?.getBool('isDark') ?? false;
+      pref.setBool('isDark', !isDark);
     });
   }
 
@@ -41,9 +52,9 @@ class DrawerSettingsState extends State<DrawerSettings> {
           if (Constants.textInt > 0.6) {
             Constants.textInt = Constants.textInt - 0.5;
           }
-          notifyParent();
           updateText();
         },
+        tooltip: Constants.textTooltipTextSizeLess,
       );
     } else {
       return IconButton(
@@ -53,9 +64,9 @@ class DrawerSettingsState extends State<DrawerSettings> {
         ),
         onPressed: () {
           Constants.textInt = Constants.textInt + 0.5;
-          notifyParent();
           updateText();
         },
+        tooltip: Constants.textTooltipTextSizePlus,
       );
     }
   }
@@ -69,15 +80,24 @@ class DrawerSettingsState extends State<DrawerSettings> {
             Icons.color_lens,
             color: Constants.themeForeground,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Constants().changeTheme();
+            updateTheme();
+          },
+          tooltip: Constants.textTooltipTheme,
         ),
         Spacer(),
         IconButton(
           icon: Icon(
-            Icons.favorite_border,
+            Icons.delete_forever,
             color: Constants.themeForeground,
           ),
-          onPressed: () {},
+          onPressed: () {
+            FirestoreSlideshowState.favorites = Set<String>();
+            notifyParent();
+            Favorites().updateFavorites();
+          },
+          tooltip: Constants.textTooltipTrash,
         ),
         Spacer(),
         textButtons(1),

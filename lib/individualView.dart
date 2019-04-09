@@ -66,7 +66,7 @@ class TextCardState extends State<TextCard> {
               child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Constants.themeBackground.withAlpha(115)),
+                      color: Constants.themeBackground.withAlpha(130)),
                   child:
                   /*new ClipRect(child: new BackdropFilter(
                   filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
@@ -114,7 +114,7 @@ class TextCardState extends State<TextCard> {
                                     setState(() {
                                       Favorites().setFavorite(title);
                                     });
-                                  })
+                                  }, tooltip: Constants.textTooltipFav,)
                             ],
                           )
                         ],

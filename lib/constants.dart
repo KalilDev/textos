@@ -23,6 +23,11 @@ class Constants {
   ];
   static const textTema = 'Tema';
   static const textConfigs = 'Configurações';
+  static const textTooltipTheme = 'Alterar tema';
+  static const textTooltipTrash = 'Limpar favoritos';
+  static const textTooltipTextSizeLess = 'Diminuir tamanho do texto';
+  static const textTooltipTextSizePlus = 'Aumentar tamanho do texto';
+  static const textTooltipFav = 'Favoritar textos';
 
   // Theme Light
   static const themeBackgroundLight = Colors.white;
