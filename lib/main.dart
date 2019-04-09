@@ -59,13 +59,11 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
   FirestoreSlideshowState({Key key, @required this.notifyParent});
 
   static final Set<String> favorites = new Set<String>();
-  static final Map<String, int> all = {};
 
   // Make a Query
   static Query query;
 
   Stream _queryDb({int tag = 0}) {
-    FirestoreSlideshowState.all.clear();
     switch (tag) {
       case 0:
         {
@@ -121,8 +119,6 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
     final double blur = active ? 30 : 0;
     final double offset = active ? 20 : 0;
     final double top = active ? 100 : 200;
-
-    FirestoreSlideshowState.all[data['title']] = index;
 
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;
@@ -242,13 +238,15 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
         ));
   }
 
+  static List slideList;
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: slides,
         initialData: [],
         builder: (context, AsyncSnapshot snap) {
-          List slideList = snap.data.toList();
+          slideList = snap.data.toList();
 
           return PageView.builder(
               controller: ctrl,

@@ -3,6 +3,8 @@ import 'package:marquee/marquee.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/main.dart';
 
+import 'individualView.dart';
+
 class Favorites {
   var list = FirestoreSlideshowState.favorites;
 
@@ -25,7 +27,10 @@ class Favorites {
 
   Widget buildItem(BuildContext context, int index) {
     final text = list.toList()[index];
-    final idxTxt = FirestoreSlideshowState.all[text];
+    final dataList = FirestoreSlideshowState.slideList;
+
+    var idxTxt = dataList.indexWhere((list) => list['title'] == text);
+
     Widget txt;
     if (text.length > 25) {
       txt = Container(
@@ -44,9 +49,15 @@ class Favorites {
     return ListTile(
         title: txt,
         onTap: () {
-          FirestoreSlideshowState.ctrl.animateToPage(idxTxt,
-              duration: Duration(milliseconds: 600), curve: Curves.decelerate);
-          Navigator.pop(context);
+          if (idxTxt != -1) {
+            FirestoreSlideshowState.ctrl.jumpToPage(idxTxt + 1);
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => new TextCard(map: dataList[idxTxt])),
+            );
+          }
         });
   }
 }
