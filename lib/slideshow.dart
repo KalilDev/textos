@@ -50,7 +50,7 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
     });
   }
 
-  static final PageController ctrl = PageController(viewportFraction: 0.8);
+  static final PageController ctrl = PageController(viewportFraction: 0.85);
 
   final Firestore db = Firestore.instance;
   Stream slides;
@@ -80,7 +80,7 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
     // Animated Properties
     final double blur = active ? 30 : 0;
     final double offset = active ? 20 : 0;
-    final double top = active ? 100 : 200;
+    final double top = active ? 60 : 180;
 
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;

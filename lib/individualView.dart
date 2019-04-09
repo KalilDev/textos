@@ -5,21 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/favorites.dart';
 
-class IndividualView extends StatelessWidget {
-  // Declare a field that holds the Todo
-  final Map map;
-  final int index;
-
-  // In the constructor, require a Todo
-  IndividualView({Key key, @required this.map, this.index}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        home: new Scaffold(body: TextCard(map: map, index: index)));
-  }
-}
-
 class TextCard extends StatefulWidget {
   // Declare a field that holds the Todo
   final Map map;
@@ -52,7 +37,9 @@ class TextCardState extends State<TextCard> {
 
     final favorite = Favorites().isFavorite(title);
     return MaterialApp(
-        theme: Constants.themeData, home: new Scaffold(body: GestureDetector(
+        theme: Constants.themeData, home: new Scaffold(
+        drawer: FavoritesDrawer(),
+        body: GestureDetector(
         child: Hero(
             tag: map['title'],
             child: Container(

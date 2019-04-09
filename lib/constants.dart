@@ -80,4 +80,11 @@ class Constants {
   static const placeholderText = 'Texto';
   static const placeholderDate = '01/01/1970';
   static const placeholderImg = 'https://i.imgur.com/H6i4c32.jpg';
+
+  // AppBar
+  Widget appbarTransparent() => AppBar(
+    backgroundColor: Colors.transparent,
+    elevation: 0.0,
+    iconTheme: IconThemeData(color: Constants.themeForeground),
+    key: Key('appbar'),);
 }

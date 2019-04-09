@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:textos/Settings.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/individualView.dart';
 import 'package:textos/slideshow.dart';
@@ -81,11 +82,20 @@ class FavoritesDrawerState extends State<FavoritesDrawer> {
     }
 
     return new Drawer(
-      child: ListView.separated(
-        itemCount: FirestoreSlideshowState.favorites.length,
-        itemBuilder: (BuildContext context, int index) =>
-            Favorites().buildItem(context, index),
-        separatorBuilder: (BuildContext context, int index) => Separator(),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.separated(
+                itemCount: FirestoreSlideshowState.favorites.length,
+                itemBuilder: (BuildContext context, int index) =>
+                    Favorites().buildItem(context, index),
+                separatorBuilder: (BuildContext context, int index) =>
+                    Separator()
+            ),
+          ),
+          DrawerSettings().header(),
+          DrawerSettings(),
+        ],
       ),
     );
   }
