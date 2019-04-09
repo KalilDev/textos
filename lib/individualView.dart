@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/favorites.dart';
 
+import 'Settings.dart';
+
 class TextCard extends StatefulWidget {
   // Declare a field that holds the Todo
   final Map map;
@@ -24,6 +26,10 @@ class TextCardState extends State<TextCard> {
   // In the constructor, require the data map and index
   TextCardState({Key key, @required this.map, this.index});
 
+  refresh() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     // Sanitize input
@@ -38,7 +44,7 @@ class TextCardState extends State<TextCard> {
     final favorite = Favorites().isFavorite(title);
     return MaterialApp(
         theme: Constants.themeData, home: new Scaffold(
-        drawer: FavoritesDrawer(),
+        drawer: FavoritesDrawer(notifyParent: refresh),
         body: GestureDetector(
         child: Hero(
             tag: map['title'],
@@ -89,6 +95,11 @@ class TextCardState extends State<TextCard> {
                               Text(date,
                                   style: Constants().textstyleDate()),
                               Spacer(),
+                              DrawerSettingsState(notifyParent: refresh)
+                                  .textButtons(1),
+                              DrawerSettingsState(notifyParent: refresh)
+                                  .textButtons(0),
+                              SizedBox(width: 10,),
                               FloatingActionButton(
                                   child: Icon(
                                     Icons.favorite,

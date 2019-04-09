@@ -139,7 +139,7 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
         color: color,
         child: Text(
           '#' + Constants.textTag[id],
-          style: TextStyle(color: Constants.themeForeground),
+          style: Constants().textStyleButton(),
         ),
         onPressed: () => _queryDb(tag: id));
   }
@@ -150,7 +150,8 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
         color: color,
         child: Text(
           Constants.textTema,
-          style: TextStyle(color: Constants.themeBackground),
+          style: Constants().textStyleButton().copyWith(
+              color: Constants.themeBackground),
         ),
         onPressed: () {
           setState(() {
@@ -177,17 +178,9 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
               Constants.textTextos,
               style: Constants().textstyleTitle(),
             ),
-            GestureDetector(
-              child: Container(
-                constraints: BoxConstraints.expand(height: 45.0, width: 200.0),
-                child: Text(
-                  texto,
-                  style: Constants().textstyleTitle(),
-                ),
-              ),
-              onTap: () {
-                //TODO
-              },
+            Text(
+              texto,
+              style: Constants().textstyleTitle(),
             ),
           ],
         ),

@@ -22,6 +22,7 @@ class Constants {
     'Desabafos'
   ];
   static const textTema = 'Tema';
+  static const textConfigs = 'Configurações';
 
   // Theme Light
   static const themeBackgroundLight = Colors.white;
@@ -56,24 +57,43 @@ class Constants {
     themeData = themeDataLight;
   }
 
+  static double textInt;
+
   // TextStyles
+  double getTextSize(int) {
+    return textInt * int;
+  }
+
   TextStyle textstyleTitle() =>
       TextStyle(
-      fontSize: 40,
+          fontSize: getTextSize(8),
       fontWeight: FontWeight.bold,
       color: themeForeground,
       fontFamily: 'Merriweather');
 
   TextStyle textstyleFilter() =>
       TextStyle(
-      color: themeForeground.withAlpha(150), fontFamily: 'Merriweather');
+          fontSize: getTextSize(3),
+          color: themeForeground.withAlpha(150),
+          fontFamily: 'Merriweather');
 
   TextStyle textstyleText() =>
-      TextStyle(fontSize: 20, color: themeForeground, fontFamily: 'Muli');
+      TextStyle(fontSize: getTextSize(4.5),
+          color: themeForeground,
+          fontFamily: 'Muli');
 
   TextStyle textstyleDate() =>
       TextStyle(
-          fontSize: 25, color: themeForeground, fontFamily: 'Merriweather');
+          fontSize: getTextSize(5),
+          color: themeForeground,
+          fontFamily: 'Merriweather');
+
+  TextStyle textStyleButton() =>
+      TextStyle(
+          fontSize: getTextSize(3),
+          color: themeForeground,
+          fontFamily: 'Merriweather'
+      );
 
   // Placeholders
   static const placeholderTitle = 'Titulo';

@@ -71,10 +71,18 @@ class Favorites {
 }
 
 class FavoritesDrawer extends StatefulWidget {
-  createState() => new FavoritesDrawerState();
+  final Function() notifyParent;
+
+  FavoritesDrawer({Key key, @required this.notifyParent}) : super(key: key);
+
+  createState() => new FavoritesDrawerState(notifyParent: notifyParent);
 }
 
 class FavoritesDrawerState extends State<FavoritesDrawer> {
+  final Function() notifyParent;
+
+  FavoritesDrawerState({Key key, @required this.notifyParent});
+
   @override
   Widget build(BuildContext context) {
     Widget Separator() {
@@ -94,7 +102,7 @@ class FavoritesDrawerState extends State<FavoritesDrawer> {
             ),
           ),
           DrawerSettings().header(),
-          DrawerSettings(),
+          DrawerSettings(notifyParent: notifyParent),
         ],
       ),
     );

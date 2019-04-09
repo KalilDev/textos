@@ -17,6 +17,8 @@ void main() async {
   runApp(new MyApp());
   FirestoreSlideshowState.favorites =
       prefs?.getStringList('favorites')?.toSet() ?? Set<String>();
+  Constants.textInt =
+      prefs?.getDouble('textSize') ?? 4.5;
 }
 
 class MyApp extends StatelessWidget {
@@ -42,7 +44,7 @@ class ScaffoldAppState extends State<ScaffoldApp> {
     return MaterialApp(
       home: new Scaffold(
         appBar: Constants().appbarTransparent(),
-        drawer: FavoritesDrawer(),
+        drawer: FavoritesDrawer(notifyParent: refresh),
         body: FirestoreSlideshow(notifyParent: refresh),
       ),
       theme: Constants.themeData,);
