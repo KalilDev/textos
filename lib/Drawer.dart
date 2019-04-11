@@ -9,7 +9,7 @@ import 'package:textos/main.dart';
 
 
 class TextAppDrawer extends StatelessWidget {
-  Store<AppStateMain> store;
+  final Store<AppStateMain> store;
 
   TextAppDrawer({@required this.store});
 
@@ -52,7 +52,7 @@ class TextAppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget Separator() {
+    Widget separator() {
       return Divider();
     }
 
@@ -70,7 +70,7 @@ class TextAppDrawer extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) =>
                     buildFavoritesItem(context, index),
                 separatorBuilder: (BuildContext context, int index) =>
-                    Separator()),
+                    separator()),
           ),
           DrawerSettings(store: store).header(),
           DrawerSettings(store: store),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +25,7 @@ class TextSlideshowState extends State<TextSlideshow> {
   // Make a Query
   static Query query;
 
-  Stream _queryDb({int tag = 0}) {
+  void _queryDb({int tag = 0}) {
     switch (tag) {
       case 0:
         {
@@ -61,6 +63,7 @@ class TextSlideshowState extends State<TextSlideshow> {
 
   @override
   void initState() {
+    super.initState();
     _queryDb();
 
     // Set state when page changes
@@ -145,20 +148,6 @@ class TextSlideshowState extends State<TextSlideshow> {
         onPressed: () => _queryDb(tag: id));
   }
 
-  Widget _buildThemeButton() {
-    Color color = Constants.themeForeground;
-    return FlatButton(
-        color: color,
-        child: Text(
-          Constants.textTema,
-          style: Constants().textStyleButton(store.state.textSize).copyWith(
-              color: Constants.themeBackground),
-        ),
-        onPressed: () {
-          store.dispatch(UpdateDarkMode(enable: !store.state.enableDarkMode));
-        });
-  }
-
   _buildTagPage() {
     var texto = Constants.textKalil;
     return Container(
@@ -183,8 +172,7 @@ class TextSlideshowState extends State<TextSlideshow> {
             _buildButton(0),
             _buildButton(1),
             _buildButton(2),
-            _buildButton(3),
-            _buildThemeButton()
+            _buildButton(3)
           ],
         ));
   }
