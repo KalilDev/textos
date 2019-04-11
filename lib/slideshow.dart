@@ -1,25 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:textos/Settings.dart';
+import 'package:redux/redux.dart';
 
 import 'constants.dart';
-import 'individualView.dart';
+import 'main2.dart';
 
-class FirestoreSlideshow extends StatefulWidget {
-  final Function() notifyParent;
+class TextSlideshow extends StatefulWidget {
+  final Store store;
 
-  FirestoreSlideshow({Key key, @required this.notifyParent}) : super(key: key);
+  TextSlideshow({@required this.store});
 
-  createState() => FirestoreSlideshowState(notifyParent: notifyParent);
+  createState() => TextSlideshowState(store: store);
 }
 
-class FirestoreSlideshowState extends State<FirestoreSlideshow> {
-  final Function() notifyParent;
+class TextSlideshowState extends State<TextSlideshow> {
+  final Store<AppStateMain> store;
 
-  FirestoreSlideshowState({Key key, @required this.notifyParent});
-
-  static Set<String> favorites = new Set<String>();
+  TextSlideshowState({@required this.store});
 
   // Make a Query
   static Query query;
@@ -107,16 +105,17 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
                   ]),
               child: Center(
                   child: Material(
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Constants.themeBackground.withAlpha(125)),
-                  child: Text(title,
-                      textAlign: TextAlign.center,
-                      style: Constants().textstyleTitle()),
-                ),
-                color: Colors.transparent,
-              )),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Constants.themeBackground.withAlpha(125)),
+                      child: Text(title,
+                          textAlign: TextAlign.center,
+                          style: Constants().textstyleTitle(
+                              store.state.textSize)),
+                    ),
+                    color: Colors.transparent,
+                  )),
             )),
         onTap: () {
           if (!active) {
@@ -134,12 +133,12 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
 
   Widget _buildButton(int id) {
     Color color =
-        id == activeTag ? Constants.themeAccent : Constants.themeBackground;
+    id == activeTag ? Constants.themeAccent : Constants.themeBackground;
     return FlatButton(
         color: color,
         child: Text(
           '#' + Constants.textTag[id],
-          style: Constants().textStyleButton(),
+          style: Constants().textStyleButton(store.state.textSize),
         ),
         onPressed: () => _queryDb(tag: id));
   }
@@ -150,12 +149,11 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
         color: color,
         child: Text(
           Constants.textTema,
-          style: Constants().textStyleButton().copyWith(
+          style: Constants().textStyleButton(store.state.textSize).copyWith(
               color: Constants.themeBackground),
         ),
         onPressed: () {
-          Constants().changeTheme();
-          DrawerSettingsState(notifyParent: notifyParent).updateTheme();
+          store.dispatch(UpdateDarkMode(enable: !store.state.enableDarkMode));
         });
   }
 
@@ -163,29 +161,30 @@ class FirestoreSlideshowState extends State<FirestoreSlideshow> {
     var texto = Constants.textKalil;
     return Container(
         child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: <Widget>[
-            Text(
-              Constants.textTextos,
-              style: Constants().textstyleTitle(),
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: <Widget>[
+                Text(
+                  Constants.textTextos,
+                  style: Constants().textstyleTitle(store.state.textSize),
+                ),
+                Text(
+                  texto,
+                  style: Constants().textstyleTitle(store.state.textSize),
+                ),
+              ],
             ),
-            Text(
-              texto,
-              style: Constants().textstyleTitle(),
-            ),
+            Text(Constants.textFilter,
+                style: Constants().textstyleFilter(store.state.textSize)),
+            _buildButton(0),
+            _buildButton(1),
+            _buildButton(2),
+            _buildButton(3),
+            _buildThemeButton()
           ],
-        ),
-        Text(Constants.textFilter, style: Constants().textstyleFilter()),
-        _buildButton(0),
-        _buildButton(1),
-        _buildButton(2),
-        _buildButton(3),
-        _buildThemeButton()
-      ],
-    ));
+        ));
   }
 
   static List slideList;

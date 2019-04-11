@@ -1,44 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:redux/redux.dart';
 
 import 'constants.dart';
-import 'favorites.dart';
-import 'slideshow.dart';
+import 'main2.dart';
 
-class DrawerSettings extends StatefulWidget {
-  final Function() notifyParent;
+class DrawerSettings extends StatelessWidget {
+  final Store<AppStateMain> store;
 
-  DrawerSettings({Key key, this.notifyParent}) : super(key: key);
+  DrawerSettings({Key key, @required this.store});
 
   Widget header() {
     return Center(
         child: Text(
           Constants.textConfigs,
-          style: Constants().textstyleText(),
+          style: Constants().textstyleText(store.state.textSize),
         ));
-  }
-
-  createState() => DrawerSettingsState(notifyParent: notifyParent);
-}
-
-class DrawerSettingsState extends State<DrawerSettings> {
-  final Function() notifyParent;
-
-  DrawerSettingsState({Key key, @required this.notifyParent});
-
-  void updateText() {
-    notifyParent();
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setDouble('textSize', Constants.textInt);
-    });
-  }
-
-  void updateTheme() {
-    notifyParent();
-    SharedPreferences.getInstance().then((pref) {
-      var isDark = pref?.getBool('isDark') ?? false;
-      pref.setBool('isDark', !isDark);
-    });
   }
 
   Widget textButtons(int i) {
@@ -49,10 +25,9 @@ class DrawerSettingsState extends State<DrawerSettings> {
           color: Constants.themeForeground,
         ),
         onPressed: () {
-          if (Constants.textInt > 0.6) {
-            Constants.textInt = Constants.textInt - 0.5;
+          if (store.state.textSize > 0.6) {
+            store.dispatch(UpdateTextSize(size: store.state.textSize - 0.5));
           }
-          updateText();
         },
         tooltip: Constants.textTooltipTextSizeLess,
       );
@@ -63,8 +38,9 @@ class DrawerSettingsState extends State<DrawerSettings> {
           color: Constants.themeForeground,
         ),
         onPressed: () {
-          Constants.textInt = Constants.textInt + 0.5;
-          updateText();
+          if (store.state.textSize > 0.6) {
+            store.dispatch(UpdateTextSize(size: store.state.textSize + 0.5));
+          }
         },
         tooltip: Constants.textTooltipTextSizePlus,
       );
@@ -81,8 +57,7 @@ class DrawerSettingsState extends State<DrawerSettings> {
             color: Constants.themeForeground,
           ),
           onPressed: () {
-            Constants().changeTheme();
-            updateTheme();
+            store.dispatch(UpdateDarkMode(enable: !store.state.enableDarkMode));
           },
           tooltip: Constants.textTooltipTheme,
         ),
@@ -93,9 +68,7 @@ class DrawerSettingsState extends State<DrawerSettings> {
             color: Constants.themeForeground,
           ),
           onPressed: () {
-            FirestoreSlideshowState.favorites = Set<String>();
-            notifyParent();
-            Favorites().updateFavorites();
+            store.dispatch(UpdateFavorites(toClear: 1));
           },
           tooltip: Constants.textTooltipTrash,
         ),

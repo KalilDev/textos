@@ -64,38 +64,33 @@ class Constants {
 
   static double textInt;
 
-  // TextStyles
-  double getTextSize(int) {
-    return textInt * int;
-  }
-
-  TextStyle textstyleTitle() =>
+  TextStyle textstyleTitle(double size) =>
       TextStyle(
-          fontSize: getTextSize(8),
+          fontSize: size * 8,
       fontWeight: FontWeight.bold,
       color: themeForeground,
       fontFamily: 'Merriweather');
 
-  TextStyle textstyleFilter() =>
+  TextStyle textstyleFilter(double size) =>
       TextStyle(
-          fontSize: getTextSize(3),
+          fontSize: size * 3,
           color: themeForeground.withAlpha(150),
           fontFamily: 'Merriweather');
 
-  TextStyle textstyleText() =>
-      TextStyle(fontSize: getTextSize(4.5),
+  TextStyle textstyleText(double size) =>
+      TextStyle(fontSize: size * 4.5,
           color: themeForeground,
           fontFamily: 'Muli');
 
-  TextStyle textstyleDate() =>
+  TextStyle textstyleDate(double size) =>
       TextStyle(
-          fontSize: getTextSize(5),
+          fontSize: size * 5,
           color: themeForeground,
           fontFamily: 'Merriweather');
 
-  TextStyle textStyleButton() =>
+  TextStyle textStyleButton(double size) =>
       TextStyle(
-          fontSize: getTextSize(3),
+          fontSize: size * 3,
           color: themeForeground,
           fontFamily: 'Merriweather'
       );

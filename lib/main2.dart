@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
+import 'drawer.dart';
+import 'slideshow.dart';
 
 void main() async {
   SystemChrome.setEnabledSystemUIOverlays([]);
@@ -15,18 +17,18 @@ void main() async {
       .setWhiteTheme();
   final _favoritesSet = prefs?.getStringList('favorites')?.toSet() ??
       Set<String>();
-  final _textSize = prefs?.getDouble('textSize') ?? 10.0;
+  final _textSize = prefs?.getDouble('textSize') ?? 4.5;
 
-  final store = Store<AppState>(
+  final store = Store<AppStateMain>(
     reducer,
     distinct: true,
-    initialState: AppState(
+    initialState: AppStateMain(
         enableDarkMode: _enableDarkMode,
         favoritesSet: _favoritesSet,
         textSize: _textSize),
   );
 
-  runApp(StoreProvider<AppState>(
+  runApp(StoreProvider<AppStateMain>(
     store: store,
     child: MyApp(),
   ));
@@ -35,7 +37,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, List>(
+    return StoreConnector<AppStateMain, List>(
       distinct: true,
       converter: (store) {
         return [
@@ -45,21 +47,7 @@ class MyApp extends StatelessWidget {
         ];
       },
       builder: (_, List list) {
-        return MaterialApp(
-          theme: Constants.themeData,
-          home: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'Test Redux App',
-                style: TextStyle(
-                    fontSize: list[2], color: Constants.themeForeground),
-              ),
-              backgroundColor: Constants.themeBackground,
-            ),
-            body: SettingsView(),
-            drawer: null,
-          ),
-        );
+        return SettingsView();
       },
     );
   }
@@ -70,7 +58,7 @@ class SettingsView extends StatefulWidget {
 }
 
 class SettingsViewState extends State<SettingsView> {
-  Widget Item(Store<AppState> store, int index) {
+  Widget Item(Store<AppStateMain> store, int index) {
     var state = store.state;
     if (index == 0) {
       return SwitchListTile(
@@ -142,16 +130,23 @@ class SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return StoreBuilder(
-      builder: (BuildContext context, Store<AppState> store) {
-        return
+      builder: (BuildContext context, Store<AppStateMain> store) {
+        return MaterialApp(
+          theme: Constants.themeData,
+          home: Scaffold(
+            appBar: Constants().appbarTransparent(),
+            body: TextSlideshow(store: store),
+            drawer: TextAppDrawer(store: store),
+          ),
+        );
       },
     );
   }
 }
 
 // Redux
-class AppState {
-  AppState(
+class AppStateMain {
+  AppStateMain(
       {@required this.enableDarkMode,
       @required this.favoritesSet,
       @required this.textSize});
@@ -181,7 +176,7 @@ class UpdateTextSize {
   final double size;
 }
 
-AppState reducer(AppState state, dynamic action) {
+AppStateMain reducer(AppStateMain state, dynamic action) {
   if (action is UpdateDarkMode) {
     if (action.enable) Constants().setDarkTheme();
     if (!action.enable) Constants().setWhiteTheme();
@@ -189,7 +184,7 @@ AppState reducer(AppState state, dynamic action) {
       pref.setBool('isDark', action.enable);
     });
 
-    return AppState(
+    return AppStateMain(
         enableDarkMode: action.enable,
         favoritesSet: state.favoritesSet,
         textSize: state.textSize);
@@ -204,7 +199,7 @@ AppState reducer(AppState state, dynamic action) {
       pref.setStringList('favorites', fav.toList());
     });
 
-    return AppState(
+    return AppStateMain(
         enableDarkMode: state.enableDarkMode,
         favoritesSet: fav,
         textSize: state.textSize);
@@ -215,7 +210,7 @@ AppState reducer(AppState state, dynamic action) {
       pref.setDouble('textSize', action.size);
     });
 
-    return AppState(
+    return AppStateMain(
         enableDarkMode: state.enableDarkMode,
         favoritesSet: state.favoritesSet,
         textSize: action.size);
