@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
+import 'constants.dart';
+
 void main() {
   Set<String> favorites;
   favorites = ['random', 'lol'].toSet();
@@ -32,15 +34,15 @@ class MyApp extends StatelessWidget {
       },
       builder: (_, List list) {
         return MaterialApp(
-          theme: ThemeData(
-            brightness: list[0] ? Brightness.dark : Brightness.light,
-          ),
+          theme: Constants.themeData,
           home: Scaffold(
             appBar: AppBar(
               title: Text(
                 'Test Redux App',
-                style: TextStyle(fontSize: list[2]),
+                style: TextStyle(
+                    fontSize: list[2], color: Constants.themeForeground),
               ),
+              backgroundColor: Constants.themeBackground,
             ),
             body: SettingsView(),
             drawer: null,
@@ -98,17 +100,28 @@ class SettingsViewState extends State<SettingsView> {
           ],
         ),
       );
+    } else if (index == 2) {
+      return ListTile(
+        title: Text('Clear fav', style: TextStyle(fontSize: state.textSize),),
+        onTap: () {
+          store.dispatch(UpdateFavorites(toClear: 0));
+        },
+      );
+    } else if (index == 3) {
+      return ListTile(
+        title: Text('Remove sup5', style: TextStyle(fontSize: state.textSize),),
+        onTap: () {
+          store.dispatch(UpdateFavorites(toRemove: 'sup5'));
+        },
+      );
     } else {
       return ListTile(
         title: Text(
-          state.favoritesSet.toList()[index - 2],
+          state.favoritesSet.toList()[index - 4],
           style: TextStyle(fontSize: state.textSize),
         ),
         onTap: () {
-          var list = state.favoritesSet.toList();
-          //list.removeLast();
-          list.add('sup' + index.toString());
-          store.dispatch(UpdateFavorites(list: list));
+          store.dispatch(UpdateFavorites(toAdd: 'sup' + index.toString()));
         },
       );
     }
@@ -122,7 +135,7 @@ class SettingsViewState extends State<SettingsView> {
         final state = store.state;
         return ListView.builder(
           itemBuilder: (BuildContext context, int index) => Item(store, index),
-          itemCount: state.favoritesSet.length + 2,
+          itemCount: state.favoritesSet.length + 4,
         );
       },
     );
@@ -148,9 +161,11 @@ class UpdateDarkMode {
 }
 
 class UpdateFavorites {
-  UpdateFavorites({@required this.list});
+  UpdateFavorites({this.toClear, this.toAdd, this.toRemove});
 
-  final List<String> list;
+  final int toClear;
+  final String toAdd;
+  final String toRemove;
 }
 
 class UpdateTextSize {
@@ -161,6 +176,9 @@ class UpdateTextSize {
 
 AppState reducer(AppState state, dynamic action) {
   if (action is UpdateDarkMode) {
+    if (action.enable) Constants().setDarkTheme();
+    if (!action.enable) Constants().setWhiteTheme();
+
     return AppState(
         enableDarkMode: action.enable,
         favoritesSet: state.favoritesSet,
@@ -168,9 +186,14 @@ AppState reducer(AppState state, dynamic action) {
   }
 
   if (action is UpdateFavorites) {
+    var fav = state.favoritesSet;
+    if (action.toClear != null) fav.clear();
+    if (action.toAdd != null) fav.add(action.toAdd);
+    if (action.toRemove != null) fav.remove(action.toRemove);
+
     return AppState(
         enableDarkMode: state.enableDarkMode,
-        favoritesSet: action.list.toSet(),
+        favoritesSet: fav,
         textSize: state.textSize);
   }
 
