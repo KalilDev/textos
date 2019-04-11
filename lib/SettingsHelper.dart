@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
+import 'package:textos/Constants.dart';
+import 'package:textos/main.dart';
 
-import 'constants.dart';
-import 'main2.dart';
 
 class DrawerSettings extends StatelessWidget {
   final Store<AppStateMain> store;
 
-  DrawerSettings({Key key, @required this.store});
+  DrawerSettings({@required this.store});
 
   Widget header() {
     return Center(
@@ -45,6 +45,27 @@ class DrawerSettings extends StatelessWidget {
         tooltip: Constants.textTooltipTextSizePlus,
       );
     }
+  }
+
+  Widget favoriteFAB(String title) {
+    final favorite = store.state.favoritesSet.toList().contains(title);
+    return FloatingActionButton(
+      child: Icon(
+        Icons.favorite,
+        color: favorite ? Colors.red : Constants
+            .themeBackground,
+      ),
+      backgroundColor:
+      favorite
+          ? Constants.themeBackground
+          : Constants.themeAccent,
+      onPressed: () {
+        if (favorite) {
+          store.dispatch(UpdateFavorites(toRemove: title));
+        } else {
+          store.dispatch(UpdateFavorites(toAdd: title));
+        }
+      }, tooltip: Constants.textTooltipFav,);
   }
 
   @override

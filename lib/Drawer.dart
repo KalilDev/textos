@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Settings.dart';
-import 'package:textos/constants.dart';
+import 'package:textos/Constants.dart';
+import 'package:textos/FirestoreSlideshowView.dart';
+import 'package:textos/SettingsHelper.dart';
+import 'package:textos/TextCardView.dart';
+import 'package:textos/main.dart';
 
-import 'main2.dart';
-import 'slideshow.dart';
 
 class TextAppDrawer extends StatelessWidget {
   Store<AppStateMain> store;
 
-  TextAppDrawer({Key key, @required this.store});
+  TextAppDrawer({@required this.store});
 
   Widget buildFavoritesItem(BuildContext context, int index) {
     final favoriteTitle = store.state.favoritesSet.toList()[index];
@@ -42,7 +43,8 @@ class TextAppDrawer extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => new TextCard(map: dataList[idxTxt])),
+                  builder: (context) =>
+                  new TextCard(map: dataList[idxTxt], store: store)),
             );
           }
         });
@@ -57,6 +59,11 @@ class TextAppDrawer extends StatelessWidget {
     return new Drawer(
       child: Column(
         children: <Widget>[
+          Center(
+              child: Text(
+                Constants.textFavs,
+                style: Constants().textstyleText(store.state.textSize),
+              )),
           Expanded(
             child: ListView.separated(
                 itemCount: store.state.favoritesSet.length,

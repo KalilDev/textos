@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class Constants {
   void changeTheme() {
     themeBackground = themeBackground == themeBackgroundDark
@@ -23,6 +24,7 @@ class Constants {
   ];
   static const textTema = 'Tema';
   static const textConfigs = 'Configurações';
+  static const textFavs = 'Favoritos';
   static const textTooltipTheme = 'Alterar tema';
   static const textTooltipTrash = 'Limpar favoritos';
   static const textTooltipTextSizeLess = 'Diminuir tamanho do texto';
@@ -67,9 +69,9 @@ class Constants {
   TextStyle textstyleTitle(double size) =>
       TextStyle(
           fontSize: size * 8,
-      fontWeight: FontWeight.bold,
-      color: themeForeground,
-      fontFamily: 'Merriweather');
+          fontWeight: FontWeight.bold,
+          color: themeForeground,
+          fontFamily: 'Merriweather');
 
   TextStyle textstyleFilter(double size) =>
       TextStyle(

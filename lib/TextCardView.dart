@@ -1,34 +1,19 @@
-import 'dart:ui';
-
-import 'package:cached_network_image/cached_network_image.dart';
+import'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:textos/constants.dart';
-import 'package:textos/favorites.dart';
+import 'package:redux/redux.dart';
+import 'package:textos/Constants.dart';
+import 'package:textos/Drawer.dart';
+import 'package:textos/SettingsHelper.dart';
+import 'package:textos/main.dart';
 
-import 'Settings.dart';
 
-class TextCard extends StatefulWidget {
-  // Declare a field that holds the Todo
-  final Map map;
-  final int index;
-
-  // In the constructor, require a Todo
-  TextCard({Key key, @required this.map, this.index}) : super(key: key);
-
-  createState() => TextCardState(map: map, index: index);
-}
-
-class TextCardState extends State<TextCard> {
+class TextCard extends StatelessWidget {
   // Declare a field that holds the data map, and a field that holds the index
   final Map map;
-  final int index;
+  final Store<AppStateMain> store;
 
   // In the constructor, require the data map and index
-  TextCardState({Key key, @required this.map, this.index});
-
-  refresh() {
-    setState(() {});
-  }
+  TextCard({@required this.map, this.store});
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +26,9 @@ class TextCardState extends State<TextCard> {
     final double blur = 30;
     final double offset = 10;
 
-    final favorite = Favorites().isFavorite(title);
     return MaterialApp(
         theme: Constants.themeData, home: new Scaffold(
-        drawer: FavoritesDrawer(notifyParent: refresh),
+        drawer: TextAppDrawer(store: store),
         body: GestureDetector(
         child: Hero(
             tag: map['title'],
@@ -83,38 +67,25 @@ class TextCardState extends State<TextCard> {
                                   children: <Widget>[
                                     Text(title, textAlign: TextAlign.center,
                                         style: Constants()
-                                            .textstyleTitle()),
+                                            .textstyleTitle(
+                                            store.state.textSize)),
                                     SizedBox(height: 10,),
                                     Text(text,
-                                        style: Constants().textstyleText()),
+                                        style: Constants().textstyleText(
+                                            store.state.textSize)),
                                   ],
                                 ),
                               )),
                           Row(
                             children: <Widget>[
                               Text(date,
-                                  style: Constants().textstyleDate()),
+                                  style: Constants().textstyleDate(
+                                      store.state.textSize)),
                               Spacer(),
-                              DrawerSettingsState(notifyParent: refresh)
-                                  .textButtons(1),
-                              DrawerSettingsState(notifyParent: refresh)
-                                  .textButtons(0),
+                              DrawerSettings(store: store).textButtons(1),
+                              DrawerSettings(store: store).textButtons(0),
                               SizedBox(width: 10,),
-                              FloatingActionButton(
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: favorite ? Colors.red : Constants
-                                        .themeBackground,
-                                  ),
-                                  backgroundColor:
-                                  favorite
-                                      ? Constants.themeBackground
-                                      : Constants.themeAccent,
-                                  onPressed: () {
-                                    setState(() {
-                                      Favorites().setFavorite(title);
-                                    });
-                                  }, tooltip: Constants.textTooltipFav,)
+                              DrawerSettings(store: store).favoriteFAB(title),
                             ],
                           )
                         ],

@@ -2,9 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
+import 'package:textos/Constants.dart';
+import 'package:textos/TextCardView.dart';
+import 'package:textos/main.dart';
 
-import 'constants.dart';
-import 'main2.dart';
 
 class TextSlideshow extends StatefulWidget {
   final Store store;
@@ -125,7 +126,8 @@ class TextSlideshowState extends State<TextSlideshow> {
           } else {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => new TextCard(map: data)),
+              MaterialPageRoute(
+                  builder: (context) => new TextCard(map: data, store: store)),
             );
           }
         });
