@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 
 import 'constants.dart';
 
-void main() {
-  Set<String> favorites;
-  favorites = ['random', 'lol'].toSet();
+void main() async {
+  SystemChrome.setEnabledSystemUIOverlays([]);
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  final _enableDarkMode = prefs?.getBool('isDark') ?? false;
+  (_enableDarkMode == true) ? Constants().setDarkTheme() : Constants()
+      .setWhiteTheme();
+  final _favoritesSet = prefs?.getStringList('favorites')?.toSet() ??
+      Set<String>();
+  final _textSize = prefs?.getDouble('textSize') ?? 10.0;
+
   final store = Store<AppState>(
     reducer,
     distinct: true,
     initialState: AppState(
-        enableDarkMode: false, favoritesSet: favorites, textSize: 20.0),
+        enableDarkMode: _enableDarkMode,
+        favoritesSet: _favoritesSet,
+        textSize: _textSize),
   );
 
   runApp(StoreProvider<AppState>(
@@ -130,13 +142,8 @@ class SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return StoreBuilder(
-      // Would use a StoreConnector & ViewModel in the real world
       builder: (BuildContext context, Store<AppState> store) {
-        final state = store.state;
-        return ListView.builder(
-          itemBuilder: (BuildContext context, int index) => Item(store, index),
-          itemCount: state.favoritesSet.length + 4,
-        );
+        return
       },
     );
   }
@@ -178,6 +185,9 @@ AppState reducer(AppState state, dynamic action) {
   if (action is UpdateDarkMode) {
     if (action.enable) Constants().setDarkTheme();
     if (!action.enable) Constants().setWhiteTheme();
+    SharedPreferences.getInstance().then((pref) {
+      pref.setBool('isDark', action.enable);
+    });
 
     return AppState(
         enableDarkMode: action.enable,
@@ -190,6 +200,9 @@ AppState reducer(AppState state, dynamic action) {
     if (action.toClear != null) fav.clear();
     if (action.toAdd != null) fav.add(action.toAdd);
     if (action.toRemove != null) fav.remove(action.toRemove);
+    SharedPreferences.getInstance().then((pref) {
+      pref.setStringList('favorites', fav.toList());
+    });
 
     return AppState(
         enableDarkMode: state.enableDarkMode,
@@ -198,6 +211,10 @@ AppState reducer(AppState state, dynamic action) {
   }
 
   if (action is UpdateTextSize) {
+    SharedPreferences.getInstance().then((pref) {
+      pref.setDouble('textSize', action.size);
+    });
+
     return AppState(
         enableDarkMode: state.enableDarkMode,
         favoritesSet: state.favoritesSet,
