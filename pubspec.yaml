@@ -24,6 +24,8 @@ dependencies:
   flutter_cache_manager: ^0.3.2
   marquee: ^1.1.0
   shared_preferences: ^0.5.1+2
+  flutter_redux: any
+  redux: any
 
 dev_dependencies:
   flutter_test:
