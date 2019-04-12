@@ -48,7 +48,7 @@ class TextCard extends StatelessWidget {
                       left: Constants().reactiveSize(10, 1, height, width)),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Constants.themeForeground,
+                      color: Constants.themeBackground,
                       image: DecorationImage(
                         fit: BoxFit.cover,
                         image: CachedNetworkImageProvider(img),
