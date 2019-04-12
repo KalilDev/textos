@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +8,6 @@ import 'package:textos/FirestoreSlideshowView.dart';
 
 
 void main() async {
-  SystemChrome.setEnabledSystemUIOverlays([]);
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   final _enableDarkMode = prefs?.getBool('isDark') ?? false;

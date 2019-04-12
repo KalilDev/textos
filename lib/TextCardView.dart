@@ -42,9 +42,9 @@ class TextCard extends StatelessWidget {
                 tag: map['title'],
                 child: Container(
                   margin: EdgeInsets.only(
-                      top: Constants().reactiveSize(40, 0, height, width),
-                      bottom: Constants().reactiveSize(50, 0, height, width),
-                      right: Constants().reactiveSize(30, 1, height, width),
+                      top: Constants().reactiveSize(50, 0, height, width),
+                      bottom: Constants().reactiveSize(20, 0, height, width),
+                      right: Constants().reactiveSize(20, 1, height, width),
                       left: Constants().reactiveSize(10, 1, height, width)),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
