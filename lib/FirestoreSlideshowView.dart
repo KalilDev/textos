@@ -79,10 +79,22 @@ class TextSlideshowState extends State<TextSlideshow> {
   }
 
   _buildStoryPage(Map data, bool active, int index) {
+    final width = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final height = MediaQuery
+        .of(context)
+        .size
+        .height;
+
     // Animated Properties
     final double blur = active ? 30 : 0;
-    final double offset = active ? 20 : 0;
-    final double top = active ? 60 : 180;
+    final double offset = active ? Constants().reactiveSize(
+        20, 1, height, width) : 0;
+    final double top = active
+        ? Constants().reactiveSize(60, 0, height, width)
+        : Constants().reactiveSize(180, 0, height, width);
 
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;
@@ -93,7 +105,9 @@ class TextSlideshowState extends State<TextSlideshow> {
             child: AnimatedContainer(
               duration: Duration(milliseconds: 500),
               curve: Curves.decelerate,
-              margin: EdgeInsets.only(top: top, bottom: 50, right: 30),
+              margin: EdgeInsets.only(top: top,
+                  bottom: Constants().reactiveSize(50, 0, height, width),
+                  right: Constants().reactiveSize(30, 1, height, width)),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Constants.themeBackground,
@@ -190,6 +204,7 @@ class TextSlideshowState extends State<TextSlideshow> {
           return PageView.builder(
               controller: ctrl,
               itemCount: slideList.length + 1,
+              pageSnapping: false,
               itemBuilder: (context, int currentIdx) {
                 if (currentIdx == 0) {
                   return _buildTagPage();

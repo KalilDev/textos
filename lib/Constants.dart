@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 
 
 class Constants {
+  final appHeight = 900;
+  var appWidth;
+
+  double reactiveSize(int size, int arg, double height, double width) {
+    if (arg == 0) { //  height
+      return size * height / appHeight;
+    } else {
+      appWidth = appHeight * width / height;
+      return size * width / appWidth;
+      //return appHeight * size * width * width / height;
+    }
+  }
+
   void changeTheme() {
     themeBackground = themeBackground == themeBackgroundDark
         ? themeBackgroundLight
