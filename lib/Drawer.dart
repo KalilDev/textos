@@ -70,6 +70,10 @@ class TextAppDrawer extends StatelessWidget {
     return new Drawer(
       child: Column(
         children: <Widget>[
+          SizedBox(height: MediaQuery
+              .of(context)
+              .padding
+              .top,),
           Center(
               child: Text(
                 Constants.textFavs,

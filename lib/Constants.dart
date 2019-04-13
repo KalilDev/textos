@@ -84,7 +84,7 @@ class Constants {
           color: isDark
               ? themeForegroundDark
               : themeForegroundLight,
-          fontFamily: 'Merriweather');
+        fontFamily: 'Merriweather',);
 
   TextStyle textStyleButton(double size, bool isDark) =>
       TextStyle(

@@ -59,8 +59,8 @@ class DrawerSettings extends StatelessWidget {
           tooltip: Constants.textTooltipTrash,
         ),
         Spacer(),
-        TextDecrease(store: store),
-        TextIncrease(store: store),
+        TextDecrease(store: store, isBackground: false),
+        TextIncrease(store: store, isBackground: false),
       ],
     );
   }
@@ -117,12 +117,24 @@ class TextIncrease extends StatelessWidget {
   const TextIncrease({
     Key key,
     @required this.store,
+    @required this.isBackground,
   }) : super(key: key);
 
   final Store<AppStateMain> store;
+  final bool isBackground;
 
   @override
   Widget build(BuildContext context) {
+    Color color;
+    if (isBackground) {
+      color = store.state.enableDarkMode
+          ? Constants.themeBackgroundDark
+          : Constants.themeBackgroundLight;
+    } else {
+      color = store.state.enableDarkMode
+          ? Constants.themeForegroundDark
+          : Constants.themeForegroundLight;
+    }
     final width = MediaQuery
         .of(context)
         .size
@@ -131,20 +143,21 @@ class TextIncrease extends StatelessWidget {
         .of(context)
         .size
         .height;
-    return IconButton(
-      icon: Icon(
-        Icons.arrow_upward,
-        color: store.state.enableDarkMode
-            ? Constants.themeForegroundDark
-            : Constants.themeForegroundLight,
+    return Container(
+      width: Constants().reactiveSize(50, 0, height, width),
+      height: Constants().reactiveSize(50, 0, height, width),
+      child: RawMaterialButton(
+        shape: CircleBorder(),
+        child: Icon(
+            Icons.arrow_upward,
+            color: color
+        ),
+        onPressed: () {
+          if (store.state.textSize < 6.4) {
+            store.dispatch(UpdateTextSize(size: store.state.textSize + 0.5));
+          }
+        },
       ),
-      onPressed: () {
-        if (store.state.textSize < 6.4) {
-          store.dispatch(UpdateTextSize(size: store.state.textSize + 0.5));
-        }
-      },
-      iconSize: Constants().reactiveSize(25, 0, height, width),
-      tooltip: Constants.textTooltipTextSizePlus,
     );
   }
 }
@@ -153,12 +166,25 @@ class TextDecrease extends StatelessWidget {
   const TextDecrease({
     Key key,
     @required this.store,
+    @required this.isBackground,
   }) : super(key: key);
 
   final Store<AppStateMain> store;
+  final bool isBackground;
 
   @override
   Widget build(BuildContext context) {
+    Color color;
+    if (isBackground) {
+      color = store.state.enableDarkMode
+          ? Constants.themeBackgroundDark
+          : Constants.themeBackgroundLight;
+    } else {
+      color = store.state.enableDarkMode
+          ? Constants.themeForegroundDark
+          : Constants.themeForegroundLight;
+    }
+
     final width = MediaQuery
         .of(context)
         .size
@@ -168,20 +194,21 @@ class TextDecrease extends StatelessWidget {
         .size
         .height;
 
-    return IconButton(
-      icon: Icon(
-        Icons.arrow_downward,
-        color: store.state.enableDarkMode
-            ? Constants.themeForegroundDark
-            : Constants.themeForegroundLight,
+    return Container(
+      width: Constants().reactiveSize(50, 0, height, width),
+      height: Constants().reactiveSize(50, 0, height, width),
+      child: RawMaterialButton(
+        shape: CircleBorder(),
+        child: Icon(
+          Icons.arrow_downward,
+          color: color,
+        ),
+        onPressed: () {
+          if (store.state.textSize > 3.1) {
+            store.dispatch(UpdateTextSize(size: store.state.textSize - 0.5));
+          }
+        },
       ),
-      onPressed: () {
-        if (store.state.textSize > 3.1) {
-          store.dispatch(UpdateTextSize(size: store.state.textSize - 0.5));
-        }
-      },
-      iconSize: Constants().reactiveSize(25, 0, height, width),
-      tooltip: Constants.textTooltipTextSizeLess,
     );
   }
 }

@@ -44,86 +44,106 @@ class TextCard extends StatelessWidget {
             ? Constants.themeDataDark
             : Constants.themeDataLight, home: new Scaffold(
         drawer: TextAppDrawer(store: store),
-        body: GestureDetector(
-            child: Hero(
-                tag: map['title'],
-                child: Container(
-                  margin: EdgeInsets.only(
-                      top: Constants().reactiveSize(50, 0, height, width),
-                      bottom: Constants().reactiveSize(20, 0, height, width),
-                      right: Constants().reactiveSize(20, 1, height, width),
-                      left: Constants().reactiveSize(10, 1, height, width)),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: themeBackground,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(img),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                            color: themeForeground.withAlpha(125),
-                            blurRadius: blur,
-                            offset: Offset(offset, offset))
-                      ]),
-                  child: Container(
+        body: Stack(
+          children: <Widget>[
+            GestureDetector(
+                child: Hero(
+                    tag: map['title'],
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          top: Constants().reactiveSize(50, 0, height, width),
+                          bottom: Constants().reactiveSize(
+                              20, 0, height, width),
+                          right: Constants().reactiveSize(20, 1, height, width),
+                          left: Constants().reactiveSize(10, 1, height, width)),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: themeBackground.withAlpha(130)),
-                      child:
-                      /*new ClipRect(child: new BackdropFilter(
-                  filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                  child: */
-                      Material(
+                          color: themeBackground,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: CachedNetworkImageProvider(img),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                                color: themeForeground.withAlpha(125),
+                                blurRadius: blur,
+                                offset: Offset(offset, offset))
+                          ]),
+                      child: Material(
+                        color: Colors.transparent,
                         child: Container(
-                          margin: EdgeInsetsDirectional.fromSTEB(
-                              Constants().reactiveSize(5, 1, height, width), 0,
-                              Constants().reactiveSize(5, 1, height, width),
-                              Constants().reactiveSize(5, 0, height, width)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              Expanded(
+                            padding: EdgeInsets.all(
+                                Constants().reactiveSize(10, 1, height, width)),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: themeBackground.withAlpha(130)),
+                            child:
+                            /*new ClipRect(child: new BackdropFilter(
+                        filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                        child: */
+                            Column(
+                              children: <Widget>[
+                                Expanded(
                                   child: SingleChildScrollView(
                                     child: Column(
-                                      children: <Widget>[
-                                        Text(title, textAlign: TextAlign.center,
-                                            style: Constants()
-                                                .textstyleTitle(
-                                                store.state.textSize,
-                                                store.state.enableDarkMode)),
-                                        SizedBox(
-                                          height: Constants().reactiveSize(
-                                              10, 0, height, width),),
-                                        Text(text,
-                                            style: Constants().textstyleText(
-                                                store.state.textSize,
-                                                store.state.enableDarkMode)),
-                                      ],
-                                    ),
-                                  )),
-                              Row(
-                                children: <Widget>[
-                                  Text(date,
-                                      style: Constants().textstyleDate(
-                                          store.state.textSize,
-                                          store.state.enableDarkMode)),
-                                  Spacer(),
-                                  TextDecrease(store: store),
-                                  TextIncrease(store: store),
-                                  SizedBox(width: Constants().reactiveSize(
-                                      10, 0, height, width),),
-                                  FavoriteFAB(store: store, title: title)
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                        color: Colors.transparent,
-                      )) /*))*/,
-                )),
-            onTap: () {
-              Navigator.pop(context);
-            })));
+                                        children: <Widget>[
+                                          Text(title,
+                                              textAlign: TextAlign.center,
+                                              style: Constants()
+                                                  .textstyleTitle(
+                                                  store.state.textSize,
+                                                  store.state.enableDarkMode)),
+                                          SizedBox(
+                                            height: Constants().reactiveSize(
+                                                10, 0, height, width),),
+                                          Text(text,
+                                              style: Constants().textstyleText(
+                                                  store.state.textSize,
+                                                  store.state.enableDarkMode)),
+                                          SizedBox(
+                                            height: Constants().reactiveSize(
+                                                43, 0, height, width),
+                                            child: Center(
+                                              child: Text(date,
+                                                  style: Constants()
+                                                      .textstyleDate(
+                                                      store.state.textSize,
+                                                      store.state
+                                                          .enableDarkMode)),
+
+                                            ),),
+                                          SizedBox(
+                                              height: Constants().reactiveSize(
+                                                  9, 0, height, width))
+                                        ]),
+                                  ),
+                                ),
+                              ],
+                            )),
+                      ) /*))*/,
+                    )),
+                onTap: () {
+                  Navigator.pop(context);
+                }),
+            Positioned(child: FavoriteFAB(store: store, title: title),
+              right: Constants().reactiveSize(30, 1, height, width),
+              bottom: Constants().reactiveSize(30, 0, height, width),
+            ),
+            Positioned(child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(80),
+                  color: Constants.themeAccent
+              ),
+              child: Row(
+                  children: <Widget>[
+                    TextDecrease(store: store, isBackground: true),
+                    TextIncrease(store: store, isBackground: true),
+                  ]),
+            ),
+              left: Constants().reactiveSize(20, 1, height, width),
+              bottom: Constants().reactiveSize(35, 0, height, width),
+            ),
+          ],
+        )));
   }
 }
