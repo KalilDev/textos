@@ -14,15 +14,6 @@ class TextAppDrawer extends StatelessWidget {
   TextAppDrawer({@required this.store});
 
   Widget buildFavoritesItem(BuildContext context, int index) {
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
-
     final favoriteTitle = store.state.favoritesSet.toList()[index];
     final dataList = TextSlideshowState.slideList;
 
@@ -35,7 +26,7 @@ class TextAppDrawer extends StatelessWidget {
               text: favoriteTitle,
               style: Constants().textstyleTitle(
                   store.state.textSize, store.state.enableDarkMode),
-              blankSpace: Constants().reactiveSize(15, 1, height, width),
+              blankSpace: 15,
               velocity: 35.0),
           height: 50.0);
     } else {

@@ -22,15 +22,6 @@ class TextCard extends StatelessWidget {
     final themeForeground = store.state.enableDarkMode ? Constants
         .themeForegroundDark : Constants.themeForegroundLight;
 
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
-
     // Sanitize input
     final title = map['title'] ?? Constants.placeholderTitle;
     final text = map['text'] ?? Constants.placeholderText;
@@ -38,7 +29,7 @@ class TextCard extends StatelessWidget {
     final img = map['img'] ?? Constants.placeholderImg;
 
     final double blur = 30;
-    final double offset = Constants().reactiveSize(10, 1, height, width);
+    final double offset = 10;
     return MaterialApp(
         theme: store.state.enableDarkMode
             ? Constants.themeDataDark
@@ -51,11 +42,10 @@ class TextCard extends StatelessWidget {
                     tag: map['title'],
                     child: Container(
                       margin: EdgeInsets.only(
-                          top: Constants().reactiveSize(50, 0, height, width),
-                          bottom: Constants().reactiveSize(
-                              20, 0, height, width),
-                          right: Constants().reactiveSize(20, 1, height, width),
-                          left: Constants().reactiveSize(10, 1, height, width)),
+                          top: 50,
+                          bottom: 20,
+                          right: 20,
+                          left: 10),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: themeBackground,
@@ -72,8 +62,7 @@ class TextCard extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: Container(
-                            padding: EdgeInsets.all(
-                                Constants().reactiveSize(10, 1, height, width)),
+                            padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 color: themeBackground.withAlpha(130)),
@@ -94,15 +83,13 @@ class TextCard extends StatelessWidget {
                                                   store.state.textSize,
                                                   store.state.enableDarkMode)),
                                           SizedBox(
-                                            height: Constants().reactiveSize(
-                                                10, 0, height, width),),
+                                            height: 10,),
                                           Text(text,
                                               style: Constants().textstyleText(
                                                   store.state.textSize,
                                                   store.state.enableDarkMode)),
                                           SizedBox(
-                                            height: Constants().reactiveSize(
-                                                43, 0, height, width),
+                                            height: 55,
                                             child: Center(
                                               child: Text(date,
                                                   style: Constants()
@@ -112,9 +99,6 @@ class TextCard extends StatelessWidget {
                                                           .enableDarkMode)),
 
                                             ),),
-                                          SizedBox(
-                                              height: Constants().reactiveSize(
-                                                  9, 0, height, width))
                                         ]),
                                   ),
                                 ),
@@ -126,8 +110,8 @@ class TextCard extends StatelessWidget {
                   Navigator.pop(context);
                 }),
             Positioned(child: FavoriteFAB(store: store, title: title),
-              right: Constants().reactiveSize(30, 1, height, width),
-              bottom: Constants().reactiveSize(30, 0, height, width),
+              right: 30,
+              bottom: 30,
             ),
             Positioned(child: Container(
               decoration: BoxDecoration(
@@ -140,8 +124,8 @@ class TextCard extends StatelessWidget {
                     TextIncrease(store: store, isBackground: true),
                   ]),
             ),
-              left: Constants().reactiveSize(20, 1, height, width),
-              bottom: Constants().reactiveSize(35, 0, height, width),
+              left: 20,
+              bottom: 37.5,
             ),
           ],
         )));

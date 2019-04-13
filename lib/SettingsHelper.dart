@@ -21,14 +21,6 @@ class DrawerSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
     return Row(
       children: <Widget>[
         IconButton(
@@ -41,7 +33,7 @@ class DrawerSettings extends StatelessWidget {
           onPressed: () {
             store.dispatch(UpdateDarkMode(enable: !store.state.enableDarkMode));
           },
-          iconSize: Constants().reactiveSize(25, 0, height, width),
+          iconSize: 25,
           tooltip: Constants.textTooltipTheme,
         ),
         Spacer(),
@@ -55,7 +47,7 @@ class DrawerSettings extends StatelessWidget {
           onPressed: () {
             store.dispatch(UpdateFavorites(toClear: 1));
           },
-          iconSize: Constants().reactiveSize(25, 0, height, width),
+          iconSize: 25,
           tooltip: Constants.textTooltipTrash,
         ),
         Spacer(),
@@ -81,35 +73,20 @@ class FavoriteFAB extends StatelessWidget {
     final themeBackground = store.state.enableDarkMode ? Constants
         .themeBackgroundDark : Constants.themeBackgroundLight;
     final favorite = store.state.favoritesSet.toList().contains(title);
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
 
-    return Container(
-        width: Constants().reactiveSize(60, 0, height, width),
-        height: Constants().reactiveSize(60, 0, height, width),
-        margin: EdgeInsetsDirectional.only(
-            top: Constants().reactiveSize(5, 0, height, width)),
-        child: new RawMaterialButton(
-            shape: new CircleBorder(),
-            elevation: 0.0,
-            fillColor: favorite
-                ? themeBackground
-                : Constants.themeAccent,
-            child: new Icon(Icons.favorite,
-                color: favorite ? Colors.red : themeBackground),
-            onPressed: () {
-              if (favorite) {
-                store.dispatch(UpdateFavorites(toRemove: title));
-              } else {
-                store.dispatch(UpdateFavorites(toAdd: title));
-              }
-            }));
+    return FloatingActionButton(
+        backgroundColor: favorite
+            ? themeBackground
+            : Constants.themeAccent,
+        child: new Icon(Icons.favorite,
+            color: favorite ? Colors.red : themeBackground),
+        onPressed: () {
+          if (favorite) {
+            store.dispatch(UpdateFavorites(toRemove: title));
+          } else {
+            store.dispatch(UpdateFavorites(toAdd: title));
+          }
+        });
   }
 }
 
@@ -135,17 +112,10 @@ class TextIncrease extends StatelessWidget {
           ? Constants.themeForegroundDark
           : Constants.themeForegroundLight;
     }
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
+
     return Container(
-      width: Constants().reactiveSize(50, 0, height, width),
-      height: Constants().reactiveSize(50, 0, height, width),
+      width: 40,
+      height: 40,
       child: RawMaterialButton(
         shape: CircleBorder(),
         child: Icon(
@@ -185,18 +155,9 @@ class TextDecrease extends StatelessWidget {
           : Constants.themeForegroundLight;
     }
 
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
-
     return Container(
-      width: Constants().reactiveSize(50, 0, height, width),
-      height: Constants().reactiveSize(50, 0, height, width),
+      width: 40,
+      height: 40,
       child: RawMaterialButton(
         shape: CircleBorder(),
         child: Icon(

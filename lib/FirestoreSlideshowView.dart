@@ -84,22 +84,10 @@ class TextSlideshowState extends State<TextSlideshow> {
     final themeForeground = store.state.enableDarkMode ? Constants
         .themeForegroundDark : Constants.themeForegroundLight;
 
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
-
     // Animated Properties
     final double blur = active ? 30 : 0;
-    final double offset = active ? Constants().reactiveSize(
-        20, 1, height, width) : 0;
-    final double top = active
-        ? Constants().reactiveSize(50, 0, height, width)
-        : Constants().reactiveSize(180, 0, height, width);
+    final double offset = active ? 20 : 0;
+    final double top = active ? 50 : 180;
 
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;
@@ -111,8 +99,8 @@ class TextSlideshowState extends State<TextSlideshow> {
               duration: Duration(milliseconds: 500),
               curve: Curves.decelerate,
               margin: EdgeInsets.only(top: top,
-                  bottom: Constants().reactiveSize(20, 0, height, width),
-                  right: Constants().reactiveSize(30, 1, height, width)),
+                  bottom: 20,
+                  right: 30),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: themeBackground,
