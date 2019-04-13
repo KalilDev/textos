@@ -17,6 +17,11 @@ class TextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeBackground = store.state.enableDarkMode ? Constants
+        .themeBackgroundDark : Constants.themeBackgroundLight;
+    final themeForeground = store.state.enableDarkMode ? Constants
+        .themeForegroundDark : Constants.themeForegroundLight;
+
     final width = MediaQuery
         .of(context)
         .size
@@ -35,7 +40,9 @@ class TextCard extends StatelessWidget {
     final double blur = 30;
     final double offset = Constants().reactiveSize(10, 1, height, width);
     return MaterialApp(
-        theme: Constants.themeData, home: new Scaffold(
+        theme: store.state.enableDarkMode
+            ? Constants.themeDataDark
+            : Constants.themeDataLight, home: new Scaffold(
         drawer: TextAppDrawer(store: store),
         body: GestureDetector(
             child: Hero(
@@ -48,21 +55,21 @@ class TextCard extends StatelessWidget {
                       left: Constants().reactiveSize(10, 1, height, width)),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Constants.themeBackground,
+                      color: themeBackground,
                       image: DecorationImage(
                         fit: BoxFit.cover,
                         image: CachedNetworkImageProvider(img),
                       ),
                       boxShadow: [
                         BoxShadow(
-                            color: Constants.themeForeground.withAlpha(125),
+                            color: themeForeground.withAlpha(125),
                             blurRadius: blur,
                             offset: Offset(offset, offset))
                       ]),
                   child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Constants.themeBackground.withAlpha(130)),
+                          color: themeBackground.withAlpha(130)),
                       child:
                       /*new ClipRect(child: new BackdropFilter(
                   filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
@@ -83,13 +90,15 @@ class TextCard extends StatelessWidget {
                                         Text(title, textAlign: TextAlign.center,
                                             style: Constants()
                                                 .textstyleTitle(
-                                                store.state.textSize)),
+                                                store.state.textSize,
+                                                store.state.enableDarkMode)),
                                         SizedBox(
                                           height: Constants().reactiveSize(
                                               10, 0, height, width),),
                                         Text(text,
                                             style: Constants().textstyleText(
-                                                store.state.textSize)),
+                                                store.state.textSize,
+                                                store.state.enableDarkMode)),
                                       ],
                                     ),
                                   )),
@@ -97,7 +106,8 @@ class TextCard extends StatelessWidget {
                                 children: <Widget>[
                                   Text(date,
                                       style: Constants().textstyleDate(
-                                          store.state.textSize)),
+                                          store.state.textSize,
+                                          store.state.enableDarkMode)),
                                   Spacer(),
                                   TextDecrease(store: store),
                                   TextIncrease(store: store),

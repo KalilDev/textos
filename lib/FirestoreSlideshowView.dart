@@ -79,6 +79,11 @@ class TextSlideshowState extends State<TextSlideshow> {
   }
 
   _buildStoryPage(Map data, bool active, int index) {
+    final themeBackground = store.state.enableDarkMode ? Constants
+        .themeBackgroundDark : Constants.themeBackgroundLight;
+    final themeForeground = store.state.enableDarkMode ? Constants
+        .themeForegroundDark : Constants.themeForegroundLight;
+
     final width = MediaQuery
         .of(context)
         .size
@@ -110,14 +115,14 @@ class TextSlideshowState extends State<TextSlideshow> {
                   right: Constants().reactiveSize(30, 1, height, width)),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Constants.themeBackground,
+                  color: themeBackground,
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: CachedNetworkImageProvider(img),
                   ),
                   boxShadow: [
                     BoxShadow(
-                        color: Constants.themeForeground.withAlpha(80),
+                        color: themeForeground.withAlpha(80),
                         blurRadius: blur,
                         offset: Offset(offset, offset))
                   ]),
@@ -126,11 +131,12 @@ class TextSlideshowState extends State<TextSlideshow> {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Constants.themeBackground.withAlpha(125)),
+                          color: themeBackground.withAlpha(125)),
                       child: Text(title,
                           textAlign: TextAlign.center,
                           style: Constants().textstyleTitle(
-                              store.state.textSize)),
+                              store.state.textSize,
+                              store.state.enableDarkMode)),
                     ),
                     color: Colors.transparent,
                   )),
@@ -152,12 +158,13 @@ class TextSlideshowState extends State<TextSlideshow> {
 
   Widget _buildButton(int id) {
     Color color =
-    id == activeTag ? Constants.themeAccent : Constants.themeBackground;
+    id == activeTag ? Constants.themeAccent : Colors.transparent;
     return FlatButton(
         color: color,
         child: Text(
           '#' + Constants.textTag[id],
-          style: Constants().textStyleButton(store.state.textSize),
+          style: Constants().textStyleButton(
+              store.state.textSize, store.state.enableDarkMode),
         ),
         onPressed: () => _queryDb(tag: id));
   }
@@ -173,16 +180,19 @@ class TextSlideshowState extends State<TextSlideshow> {
               children: <Widget>[
                 Text(
                   Constants.textTextos,
-                  style: Constants().textstyleTitle(store.state.textSize),
+                  style: Constants().textstyleTitle(
+                      store.state.textSize, store.state.enableDarkMode),
                 ),
                 Text(
                   texto,
-                  style: Constants().textstyleTitle(store.state.textSize),
+                  style: Constants().textstyleTitle(
+                      store.state.textSize, store.state.enableDarkMode),
                 ),
               ],
             ),
             Text(Constants.textFilter,
-                style: Constants().textstyleFilter(store.state.textSize)),
+                style: Constants().textstyleFilter(
+                    store.state.textSize, store.state.enableDarkMode)),
             _buildButton(0),
             _buildButton(1),
             _buildButton(2),

@@ -11,8 +11,6 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   final _enableDarkMode = prefs?.getBool('isDark') ?? false;
-  (_enableDarkMode == true) ? Constants().setDarkTheme() : Constants()
-      .setWhiteTheme();
   final _favoritesSet = prefs?.getStringList('favorites')?.toSet() ??
       Set<String>();
   final _textSize = prefs?.getDouble('textSize') ?? 4.5;
@@ -61,9 +59,11 @@ class SettingsViewState extends State<SettingsView> {
     return StoreBuilder(
       builder: (BuildContext context, Store<AppStateMain> store) {
         return MaterialApp(
-          theme: Constants.themeData,
+          theme: store.state.enableDarkMode
+              ? Constants.themeDataDark
+              : Constants.themeDataLight,
           home: Scaffold(
-            appBar: Constants().appbarTransparent(),
+            appBar: Constants().appbarTransparent(store.state.enableDarkMode),
             body: TextSlideshow(store: store),
             drawer: TextAppDrawer(store: store),
           ),
@@ -106,8 +106,6 @@ class UpdateTextSize {
 
 AppStateMain reducer(AppStateMain state, dynamic action) {
   if (action is UpdateDarkMode) {
-    if (action.enable) Constants().setDarkTheme();
-    if (!action.enable) Constants().setWhiteTheme();
     SharedPreferences.getInstance().then((pref) {
       pref.setBool('isDark', action.enable);
     });

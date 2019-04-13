@@ -33,14 +33,16 @@ class TextAppDrawer extends StatelessWidget {
       txt = Container(
           child: Marquee(
               text: favoriteTitle,
-              style: Constants().textstyleTitle(store.state.textSize),
+              style: Constants().textstyleTitle(
+                  store.state.textSize, store.state.enableDarkMode),
               blankSpace: Constants().reactiveSize(15, 1, height, width),
               velocity: 35.0),
           height: 50.0);
     } else {
       txt = Text(
         favoriteTitle,
-        style: Constants().textstyleTitle(store.state.textSize),
+        style: Constants().textstyleTitle(
+            store.state.textSize, store.state.enableDarkMode),
       );
     }
     return ListTile(
@@ -71,7 +73,8 @@ class TextAppDrawer extends StatelessWidget {
           Center(
               child: Text(
                 Constants.textFavs,
-                style: Constants().textstyleText(store.state.textSize),
+                style: Constants().textstyleText(
+                    store.state.textSize, store.state.enableDarkMode),
               )),
           Expanded(
             child: ListView.separated(

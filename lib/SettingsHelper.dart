@@ -13,7 +13,8 @@ class DrawerSettings extends StatelessWidget {
     return Center(
         child: Text(
           Constants.textConfigs,
-          style: Constants().textstyleText(store.state.textSize),
+          style: Constants().textstyleText(
+              store.state.textSize, store.state.enableDarkMode),
         ));
   }
 
@@ -33,7 +34,9 @@ class DrawerSettings extends StatelessWidget {
         IconButton(
           icon: Icon(
             Icons.color_lens,
-            color: Constants.themeForeground,
+            color: store.state.enableDarkMode
+                ? Constants.themeForegroundDark
+                : Constants.themeForegroundLight,
           ),
           onPressed: () {
             store.dispatch(UpdateDarkMode(enable: !store.state.enableDarkMode));
@@ -45,7 +48,9 @@ class DrawerSettings extends StatelessWidget {
         IconButton(
           icon: Icon(
             Icons.delete_forever,
-            color: Constants.themeForeground,
+            color: store.state.enableDarkMode
+                ? Constants.themeForegroundDark
+                : Constants.themeForegroundLight,
           ),
           onPressed: () {
             store.dispatch(UpdateFavorites(toClear: 1));
@@ -73,6 +78,8 @@ class FavoriteFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeBackground = store.state.enableDarkMode ? Constants
+        .themeBackgroundDark : Constants.themeBackgroundLight;
     final favorite = store.state.favoritesSet.toList().contains(title);
     final width = MediaQuery
         .of(context)
@@ -92,10 +99,10 @@ class FavoriteFAB extends StatelessWidget {
             shape: new CircleBorder(),
             elevation: 0.0,
             fillColor: favorite
-                ? Constants.themeBackground
+                ? themeBackground
                 : Constants.themeAccent,
             child: new Icon(Icons.favorite,
-                color: favorite ? Colors.red : Constants.themeBackground),
+                color: favorite ? Colors.red : themeBackground),
             onPressed: () {
               if (favorite) {
                 store.dispatch(UpdateFavorites(toRemove: title));
@@ -127,7 +134,9 @@ class TextIncrease extends StatelessWidget {
     return IconButton(
       icon: Icon(
         Icons.arrow_upward,
-        color: Constants.themeForeground,
+        color: store.state.enableDarkMode
+            ? Constants.themeForegroundDark
+            : Constants.themeForegroundLight,
       ),
       onPressed: () {
         if (store.state.textSize < 6.4) {
@@ -162,7 +171,9 @@ class TextDecrease extends StatelessWidget {
     return IconButton(
       icon: Icon(
         Icons.arrow_downward,
-        color: Constants.themeForeground,
+        color: store.state.enableDarkMode
+            ? Constants.themeForegroundDark
+            : Constants.themeForegroundLight,
       ),
       onPressed: () {
         if (store.state.textSize > 3.1) {

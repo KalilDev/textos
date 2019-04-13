@@ -15,16 +15,6 @@ class Constants {
     }
   }
 
-  void changeTheme() {
-    themeBackground = themeBackground == themeBackgroundDark
-        ? themeBackgroundLight
-        : themeBackgroundDark;
-    themeForeground = themeForeground == themeForegroundDark
-        ? themeForegroundLight
-        : themeForegroundDark;
-    themeData = themeData == themeDataDark ? themeDataLight : themeDataDark;
-  }
-
   // Text
   static const textKalil = 'do Kalil';
   static const textTextos = 'Textos ';
@@ -61,52 +51,47 @@ class Constants {
 
   // Themes
   static const themeAccent = Colors.indigo;
-  static var themeBackground;
-  static var themeForeground;
-  static var themeData;
-
-  void setDarkTheme() {
-    themeBackground = themeBackgroundDark;
-    themeForeground = themeForegroundDark;
-    themeData = themeDataDark;
-  }
-
-  void setWhiteTheme() {
-    themeBackground = themeBackgroundLight;
-    themeForeground = themeForegroundLight;
-    themeData = themeDataLight;
-  }
 
   static double textInt;
 
-  TextStyle textstyleTitle(double size) =>
+  TextStyle textstyleTitle(double size, bool isDark) =>
       TextStyle(
           fontSize: size * 8,
           fontWeight: FontWeight.bold,
-          color: themeForeground,
+          color: isDark
+              ? themeForegroundDark
+              : themeForegroundLight,
           fontFamily: 'Merriweather');
 
-  TextStyle textstyleFilter(double size) =>
+  TextStyle textstyleFilter(double size, bool isDark) =>
       TextStyle(
           fontSize: size * 3,
-          color: themeForeground.withAlpha(150),
+          color: isDark
+              ? themeForegroundDark.withAlpha(150)
+              : themeForegroundLight.withAlpha(150),
           fontFamily: 'Merriweather');
 
-  TextStyle textstyleText(double size) =>
+  TextStyle textstyleText(double size, bool isDark) =>
       TextStyle(fontSize: size * 4.5,
-          color: themeForeground,
+          color: isDark
+              ? themeForegroundDark
+              : themeForegroundLight,
           fontFamily: 'Muli');
 
-  TextStyle textstyleDate(double size) =>
+  TextStyle textstyleDate(double size, bool isDark) =>
       TextStyle(
           fontSize: size * 5,
-          color: themeForeground,
+          color: isDark
+              ? themeForegroundDark
+              : themeForegroundLight,
           fontFamily: 'Merriweather');
 
-  TextStyle textStyleButton(double size) =>
+  TextStyle textStyleButton(double size, bool isDark) =>
       TextStyle(
           fontSize: size * 3,
-          color: themeForeground,
+          color: isDark
+              ? themeForegroundDark
+              : themeForegroundLight,
           fontFamily: 'Merriweather'
       );
 
@@ -117,9 +102,12 @@ class Constants {
   static const placeholderImg = 'https://i.imgur.com/H6i4c32.jpg';
 
   // AppBar
-  Widget appbarTransparent() => AppBar(
+  Widget appbarTransparent(bool isDark) =>
+      AppBar(
     backgroundColor: Colors.transparent,
     elevation: 0.0,
-    iconTheme: IconThemeData(color: Constants.themeForeground),
+        iconTheme: IconThemeData(color: isDark
+            ? themeForegroundDark
+            : themeForegroundLight,),
     key: Key('appbar'),);
 }
