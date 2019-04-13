@@ -86,7 +86,8 @@ class FavoriteFAB extends StatelessWidget {
           } else {
             store.dispatch(UpdateFavorites(toAdd: title));
           }
-        });
+        },
+      tooltip: Constants.textTooltipFav,);
   }
 }
 
@@ -113,21 +114,18 @@ class TextIncrease extends StatelessWidget {
           : Constants.themeForegroundLight;
     }
 
-    return Container(
-      width: 40,
-      height: 40,
-      child: RawMaterialButton(
-        shape: CircleBorder(),
-        child: Icon(
-            Icons.arrow_upward,
-            color: color
-        ),
-        onPressed: () {
-          if (store.state.textSize < 6.4) {
-            store.dispatch(UpdateTextSize(size: store.state.textSize + 0.5));
-          }
-        },
+    return IconButton(
+      icon: Icon(
+        Icons.arrow_upward,
+        color: color,
       ),
+      onPressed: () {
+        if (store.state.textSize < 6.4) {
+          store.dispatch(UpdateTextSize(size: store.state.textSize + 0.5));
+        }
+      },
+      iconSize: 25,
+      tooltip: Constants.textTooltipTextSizePlus,
     );
   }
 }
@@ -155,21 +153,18 @@ class TextDecrease extends StatelessWidget {
           : Constants.themeForegroundLight;
     }
 
-    return Container(
-      width: 40,
-      height: 40,
-      child: RawMaterialButton(
-        shape: CircleBorder(),
-        child: Icon(
-          Icons.arrow_downward,
-          color: color,
-        ),
-        onPressed: () {
-          if (store.state.textSize > 3.1) {
-            store.dispatch(UpdateTextSize(size: store.state.textSize - 0.5));
-          }
-        },
+    return IconButton(
+      icon: Icon(
+        Icons.arrow_downward,
+        color: color,
       ),
+      onPressed: () {
+        if (store.state.textSize > 3.1) {
+          store.dispatch(UpdateTextSize(size: store.state.textSize - 0.5));
+        }
+      },
+      iconSize: 25,
+      tooltip: Constants.textTooltipTextSizeLess,
     );
   }
 }

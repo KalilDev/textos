@@ -118,14 +118,18 @@ class TextCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(80),
                   color: Constants.themeAccent
               ),
-              child: Row(
-                  children: <Widget>[
-                    TextDecrease(store: store, isBackground: true),
-                    TextIncrease(store: store, isBackground: true),
-                  ]),
+              child: Material(color: Colors.transparent,
+                child: Container(
+                  child: Row(
+                      children: <Widget>[
+                        TextDecrease(store: store, isBackground: true),
+                        TextIncrease(store: store, isBackground: true),
+                      ]),
+                ),
+              ),
             ),
               left: 20,
-              bottom: 37.5,
+              bottom: 33.5,
             ),
           ],
         )));

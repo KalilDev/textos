@@ -19,7 +19,7 @@ class Constants {
   static const textTooltipTrash = 'Limpar favoritos';
   static const textTooltipTextSizeLess = 'Diminuir tamanho do texto';
   static const textTooltipTextSizePlus = 'Aumentar tamanho do texto';
-  static const textTooltipFav = 'Favoritar textos';
+  static const textTooltipFav = 'Adicionar aos favoritos';
 
   // Theme Light
   static const themeBackgroundLight = Colors.white;
