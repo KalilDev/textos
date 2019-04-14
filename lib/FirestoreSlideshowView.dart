@@ -9,6 +9,10 @@ import 'package:textos/Constants.dart';
 import 'package:textos/TextCardView.dart';
 import 'package:textos/main.dart';
 
+// TODO Fix the blur for some cases
+// Implement optimization for the slideshow:
+// Idea: Only load the Decoration image for the current ∓3 pages
+
 class TextSlideshow extends StatefulWidget {
   final Store store;
 
@@ -78,7 +82,10 @@ class TextSlideshowState extends State<TextSlideshow> {
     });
   }
 
-  _buildStoryPage(Map data, bool active, int index) {
+  _buildStoryPage(Map data, int index) {
+    // Active page
+    bool active = index == currentPage;
+
     final themeBackground = Theme
         .of(context)
         .backgroundColor;
@@ -212,10 +219,8 @@ class TextSlideshowState extends State<TextSlideshow> {
                 if (currentIdx == 0) {
                   return _buildTagPage();
                 } else if (slideList.length >= currentIdx) {
-                  // Active page
-                  bool active = currentIdx == currentPage;
                   return _buildStoryPage(
-                      slideList[currentIdx - 1], active, currentIdx);
+                      slideList[currentIdx - 1], currentIdx);
                 }
               });
         });

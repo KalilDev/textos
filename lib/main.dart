@@ -6,7 +6,13 @@ import 'package:textos/Constants.dart';
 import 'package:textos/Drawer.dart';
 import 'package:textos/FirestoreSlideshowView.dart';
 
-
+// TODO Document the app
+// TODO Dismissable favorites
+// TODO Implement blur settings
+// TODO Implement Firestore favorites
+// TODO Implement tutorial
+// TODO Implement Firebase analytics
+// TODO Implement optimization for the slideshow
 void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
