@@ -79,10 +79,12 @@ class TextSlideshowState extends State<TextSlideshow> {
   }
 
   _buildStoryPage(Map data, bool active, int index) {
-    final themeBackground = store.state.enableDarkMode ? Constants
-        .themeBackgroundDark : Constants.themeBackgroundLight;
-    final themeForeground = store.state.enableDarkMode ? Constants
-        .themeForegroundDark : Constants.themeForegroundLight;
+    final themeBackground = Theme
+        .of(context)
+        .backgroundColor;
+    final themeForeground = Theme
+        .of(context)
+        .primaryColor;
 
     // Animated Properties
     final double blur = active ? 30 : 0;
@@ -138,7 +140,7 @@ class TextSlideshowState extends State<TextSlideshow> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => new TextCard(map: data, store: store)),
+                  builder: (context) => TextCard(map: data, store: store)),
             );
           }
         });

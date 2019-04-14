@@ -25,7 +25,9 @@ class Constants {
   static const themeBackgroundLight = Colors.white;
   static const themeForegroundLight = Colors.black;
   static final themeDataLight = ThemeData(accentColor: themeAccent,
-      dividerColor: themeForegroundLight.withAlpha(70));
+      dividerColor: themeForegroundLight.withAlpha(70),
+      primaryColor: themeForegroundLight,
+      backgroundColor: themeBackgroundLight);
 
   // Theme Dark
   static const themeBackgroundDark = Colors.black;
@@ -34,7 +36,9 @@ class Constants {
       accentColor: themeAccent,
       scaffoldBackgroundColor: themeBackgroundDark,
       canvasColor: themeBackgroundDark,
-      dividerColor: themeForegroundDark.withAlpha(70));
+      dividerColor: themeForegroundDark.withAlpha(70),
+      primaryColor: themeForegroundDark,
+      backgroundColor: themeBackgroundDark);
 
   // Themes
   static const themeAccent = Colors.indigo;
@@ -86,7 +90,7 @@ class Constants {
   static const placeholderTitle = 'Titulo';
   static const placeholderText = 'Texto';
   static const placeholderDate = '01/01/1970';
-  static const placeholderImg = 'https://i.imgur.com/H6i4c32.jpg';
+  static const placeholderImg = 'https://i.imgur.com/95fvCBU.jpg';
 
   // AppBar
   Widget appbarTransparent(bool isDark) =>

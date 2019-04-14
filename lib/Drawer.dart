@@ -46,7 +46,7 @@ class TextAppDrawer extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                  new TextCard(map: dataList[idxTxt], store: store)),
+                      TextCard(map: dataList[idxTxt], store: store)),
             );
           }
         });

@@ -26,9 +26,9 @@ class DrawerSettings extends StatelessWidget {
         IconButton(
           icon: Icon(
             Icons.color_lens,
-            color: store.state.enableDarkMode
-                ? Constants.themeForegroundDark
-                : Constants.themeForegroundLight,
+            color: Theme
+                .of(context)
+                .primaryColor,
           ),
           onPressed: () {
             store.dispatch(UpdateDarkMode(enable: !store.state.enableDarkMode));
@@ -40,9 +40,9 @@ class DrawerSettings extends StatelessWidget {
         IconButton(
           icon: Icon(
             Icons.delete_forever,
-            color: store.state.enableDarkMode
-                ? Constants.themeForegroundDark
-                : Constants.themeForegroundLight,
+            color: Theme
+                .of(context)
+                .primaryColor,
           ),
           onPressed: () {
             store.dispatch(UpdateFavorites(toClear: 1));
@@ -70,8 +70,9 @@ class FavoriteFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeBackground = store.state.enableDarkMode ? Constants
-        .themeBackgroundDark : Constants.themeBackgroundLight;
+    final themeBackground = Theme
+        .of(context)
+        .backgroundColor;
     final favorite = store.state.favoritesSet.toList().contains(title);
 
     return FloatingActionButton(
@@ -105,13 +106,13 @@ class TextIncrease extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color;
     if (isBackground) {
-      color = store.state.enableDarkMode
-          ? Constants.themeBackgroundDark
-          : Constants.themeBackgroundLight;
+      color = Theme
+          .of(context)
+          .backgroundColor;
     } else {
-      color = store.state.enableDarkMode
-          ? Constants.themeForegroundDark
-          : Constants.themeForegroundLight;
+      color = Theme
+          .of(context)
+          .primaryColor;
     }
 
     return IconButton(
@@ -144,13 +145,13 @@ class TextDecrease extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color;
     if (isBackground) {
-      color = store.state.enableDarkMode
-          ? Constants.themeBackgroundDark
-          : Constants.themeBackgroundLight;
+      color = Theme
+          .of(context)
+          .backgroundColor;
     } else {
-      color = store.state.enableDarkMode
-          ? Constants.themeForegroundDark
-          : Constants.themeForegroundLight;
+      color = Theme
+          .of(context)
+          .primaryColor;
     }
 
     return IconButton(

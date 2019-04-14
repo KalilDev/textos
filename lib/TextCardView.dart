@@ -1,4 +1,4 @@
-import'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
@@ -17,10 +17,12 @@ class TextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeBackground = store.state.enableDarkMode ? Constants
-        .themeBackgroundDark : Constants.themeBackgroundLight;
-    final themeForeground = store.state.enableDarkMode ? Constants
-        .themeForegroundDark : Constants.themeForegroundLight;
+    final themeBackground = Theme
+        .of(context)
+        .backgroundColor;
+    final themeForeground = Theme
+        .of(context)
+        .primaryColor;
 
     // Sanitize input
     final title = map['title'] ?? Constants.placeholderTitle;
@@ -116,7 +118,9 @@ class TextCard extends StatelessWidget {
             Positioned(child: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(80),
-                  color: Constants.themeAccent
+                  color: Theme
+                      .of(context)
+                      .accentColor
               ),
               child: Material(color: Colors.transparent,
                 child: Container(
