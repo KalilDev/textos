@@ -24,7 +24,10 @@ class Constants {
   // Theme Light
   static const themeBackgroundLight = Colors.white;
   static const themeForegroundLight = Colors.black;
-  static final themeDataLight = ThemeData(accentColor: themeAccent,
+  static final themeDataLight = ThemeData(
+      accentColor: themeAccent,
+      scaffoldBackgroundColor: themeBackgroundLight,
+      canvasColor: Colors.transparent,
       dividerColor: themeForegroundLight.withAlpha(70),
       primaryColor: themeForegroundLight,
       backgroundColor: themeBackgroundLight);
@@ -35,7 +38,7 @@ class Constants {
   static final themeDataDark = ThemeData(
       accentColor: themeAccent,
       scaffoldBackgroundColor: themeBackgroundDark,
-      canvasColor: themeBackgroundDark,
+      canvasColor: Colors.transparent,
       dividerColor: themeForegroundDark.withAlpha(70),
       primaryColor: themeForegroundDark,
       backgroundColor: themeBackgroundDark);

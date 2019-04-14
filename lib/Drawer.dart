@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:redux/redux.dart';
@@ -58,8 +60,8 @@ class TextAppDrawer extends StatelessWidget {
       return Divider();
     }
 
-    return new Drawer(
-      child: Column(
+    return Drawer(
+      child: BlurOverlay(child: Column(
         children: <Widget>[
           SizedBox(height: MediaQuery
               .of(context)
@@ -83,6 +85,36 @@ class TextAppDrawer extends StatelessWidget {
           DrawerSettings(store: store),
         ],
       ),
+      ),
     );
+  }
+}
+
+class BlurOverlay extends StatelessWidget {
+  final Widget child;
+
+  BlurOverlay({@required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    if (Theme
+        .of(context)
+        .backgroundColor == Constants.themeBackgroundDark) {
+      return ClipRect(clipBehavior: Clip.hardEdge, child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: Container(
+              color: Theme
+                  .of(context)
+                  .backgroundColor
+                  .withAlpha(140), child: child)));
+    } else {
+      return ClipRect(clipBehavior: Clip.hardEdge, child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: Container(
+              color: Theme
+                  .of(context)
+                  .backgroundColor
+                  .withAlpha(140), child: child)));
+    }
   }
 }

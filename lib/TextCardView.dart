@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
@@ -5,7 +7,6 @@ import 'package:textos/Constants.dart';
 import 'package:textos/Drawer.dart';
 import 'package:textos/SettingsHelper.dart';
 import 'package:textos/main.dart';
-
 
 class TextCard extends StatelessWidget {
   // Declare a field that holds the data map, and a field that holds the index
@@ -35,107 +36,117 @@ class TextCard extends StatelessWidget {
     return MaterialApp(
         theme: store.state.enableDarkMode
             ? Constants.themeDataDark
-            : Constants.themeDataLight, home: new Scaffold(
-        drawer: TextAppDrawer(store: store),
-        body: Stack(
-          children: <Widget>[
-            GestureDetector(
-                child: Hero(
-                    tag: map['title'],
-                    child: Container(
-                      margin: EdgeInsets.only(
-                          top: 50,
-                          bottom: 20,
-                          right: 20,
-                          left: 10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: themeBackground,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(img),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                                color: themeForeground.withAlpha(125),
-                                blurRadius: blur,
-                                offset: Offset(offset, offset))
-                          ]),
-                      child: Material(
-                        color: Colors.transparent,
+            : Constants.themeDataLight,
+        home: new Scaffold(
+            drawer: TextAppDrawer(store: store),
+            body: Stack(
+              children: <Widget>[
+                GestureDetector(
+                    child: Hero(
+                        tag: map['title'],
                         child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: themeBackground.withAlpha(130)),
-                            child:
-                            /*new ClipRect(child: new BackdropFilter(
-                        filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                        child: */
-                            Column(
-                              children: <Widget>[
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                        children: <Widget>[
-                                          Text(title,
-                                              textAlign: TextAlign.center,
-                                              style: Constants()
-                                                  .textstyleTitle(
-                                                  store.state.textSize,
-                                                  store.state.enableDarkMode)),
-                                          SizedBox(
-                                            height: 10,),
-                                          Text(text,
-                                              style: Constants().textstyleText(
-                                                  store.state.textSize,
-                                                  store.state.enableDarkMode)),
-                                          SizedBox(
-                                            height: 55,
-                                            child: Center(
-                                              child: Text(date,
-                                                  style: Constants()
-                                                      .textstyleDate(
-                                                      store.state.textSize,
-                                                      store.state
-                                                          .enableDarkMode)),
-
-                                            ),),
-                                        ]),
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ) /*))*/,
-                    )),
-                onTap: () {
-                  Navigator.pop(context);
-                }),
-            Positioned(child: FavoriteFAB(store: store, title: title),
-              right: 30,
-              bottom: 30,
-            ),
-            Positioned(child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(80),
-                  color: Theme
-                      .of(context)
-                      .accentColor
-              ),
-              child: Material(color: Colors.transparent,
-                child: Container(
-                  child: Row(
-                      children: <Widget>[
-                        TextDecrease(store: store, isBackground: true),
-                        TextIncrease(store: store, isBackground: true),
-                      ]),
+                          margin: EdgeInsets.only(
+                              top: 50, bottom: 20, right: 20, left: 10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: themeBackground,
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: CachedNetworkImageProvider(img),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: themeForeground.withAlpha(125),
+                                    blurRadius: blur,
+                                    offset: Offset(offset, offset))
+                              ]),
+                          child: Material(
+                              color: Colors.transparent,
+                              child: new ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: new BackdropFilter(
+                                    filter: new ImageFilter.blur(
+                                        sigmaX: 5.0, sigmaY: 5.0),
+                                    child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(20),
+                                            color:
+                                            themeBackground.withAlpha(80)),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: SingleChildScrollView(
+                                                child:
+                                                Column(children: <Widget>[
+                                                  Text(title,
+                                                      textAlign:
+                                                      TextAlign.center,
+                                                      style: Constants()
+                                                          .textstyleTitle(
+                                                          store.state
+                                                              .textSize,
+                                                          store.state
+                                                              .enableDarkMode)),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(text,
+                                                      style: Constants()
+                                                          .textstyleText(
+                                                          store.state
+                                                              .textSize,
+                                                          store.state
+                                                              .enableDarkMode)),
+                                                  SizedBox(
+                                                    height: 55,
+                                                    child: Center(
+                                                      child: Text(date,
+                                                          style: Constants()
+                                                              .textstyleDate(
+                                                              store.state
+                                                                  .textSize,
+                                                              store.state
+                                                                  .enableDarkMode)),
+                                                    ),
+                                                  ),
+                                                ]),
+                                              ),
+                                            ),
+                                          ],
+                                        )),
+                                  ))),
+                        )),
+                    onTap: () {
+                      Navigator.pop(context);
+                    }),
+                Positioned(
+                  child: FavoriteFAB(store: store, title: title),
+                  right: 30,
+                  bottom: 30,
                 ),
-              ),
-            ),
-              left: 20,
-              bottom: 33.5,
-            ),
-          ],
-        )));
+                Positioned(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(80),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
+                      child: Material(
+                        color: Theme
+                            .of(context)
+                            .accentColor
+                            .withAlpha(150),
+                        child: Row(children: <Widget>[
+                          TextDecrease(store: store),
+                          TextIncrease(store: store),
+                        ]),
+                      ),
+                    ),
+                  ),
+                  left: 20,
+                  bottom: 33.5,
+                ),
+              ],
+            )));
   }
 }

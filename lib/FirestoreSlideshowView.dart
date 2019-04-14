@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,6 @@ import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
 import 'package:textos/TextCardView.dart';
 import 'package:textos/main.dart';
-
 
 class TextSlideshow extends StatefulWidget {
   final Store store;
@@ -100,9 +100,7 @@ class TextSlideshowState extends State<TextSlideshow> {
             child: AnimatedContainer(
               duration: Duration(milliseconds: 500),
               curve: Curves.decelerate,
-              margin: EdgeInsets.only(top: top,
-                  bottom: 20,
-                  right: 30),
+              margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: themeBackground,
@@ -121,12 +119,18 @@ class TextSlideshowState extends State<TextSlideshow> {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: themeBackground.withAlpha(125)),
-                      child: Text(title,
-                          textAlign: TextAlign.center,
-                          style: Constants().textstyleTitle(
-                              store.state.textSize,
-                              store.state.enableDarkMode)),
+                          color: themeBackground.withAlpha(40)),
+                      margin: EdgeInsets.all(12.5),
+                      child: new ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: new BackdropFilter(
+                              filter: new ImageFilter.blur(
+                                  sigmaX: 5.0, sigmaY: 5.0),
+                              child: Text(title,
+                                  textAlign: TextAlign.center,
+                                  style: Constants().textstyleTitle(
+                                      store.state.textSize,
+                                      store.state.enableDarkMode)))),
                     ),
                     color: Colors.transparent,
                   )),
@@ -147,8 +151,7 @@ class TextSlideshowState extends State<TextSlideshow> {
   }
 
   Widget _buildButton(int id) {
-    Color color =
-    id == activeTag ? Constants.themeAccent : Colors.transparent;
+    Color color = id == activeTag ? Constants.themeAccent : Colors.transparent;
     return FlatButton(
         color: color,
         child: Text(

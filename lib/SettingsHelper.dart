@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
@@ -51,8 +53,8 @@ class DrawerSettings extends StatelessWidget {
           tooltip: Constants.textTooltipTrash,
         ),
         Spacer(),
-        TextDecrease(store: store, isBackground: false),
-        TextIncrease(store: store, isBackground: false),
+        TextDecrease(store: store),
+        TextIncrease(store: store),
       ],
     );
   }
@@ -73,22 +75,31 @@ class FavoriteFAB extends StatelessWidget {
     final themeBackground = Theme
         .of(context)
         .backgroundColor;
+    final themeForeground = Theme
+        .of(context)
+        .primaryColor;
     final favorite = store.state.favoritesSet.toList().contains(title);
 
-    return FloatingActionButton(
-        backgroundColor: favorite
-            ? themeBackground
-            : Constants.themeAccent,
-        child: new Icon(Icons.favorite,
-            color: favorite ? Colors.red : themeBackground),
-        onPressed: () {
-          if (favorite) {
-            store.dispatch(UpdateFavorites(toRemove: title));
-          } else {
-            store.dispatch(UpdateFavorites(toAdd: title));
-          }
-        },
-      tooltip: Constants.textTooltipFav,);
+    return ClipOval(
+        child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: FloatingActionButton(
+              backgroundColor: favorite
+                  ? themeBackground.withAlpha(160)
+                  : Theme
+                  .of(context)
+                  .accentColor
+                  .withAlpha(140),
+              child: new Icon(Icons.favorite,
+                  color: favorite ? Colors.red : themeForeground),
+              onPressed: () {
+                if (favorite) {
+                  store.dispatch(UpdateFavorites(toRemove: title));
+                } else {
+                  store.dispatch(UpdateFavorites(toAdd: title));
+                }
+              },
+              tooltip: Constants.textTooltipFav,)));
   }
 }
 
@@ -96,24 +107,16 @@ class TextIncrease extends StatelessWidget {
   const TextIncrease({
     Key key,
     @required this.store,
-    @required this.isBackground,
   }) : super(key: key);
 
   final Store<AppStateMain> store;
-  final bool isBackground;
 
   @override
   Widget build(BuildContext context) {
     Color color;
-    if (isBackground) {
-      color = Theme
-          .of(context)
-          .backgroundColor;
-    } else {
-      color = Theme
-          .of(context)
-          .primaryColor;
-    }
+    color = Theme
+        .of(context)
+        .primaryColor;
 
     return IconButton(
       icon: Icon(
@@ -135,24 +138,16 @@ class TextDecrease extends StatelessWidget {
   const TextDecrease({
     Key key,
     @required this.store,
-    @required this.isBackground,
   }) : super(key: key);
 
   final Store<AppStateMain> store;
-  final bool isBackground;
 
   @override
   Widget build(BuildContext context) {
     Color color;
-    if (isBackground) {
-      color = Theme
-          .of(context)
-          .backgroundColor;
-    } else {
-      color = Theme
-          .of(context)
-          .primaryColor;
-    }
+    color = Theme
+        .of(context)
+        .primaryColor;
 
     return IconButton(
       icon: Icon(
