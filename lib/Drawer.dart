@@ -38,20 +38,47 @@ class TextAppDrawer extends StatelessWidget {
             store.state.textSize, store.state.enableDarkMode),
       );
     }
-    return ListTile(
-        title: txt,
-        onTap: () {
-          if (idxTxt != -1) {
-            TextSlideshowState.ctrl.jumpToPage(idxTxt + 1);
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      TextCard(map: dataList[idxTxt], store: store)),
-            );
-          }
-        });
+    return Dismissible(
+        key: Key('Dismissible-' + favoriteTitle),
+        onDismissed: (direction) => {
+        store
+        .
+        dispatch
+        (
+        UpdateFavorites
+        (
+        toRemove
+        :
+        favoriteTitle))}
+    ,
+    child
+        :
+    ListTile
+    (
+    title
+        :
+    txt
+    ,
+    onTap
+        :
+    (
+    )
+    {
+    if (idxTxt != -1)
+    {
+    TextSlideshowState.ctrl.jumpToPage(idxTxt + 1);
+    Navigator.pop(context);
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) =>
+    TextCard(map: dataList[idxTxt], store: store)),
+    );
+    }
+    }
+    )
+    ,
+    );
   }
 
   @override

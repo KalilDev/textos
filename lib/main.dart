@@ -7,7 +7,6 @@ import 'package:textos/Drawer.dart';
 import 'package:textos/FirestoreSlideshowView.dart';
 
 // TODO Document the app
-// TODO Dismissable favorites
 // TODO Implement blur settings
 // TODO Implement Firestore favorites
 // TODO Implement tutorial
