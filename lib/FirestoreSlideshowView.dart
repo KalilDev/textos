@@ -204,24 +204,27 @@ class TextSlideshowState extends State<TextSlideshow> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: slides,
-        initialData: [],
-        builder: (context, AsyncSnapshot snap) {
-          slideList = snap.data.toList();
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: StreamBuilder(
+          stream: slides,
+          initialData: [],
+          builder: (context, AsyncSnapshot snap) {
+            slideList = snap.data.toList();
 
-          return PageView.builder(
-              controller: ctrl,
-              itemCount: slideList.length + 1,
-              pageSnapping: false,
-              itemBuilder: (context, int currentIdx) {
-                if (currentIdx == 0) {
-                  return _buildTagPage();
-                } else if (slideList.length >= currentIdx) {
-                  return _buildStoryPage(
-                      slideList[currentIdx - 1], currentIdx);
-                }
-              });
-        });
+            return PageView.builder(
+                controller: ctrl,
+                itemCount: slideList.length + 1,
+                pageSnapping: false,
+                itemBuilder: (context, int currentIdx) {
+                  if (currentIdx == 0) {
+                    return _buildTagPage();
+                  } else if (slideList.length >= currentIdx) {
+                    return _buildStoryPage(
+                        slideList[currentIdx - 1], currentIdx);
+                  }
+                });
+          }),
+    );
   }
 }
