@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
+import 'package:textos/SettingsHelper.dart';
 import 'package:textos/TextCardView.dart';
 import 'package:textos/main.dart';
 
@@ -128,16 +129,15 @@ class TextSlideshowState extends State<TextSlideshow> {
                           borderRadius: BorderRadius.circular(20),
                           color: themeBackground.withAlpha(40)),
                       margin: EdgeInsets.all(12.5),
-                      child: new ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: new BackdropFilter(
-                              filter: new ImageFilter.blur(
-                                  sigmaX: 5.0, sigmaY: 5.0),
-                              child: Text(title,
-                                  textAlign: TextAlign.center,
-                                  style: Constants().textstyleTitle(
-                                      store.state.textSize,
-                                      store.state.enableDarkMode)))),
+                      child: BlurOverlay(
+                        radius: 15,
+                        enabled: BlurSettings(store).getTextsBlur(),
+                        child: Text(title,
+                            textAlign: TextAlign.center,
+                            style: Constants().textstyleTitle(
+                                store.state.textSize,
+                                store.state.enableDarkMode)),
+                      ),
                     ),
                     color: Colors.transparent,
                   )),

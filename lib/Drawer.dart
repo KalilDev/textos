@@ -16,7 +16,8 @@ class TextAppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(child: BlurOverlay(child: Column(
+    return Drawer(child: BlurOverlay(
+        enabled: BlurSettings(store).getDrawerBlur(), child: Column(
       children: <Widget>[
         SizedBox(
           height: MediaQuery

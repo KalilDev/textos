@@ -62,61 +62,63 @@ class TextCard extends StatelessWidget {
                               ]),
                           child: Material(
                               color: Colors.transparent,
-                              child: new ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: new BackdropFilter(
-                                    filter: new ImageFilter.blur(
-                                        sigmaX: 5.0, sigmaY: 5.0),
-                                    child: Container(
-                                        padding: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(20),
-                                            color:
-                                            themeBackground.withAlpha(80)),
-                                        child: Column(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: SingleChildScrollView(
-                                                child:
-                                                Column(children: <Widget>[
-                                                  Text(title,
-                                                      textAlign:
-                                                      TextAlign.center,
-                                                      style: Constants()
-                                                          .textstyleTitle(
-                                                          store.state
-                                                              .textSize,
-                                                          store.state
-                                                              .enableDarkMode)),
-                                                  SizedBox(
-                                                    height: 10,
+                              child: BlurOverlay(
+                                enabled: BlurSettings(store).getTextsBlur(),
+                                radius: 20,
+                                child: Container(
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(20),
+                                        color:
+                                        themeBackground.withAlpha(80)),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                20.0),
+                                            child: SingleChildScrollView(
+                                              child:
+                                              Column(children: <Widget>[
+                                                Text(title,
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                    style: Constants()
+                                                        .textstyleTitle(
+                                                        store.state
+                                                            .textSize,
+                                                        store.state
+                                                            .enableDarkMode)),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(text,
+                                                    style: Constants()
+                                                        .textstyleText(
+                                                        store.state
+                                                            .textSize,
+                                                        store.state
+                                                            .enableDarkMode)),
+                                                SizedBox(
+                                                  height: 55,
+                                                  child: Center(
+                                                    child: Text(date,
+                                                        style: Constants()
+                                                            .textstyleDate(
+                                                            store.state
+                                                                .textSize,
+                                                            store.state
+                                                                .enableDarkMode)),
                                                   ),
-                                                  Text(text,
-                                                      style: Constants()
-                                                          .textstyleText(
-                                                          store.state
-                                                              .textSize,
-                                                          store.state
-                                                              .enableDarkMode)),
-                                                  SizedBox(
-                                                    height: 55,
-                                                    child: Center(
-                                                      child: Text(date,
-                                                          style: Constants()
-                                                              .textstyleDate(
-                                                              store.state
-                                                                  .textSize,
-                                                              store.state
-                                                                  .enableDarkMode)),
-                                                    ),
-                                                  ),
-                                                ]),
-                                              ),
+                                                ),
+                                              ]),
                                             ),
-                                          ],
-                                        )),
-                                  ))),
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                              )),
                         )),
                     onTap: () {
                       Navigator.pop(context);
@@ -127,20 +129,18 @@ class TextCard extends StatelessWidget {
                   bottom: 30,
                 ),
                 Positioned(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(80),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
-                      child: Material(
-                        color: Theme
-                            .of(context)
-                            .accentColor
-                            .withAlpha(150),
-                        child: Row(children: <Widget>[
-                          TextDecrease(store: store),
-                          TextIncrease(store: store),
-                        ]),
-                      ),
+                  child: BlurOverlay(
+                    enabled: BlurSettings(store).getButtonsBlur(),
+                    radius: 80,
+                    child: Material(
+                      color: Theme
+                          .of(context)
+                          .accentColor
+                          .withAlpha(150),
+                      child: Row(children: <Widget>[
+                        TextDecrease(store: store),
+                        TextIncrease(store: store),
+                      ]),
                     ),
                   ),
                   left: 20,

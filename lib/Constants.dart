@@ -18,6 +18,9 @@ class Constants {
   static const textTextSize = 'Tamanho do texto';
   static const textTextTheme = 'Tema Escuro';
   static const textTextTrash = 'Limpar favoritos';
+  static const textTextBlurDrawer = 'Borrar a gaveta';
+  static const textTextBlurButtons = 'Borrar os botões';
+  static const textTextBlurText = 'Borrar fundo dos textos';
   static const textTooltipTextSizeLess = 'Diminuir tamanho do texto';
   static const textTooltipTextSizePlus = 'Aumentar tamanho do texto';
   static const textTooltipFav = 'Adicionar aos favoritos';

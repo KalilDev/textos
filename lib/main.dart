@@ -7,7 +7,6 @@ import 'package:textos/Drawer.dart';
 import 'package:textos/FirestoreSlideshowView.dart';
 
 // TODO Document the app
-// TODO Implement blur settings
 // TODO Implement Firestore favorites
 // TODO Implement tutorial
 // TODO Implement Firebase analytics
@@ -19,6 +18,7 @@ void main() async {
   final _favoritesSet = prefs?.getStringList('favorites')?.toSet() ??
       Set<String>();
   final _textSize = prefs?.getDouble('textSize') ?? 4.5;
+  final _blurSettings = prefs?.getInt('blurSettings') ?? 1;
 
   final store = Store<AppStateMain>(
     reducer,
@@ -27,7 +27,8 @@ void main() async {
         enableDarkMode: _enableDarkMode,
         favoritesSet: _favoritesSet,
         textSize: _textSize,
-        settingsDrawer: false),
+        settingsDrawer: false,
+        blurSettings: _blurSettings),
   );
 
   runApp(StoreProvider<AppStateMain>(
@@ -45,7 +46,8 @@ class MyApp extends StatelessWidget {
         return [
           store.state.enableDarkMode,
           store.state.favoritesSet,
-          store.state.textSize
+          store.state.textSize,
+          store.state.blurSettings
         ];
       },
       builder: (_, List list) {
@@ -84,12 +86,14 @@ class AppStateMain {
   AppStateMain({@required this.enableDarkMode,
     @required this.favoritesSet,
     @required this.textSize,
-    this.settingsDrawer});
+    @required this.settingsDrawer,
+    @required this.blurSettings});
 
   bool enableDarkMode;
   Set<String> favoritesSet;
   double textSize;
   bool settingsDrawer;
+  int blurSettings;
 }
 
 class UpdateDarkMode {
@@ -118,6 +122,12 @@ class UpdateSettingsBool {
   final bool boolean;
 }
 
+class UpdateBlurSettings {
+  UpdateBlurSettings({@required this.integer});
+
+  final int integer;
+}
+
 AppStateMain reducer(AppStateMain state, dynamic action) {
   if (action is UpdateDarkMode) {
     SharedPreferences.getInstance().then((pref) {
@@ -128,7 +138,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: action.enable,
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
-        settingsDrawer: state.settingsDrawer);
+        settingsDrawer: state.settingsDrawer,
+        blurSettings: state.blurSettings);
   }
 
   if (action is UpdateFavorites) {
@@ -144,7 +155,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: state.enableDarkMode,
         favoritesSet: fav,
         textSize: state.textSize,
-        settingsDrawer: state.settingsDrawer);
+        settingsDrawer: state.settingsDrawer,
+        blurSettings: state.blurSettings);
   }
 
   if (action is UpdateTextSize) {
@@ -156,7 +168,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: state.enableDarkMode,
         favoritesSet: state.favoritesSet,
         textSize: action.size,
-        settingsDrawer: state.settingsDrawer);
+        settingsDrawer: state.settingsDrawer,
+        blurSettings: state.blurSettings);
   }
 
   if (action is UpdateSettingsBool) {
@@ -164,7 +177,21 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: state.enableDarkMode,
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
-        settingsDrawer: action.boolean);
+        settingsDrawer: action.boolean,
+        blurSettings: state.blurSettings);
+  }
+
+  if (action is UpdateBlurSettings) {
+    SharedPreferences.getInstance().then((pref) {
+      pref.setInt('blurSettings', action.integer);
+    });
+
+    return AppStateMain(
+        enableDarkMode: state.enableDarkMode,
+        favoritesSet: state.favoritesSet,
+        textSize: state.textSize,
+        settingsDrawer: state.settingsDrawer,
+        blurSettings: action.integer);
   }
 
   return state;
