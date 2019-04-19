@@ -26,7 +26,8 @@ void main() async {
     initialState: AppStateMain(
         enableDarkMode: _enableDarkMode,
         favoritesSet: _favoritesSet,
-        textSize: _textSize),
+        textSize: _textSize,
+        settingsDrawer: false),
   );
 
   runApp(StoreProvider<AppStateMain>(
@@ -82,11 +83,13 @@ class SettingsViewState extends State<SettingsView> {
 class AppStateMain {
   AppStateMain({@required this.enableDarkMode,
     @required this.favoritesSet,
-    @required this.textSize});
+    @required this.textSize,
+    this.settingsDrawer});
 
   bool enableDarkMode;
   Set<String> favoritesSet;
   double textSize;
+  bool settingsDrawer;
 }
 
 class UpdateDarkMode {
@@ -109,6 +112,12 @@ class UpdateTextSize {
   final double size;
 }
 
+class UpdateSettingsBool {
+  UpdateSettingsBool({@required this.boolean});
+
+  final bool boolean;
+}
+
 AppStateMain reducer(AppStateMain state, dynamic action) {
   if (action is UpdateDarkMode) {
     SharedPreferences.getInstance().then((pref) {
@@ -118,7 +127,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
     return AppStateMain(
         enableDarkMode: action.enable,
         favoritesSet: state.favoritesSet,
-        textSize: state.textSize);
+        textSize: state.textSize,
+        settingsDrawer: state.settingsDrawer);
   }
 
   if (action is UpdateFavorites) {
@@ -133,7 +143,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
     return AppStateMain(
         enableDarkMode: state.enableDarkMode,
         favoritesSet: fav,
-        textSize: state.textSize);
+        textSize: state.textSize,
+        settingsDrawer: state.settingsDrawer);
   }
 
   if (action is UpdateTextSize) {
@@ -144,7 +155,16 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
     return AppStateMain(
         enableDarkMode: state.enableDarkMode,
         favoritesSet: state.favoritesSet,
-        textSize: action.size);
+        textSize: action.size,
+        settingsDrawer: state.settingsDrawer);
+  }
+
+  if (action is UpdateSettingsBool) {
+    return AppStateMain(
+        enableDarkMode: state.enableDarkMode,
+        favoritesSet: state.favoritesSet,
+        textSize: state.textSize,
+        settingsDrawer: action.boolean);
   }
 
   return state;

@@ -5,61 +5,6 @@ import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
 import 'package:textos/main.dart';
 
-
-class DrawerSettings extends StatelessWidget {
-  final Store<AppStateMain> store;
-
-  DrawerSettings({@required this.store});
-
-  Widget header() {
-    return Center(
-        child: Text(
-          Constants.textConfigs,
-          style: Constants().textstyleText(
-              store.state.textSize, store.state.enableDarkMode),
-        ));
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.color_lens,
-            color: Theme
-                .of(context)
-                .primaryColor,
-          ),
-          onPressed: () {
-            store.dispatch(UpdateDarkMode(enable: !store.state.enableDarkMode));
-          },
-          iconSize: 25,
-          tooltip: Constants.textTooltipTheme,
-        ),
-        Spacer(),
-        IconButton(
-          icon: Icon(
-            Icons.delete_forever,
-            color: Theme
-                .of(context)
-                .primaryColor,
-          ),
-          onPressed: () {
-            store.dispatch(UpdateFavorites(toClear: 1));
-          },
-          iconSize: 25,
-          tooltip: Constants.textTooltipTrash,
-        ),
-        Spacer(),
-        TextDecrease(store: store),
-        TextIncrease(store: store),
-      ],
-    );
-  }
-}
-
 class FavoriteFAB extends StatelessWidget {
   const FavoriteFAB({
     Key key,
@@ -99,7 +44,8 @@ class FavoriteFAB extends StatelessWidget {
                   store.dispatch(UpdateFavorites(toAdd: title));
                 }
               },
-              tooltip: Constants.textTooltipFav,)));
+              tooltip: Constants.textTooltipFav,
+            )));
   }
 }
 
@@ -162,5 +108,66 @@ class TextDecrease extends StatelessWidget {
       iconSize: 25,
       tooltip: Constants.textTooltipTextSizeLess,
     );
+  }
+}
+
+class SettingsDrawer {
+  final Store<AppStateMain> store;
+  final BuildContext context;
+
+  SettingsDrawer({@required this.store, @required this.context});
+
+  List<Widget> drawer() {
+    final TextStyle settingsStyle = Constants().textstyleTitle(
+        store.state.textSize / 16 * 7, store.state.enableDarkMode);
+    final Color settingsIconColor = Theme
+        .of(context)
+        .primaryColor;
+    return [
+      SwitchListTile(
+          title: Text(Constants.textTextTheme, style: settingsStyle),
+          secondary: Icon(Icons.color_lens, color: settingsIconColor),
+          value: store.state.enableDarkMode,
+          onChanged: (Map) =>
+              store.dispatch(
+                  UpdateDarkMode(enable: !store.state.enableDarkMode))),
+      ListTile(
+          leading: Icon(Icons.text_fields, color: settingsIconColor),
+          title: Text(Constants.textTextSize, style: settingsStyle),
+          trailing: new Container(
+            width: 96,
+            child: Row(
+              children: <Widget>[
+                TextDecrease(store: store),
+                TextIncrease(store: store),
+              ],
+            ),
+          )),
+      ListTile(
+        leading: Icon(Icons.delete_forever, color: settingsIconColor),
+        title: Text(Constants.textTextTrash, style: settingsStyle),
+        onTap: () => store.dispatch(UpdateFavorites(toClear: 1)),
+      ),
+    ];
+  }
+}
+
+class BlurOverlay extends StatelessWidget {
+  final Widget child;
+
+  BlurOverlay({@required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+        clipBehavior: Clip.hardEdge,
+        child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+            child: Container(
+                color: Theme
+                    .of(context)
+                    .backgroundColor
+                    .withAlpha(140),
+                child: child)));
   }
 }

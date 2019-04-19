@@ -9,11 +9,52 @@ import 'package:textos/SettingsHelper.dart';
 import 'package:textos/TextCardView.dart';
 import 'package:textos/main.dart';
 
-
 class TextAppDrawer extends StatelessWidget {
   final Store<AppStateMain> store;
 
   TextAppDrawer({@required this.store});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(child: BlurOverlay(child: Column(
+      children: <Widget>[
+        SizedBox(
+          height: MediaQuery
+              .of(context)
+              .padding
+              .top,
+        ),
+        Center(
+            child: Text(
+              store.state.settingsDrawer ? Constants.textConfigs : Constants
+                  .textFavs,
+              style: Constants()
+                  .textstyleText(
+                  store.state.textSize, store.state.enableDarkMode),
+            )),
+        store.state.settingsDrawer
+            ? Column(
+          children: SettingsDrawer(store: store, context: context).drawer(),)
+            : Expanded(child: FavoritesDrawer(store: store).drawer(context)),
+        Spacer(),
+        ListTile(title: Text(
+          store.state.settingsDrawer ? Constants.textFavs : Constants
+              .textConfigs, style: Constants()
+            .textstyleTitle(
+            store.state.textSize / 16 * 9, store.state.enableDarkMode),
+          textAlign: TextAlign.center,), onTap: () {
+          store.dispatch(
+              UpdateSettingsBool(boolean: !store.state.settingsDrawer));
+        },)
+      ],
+    )));
+  }
+}
+
+class FavoritesDrawer {
+  final Store<AppStateMain> store;
+
+  FavoritesDrawer({@required this.store});
 
   Widget buildFavoritesItem(BuildContext context, int index) {
     final favoriteTitle = store.state.favoritesSet.toList()[index];
@@ -34,22 +75,29 @@ class TextAppDrawer extends StatelessWidget {
     } else {
       txt = Text(
         favoriteTitle,
-        style: Constants().textstyleTitle(
-            store.state.textSize, store.state.enableDarkMode),
+        style: Constants()
+            .textstyleTitle(store.state.textSize, store.state.enableDarkMode),
       );
     }
     return Dismissible(
         key: Key('Dismissible-' + favoriteTitle),
-        onDismissed: (direction) => {
-        store
-        .
-        dispatch
-        (
-        UpdateFavorites
-        (
-        toRemove
-        :
-        favoriteTitle))}
+        background: Container(child: Row(
+          children: <Widget>[
+            Container(child: Icon(Icons.delete, color: Theme
+                .of(context)
+                .primaryColor,), width: 90), Spacer()
+          ],
+        ),),
+        secondaryBackground: Container(child: Row(
+          children: <Widget>[
+            Spacer(), Container(
+              child: Icon(Icons.delete, color: Theme
+                  .of(context)
+                  .primaryColor), width: 90,),
+          ],
+        ),),
+        onDismissed: (direction) =>
+        {store.dispatch(UpdateFavorites(toRemove: favoriteTitle))}
     ,
     child
         :
@@ -81,67 +129,12 @@ class TextAppDrawer extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    Widget separator() {
-      return Divider();
-    }
-
-    return Drawer(
-      child: BlurOverlay(child: Column(
-        children: <Widget>[
-          SizedBox(height: MediaQuery
-              .of(context)
-              .padding
-              .top,),
-          Center(
-              child: Text(
-                Constants.textFavs,
-                style: Constants().textstyleText(
-                    store.state.textSize, store.state.enableDarkMode),
-              )),
-          Expanded(
-            child: ListView.separated(
-                itemCount: store.state.favoritesSet.length,
-                itemBuilder: (BuildContext context, int index) =>
-                    buildFavoritesItem(context, index),
-                separatorBuilder: (BuildContext context, int index) =>
-                    separator()),
-          ),
-          DrawerSettings(store: store).header(),
-          DrawerSettings(store: store),
-        ],
-      ),
-      ),
+  Widget drawer(BuildContext context) {
+    return new ListView.separated(
+      itemCount: store.state.favoritesSet.length,
+      itemBuilder: (BuildContext context, int index) =>
+          buildFavoritesItem(context, index),
+      separatorBuilder: (BuildContext context, int index) => Divider(),
     );
-  }
-}
-
-class BlurOverlay extends StatelessWidget {
-  final Widget child;
-
-  BlurOverlay({@required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    if (Theme
-        .of(context)
-        .backgroundColor == Constants.themeBackgroundDark) {
-      return ClipRect(clipBehavior: Clip.hardEdge, child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-          child: Container(
-              color: Theme
-                  .of(context)
-                  .backgroundColor
-                  .withAlpha(140), child: child)));
-    } else {
-      return ClipRect(clipBehavior: Clip.hardEdge, child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-          child: Container(
-              color: Theme
-                  .of(context)
-                  .backgroundColor
-                  .withAlpha(140), child: child)));
-    }
   }
 }
