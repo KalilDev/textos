@@ -172,9 +172,9 @@ class SettingsDrawer {
 }
 
 class BlurSettings {
-  BlurSettings(@required this.store);
-
   Store<AppStateMain> store;
+
+  BlurSettings(@required this.store);
 
   List<double> settingsTable = [2.0, 3.0, 5.0];
 

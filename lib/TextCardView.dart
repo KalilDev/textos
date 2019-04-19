@@ -123,6 +123,7 @@ class TextCard extends StatelessWidget {
                     onTap: () {
                       Navigator.pop(context);
                     }),
+                Positioned(child: new DrawerButton(), top: 5, left: 5,),
                 Positioned(
                   child: FavoriteFAB(store: store, title: title),
                   right: 30,

@@ -10,7 +10,6 @@ import 'package:textos/SettingsHelper.dart';
 import 'package:textos/TextCardView.dart';
 import 'package:textos/main.dart';
 
-// TODO Fix the blur for some cases
 // Implement optimization for the slideshow:
 // Idea: Only load the Decoration image for the current ∓3 pages
 
