@@ -31,7 +31,7 @@ class Constants {
   static final themeDataLight = ThemeData(
       accentColor: themeAccent,
       scaffoldBackgroundColor: themeBackgroundLight,
-      canvasColor: Colors.transparent,
+      canvasColor: themeBackgroundLight,
       dividerColor: themeForegroundLight.withAlpha(70),
       primaryColor: themeForegroundLight,
       backgroundColor: themeBackgroundLight);
@@ -39,10 +39,10 @@ class Constants {
   // Theme Dark
   static const themeBackgroundDark = Colors.black;
   static const themeForegroundDark = Colors.white;
-  static final themeDataDark = ThemeData(
+  static final themeDataDark = ThemeData.dark().copyWith(
       accentColor: themeAccent,
       scaffoldBackgroundColor: themeBackgroundDark,
-      canvasColor: Colors.transparent,
+      canvasColor: themeBackgroundDark,
       dividerColor: themeForegroundDark.withAlpha(70),
       primaryColor: themeForegroundDark,
       backgroundColor: themeBackgroundDark);

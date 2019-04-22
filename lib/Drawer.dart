@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:redux/redux.dart';
@@ -16,39 +14,42 @@ class TextAppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(child: BlurOverlay(
-        enabled: BlurSettings(store).getDrawerBlur(), child: Column(
-      children: <Widget>[
-        SizedBox(
-          height: MediaQuery
-              .of(context)
-              .padding
-              .top,
-        ),
-        Center(
-            child: Text(
-              store.state.settingsDrawer ? Constants.textConfigs : Constants
-                  .textFavs,
-              style: Constants()
-                  .textstyleText(
-                  store.state.textSize, store.state.enableDarkMode),
-            )),
-        store.state.settingsDrawer
-            ? Column(
-          children: SettingsDrawer(store: store, context: context).drawer(),)
-            : Expanded(child: FavoritesDrawer(store: store).drawer(context)),
-        Spacer(),
-        ListTile(title: Text(
-          store.state.settingsDrawer ? Constants.textFavs : Constants
-              .textConfigs, style: Constants()
-            .textstyleTitle(
-            store.state.textSize / 16 * 9, store.state.enableDarkMode),
-          textAlign: TextAlign.center,), onTap: () {
-          store.dispatch(
-              UpdateSettingsBool(boolean: !store.state.settingsDrawer));
-        },)
-      ],
-    )));
+    return Theme(
+      data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
+      child: Drawer(child: BlurOverlay(
+          enabled: BlurSettings(store).getDrawerBlur(), child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: MediaQuery
+                .of(context)
+                .padding
+                .top,
+          ),
+          Center(
+              child: Text(
+                store.state.settingsDrawer ? Constants.textConfigs : Constants
+                    .textFavs,
+                style: Constants()
+                    .textstyleText(
+                    store.state.textSize, store.state.enableDarkMode),
+              )),
+          store.state.settingsDrawer
+              ? Column(
+            children: SettingsDrawer(store: store, context: context).drawer(),)
+              : Expanded(child: FavoritesDrawer(store: store).drawer(context)),
+          Spacer(),
+          ListTile(title: Text(
+            store.state.settingsDrawer ? Constants.textFavs : Constants
+                .textConfigs, style: Constants()
+              .textstyleTitle(
+              store.state.textSize / 16 * 9, store.state.enableDarkMode),
+            textAlign: TextAlign.center,), onTap: () {
+            store.dispatch(
+                UpdateSettingsBool(boolean: !store.state.settingsDrawer));
+          },)
+        ],
+      ))),
+    );
   }
 }
 

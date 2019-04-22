@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,7 +46,12 @@ class TextSlideshowState extends State<TextSlideshow> {
 
     // Map the documents to the data payload
     slides =
-        query.snapshots().map((list) => list.documents.map((doc) => doc.data));
+        query.snapshots().map((list) =>
+            list.documents.map((doc) {
+              final Map data = doc.data;
+              data['id'] = doc.documentID;
+              return data;
+            }));
 
     // Update the active tag
     setState(() {
