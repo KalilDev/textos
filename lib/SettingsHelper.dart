@@ -17,12 +17,6 @@ class FavoriteFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeBackground = Theme
-        .of(context)
-        .backgroundColor;
-    final themeForeground = Theme
-        .of(context)
-        .primaryColor;
     final favorite = store.state.favoritesSet.toList().contains(title);
 
     return BlurOverlay(
@@ -30,13 +24,18 @@ class FavoriteFAB extends StatelessWidget {
       radius: 100,
       child: FloatingActionButton(
         backgroundColor: favorite
-            ? themeBackground.withAlpha(160)
+            ? Theme
+            .of(context)
+            .backgroundColor
+            .withAlpha(160)
             : Theme
             .of(context)
             .accentColor
             .withAlpha(140),
         child: new Icon(Icons.favorite,
-            color: favorite ? Colors.red : themeForeground),
+            color: favorite ? Colors.red : Theme
+                .of(context)
+                .primaryColor),
         onPressed: () {
           if (favorite) {
             store.dispatch(UpdateFavorites(toRemove: title));
@@ -60,15 +59,9 @@ class TextIncrease extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color;
-    color = Theme
-        .of(context)
-        .primaryColor;
-
     return IconButton(
       icon: Icon(
-        Icons.arrow_upward,
-        color: color,
+          Icons.arrow_upward
       ),
       onPressed: () {
         if (store.state.textSize < 6.4) {
@@ -91,15 +84,9 @@ class TextDecrease extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color;
-    color = Theme
-        .of(context)
-        .primaryColor;
-
     return IconButton(
       icon: Icon(
         Icons.arrow_downward,
-        color: color,
       ),
       onPressed: () {
         if (store.state.textSize > 3.1) {
@@ -112,28 +99,34 @@ class TextDecrease extends StatelessWidget {
   }
 }
 
-class SettingsDrawer {
+class SettingsDrawer extends StatelessWidget {
   final Store<AppStateMain> store;
-  final BuildContext context;
 
-  SettingsDrawer({@required this.store, @required this.context});
+  SettingsDrawer({@required this.store});
 
-  List<Widget> drawer() {
+  @override
+  Widget build(BuildContext context) {
     final TextStyle settingsStyle = Constants().textstyleTitle(
-        store.state.textSize / 16 * 7, store.state.enableDarkMode);
-    final Color settingsIconColor = Theme
-        .of(context)
-        .primaryColor;
-    return [
-      SwitchListTile(
-          title: Text(Constants.textTextTheme, style: settingsStyle),
-          secondary: Icon(Icons.color_lens, color: settingsIconColor),
-          value: store.state.enableDarkMode,
-          onChanged: (Map) =>
-              store.dispatch(
-                  UpdateDarkMode(enable: !store.state.enableDarkMode))),
+        store.state.textSize / 16 * 7);
+    return Column(
+      children: <Widget>[
+        SwitchListTile(
+            title: Text(Constants.textTextTheme, style: settingsStyle),
+            secondary: Icon(Icons.color_lens),
+            value: store.state.enableDarkMode,
+            activeColor: Theme
+                .of(context)
+                .accentColor,
+            activeTrackColor: Theme
+                .of(context)
+                .accentColor
+                .withAlpha(170),
+            onChanged: (Map) =>
+                store.dispatch(
+                    UpdateDarkMode(enable: !store.state.enableDarkMode))),
+
       ListTile(
-          leading: Icon(Icons.text_fields, color: settingsIconColor),
+          leading: Icon(Icons.text_fields),
           title: Text(Constants.textTextSize, style: settingsStyle),
           trailing: new Container(
             width: 96,
@@ -145,29 +138,51 @@ class SettingsDrawer {
             ),
           )),
       ListTile(
-        leading: Icon(Icons.delete_forever, color: settingsIconColor),
+        leading: Icon(Icons.delete_forever),
         title: Text(Constants.textTextTrash, style: settingsStyle),
         onTap: () => store.dispatch(UpdateFavorites(toClear: 1)),
       ),
       SwitchListTile(
           title: Text(Constants.textTextBlurDrawer, style: settingsStyle),
-          secondary: Icon(Icons.blur_linear, color: settingsIconColor),
+          secondary: Icon(Icons.blur_linear),
           value: BlurSettings(store).getDrawerBlur(),
+          activeColor: Theme
+              .of(context)
+              .accentColor,
+          activeTrackColor: Theme
+              .of(context)
+              .accentColor
+              .withAlpha(170),
           onChanged: (Map) =>
               BlurSettings(store).setDrawerBlur()),
       SwitchListTile(
           title: Text(Constants.textTextBlurButtons, style: settingsStyle),
-          secondary: Icon(Icons.blur_circular, color: settingsIconColor),
+          secondary: Icon(Icons.blur_circular),
           value: BlurSettings(store).getButtonsBlur(),
+          activeColor: Theme
+              .of(context)
+              .accentColor,
+          activeTrackColor: Theme
+              .of(context)
+              .accentColor
+              .withAlpha(170),
           onChanged: (Map) =>
               BlurSettings(store).setButtonsBlur()),
       SwitchListTile(
           title: Text(Constants.textTextBlurText, style: settingsStyle),
-          secondary: Icon(Icons.blur_on, color: settingsIconColor),
+          secondary: Icon(Icons.blur_on),
           value: BlurSettings(store).getTextsBlur(),
+          activeColor: Theme
+              .of(context)
+              .accentColor,
+          activeTrackColor: Theme
+              .of(context)
+              .accentColor
+              .withAlpha(170),
           onChanged: (Map) =>
               BlurSettings(store).setTextsBlur()),
-    ];
+      ],
+    );
   }
 }
 

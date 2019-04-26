@@ -16,13 +16,6 @@ class TextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeBackground = Theme
-        .of(context)
-        .backgroundColor;
-    final themeForeground = Theme
-        .of(context)
-        .primaryColor;
-
     // Sanitize input
     final title = map['title'] ?? Constants.placeholderTitle;
     final text = map['text'] ?? Constants.placeholderText;
@@ -47,14 +40,19 @@ class TextCard extends StatelessWidget {
                               top: 50, bottom: 20, right: 20, left: 10),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              color: themeBackground,
+                              color: Theme
+                                  .of(context)
+                                  .backgroundColor,
                               image: DecorationImage(
                                 fit: BoxFit.cover,
                                 image: CachedNetworkImageProvider(img),
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                    color: themeForeground.withAlpha(125),
+                                    color: Theme
+                                        .of(context)
+                                        .primaryColor
+                                        .withAlpha(125),
                                     blurRadius: blur,
                                     offset: Offset(offset, offset))
                               ]),
@@ -67,9 +65,7 @@ class TextCard extends StatelessWidget {
                                     padding: EdgeInsets.all(5),
                                     decoration: BoxDecoration(
                                         borderRadius:
-                                        BorderRadius.circular(20),
-                                        color:
-                                        themeBackground.withAlpha(80)),
+                                        BorderRadius.circular(20)),
                                     child: Column(
                                       children: <Widget>[
                                         Expanded(
@@ -85,9 +81,7 @@ class TextCard extends StatelessWidget {
                                                     style: Constants()
                                                         .textstyleTitle(
                                                         store.state
-                                                            .textSize,
-                                                        store.state
-                                                            .enableDarkMode)),
+                                                            .textSize)),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
@@ -95,9 +89,7 @@ class TextCard extends StatelessWidget {
                                                     style: Constants()
                                                         .textstyleText(
                                                         store.state
-                                                            .textSize,
-                                                        store.state
-                                                            .enableDarkMode)),
+                                                            .textSize)),
                                                 SizedBox(
                                                   height: 55,
                                                   child: Center(
@@ -105,9 +97,7 @@ class TextCard extends StatelessWidget {
                                                         style: Constants()
                                                             .textstyleDate(
                                                             store.state
-                                                                .textSize,
-                                                            store.state
-                                                                .enableDarkMode)),
+                                                                .textSize)),
                                                   ),
                                                 ),
                                               ]),

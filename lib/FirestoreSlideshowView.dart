@@ -89,14 +89,6 @@ class TextSlideshowState extends State<TextSlideshow> {
   _buildStoryPage(Map data, int index) {
     // Active page
     bool active = index == currentPage;
-
-    final themeBackground = Theme
-        .of(context)
-        .backgroundColor;
-    final themeForeground = Theme
-        .of(context)
-        .primaryColor;
-
     // Animated Properties
     final double blur = active ? 30 : 0;
     final double offset = active ? 20 : 0;
@@ -114,14 +106,19 @@ class TextSlideshowState extends State<TextSlideshow> {
               margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: themeBackground,
+                  color: Theme
+                      .of(context)
+                      .backgroundColor,
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: CachedNetworkImageProvider(img),
                   ),
                   boxShadow: [
                     BoxShadow(
-                        color: themeForeground.withAlpha(80),
+                        color: Theme
+                            .of(context)
+                            .primaryColor
+                            .withAlpha(80),
                         blurRadius: blur,
                         offset: Offset(offset, offset))
                   ]),
@@ -129,8 +126,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                   child: Material(
                     child: Container(
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: themeBackground.withAlpha(40)),
+                          borderRadius: BorderRadius.circular(20)),
                       margin: EdgeInsets.all(12.5),
                       child: BlurOverlay(
                         radius: 15,
@@ -138,8 +134,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                         child: Text(title,
                             textAlign: TextAlign.center,
                             style: Constants().textstyleTitle(
-                                store.state.textSize,
-                                store.state.enableDarkMode)),
+                                store.state.textSize)),
                       ),
                     ),
                     color: Colors.transparent,
@@ -167,7 +162,7 @@ class TextSlideshowState extends State<TextSlideshow> {
         child: Text(
           '#' + Constants.textTag[id],
           style: Constants().textStyleButton(
-              store.state.textSize, store.state.enableDarkMode),
+              store.state.textSize),
         ),
         onPressed: () => _queryDb(tag: id));
   }
@@ -184,12 +179,12 @@ class TextSlideshowState extends State<TextSlideshow> {
                 Text(
                   Constants.textTextos,
                   style: Constants().textstyleTitle(
-                      store.state.textSize, store.state.enableDarkMode),
+                      store.state.textSize),
                 ),
                 Text(
                   texto,
                   style: Constants().textstyleTitle(
-                      store.state.textSize, store.state.enableDarkMode),
+                      store.state.textSize),
                 ),
               ],
             ),

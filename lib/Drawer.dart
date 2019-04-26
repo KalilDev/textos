@@ -16,44 +16,48 @@ class TextAppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
-      child: Drawer(child: BlurOverlay(
-          enabled: BlurSettings(store).getDrawerBlur(), child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: MediaQuery
-                .of(context)
-                .padding
-                .top,
-          ),
-          Center(
-              child: Text(
-                store.state.settingsDrawer ? Constants.textConfigs : Constants
-                    .textFavs,
-                style: Constants()
-                    .textstyleText(
-                    store.state.textSize, store.state.enableDarkMode),
-              )),
-          store.state.settingsDrawer
-              ? Column(
-            children: SettingsDrawer(store: store, context: context).drawer(),)
-              : Expanded(child: FavoritesDrawer(store: store).drawer(context)),
-          Spacer(),
-          ListTile(title: Text(
-            store.state.settingsDrawer ? Constants.textFavs : Constants
-                .textConfigs, style: Constants()
-              .textstyleTitle(
-              store.state.textSize / 16 * 9, store.state.enableDarkMode),
-            textAlign: TextAlign.center,), onTap: () {
-            store.dispatch(
-                UpdateSettingsBool(boolean: !store.state.settingsDrawer));
-          },)
-        ],
-      ))),
+      child: Drawer(
+          child: BlurOverlay(
+              enabled: BlurSettings(store).getDrawerBlur(),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: MediaQuery
+                        .of(context)
+                        .padding
+                        .top,
+                  ),
+                  Center(
+                      child: Text(
+                        store.state.settingsDrawer
+                            ? Constants.textConfigs
+                            : Constants.textFavs,
+                        style: Constants().textstyleText(
+                            store.state.textSize),
+                      )),
+                  Expanded(child: store.state.settingsDrawer ? SettingsDrawer(
+                      store: store) : FavoritesDrawer(store: store)),
+                  ListTile(
+                    title: Text(
+                      store.state.settingsDrawer
+                          ? Constants.textFavs
+                          : Constants.textConfigs,
+                      style: Constants().textstyleTitle(
+                          store.state.textSize / 16 * 9),
+                      textAlign: TextAlign.center,
+                    ),
+                    onTap: () {
+                      store.dispatch(UpdateSettingsBool(
+                          boolean: !store.state.settingsDrawer));
+                    },
+                  )
+                ],
+              ))),
     );
   }
 }
 
-class FavoritesDrawer {
+class FavoritesDrawer extends StatelessWidget {
   final Store<AppStateMain> store;
 
   FavoritesDrawer({@required this.store});
@@ -70,7 +74,7 @@ class FavoritesDrawer {
           child: Marquee(
               text: favoriteTitle,
               style: Constants().textstyleTitle(
-                  store.state.textSize, store.state.enableDarkMode),
+                  store.state.textSize),
               blankSpace: 15,
               velocity: 35.0),
           height: 50.0);
@@ -78,26 +82,34 @@ class FavoritesDrawer {
       txt = Text(
         favoriteTitle,
         style: Constants()
-            .textstyleTitle(store.state.textSize, store.state.enableDarkMode),
+            .textstyleTitle(store.state.textSize),
       );
     }
     return Dismissible(
         key: Key('Dismissible-' + favoriteTitle),
-        background: Container(child: Row(
+        background: Container(
+          child: Row(
           children: <Widget>[
-            Container(child: Icon(Icons.delete, color: Theme
-                .of(context)
-                .primaryColor,), width: 90), Spacer()
+            Container(
+                child: Icon(
+                    Icons.delete
+                ),
+                width: 90),
+            Spacer()
           ],
-        ),),
-        secondaryBackground: Container(child: Row(
+          ),
+        ),
+        secondaryBackground: Container(
+          child: Row(
           children: <Widget>[
-            Spacer(), Container(
-              child: Icon(Icons.delete, color: Theme
-                  .of(context)
-                  .primaryColor), width: 90,),
+            Spacer(),
+            Container(
+              child: Icon(Icons.delete),
+              width: 90,
+            ),
           ],
-        ),),
+          ),
+        ),
         onDismissed: (direction) =>
         {store.dispatch(UpdateFavorites(toRemove: favoriteTitle))}
     ,
@@ -131,7 +143,8 @@ class FavoritesDrawer {
     );
   }
 
-  Widget drawer(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return new ListView.separated(
       itemCount: store.state.favoritesSet.length,
       itemBuilder: (BuildContext context, int index) =>
@@ -140,7 +153,6 @@ class FavoritesDrawer {
     );
   }
 }
-
 
 class DrawerButton extends StatelessWidget {
   const DrawerButton({
@@ -152,8 +164,6 @@ class DrawerButton extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.menu),
       onPressed: () => Scaffold.of(context).openDrawer(),
-      color: Theme
-          .of(context)
-          .primaryColor,);
+    );
   }
 }

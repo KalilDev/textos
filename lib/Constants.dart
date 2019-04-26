@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class Constants {
   // Text
   static const textKalil = 'do Kalil';
@@ -29,22 +28,28 @@ class Constants {
   static const themeBackgroundLight = Colors.white;
   static const themeForegroundLight = Colors.black;
   static final themeDataLight = ThemeData(
+      brightness: Brightness.light,
       accentColor: themeAccent,
+      accentColorBrightness: Brightness.light,
       scaffoldBackgroundColor: themeBackgroundLight,
       canvasColor: themeBackgroundLight,
       dividerColor: themeForegroundLight.withAlpha(70),
       primaryColor: themeForegroundLight,
+      primaryColorBrightness: Brightness.dark,
       backgroundColor: themeBackgroundLight);
 
   // Theme Dark
   static const themeBackgroundDark = Colors.black;
   static const themeForegroundDark = Colors.white;
-  static final themeDataDark = ThemeData.dark().copyWith(
+  static final themeDataDark = ThemeData(
+      brightness: Brightness.dark,
       accentColor: themeAccent,
+      accentColorBrightness: Brightness.dark,
       scaffoldBackgroundColor: themeBackgroundDark,
       canvasColor: themeBackgroundDark,
       dividerColor: themeForegroundDark.withAlpha(70),
       primaryColor: themeForegroundDark,
+      primaryColorBrightness: Brightness.light,
       backgroundColor: themeBackgroundDark);
 
   // Themes
@@ -52,13 +57,10 @@ class Constants {
 
   static double textInt;
 
-  TextStyle textstyleTitle(double size, bool isDark) =>
+  TextStyle textstyleTitle(double size) =>
       TextStyle(
           fontSize: size * 8,
           fontWeight: FontWeight.bold,
-          color: isDark
-              ? themeForegroundDark
-              : themeForegroundLight,
           fontFamily: 'Merriweather');
 
   TextStyle textstyleFilter(double size, bool isDark) =>
@@ -69,29 +71,21 @@ class Constants {
               : themeForegroundLight.withAlpha(150),
           fontFamily: 'Merriweather');
 
-  TextStyle textstyleText(double size, bool isDark) =>
-      TextStyle(fontSize: size * 4.5,
-          color: isDark
-              ? themeForegroundDark
-              : themeForegroundLight,
+  TextStyle textstyleText(double size) =>
+      TextStyle(
+          fontSize: size * 4.5,
           fontFamily: 'Muli');
 
-  TextStyle textstyleDate(double size, bool isDark) =>
+  TextStyle textstyleDate(double size) =>
       TextStyle(
-          fontSize: size * 5,
-          color: isDark
-              ? themeForegroundDark
-              : themeForegroundLight,
-        fontFamily: 'Merriweather',);
+        fontSize: size * 5,
+        fontFamily: 'Merriweather',
+      );
 
-  TextStyle textStyleButton(double size, bool isDark) =>
+  TextStyle textStyleButton(double size) =>
       TextStyle(
           fontSize: size * 3,
-          color: isDark
-              ? themeForegroundDark
-              : themeForegroundLight,
-          fontFamily: 'Merriweather'
-      );
+          fontFamily: 'Merriweather');
 
   // Placeholders
   static const placeholderTitle = 'Titulo';
@@ -102,10 +96,10 @@ class Constants {
   // AppBar
   Widget appbarTransparent(bool isDark) =>
       AppBar(
-    backgroundColor: Colors.transparent,
-    elevation: 0.0,
-        iconTheme: IconThemeData(color: isDark
-            ? themeForegroundDark
-            : themeForegroundLight,),
-    key: Key('appbar'),);
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          iconTheme: IconThemeData(
+            color: isDark ? themeForegroundDark : themeForegroundLight,
+          )
+      );
 }
