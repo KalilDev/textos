@@ -28,6 +28,7 @@ class FavoriteFABState extends State<FavoriteFAB>
 
   AnimationController _animationController;
   Animation<double> _scale;
+  bool _disposed = false;
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class FavoriteFABState extends State<FavoriteFAB>
   @override
   void dispose() {
     _animationController.dispose();
+    _disposed = true;
     super.dispose();
   }
 
@@ -56,7 +58,7 @@ class FavoriteFABState extends State<FavoriteFAB>
         string.contains(text));
     if (favorite) {
       Future.delayed(Duration(milliseconds: 600)).then((val) =>
-          _animationController.repeat(
+      _disposed ? null : _animationController.repeat(
               min: 0.7, max: 1.0, period: Duration(milliseconds: 500)));
     }
 
