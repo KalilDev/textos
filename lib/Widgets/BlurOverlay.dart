@@ -6,13 +6,16 @@ class BlurOverlay extends StatelessWidget {
   final Widget child;
   final int radius;
   final bool enabled;
+  final double intensity;
 
-  BlurOverlay({@required this.child, this.radius = 0, @required this.enabled});
+  BlurOverlay(
+      {@required this.child, this.radius = 0, @required this.enabled, this.intensity = 1.0});
 
   Widget blur(BuildContext context) {
+    final sigma = 4 * intensity;
     if (enabled) {
       return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
           child: Container(
               color: Theme.of(context).backgroundColor.withAlpha(140),
               child: child));

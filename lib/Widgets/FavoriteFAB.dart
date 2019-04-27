@@ -42,8 +42,9 @@ class FavoriteFABState extends State<FavoriteFAB>
       });
     _animationController.forward();
     if (favorite) {
-      _animationController.repeat(
-          min: 0.8, max: 1.0, period: Duration(milliseconds: 500));
+      Future.delayed(Duration(milliseconds: 600)).then((unused) =>
+          _animationController.repeat(
+              min: 0.8, max: 1.0, period: Duration(milliseconds: 500)));
     }
   }
 
@@ -62,10 +63,17 @@ class FavoriteFABState extends State<FavoriteFAB>
       child: BlurOverlay(
         enabled: BlurSettings(store).getButtonsBlur(),
         radius: 100,
+        intensity: 0.65,
         child: FloatingActionButton(
           backgroundColor: favorite
-              ? Theme.of(context).backgroundColor.withAlpha(160)
-              : Theme.of(context).accentColor.withAlpha(140),
+              ? Theme
+              .of(context)
+              .backgroundColor
+              .withAlpha(120)
+              : Theme
+              .of(context)
+              .accentColor
+              .withAlpha(120),
           child: new Icon(Icons.favorite,
               color: favorite ? Colors.red : Theme.of(context).primaryColor),
           onPressed: () {

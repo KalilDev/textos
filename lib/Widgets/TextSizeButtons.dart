@@ -52,8 +52,12 @@ class TextSizeButtonState extends State<TextSizeButton>
       child: BlurOverlay(
         enabled: BlurSettings(store).getButtonsBlur(),
         radius: 80,
+        intensity: 0.65,
         child: Material(
-          color: Theme.of(context).accentColor.withAlpha(150),
+          color: Theme
+              .of(context)
+              .accentColor
+              .withAlpha(120),
           child: Row(children: <Widget>[
             TextDecrease(store: store),
             TextIncrease(store: store),
