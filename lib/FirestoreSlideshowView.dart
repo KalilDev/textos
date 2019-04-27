@@ -176,8 +176,9 @@ class TextSlideshowState extends State<TextSlideshow> {
                 ],
               ),
             )),
-        onTap: () {
-          ctrl.jumpToPage(index);
+        onTap: () async {
+          ctrl.animateToPage(index, duration: Duration(milliseconds: 500),
+              curve: Curves.decelerate);
           Navigator.push(
               context,
               CustomRoute(

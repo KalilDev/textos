@@ -42,11 +42,6 @@ class FavoriteFABState extends State<FavoriteFAB>
         }
       });
     _animationController.forward();
-    if (store.state.favoritesSet.any((string) => string.contains(text))) {
-      Future.delayed(Duration(milliseconds: 600)).then((val) =>
-          _animationController.repeat(
-              min: 0.8, max: 1.0, period: Duration(milliseconds: 500)));
-    }
   }
 
   @override
@@ -59,6 +54,11 @@ class FavoriteFABState extends State<FavoriteFAB>
   Widget build(BuildContext context) {
     final bool favorite = store.state.favoritesSet.any((string) =>
         string.contains(text));
+    if (favorite) {
+      Future.delayed(Duration(milliseconds: 600)).then((val) =>
+          _animationController.repeat(
+              min: 0.7, max: 1.0, period: Duration(milliseconds: 500)));
+    }
 
     return ScaleTransition(
       scale: _scale,
@@ -95,7 +95,7 @@ class FavoriteFABState extends State<FavoriteFAB>
               TextSlideshowState.slideList[idx]['favorites'] = current + 1;
               store.dispatch(UpdateFavorites(toAdd: text));
               _animationController.repeat(
-                  min: 0.8, max: 1.0, period: Duration(milliseconds: 500));
+                  min: 0.7, max: 1.0, period: Duration(milliseconds: 500));
             }
           },
           tooltip: Constants.textTooltipFav,
