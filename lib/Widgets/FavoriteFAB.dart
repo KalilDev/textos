@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
+import 'package:textos/FirestoreSlideshowView.dart';
 import 'package:textos/SettingsHelper.dart';
-import 'package:textos/Widgets/BlurOverlay.dart';
+import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
 class FavoriteFAB extends StatefulWidget {
   final Store store;
   final String title;
+  final String id;
 
-  FavoriteFAB({@required this.store, @required this.title});
+  FavoriteFAB({@required this.store, @required this.title, @required this.id});
 
-  createState() => FavoriteFABState(store: store, title: title);
+  createState() => FavoriteFABState(store: store, text: "${title};${id}");
 }
 
 class FavoriteFABState extends State<FavoriteFAB>
     with TickerProviderStateMixin {
   FavoriteFABState({
     @required this.store,
-    @required this.title,
+    @required this.text,
   });
 
   final Store<AppStateMain> store;
-  final String title;
+  final String text;
 
   AnimationController _animationController;
   Animation<double> _scale;
@@ -30,7 +32,6 @@ class FavoriteFABState extends State<FavoriteFAB>
   @override
   void initState() {
     super.initState();
-    final favorite = store.state.favoritesSet.toList().contains(title);
     _animationController = new AnimationController(
         duration: Duration(milliseconds: 600), vsync: this);
     _scale = new CurvedAnimation(
@@ -41,8 +42,8 @@ class FavoriteFABState extends State<FavoriteFAB>
         }
       });
     _animationController.forward();
-    if (favorite) {
-      Future.delayed(Duration(milliseconds: 600)).then((unused) =>
+    if (store.state.favoritesSet.any((string) => string.contains(text))) {
+      Future.delayed(Duration(milliseconds: 600)).then((val) =>
           _animationController.repeat(
               min: 0.8, max: 1.0, period: Duration(milliseconds: 500)));
     }
@@ -56,7 +57,8 @@ class FavoriteFABState extends State<FavoriteFAB>
 
   @override
   Widget build(BuildContext context) {
-    final favorite = store.state.favoritesSet.toList().contains(title);
+    final bool favorite = store.state.favoritesSet.any((string) =>
+        string.contains(text));
 
     return ScaleTransition(
       scale: _scale,
@@ -77,12 +79,21 @@ class FavoriteFABState extends State<FavoriteFAB>
           child: new Icon(Icons.favorite,
               color: favorite ? Colors.red : Theme.of(context).primaryColor),
           onPressed: () {
+            final idx = TextSlideshowState.slideList.indexWhere((map) {
+              return map['id'] == text.split(';')[1].split('/')[1];
+            });
             if (favorite) {
-              store.dispatch(UpdateFavorites(toRemove: title));
+              final int current = TextSlideshowState
+                  .slideList[idx]['favorites'] ?? 1;
+              TextSlideshowState.slideList[idx]['favorites'] = current - 1;
+              store.dispatch(UpdateFavorites(toRemove: text));
               _animationController.stop();
               _animationController.forward();
             } else {
-              store.dispatch(UpdateFavorites(toAdd: title));
+              final int current = TextSlideshowState
+                  .slideList[idx]['favorites'] ?? 0;
+              TextSlideshowState.slideList[idx]['favorites'] = current + 1;
+              store.dispatch(UpdateFavorites(toAdd: text));
               _animationController.repeat(
                   min: 0.8, max: 1.0, period: Duration(milliseconds: 500));
             }

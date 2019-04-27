@@ -7,7 +7,7 @@ import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
 import 'package:textos/SettingsHelper.dart';
 import 'package:textos/TextCardView.dart';
-import 'package:textos/Widgets/BlurOverlay.dart';
+import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
 // Implement optimization for the slideshow:
@@ -46,13 +46,12 @@ class TextSlideshowState extends State<TextSlideshow> {
     }
 
     // Map the documents to the data payload
-    slides =
-        query.snapshots().map((list) =>
-            list.documents.map((doc) {
-              final Map data = doc.data;
-              data['id'] = doc.documentID;
-              return data;
-            }));
+    slides = query.snapshots().map((list) =>
+        list.documents.map((doc) {
+          final Map data = doc.data;
+          data['id'] = doc.documentID;
+          return data;
+        }));
 
     // Update the active tag
     setState(() {
@@ -97,6 +96,7 @@ class TextSlideshowState extends State<TextSlideshow> {
 
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;
+    final favorites = data['favorites'] ?? 0;
 
     return GestureDetector(
         child: Hero(
@@ -123,36 +123,65 @@ class TextSlideshowState extends State<TextSlideshow> {
                         blurRadius: blur,
                         offset: Offset(offset, offset))
                   ]),
-              child: Center(
-                  child: Material(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20)),
-                      margin: EdgeInsets.all(12.5),
-                      child: BlurOverlay(
-                        radius: 15,
-                        enabled: BlurSettings(store).getTextsBlur(),
-                        child: Text(title,
-                            textAlign: TextAlign.center,
-                            style: Constants().textstyleTitle(
-                                store.state.textSize)),
-                      ),
-                    ),
-                    color: Colors.transparent,
-                  )),
+              child: Stack(
+                children: <Widget>[
+                  Center(
+                      child: Material(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)),
+                          margin: EdgeInsets.all(12.5),
+                          child: BlurOverlay(
+                            radius: 15,
+                            enabled: BlurSettings(store).getTextsBlur(),
+                            child: Text(title,
+                                textAlign: TextAlign.center,
+                                style: Constants()
+                                    .textstyleTitle(store.state.textSize)),
+                          ),
+                        ),
+                        color: Colors.transparent,
+                      )),
+                  Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Material(
+                            color: Colors.transparent,
+                            elevation: 15.0,
+                            child: Container(
+                              decoration: BoxDecoration(color: Colors.red,
+                                  borderRadius: BorderRadius.circular(200)),
+                              height: store.state.textSize * 1.5 * 4.5 + 10,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  SizedBox(width: 5.0),
+                                  Text(favorites.toString(),
+                                    style: Constants().textstyleText(
+                                        store.state.textSize * 1.5).copyWith(
+                                        fontWeight: FontWeight.bold),),
+                                  Center(child: Icon(Icons.favorite)),
+                                  SizedBox(width: 5.0),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10.0)
+                        ],
+                      ))
+                ],
+              ),
             )),
         onTap: () {
-          if (!active) {
-            ctrl.animateToPage(index,
-                duration: Duration(milliseconds: 100),
-                curve: Curves.decelerate);
-          } else {
-            Navigator.push(
+          ctrl.jumpToPage(index);
+          Navigator.push(
               context,
               CustomRoute(
-                  builder: (context) => TextCardView(map: data, store: store)),
-            );
-          }
+                  builder: (context) => TextCardView(map: data, store: store)));
         });
   }
 
@@ -162,8 +191,7 @@ class TextSlideshowState extends State<TextSlideshow> {
         color: color,
         child: Text(
           '#' + Constants.textTag[id],
-          style: Constants().textStyleButton(
-              store.state.textSize),
+          style: Constants().textStyleButton(store.state.textSize),
         ),
         onPressed: () => _queryDb(tag: id));
   }
@@ -179,13 +207,11 @@ class TextSlideshowState extends State<TextSlideshow> {
               children: <Widget>[
                 Text(
                   Constants.textTextos,
-                  style: Constants().textstyleTitle(
-                      store.state.textSize),
+                  style: Constants().textstyleTitle(store.state.textSize),
                 ),
                 Text(
                   texto,
-                  style: Constants().textstyleTitle(
-                      store.state.textSize),
+                  style: Constants().textstyleTitle(store.state.textSize),
                 ),
               ],
             ),

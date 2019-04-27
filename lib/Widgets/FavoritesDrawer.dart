@@ -12,7 +12,8 @@ class FavoritesDrawer extends StatelessWidget {
   FavoritesDrawer({@required this.store});
 
   Widget buildFavoritesItem(BuildContext context, int index) {
-    final favoriteTitle = store.state.favoritesSet.toList()[index];
+    final favoriteTitle = store.state.favoritesSet.toList()[index].split(
+        ';')[0];
     final dataList = TextSlideshowState.slideList;
 
     var idxTxt = dataList.indexWhere((list) => list['title'] == favoriteTitle);

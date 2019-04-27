@@ -4,9 +4,7 @@ import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
 import 'package:textos/Drawer.dart';
 import 'package:textos/SettingsHelper.dart';
-import 'package:textos/Widgets/BlurOverlay.dart';
-import 'package:textos/Widgets/FavoriteFAB.dart';
-import 'package:textos/Widgets/TextSizeButtons.dart';
+import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
 class TextCardView extends StatelessWidget {
@@ -59,7 +57,7 @@ class TextCard extends StatelessWidget {
       children: <Widget>[
         Dismissible(
           key: Key(title),
-          movementDuration: Duration(milliseconds: 100),
+          movementDuration: Duration(milliseconds: 250),
           confirmDismiss: (callback) {
             if (callback == DismissDirection.startToEnd) {
               Scaffold.of(context).openDrawer();
@@ -148,7 +146,8 @@ class TextCard extends StatelessWidget {
                     )),
               ),
               Positioned(
-                child: new FavoriteFAB(store: store, title: title),
+                child: new FavoriteFAB(
+                    store: store, title: title, id: 'stories/' + map['id']),
                 right: 30,
                 bottom: 30,
               ),

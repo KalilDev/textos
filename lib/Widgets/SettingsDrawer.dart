@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
 import 'package:textos/SettingsHelper.dart';
-import 'package:textos/Widgets/TextSizeButtons.dart';
+import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
 class SettingsDrawer extends StatelessWidget {

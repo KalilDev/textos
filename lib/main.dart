@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
@@ -19,6 +20,13 @@ void main() async {
       Set<String>();
   final _textSize = prefs?.getDouble('textSize') ?? 4.5;
   final _blurSettings = prefs?.getInt('blurSettings') ?? 1;
+
+  // Clear favorites if the data doesn't contain the documentID needed for
+  // setting the statistics on the database
+  if (!_favoritesSet.any((string) => string.contains(';'))) {
+    _favoritesSet.clear();
+    prefs.setStringList('favorites', _favoritesSet.toList());
+  }
 
   final store = Store<AppStateMain>(
     reducer,
@@ -143,17 +151,52 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
   }
 
   if (action is UpdateFavorites) {
-    var fav = state.favoritesSet;
-    if (action.toClear != null) fav.clear();
-    if (action.toAdd != null) fav.add(action.toAdd);
-    if (action.toRemove != null) fav.remove(action.toRemove);
+    var _fav = state.favoritesSet;
+
+    void _updateFavoritesDB(String path, int operation) async {
+      Firestore db = Firestore.instance;
+      final collection = path.split('/')[0];
+      final docID = path.split('/')[1];
+      db.runTransaction((transaction) async {
+        final reference = db.collection(collection).document(docID);
+        final snapshot = await transaction.get(reference);
+        final int current = snapshot?.data['favorites'];
+        int target;
+        if (current == null) {
+          target = 0 + operation;
+        } else {
+          target = current + operation;
+        }
+
+        await transaction.update(reference, {'favorites': target});
+      });
+    }
+
+    if (action.toClear != null) {
+      state.favoritesSet.forEach((string) {
+        final path = string.split(';')[1];
+        _updateFavoritesDB(path, -1);
+      });
+      _fav.clear();
+    }
+    if (action.toAdd != null) {
+      final path = action.toAdd.split(';')[1];
+      _updateFavoritesDB(path, 1);
+      _fav.add(action.toAdd);
+    }
+    if (action.toRemove != null) {
+      final path = action.toRemove.split(';')[1];
+      _updateFavoritesDB(path, -1);
+      _fav.remove(action.toRemove);
+    }
+
     SharedPreferences.getInstance().then((pref) {
-      pref.setStringList('favorites', fav.toList());
+      pref.setStringList('favorites', _fav.toList());
     });
 
     return AppStateMain(
         enableDarkMode: state.enableDarkMode,
-        favoritesSet: fav,
+        favoritesSet: _fav,
         textSize: state.textSize,
         settingsDrawer: state.settingsDrawer,
         blurSettings: state.blurSettings);

@@ -19,7 +19,6 @@ class BlurSettings {
     double settingsDouble = getDrawerBlur()
         ? currentSettings / settingsTable[0]
         : currentSettings * settingsTable[0];
-    print(currentSettings.toString() + ' ' + settingsDouble.toString());
     store.dispatch(UpdateBlurSettings(integer: settingsDouble.round()));
   }
 
@@ -31,7 +30,6 @@ class BlurSettings {
     final int currentSettings = store.state.blurSettings;
     double settingsDouble = getButtonsBlur() ? currentSettings /
         settingsTable[1] : currentSettings * settingsTable[1];
-    print(currentSettings.toString() + ' ' + settingsDouble.toString());
     store.dispatch(UpdateBlurSettings(integer: settingsDouble.round()));
   }
 
@@ -44,7 +42,6 @@ class BlurSettings {
     double settingsDouble = getTextsBlur()
         ? currentSettings / settingsTable[2]
         : currentSettings * settingsTable[2];
-    print(currentSettings.toString() + ' ' + settingsDouble.toString());
     store.dispatch(UpdateBlurSettings(integer: settingsDouble.round()));
   }
 }
