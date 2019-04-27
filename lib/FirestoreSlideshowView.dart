@@ -7,6 +7,7 @@ import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
 import 'package:textos/SettingsHelper.dart';
 import 'package:textos/TextCardView.dart';
+import 'package:textos/Widgets/BlurOverlay.dart';
 import 'package:textos/main.dart';
 
 // Implement optimization for the slideshow:
@@ -148,8 +149,8 @@ class TextSlideshowState extends State<TextSlideshow> {
           } else {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => TextCard(map: data, store: store)),
+              CustomRoute(
+                  builder: (context) => TextCardView(map: data, store: store)),
             );
           }
         });
@@ -225,5 +226,20 @@ class TextSlideshowState extends State<TextSlideshow> {
                 });
           }),
     );
+  }
+}
+
+class CustomRoute<T> extends MaterialPageRoute<T> {
+  CustomRoute({WidgetBuilder builder, RouteSettings settings})
+      : super(builder: builder, settings: settings);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    double opacity = animation.isCompleted ? 1.0 : 0.0;
+    if (animation.status == AnimationStatus.reverse) {
+      return FadeTransition(opacity: animation, child: child);
+    }
+    return Opacity(child: child, opacity: opacity);
   }
 }
