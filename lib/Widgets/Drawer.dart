@@ -5,10 +5,20 @@ import 'package:textos/SettingsHelper.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
-class TextAppDrawer extends StatelessWidget {
+class TextAppDrawer extends StatefulWidget {
   final Store<AppStateMain> store;
 
   TextAppDrawer({@required this.store});
+
+  createState() => new TextAppDrawerState(store: store);
+}
+
+class TextAppDrawerState extends State<TextAppDrawer> {
+  final Store<AppStateMain> store;
+
+  TextAppDrawerState({@required this.store});
+
+  bool _settingsDrawer = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +37,17 @@ class TextAppDrawer extends StatelessWidget {
                   ),
                   Center(
                       child: Text(
-                        store.state.settingsDrawer
+                        _settingsDrawer
                             ? Constants.textConfigs
                             : Constants.textFavs,
                         style: Constants().textstyleText(
                             store.state.textSize),
                       )),
-                  Expanded(child: store.state.settingsDrawer ? SettingsDrawer(
+                  Expanded(child: _settingsDrawer ? SettingsDrawer(
                       store: store) : FavoritesDrawer(store: store)),
                   ListTile(
                     title: Text(
-                      store.state.settingsDrawer
+                      _settingsDrawer
                           ? Constants.textFavs
                           : Constants.textConfigs,
                       style: Constants().textstyleTitle(
@@ -45,8 +55,9 @@ class TextAppDrawer extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     onTap: () {
-                      store.dispatch(UpdateSettingsBool(
-                          boolean: !store.state.settingsDrawer));
+                      setState(() {
+                        _settingsDrawer = !_settingsDrawer;
+                      });
                     },
                   )
                 ],

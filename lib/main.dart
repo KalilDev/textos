@@ -4,8 +4,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/Constants.dart';
-import 'package:textos/Drawer.dart';
 import 'package:textos/FirestoreSlideshowView.dart';
+import 'package:textos/Widgets/Drawer.dart';
 
 // TODO Document the app
 // TODO Implement tutorial
@@ -34,7 +34,6 @@ void main() async {
         enableDarkMode: _enableDarkMode,
         favoritesSet: _favoritesSet,
         textSize: _textSize,
-        settingsDrawer: false,
         blurSettings: _blurSettings),
   );
 
@@ -93,13 +92,11 @@ class AppStateMain {
   AppStateMain({@required this.enableDarkMode,
     @required this.favoritesSet,
     @required this.textSize,
-    @required this.settingsDrawer,
     @required this.blurSettings});
 
   bool enableDarkMode;
   Set<String> favoritesSet;
   double textSize;
-  bool settingsDrawer;
   int blurSettings;
 }
 
@@ -123,12 +120,6 @@ class UpdateTextSize {
   final double size;
 }
 
-class UpdateSettingsBool {
-  UpdateSettingsBool({@required this.boolean});
-
-  final bool boolean;
-}
-
 class UpdateBlurSettings {
   UpdateBlurSettings({@required this.integer});
 
@@ -145,7 +136,6 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: action.enable,
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
-        settingsDrawer: state.settingsDrawer,
         blurSettings: state.blurSettings);
   }
 
@@ -197,7 +187,6 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: state.enableDarkMode,
         favoritesSet: _fav,
         textSize: state.textSize,
-        settingsDrawer: state.settingsDrawer,
         blurSettings: state.blurSettings);
   }
 
@@ -210,16 +199,6 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: state.enableDarkMode,
         favoritesSet: state.favoritesSet,
         textSize: action.size,
-        settingsDrawer: state.settingsDrawer,
-        blurSettings: state.blurSettings);
-  }
-
-  if (action is UpdateSettingsBool) {
-    return AppStateMain(
-        enableDarkMode: state.enableDarkMode,
-        favoritesSet: state.favoritesSet,
-        textSize: state.textSize,
-        settingsDrawer: action.boolean,
         blurSettings: state.blurSettings);
   }
 
@@ -232,7 +211,6 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: state.enableDarkMode,
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
-        settingsDrawer: state.settingsDrawer,
         blurSettings: action.integer);
   }
 
