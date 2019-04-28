@@ -12,7 +12,8 @@ class FavoritesDrawer extends StatelessWidget {
   FavoritesDrawer({@required this.store});
 
   Widget buildFavoritesItem(BuildContext context, int index) {
-    final favoriteTitle = store.state.favoritesSet.toList()[index].split(
+    final favorite = store.state.favoritesSet.toList()[index];
+    final favoriteTitle = favorite.split(
         ';')[0];
     final dataList = TextSlideshowState.slideList;
 
@@ -55,7 +56,8 @@ class FavoritesDrawer extends StatelessWidget {
         ),
       ),
       onDismissed: (direction) =>
-          {store.dispatch(UpdateFavorites(toRemove: favoriteTitle))},
+      {store.dispatch(UpdateFavorites(toRemove: favorite))}
+    ,
       child: ListTile(
           title: txt,
           onTap: () {
