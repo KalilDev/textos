@@ -8,7 +8,6 @@ import 'package:textos/Drawer.dart';
 import 'package:textos/FirestoreSlideshowView.dart';
 
 // TODO Document the app
-// TODO Implement Firestore favorites
 // TODO Implement tutorial
 // TODO Implement Firebase analytics
 // TODO Implement optimization for the slideshow

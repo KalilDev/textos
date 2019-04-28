@@ -20,6 +20,7 @@ class TextCardView extends StatelessWidget {
     exit() {
       Navigator.pop(context);
     }
+
     return MaterialApp(
         theme: store.state.enableDarkMode
             ? Constants.themeDataDark
@@ -73,7 +74,13 @@ class TextCard extends StatelessWidget {
                     tag: map['title'],
                     child: Container(
                       margin: EdgeInsets.only(
-                          top: 50, bottom: 20, right: 20, left: 10),
+                          top: MediaQuery
+                              .of(context)
+                              .padding
+                              .top + 40,
+                          bottom: 20,
+                          right: 20,
+                          left: 10),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Theme
@@ -100,40 +107,34 @@ class TextCard extends StatelessWidget {
                             child: Container(
                                 padding: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(20)),
+                                    borderRadius: BorderRadius.circular(20)),
                                 child: Column(
                                   children: <Widget>[
                                     Expanded(
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                            20.0),
+                                        borderRadius:
+                                        BorderRadius.circular(20.0),
                                         child: SingleChildScrollView(
-                                          child:
-                                          Column(children: <Widget>[
+                                          child: Column(children: <Widget>[
                                             Text(title,
-                                                textAlign:
-                                                TextAlign.center,
+                                                textAlign: TextAlign.center,
                                                 style: Constants()
                                                     .textstyleTitle(
-                                                    store.state
-                                                        .textSize)),
+                                                    store.state.textSize)),
                                             SizedBox(
                                               height: 10,
                                             ),
                                             Text(text,
                                                 style: Constants()
                                                     .textstyleText(
-                                                    store.state
-                                                        .textSize)),
+                                                    store.state.textSize)),
                                             SizedBox(
                                               height: 55,
                                               child: Center(
                                                 child: Text(date,
                                                     style: Constants()
-                                                        .textstyleDate(
-                                                        store.state
-                                                            .textSize)),
+                                                        .textstyleDate(store
+                                                        .state.textSize)),
                                               ),
                                             ),
                                           ]),
@@ -159,7 +160,18 @@ class TextCard extends StatelessWidget {
             ],
           ),
         ),
-        Positioned(child: new DrawerButton(), top: 5, left: 5,),
+        Positioned(
+          child: Tooltip(message: Constants.textTooltipDrawer,
+              child: InkWell(customBorder: CircleBorder(),
+                  child: Container(
+                      height: 60, width: 60, child: Icon(Icons.menu)),
+                  onTap: () => Scaffold.of(context).openDrawer())),
+          top: MediaQuery
+              .of(context)
+              .padding
+              .top - 2.5,
+          left: -2.5,
+        ),
       ],
     );
   }

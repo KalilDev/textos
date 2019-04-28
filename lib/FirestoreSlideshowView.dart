@@ -92,7 +92,10 @@ class TextSlideshowState extends State<TextSlideshow> {
     // Animated Properties
     final double blur = active ? 30 : 0;
     final double offset = active ? 20 : 0;
-    final double top = active ? 50 : 180;
+    final double top = active ? MediaQuery
+        .of(context)
+        .padding
+        .top + 10 : 180;
 
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;

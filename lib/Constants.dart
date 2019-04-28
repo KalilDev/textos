@@ -23,6 +23,7 @@ class Constants {
   static const textTooltipTextSizeLess = 'Diminuir tamanho do texto';
   static const textTooltipTextSizePlus = 'Aumentar tamanho do texto';
   static const textTooltipFav = 'Adicionar aos favoritos';
+  static const textTooltipDrawer = 'Abrir gaveta';
 
   // Theme Light
   static const themeBackgroundLight = Colors.white;
