@@ -41,8 +41,8 @@ class TextSizeButtonState extends State<TextSizeButton>
 
   @override
   void dispose() {
-    super.dispose();
     _animationController.dispose();
+    super.dispose();
   }
 
   @override

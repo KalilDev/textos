@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
@@ -102,90 +101,66 @@ class TextSlideshowState extends State<TextSlideshow> {
     final favorites = data['favorites'] ?? 0;
 
     return GestureDetector(
-        child: Hero(
-            tag: title,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              curve: Curves.decelerate,
-              margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Theme
-                      .of(context)
-                      .backgroundColor,
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: CachedNetworkImageProvider(img),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Theme
-                            .of(context)
-                            .primaryColor
-                            .withAlpha(80),
-                        blurRadius: blur,
-                        offset: Offset(offset, offset))
-                  ]),
-              child: Stack(
-                children: <Widget>[
-                  Center(
-                      child: Material(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20)),
-                          margin: EdgeInsets.all(12.5),
-                          child: BlurOverlay(
-                            radius: 15,
-                            enabled: BlurSettings(store).getTextsBlur(),
-                            child: Text(title,
-                                textAlign: TextAlign.center,
-                                style: Constants()
-                                    .textstyleTitle(store.state.textSize)),
-                          ),
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 500),
+          curve: Curves.decelerate,
+          margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Theme
+                  .of(context)
+                  .backgroundColor,
+              boxShadow: [
+                BoxShadow(
+                    color: Theme
+                        .of(context)
+                        .primaryColor
+                        .withAlpha(80),
+                    blurRadius: blur,
+                    offset: Offset(offset, offset))
+              ]),
+          child: Stack(
+            children: <Widget>[
+              Hero(tag: 'image' + data['id'],
+                  child: ImageBackground(img: img,
+                      enabled: false,
+                      key: Key('image' + data['id']))),
+              Center(
+                  child: Hero(
+                    tag: 'body' + data['id'],
+                    child: Material(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20)),
+                        margin: EdgeInsets.all(12.5),
+                        child: BlurOverlay(
+                          radius: 15,
+                          enabled: BlurSettings(store).getTextsBlur(),
+                          child: Text(title,
+                              textAlign: TextAlign.center,
+                              style: Constants()
+                                  .textstyleTitle(store.state.textSize)),
                         ),
-                        color: Colors.transparent,
-                      )),
-                  Align(
-                      alignment: FractionalOffset.bottomCenter,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Material(
-                            color: Colors.transparent,
-                            elevation: 15.0,
-                            child: Container(
-                              decoration: BoxDecoration(color: Colors.red,
-                                  borderRadius: BorderRadius.circular(200)),
-                              height: store.state.textSize * 1.5 * 4.5 + 10,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  SizedBox(width: 5.0),
-                                  Text(favorites.toString(),
-                                    style: Constants().textstyleText(
-                                        store.state.textSize * 1.5).copyWith(
-                                        fontWeight: FontWeight.bold),),
-                                  Center(child: Icon(Icons.favorite)),
-                                  SizedBox(width: 5.0),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10.0)
-                        ],
-                      ))
-                ],
-              ),
-            )),
+                      ),
+                      color: Colors.transparent,
+                    ),
+                  )),
+              Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: FavoritesCount(textSize: store.state.textSize,
+                      favorites: favorites,
+                      blurEnabled: BlurSettings(store).getTextsBlur()))
+            ],
+          ),
+        ),
         onTap: () async {
           ctrl.animateToPage(index, duration: Duration(milliseconds: 500),
               curve: Curves.decelerate);
           Navigator.push(
               context,
               CustomRoute(
-                  builder: (context) => TextCardView(map: data, store: store)));
+                  builder: (context) =>
+                      TextCardView(data: data, store: store)));
         });
   }
 
@@ -264,12 +239,15 @@ class CustomRoute<T> extends MaterialPageRoute<T> {
       : super(builder: builder, settings: settings);
 
   @override
+  Duration get transitionDuration => const Duration(milliseconds: 500);
+
+  @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    double opacity = animation.isCompleted ? 1.0 : 0.0;
     if (animation.status == AnimationStatus.reverse) {
-      return FadeTransition(opacity: animation, child: child);
+      return ScaleTransition(
+          scale: Tween(begin: 0.0, end: 1.0).animate(animation), child: child);
     }
-    return Opacity(child: child, opacity: opacity);
+    return FadeTransition(opacity: animation, child: child);
   }
 }

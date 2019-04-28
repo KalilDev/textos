@@ -66,7 +66,7 @@ class FavoritesDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        TextCardView(map: dataList[idxTxt], store: store)),
+    TextCardView(data: dataList[idxTxt], store: store)),
               );
             }
           }),

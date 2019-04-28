@@ -10,7 +10,6 @@ import 'package:textos/Widgets/Drawer.dart';
 // TODO Document the app
 // TODO Implement tutorial
 // TODO Implement Firebase analytics
-// TODO Implement optimization for the slideshow
 void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
