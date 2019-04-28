@@ -34,7 +34,7 @@ class FavoriteFABState extends State<FavoriteFAB>
   void initState() {
     super.initState();
     _animationController = new AnimationController(
-        duration: Duration(milliseconds: 600), vsync: this);
+        duration: Duration(milliseconds: 1200), vsync: this);
     _scale = new CurvedAnimation(
         parent: _animationController, curve: Curves.easeInOut)
       ..addStatusListener((status) {
@@ -57,7 +57,7 @@ class FavoriteFABState extends State<FavoriteFAB>
     final bool favorite = store.state.favoritesSet.any((string) =>
         string.contains(text));
     if (favorite) {
-      Future.delayed(Duration(milliseconds: 600)).then((val) =>
+      Future.delayed(Duration(milliseconds: 1200)).then((val) =>
       _disposed ? null : _animationController.repeat(
               min: 0.7, max: 1.0, period: Duration(milliseconds: 500)));
     }
@@ -81,7 +81,9 @@ class FavoriteFABState extends State<FavoriteFAB>
           child: new Icon(Icons.favorite,
               color: favorite ? Colors.red : Theme.of(context).primaryColor),
           onPressed: () {
-            final idx = TextSlideshowState.slideList.indexWhere((map) {
+            if (text.split(';')[1].split('/')[1] !=
+                Constants.textNoTextAvailable['id']) {
+              final idx = TextSlideshowState.slideList.indexWhere((map) {
               return map['id'] == text.split(';')[1].split('/')[1];
             });
             if (favorite) {
@@ -98,6 +100,7 @@ class FavoriteFABState extends State<FavoriteFAB>
               store.dispatch(UpdateFavorites(toAdd: text));
               _animationController.repeat(
                   min: 0.7, max: 1.0, period: Duration(milliseconds: 500));
+            }
             }
           },
           tooltip: Constants.textTooltipFav,

@@ -29,20 +29,10 @@ class TextSlideshowState extends State<TextSlideshow> {
   static Query query;
 
   void _queryDb({int tag = 0}) {
-    switch (tag) {
-      case 0:
-        {
-          query = db.collection('stories');
-        }
-        break;
+    query = db.collection(Constants.authorCollections[store.state.author]);
 
-      default:
-        {
-          query = db
-              .collection('stories')
-              .where('tags', arrayContains: Constants.textTag[tag]);
-        }
-    }
+    if (tag != 0)
+      query = query.where('tags', arrayContains: Constants.textTag[tag]);
 
     // Map the documents to the data payload
     slides = query.snapshots().map((list) =>
@@ -121,8 +111,10 @@ class TextSlideshowState extends State<TextSlideshow> {
               ]),
           child: Stack(
             children: <Widget>[
-              Hero(tag: 'image' + data['id'],
-                  child: ImageBackground(img: img,
+              Hero(
+                  tag: 'image' + data['id'],
+                  child: ImageBackground(
+                      img: img,
                       enabled: false,
                       key: Key('image' + data['id']))),
               Center(
@@ -130,16 +122,16 @@ class TextSlideshowState extends State<TextSlideshow> {
                     tag: 'body' + data['id'],
                     child: Material(
                       child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
+                        decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(20)),
                         margin: EdgeInsets.all(12.5),
                         child: BlurOverlay(
                           radius: 15,
                           enabled: BlurSettings(store).getTextsBlur(),
                           child: Text(title,
                               textAlign: TextAlign.center,
-                              style: Constants()
-                                  .textstyleTitle(store.state.textSize)),
+                              style:
+                              Constants().textstyleTitle(store.state.textSize)),
                         ),
                       ),
                       color: Colors.transparent,
@@ -147,15 +139,16 @@ class TextSlideshowState extends State<TextSlideshow> {
                   )),
               Align(
                   alignment: FractionalOffset.bottomCenter,
-                  child: FavoritesCount(textSize: store.state.textSize,
+                  child: FavoritesCount(
+                      textSize: store.state.textSize,
                       favorites: favorites,
                       blurEnabled: BlurSettings(store).getTextsBlur()))
             ],
           ),
         ),
         onTap: () async {
-          ctrl.animateToPage(index, duration: Duration(milliseconds: 500),
-              curve: Curves.decelerate);
+          ctrl.animateToPage(index,
+              duration: Duration(milliseconds: 500), curve: Curves.decelerate);
           Navigator.push(
               context,
               CustomRoute(
@@ -176,7 +169,6 @@ class TextSlideshowState extends State<TextSlideshow> {
   }
 
   _buildTagPage() {
-    var texto = Constants.textKalil;
     return Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -188,10 +180,24 @@ class TextSlideshowState extends State<TextSlideshow> {
                   Constants.textTextos,
                   style: Constants().textstyleTitle(store.state.textSize),
                 ),
-                Text(
-                  texto,
-                  style: Constants().textstyleTitle(store.state.textSize),
-                ),
+                DropdownButton(
+                    value: store.state.author,
+                    items: <DropdownMenuItem>[
+                      DropdownMenuItem(
+                          value: 0,
+                          child: Text(Constants.authorNames[0],
+                              style: Constants().textstyleTitle(
+                                  store.state.textSize))),
+                      DropdownMenuItem(
+                          value: 1,
+                          child: Text(Constants.authorNames[1],
+                              style: Constants().textstyleTitle(
+                                  store.state.textSize))),
+                    ],
+                    onChanged: (val) async {
+                      store.dispatch(UpdateAuthor(author: val));
+                      _queryDb();
+                    })
               ],
             ),
             Text(Constants.textFilter,
@@ -215,7 +221,9 @@ class TextSlideshowState extends State<TextSlideshow> {
           stream: slides,
           initialData: [],
           builder: (context, AsyncSnapshot snap) {
-            slideList = snap.data.toList();
+            final data = snap.data.toList();
+            slideList =
+            data.length == 0 ? [Constants.textNoTextAvailable,] : data;
 
             return PageView.builder(
                 controller: ctrl,
@@ -239,14 +247,15 @@ class CustomRoute<T> extends MaterialPageRoute<T> {
       : super(builder: builder, settings: settings);
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 500);
+  Duration get transitionDuration => const Duration(milliseconds: 700);
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     if (animation.status == AnimationStatus.reverse) {
-      return ScaleTransition(
-          scale: Tween(begin: 0.0, end: 1.0).animate(animation), child: child);
+      return FadeTransition(
+          opacity: Tween(begin: 0.0, end: 0.2).animate(animation),
+          child: child);
     }
     return FadeTransition(opacity: animation, child: child);
   }

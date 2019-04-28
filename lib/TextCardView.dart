@@ -147,7 +147,8 @@ class TextCard extends StatelessWidget {
                     child: new FavoriteFAB(
                         store: store,
                         title: title,
-                        id: 'stories/' + data['id']),
+                        id: Constants.authorCollections[store.state.author] +
+                            '/' + data['id']),
                     right: 10,
                     bottom: 10,
                   ),

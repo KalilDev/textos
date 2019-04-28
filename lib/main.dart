@@ -52,7 +52,8 @@ class MyApp extends StatelessWidget {
           store.state.enableDarkMode,
           store.state.favoritesSet,
           store.state.textSize,
-          store.state.blurSettings
+          store.state.blurSettings,
+          store.state.author,
         ];
       },
       builder: (_, List list) {
@@ -91,12 +92,14 @@ class AppStateMain {
   AppStateMain({@required this.enableDarkMode,
     @required this.favoritesSet,
     @required this.textSize,
-    @required this.blurSettings});
+    @required this.blurSettings,
+    this.author = 0});
 
   bool enableDarkMode;
   Set<String> favoritesSet;
   double textSize;
   int blurSettings;
+  int author;
 }
 
 class UpdateDarkMode {
@@ -125,6 +128,12 @@ class UpdateBlurSettings {
   final int integer;
 }
 
+class UpdateAuthor {
+  UpdateAuthor({@required this.author});
+
+  final int author;
+}
+
 AppStateMain reducer(AppStateMain state, dynamic action) {
   if (action is UpdateDarkMode) {
     SharedPreferences.getInstance().then((pref) {
@@ -135,7 +144,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: action.enable,
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
-        blurSettings: state.blurSettings);
+        blurSettings: state.blurSettings,
+        author: state.author);
   }
 
   if (action is UpdateFavorites) {
@@ -186,7 +196,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: state.enableDarkMode,
         favoritesSet: _fav,
         textSize: state.textSize,
-        blurSettings: state.blurSettings);
+        blurSettings: state.blurSettings,
+        author: state.author);
   }
 
   if (action is UpdateTextSize) {
@@ -198,7 +209,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: state.enableDarkMode,
         favoritesSet: state.favoritesSet,
         textSize: action.size,
-        blurSettings: state.blurSettings);
+        blurSettings: state.blurSettings,
+        author: state.author);
   }
 
   if (action is UpdateBlurSettings) {
@@ -210,7 +222,17 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         enableDarkMode: state.enableDarkMode,
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
-        blurSettings: action.integer);
+        blurSettings: action.integer,
+        author: state.author);
+  }
+
+  if (action is UpdateAuthor) {
+    return AppStateMain(
+        enableDarkMode: state.enableDarkMode,
+        favoritesSet: state.favoritesSet,
+        textSize: state.textSize,
+        blurSettings: state.blurSettings,
+        author: action.author);
   }
 
   return state;

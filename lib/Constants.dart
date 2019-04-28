@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class Constants {
   // Text
-  static const textKalil = 'do Kalil';
   static const textTextos = 'Textos ';
   static const textFilter = 'FILTRO';
   static const List<String> textTag = [
@@ -24,6 +23,26 @@ class Constants {
   static const textTooltipTextSizePlus = 'Aumentar tamanho do texto';
   static const textTooltipFav = 'Adicionar aos favoritos';
   static const textTooltipDrawer = 'Abrir gaveta';
+  static final Map<String, dynamic> textNoTextAvailable = {
+    'title': 'Não há nenhum texto nessa categoria',
+    'img': 'https://i.imgur.com/yugoBNL.jpg',
+    'text': 'Nenhum texto foi encontrado nessa categoria, tente o seguinte: Espere o autor publicar algum texto nessa categoria, desconecte e reconecte a internet, ou entre em contato com o criador do aplicativo caso tenha certeza que deveria ter um texto aqui',
+    'favorites': 0,
+    'date': DateTime.now().toIso8601String().replaceAll('-', '/').substring(
+        0, 10),
+    'tags': textTag,
+    'id': 'TEXTNOTFOUNDID'
+  };
+
+  // Authors
+  static const List<String> authorNames = [
+    'do Kalil',
+    'da Maria'
+  ];
+  static const List<String> authorCollections = [
+    'stories',
+    'maria'
+  ];
 
   // Theme Light
   static const themeBackgroundLight = Colors.white;

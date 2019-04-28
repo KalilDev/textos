@@ -11,8 +11,7 @@ class FavoritesDrawer extends StatelessWidget {
 
   FavoritesDrawer({@required this.store});
 
-  Widget buildFavoritesItem(BuildContext context, int index) {
-    final favorite = store.state.favoritesSet.toList()[index];
+  Widget buildFavoritesItem(BuildContext context, String favorite) {
     final favoriteTitle = favorite.split(
         ';')[0];
     final dataList = TextSlideshowState.slideList;
@@ -77,10 +76,17 @@ class FavoritesDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final allFavorites = store.state.favoritesSet;
+    List<String> favorites = [];
+    allFavorites.forEach((string) {
+      if (string.contains(Constants.authorCollections[store.state.author])) {
+        favorites.add(string);
+      }
+    });
     return new ListView.separated(
-      itemCount: store.state.favoritesSet.length,
+      itemCount: favorites.length,
       itemBuilder: (BuildContext context, int index) =>
-          buildFavoritesItem(context, index),
+          buildFavoritesItem(context, favorites[index]),
       separatorBuilder: (BuildContext context, int index) => Divider(),
     );
   }
