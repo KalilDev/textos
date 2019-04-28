@@ -10,6 +10,9 @@ import 'package:textos/Widgets/Drawer.dart';
 // TODO Document the app
 // TODO Implement tutorial
 // TODO Implement Firebase analytics
+// TODO Fix heartbeat not stopping if you dismiss the favorite from the drawer
+// TODO Let authors upload texts from the app
+// TODO Add notifications
 void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
