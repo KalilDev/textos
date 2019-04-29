@@ -14,7 +14,6 @@ import 'package:textos/Widgets/Widgets.dart';
 // TODO Fix heartbeat not stopping if you dismiss the favorite from the drawer
 // TODO Let authors upload texts from the app
 // TODO Let authors specify their own tags
-// TODO Prevent texts with -1 likes
 // TODO Make tapping the notification open the respective text
 void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -187,6 +186,7 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         } else {
           target = current + operation;
         }
+        target = target <= -1 ? 0 : target;
 
         await transaction.update(reference, {'favorites': target});
       });

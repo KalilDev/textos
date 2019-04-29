@@ -91,14 +91,16 @@ class FavoriteFABState extends State<FavoriteFAB>
               if (favorite) {
                 final int current = TextSlideshowState
                     .slideList[idx]['favorites'] ?? 1;
-                TextSlideshowState.slideList[idx]['favorites'] = current - 1;
+                TextSlideshowState.slideList[idx]['favorites'] =
+                current == 0 ? 0 : current - 1;
                 store.dispatch(UpdateFavorites(toRemove: text));
                 _animationController.stop();
                 _animationController.forward();
               } else {
                 final int current = TextSlideshowState
                     .slideList[idx]['favorites'] ?? 0;
-                TextSlideshowState.slideList[idx]['favorites'] = current + 1;
+                TextSlideshowState.slideList[idx]['favorites'] =
+                current == -1 ? 1 : current + 1;
                 store.dispatch(UpdateFavorites(toAdd: text));
                 _animationController.repeat(
                     min: 0.7, max: 1.0, period: Duration(milliseconds: 500));
