@@ -100,7 +100,7 @@ class TextCard extends StatelessWidget {
                     child: Material(
                         color: Colors.transparent,
                         child: BlurOverlay(
-                          enabled: BlurSettings(store).getTextsBlur(),
+                          enabled: BlurSettings(store: store).getTextsBlur(),
                           radius: 20,
                           child: Container(
                               padding: EdgeInsets.all(5),

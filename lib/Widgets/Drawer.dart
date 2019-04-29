@@ -28,7 +28,7 @@ class TextAppDrawerState extends State<TextAppDrawer> {
       data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
       child: Drawer(
           child: BlurOverlay(
-              enabled: BlurSettings(store).getDrawerBlur(),
+              enabled: BlurSettings(store: store).getDrawerBlur(),
               child: Column(
                 children: <Widget>[
                   SizedBox(

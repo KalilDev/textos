@@ -127,7 +127,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                         margin: EdgeInsets.all(12.5),
                         child: BlurOverlay(
                           radius: 15,
-                          enabled: BlurSettings(store).getTextsBlur(),
+                          enabled: BlurSettings(store: store).getTextsBlur(),
                           child: Text(title,
                               textAlign: TextAlign.center,
                               style:
@@ -142,7 +142,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                   child: FavoritesCount(
                       textSize: store.state.textSize,
                       favorites: favorites,
-                      blurEnabled: BlurSettings(store).getTextsBlur()))
+                      blurEnabled: BlurSettings(store: store).getTextsBlur()))
             ],
           ),
         ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Constants.dart';
@@ -13,7 +15,7 @@ class FavoriteFAB extends StatefulWidget {
 
   FavoriteFAB({@required this.store, @required this.title, @required this.id});
 
-  createState() => FavoriteFABState(store: store, text: "${title};${id}");
+  createState() => FavoriteFABState(store: store, text: title + ';' + id);
 }
 
 class FavoriteFABState extends State<FavoriteFAB>
@@ -59,13 +61,13 @@ class FavoriteFABState extends State<FavoriteFAB>
     if (favorite) {
       Future.delayed(Duration(milliseconds: 1200)).then((val) =>
       _disposed ? null : _animationController.repeat(
-              min: 0.7, max: 1.0, period: Duration(milliseconds: 500)));
+          min: 0.7, max: 1.0, period: Duration(milliseconds: 500)));
     }
 
     return ScaleTransition(
       scale: _scale,
       child: BlurOverlay(
-        enabled: BlurSettings(store).getButtonsBlur(),
+        enabled: BlurSettings(store: store).getButtonsBlur(),
         radius: 100,
         intensity: 0.65,
         child: FloatingActionButton(
@@ -84,23 +86,23 @@ class FavoriteFABState extends State<FavoriteFAB>
             if (text.split(';')[1].split('/')[1] !=
                 Constants.textNoTextAvailable['id']) {
               final idx = TextSlideshowState.slideList.indexWhere((map) {
-              return map['id'] == text.split(';')[1].split('/')[1];
-            });
-            if (favorite) {
-              final int current = TextSlideshowState
-                  .slideList[idx]['favorites'] ?? 1;
-              TextSlideshowState.slideList[idx]['favorites'] = current - 1;
-              store.dispatch(UpdateFavorites(toRemove: text));
-              _animationController.stop();
-              _animationController.forward();
-            } else {
-              final int current = TextSlideshowState
-                  .slideList[idx]['favorites'] ?? 0;
-              TextSlideshowState.slideList[idx]['favorites'] = current + 1;
-              store.dispatch(UpdateFavorites(toAdd: text));
-              _animationController.repeat(
-                  min: 0.7, max: 1.0, period: Duration(milliseconds: 500));
-            }
+                return map['id'] == text.split(';')[1].split('/')[1];
+              });
+              if (favorite) {
+                final int current = TextSlideshowState
+                    .slideList[idx]['favorites'] ?? 1;
+                TextSlideshowState.slideList[idx]['favorites'] = current - 1;
+                store.dispatch(UpdateFavorites(toRemove: text));
+                _animationController.stop();
+                _animationController.forward();
+              } else {
+                final int current = TextSlideshowState
+                    .slideList[idx]['favorites'] ?? 0;
+                TextSlideshowState.slideList[idx]['favorites'] = current + 1;
+                store.dispatch(UpdateFavorites(toAdd: text));
+                _animationController.repeat(
+                    min: 0.7, max: 1.0, period: Duration(milliseconds: 500));
+              }
             }
           },
           tooltip: Constants.textTooltipFav,

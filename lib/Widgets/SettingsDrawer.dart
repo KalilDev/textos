@@ -22,7 +22,8 @@ class SettingsDrawer extends StatelessWidget {
             value: store.state.enableDarkMode,
             activeColor: Theme.of(context).accentColor,
             activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
-            onChanged: (Map) => store
+            onChanged: (map) =>
+                store
                 .dispatch(UpdateDarkMode(enable: !store.state.enableDarkMode))),
         ListTile(
             leading: Icon(Icons.text_fields),
@@ -44,24 +45,24 @@ class SettingsDrawer extends StatelessWidget {
         SwitchListTile(
             title: Text(Constants.textTextBlurDrawer, style: settingsStyle),
             secondary: Icon(Icons.blur_linear),
-            value: BlurSettings(store).getDrawerBlur(),
+            value: BlurSettings(store: store).getDrawerBlur(),
             activeColor: Theme.of(context).accentColor,
             activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
-            onChanged: (Map) => BlurSettings(store).setDrawerBlur()),
+            onChanged: (map) => BlurSettings(store: store).setDrawerBlur()),
         SwitchListTile(
             title: Text(Constants.textTextBlurButtons, style: settingsStyle),
             secondary: Icon(Icons.blur_circular),
-            value: BlurSettings(store).getButtonsBlur(),
+            value: BlurSettings(store: store).getButtonsBlur(),
             activeColor: Theme.of(context).accentColor,
             activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
-            onChanged: (Map) => BlurSettings(store).setButtonsBlur()),
+            onChanged: (map) => BlurSettings(store: store).setButtonsBlur()),
         SwitchListTile(
             title: Text(Constants.textTextBlurText, style: settingsStyle),
             secondary: Icon(Icons.blur_on),
-            value: BlurSettings(store).getTextsBlur(),
+            value: BlurSettings(store: store).getTextsBlur(),
             activeColor: Theme.of(context).accentColor,
             activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
-            onChanged: (Map) => BlurSettings(store).setTextsBlur()),
+            onChanged: (map) => BlurSettings(store: store).setTextsBlur()),
       ],
     );
   }

@@ -1,18 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/Constants.dart';
 import 'package:textos/FirestoreSlideshowView.dart';
-import 'package:textos/Widgets/Drawer.dart';
+import 'package:textos/Widgets/Widgets.dart';
 
 // TODO Document the app
 // TODO Implement tutorial
 // TODO Implement Firebase analytics
 // TODO Fix heartbeat not stopping if you dismiss the favorite from the drawer
 // TODO Let authors upload texts from the app
-// TODO Add notifications
+// TODO Let authors specify their own tags
+// TODO Prevent texts with -1 likes
+// TODO Make tapping the notification open the respective text
 void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -60,17 +63,33 @@ class MyApp extends StatelessWidget {
         ];
       },
       builder: (_, List list) {
-        return SettingsView();
+        return StoreView();
       },
     );
   }
 }
 
-class SettingsView extends StatefulWidget {
-  createState() => SettingsViewState();
+class StoreView extends StatefulWidget {
+  createState() => StoreViewState();
 }
 
-class SettingsViewState extends State<SettingsView> {
+class StoreViewState extends State<StoreView> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  @override
+  void initState() {
+    super.initState();
+    _firebaseMessaging.configure(
+        onResume: (Map<String, dynamic> map) async {
+          // To implement
+        },
+        onLaunch: (Map<String, dynamic> map) async {
+          // To implement
+        }
+    );
+    _firebaseMessaging.getToken().then((token) => print(token));
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreBuilder(

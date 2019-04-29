@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="new_texts_notification_channel_id">com.kalil.texts.newTexts</string>
+    <string name="new_texts_notification_channel_name">Novos Textos</string>
+    <string name="comeback_notification_channel_id">com.kalil.texts.comeback</string>
+    <string name="comeback_notification_channel_name">Lembrete para ler</string>
+</resources>

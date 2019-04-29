@@ -5,7 +5,7 @@ import 'package:textos/main.dart';
 class BlurSettings {
   Store<AppStateMain> store;
 
-  BlurSettings(@required this.store);
+  BlurSettings({@required this.store});
 
   List<double> settingsTable = [2.0, 3.0, 5.0];
 
