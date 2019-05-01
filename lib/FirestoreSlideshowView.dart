@@ -8,6 +8,7 @@ import 'package:textos/SettingsHelper.dart';
 import 'package:textos/TextCardView.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
+import 'package:vibration/vibration.dart';
 
 // Implement optimization for the slideshow:
 // Idea: Only load the Decoration image for the current ∓3 pages
@@ -68,6 +69,7 @@ class TextSlideshowState extends State<TextSlideshow> {
       int next = ctrl.page.round();
 
       if (currentPage != next) {
+        Vibration.vibrate(duration: 90);
         setState(() {
           currentPage = next;
         });

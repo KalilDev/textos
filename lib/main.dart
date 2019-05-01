@@ -62,28 +62,62 @@ class MyApp extends StatelessWidget {
         ];
       },
       builder: (_, List list) {
-        return StoreView();
+        return StoreBuilder(
+            builder: (BuildContext context, Store<AppStateMain> store) {
+              return StoreView(store: store);
+            });
       },
     );
   }
 }
 
 class StoreView extends StatefulWidget {
-  createState() => StoreViewState();
+  Store store;
+
+  StoreView({@required this.store});
+
+  createState() => StoreViewState(store: store);
 }
 
 class StoreViewState extends State<StoreView> {
+  Store<AppStateMain> store;
+
+  StoreViewState({@required this.store});
+
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
     super.initState();
+    _firebaseMessaging.subscribeToTopic('debug');
     _firebaseMessaging.configure(
-        onResume: (Map<String, dynamic> map) async {
-          // To implement
+        onResume: (Map<String, dynamic> map) {
+          final Map<String, String> data = map['data'];
+          print('onResume: ' + data.toString());
+          final String collection = data['collection'];
+          final String id = data['id'];
+          print(collection + '/' + id);
+          //final snapshot = await Firestore.instance.collection(collection).document(id).get();
+          //print(snapshot.data);
+          //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
         },
-        onLaunch: (Map<String, dynamic> map) async {
-          // To implement
+        onMessage: (Map<String, dynamic> map) {
+          final Map<String, String> data = map['data'];
+          print('onMessage: ' + data.toString());
+          final String collection = data['collection'];
+          final String id = data['id'];
+          print(collection + '/' + id);
+          //final snapshot = await Firestore.instance.collection(collection).document(id).get();
+          //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
+        },
+        onLaunch: (Map<String, dynamic> map) {
+          final Map<String, String> data = map['data'];
+          print('onLaunch: ' + data.toString());
+          final String collection = data['collection'];
+          final String id = data['id'];
+          print(collection + '/' + id);
+          //final snapshot = await Firestore.instance.collection(collection).document(id).get();
+          //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
         }
     );
     _firebaseMessaging.getToken().then((token) => print(token));
@@ -91,19 +125,15 @@ class StoreViewState extends State<StoreView> {
 
   @override
   Widget build(BuildContext context) {
-    return StoreBuilder(
-      builder: (BuildContext context, Store<AppStateMain> store) {
-        return MaterialApp(
-          theme: store.state.enableDarkMode
-              ? Constants.themeDataDark
-              : Constants.themeDataLight,
-          home: Scaffold(
-            appBar: Constants().appbarTransparent(store.state.enableDarkMode),
-            body: TextSlideshow(store: store),
-            drawer: TextAppDrawer(store: store),
-          ),
-        );
-      },
+    return MaterialApp(
+      theme: store.state.enableDarkMode
+          ? Constants.themeDataDark
+          : Constants.themeDataLight,
+      home: Scaffold(
+        appBar: Constants().appbarTransparent(store.state.enableDarkMode),
+        body: TextSlideshow(store: store),
+        drawer: TextAppDrawer(store: store),
+      ),
     );
   }
 }
