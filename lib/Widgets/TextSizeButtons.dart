@@ -30,12 +30,7 @@ class TextSizeButtonState extends State<TextSizeButton>
     _animationController = new AnimationController(
         duration: const Duration(milliseconds: 1200), vsync: this);
     _scale = new CurvedAnimation(
-        parent: _animationController, curve: Curves.easeInOut)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.dismissed) {
-          _animationController.forward();
-        }
-      });
+        parent: _animationController, curve: Curves.easeInOut);
     _animationController.forward();
   }
 

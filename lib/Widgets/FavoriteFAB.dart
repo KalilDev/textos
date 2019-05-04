@@ -28,42 +28,55 @@ class FavoriteFABState extends State<FavoriteFAB>
   final Store<AppStateMain> store;
   final String text;
 
-  AnimationController _animationController;
+  AnimationController _scaleController;
+  AnimationController _heartController;
   Animation<double> _scale;
-  bool _disposed = false;
+  Animation<double> _heartScale;
+  bool _favorite;
 
   @override
   void initState() {
     super.initState();
-    _animationController = new AnimationController(
+    _scaleController = new AnimationController(
         duration: Duration(milliseconds: 1200), vsync: this);
-    _scale = new CurvedAnimation(
-        parent: _animationController, curve: Curves.easeInOut)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.dismissed) {
-          _animationController.forward();
-        }
-      });
-    _animationController.forward();
+    _heartController = new AnimationController(
+        duration: Duration(milliseconds: 500), vsync: this);
+
+    _scale =
+    new CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut);
+    _heartScale =
+    new CurvedAnimation(parent: _heartController, curve: Curves.easeInOut);
+
+    _scaleController.forward();
+    _heartController.value = 1.0;
+    Future.delayed(Duration(milliseconds: 1200), () =>
+        _heartController.notifyStatusListeners(AnimationStatus.completed));
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
-    _disposed = true;
+    _heartController.dispose();
+    _scaleController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool favorite = store.state.favoritesSet.any((string) =>
-        string.contains(text));
-    if (favorite) {
-      Future.delayed(Duration(milliseconds: 1200)).then((val) =>
-      _disposed ? null : _animationController.repeat(
-          min: 0.7, max: 1.0, period: Duration(milliseconds: 500)));
+    _favorite = store.state.favoritesSet.any((string) => string.contains(text));
+    if (_favorite) {
+      _heartController.notifyStatusListeners(AnimationStatus.completed);
     }
-
+    _heartScale.addStatusListener((status) {
+      if (_favorite) {
+        if (status == AnimationStatus.completed) {
+          _heartController.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          _heartController.forward();
+        }
+      } else {
+        _heartController.animateTo(1.0);
+      }
+    });
     return ScaleTransition(
       scale: _scale,
       child: BlurOverlay(
@@ -71,7 +84,7 @@ class FavoriteFABState extends State<FavoriteFAB>
         radius: 100,
         intensity: 0.65,
         child: FloatingActionButton(
-          backgroundColor: favorite
+          backgroundColor: _favorite
               ? Theme
               .of(context)
               .backgroundColor
@@ -80,30 +93,38 @@ class FavoriteFABState extends State<FavoriteFAB>
               .of(context)
               .accentColor
               .withAlpha(120),
-          child: new Icon(Icons.favorite,
-              color: favorite ? Colors.red : Theme.of(context).primaryColor),
+          child: ScaleTransition(
+            scale: _favorite
+                ? Tween(begin: 0.7, end: 1.3).animate(_heartScale)
+                : Tween(
+                begin: Tween(begin: 0.7, end: 1.3)
+                    .animate(_heartScale)
+                    .value,
+                end: 1.0)
+                .animate(_heartScale),
+            child: Icon(Icons.favorite,
+                color: _favorite ? Colors.red : Theme
+                    .of(context)
+                    .primaryColor),
+          ),
           onPressed: () {
             if (text.split(';')[1].split('/')[1] !=
                 Constants.textNoTextAvailable['id']) {
               final idx = TextSlideshowState.slideList.indexWhere((map) {
                 return map['id'] == text.split(';')[1].split('/')[1];
               });
-              if (favorite) {
-                final int current = TextSlideshowState
-                    .slideList[idx]['favorites'] ?? 1;
+              if (_favorite) {
+                final int current =
+                    TextSlideshowState.slideList[idx]['favorites'] ?? 1;
                 TextSlideshowState.slideList[idx]['favorites'] =
                 current == 0 ? 0 : current - 1;
                 store.dispatch(UpdateFavorites(toRemove: text));
-                _animationController.stop();
-                _animationController.forward();
               } else {
-                final int current = TextSlideshowState
-                    .slideList[idx]['favorites'] ?? 0;
+                final int current =
+                    TextSlideshowState.slideList[idx]['favorites'] ?? 0;
                 TextSlideshowState.slideList[idx]['favorites'] =
                 current == -1 ? 1 : current + 1;
                 store.dispatch(UpdateFavorites(toAdd: text));
-                _animationController.repeat(
-                    min: 0.7, max: 1.0, period: Duration(milliseconds: 500));
               }
             }
           },
