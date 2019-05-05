@@ -9,12 +9,13 @@ class FavoritesDrawer extends StatelessWidget {
   final int author;
   final FavoritesTap tapHandler;
 
-  FavoritesDrawer(
-      {@required this.textSize, @required this.favoriteSet, @required this.author, @required this.tapHandler});
+  FavoritesDrawer({@required this.textSize,
+    @required this.favoriteSet,
+    @required this.author,
+    @required this.tapHandler});
 
   Widget buildFavoritesItem(BuildContext context, String favorite) {
-    final favoriteTitle = favorite.split(
-        ';')[0];
+    final favoriteTitle = favorite.split(';')[0];
 
     Widget txt;
     if (favoriteTitle.length > 25) {
@@ -32,35 +33,76 @@ class FavoritesDrawer extends StatelessWidget {
       );
     }
     return Dismissible(
-      key: Key('Dismissible-' + favoriteTitle),
-      background: Container(
-        child: Row(
-          children: <Widget>[
-            Container(child: Icon(Icons.delete), width: 90),
-            Spacer()
-          ],
+        key: Key('Dismissible-' + favoriteTitle),
+        background: Container(
+          child: Row(
+            children: <Widget>[
+              Container(child: Icon(Icons.delete), width: 90),
+              Spacer()
+            ],
+          ),
         ),
-      ),
-      secondaryBackground: Container(
-        child: Row(
-          children: <Widget>[
-            Spacer(),
-            Container(
-              child: Icon(Icons.delete),
-              width: 90,
-            ),
-          ],
+        secondaryBackground: Container(
+          child: Row(
+            children: <Widget>[
+              Spacer(),
+              Container(
+                child: Icon(Icons.delete),
+                width: 90,
+              ),
+            ],
+          ),
         ),
-      ),
-      onDismissed: (direction) =>
-      {tapHandler.remove(favorite)
-  }
+        onDismissed: (direction) => {tapHandler.remove(favorite)
+  },child
+        :
+    Container
+    (
+    height
+        :
+    32
+    +
+    Constants
+    (
+    )
+        .
+    textstyleTitle
+    (
+    textSize
+    /
+    16
+    *
+    9
+    )
+        .
+    fontSize
+    *
+    3.2
     ,
-      child: ListTile(
-          title: txt,
-          onTap: () {
+    child
+        :
+    ClipRect
+    (
+    child
+        :
+    ListTile
+    (
+    title
+        :
+    txt
+    ,
+    onTap
+        :
+    (
+    )
+    {
     tapHandler.open(favorite, context);
-          }),
+    }
+    )
+    ,
+    )
+    ,
+    )
     );
   }
 

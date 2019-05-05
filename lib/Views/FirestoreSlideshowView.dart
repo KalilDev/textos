@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Src/BlurSettings.dart';
 import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 import 'package:textos/Views/TextCardView.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
@@ -91,35 +92,47 @@ class TextSlideshowState extends State<TextSlideshow> {
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;
     final favorites = data['favorites'] ?? 0;
+    final text = data['title'] + ';' +
+        Constants.authorCollections[store.state.author] +
+        '/' + data['id'];
+
+    onFavoriteToggle() {
+      FavoritesTap(store: store).toggle(text);
+    }
 
     return GestureDetector(
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 500),
-          curve: Curves.decelerate,
-          margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Theme
-                  .of(context)
-                  .backgroundColor,
-              boxShadow: [
-                BoxShadow(
-                    color: Theme
-                        .of(context)
-                        .primaryColor
-                        .withAlpha(80),
-                    blurRadius: blur,
-                    offset: Offset(offset, offset))
-              ]),
-          child: Stack(
-            children: <Widget>[
-              Hero(
+        child: Stack(
+          children: <Widget>[
+            AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              curve: Curves.decelerate,
+              margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Theme
+                      .of(context)
+                      .backgroundColor,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Theme
+                            .of(context)
+                            .primaryColor
+                            .withAlpha(80),
+                        blurRadius: blur,
+                        offset: Offset(offset, offset))
+                  ]),
+              child: Hero(
                   tag: 'image' + data['id'],
                   child: ImageBackground(
                       img: img,
                       enabled: false,
                       key: Key('image' + data['id']))),
-              Center(
+            ),
+            AnimatedContainer(
+              duration: Duration(milliseconds: 600),
+              curve: Curves.easeInOut,
+              margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
+              child: Center(
                   child: Hero(
                     tag: 'body' + data['id'],
                     child: Material(
@@ -141,16 +154,19 @@ class TextSlideshowState extends State<TextSlideshow> {
                       color: Colors.transparent,
                     ),
                   )),
-              active ? Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  child: FavoritesCount(
-                      favorites: favorites,
-                      store: store,
-                      text: data['title'] + ';' +
-                          Constants.authorCollections[store.state.author] +
-                          '/' + data['id'])) : NullWidget()
-            ],
-          ),
+            ),
+            active ? Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: FavoritesCount(
+                    favorites: favorites,
+                    isFavorite: store.state.favoritesSet.any((
+                        favorite) => favorite == text),
+                    text: text,
+                    blurEnabled: BlurSettingsParser(
+                        blurSettings: store.state.blurSettings).getTextsBlur(),
+                    favoritesTap: onFavoriteToggle,
+                    textSize: store.state.textSize)) : NullWidget()
+          ],
         ),
         onTap: () async {
           ctrl.animateToPage(index,
@@ -186,24 +202,26 @@ class TextSlideshowState extends State<TextSlideshow> {
                   Constants.textTextos,
                   style: Constants().textstyleTitle(store.state.textSize),
                 ),
-                DropdownButton(
-                    value: store.state.author,
-                    items: <DropdownMenuItem>[
-                      DropdownMenuItem(
-                          value: 0,
-                          child: Text(Constants.authorNames[0],
-                              style: Constants().textstyleTitle(
-                                  store.state.textSize))),
-                      DropdownMenuItem(
-                          value: 1,
-                          child: Text(Constants.authorNames[1],
-                              style: Constants().textstyleTitle(
-                                  store.state.textSize))),
-                    ],
-                    onChanged: (val) async {
-                      store.dispatch(UpdateAuthor(author: val));
-                      _queryDb();
-                    })
+                ClipRect(
+                  child: DropdownButton(
+                      value: store.state.author,
+                      items: <DropdownMenuItem>[
+                        DropdownMenuItem(
+                            value: 0,
+                            child: Text(Constants.authorNames[0],
+                                style: Constants().textstyleTitle(
+                                    store.state.textSize))),
+                        DropdownMenuItem(
+                            value: 1,
+                            child: Text(Constants.authorNames[1],
+                                style: Constants().textstyleTitle(
+                                    store.state.textSize))),
+                      ],
+                      onChanged: (val) async {
+                        store.dispatch(UpdateAuthor(author: val));
+                        _queryDb();
+                      }),
+                )
               ],
             ),
             Text(Constants.textFilter,

@@ -44,14 +44,14 @@ class TextSizeButtonState extends State<TextSizeButton>
     _plusController = new AnimationController(
         duration: const Duration(milliseconds: 300), vsync: this);
     _minus =
-    new CurvedAnimation(parent: _minusController, curve: Curves.easeInOut)
+    new CurvedAnimation(parent: _minusController, curve: Curves.decelerate)
       ..addStatusListener((status) {
         if (status == AnimationStatus.dismissed) {
           _minusController.forward();
         }
       });
     _plus =
-    new CurvedAnimation(parent: _plusController, curve: Curves.easeInOut)
+    new CurvedAnimation(parent: _plusController, curve: Curves.decelerate)
       ..addStatusListener((status) {
         if (status == AnimationStatus.dismissed) {
           _plusController.forward();
@@ -73,10 +73,8 @@ class TextSizeButtonState extends State<TextSizeButton>
   Widget build(BuildContext context) {
     if (_textSize > store.state.textSize) {
       _minusController.reverse();
-      print('I should be animating');
     } else if (_textSize < store.state.textSize) {
       _plusController.reverse();
-      print('I should be animating');
     }
     _textSize = store.state.textSize;
     return ScaleTransition(
