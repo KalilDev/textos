@@ -25,20 +25,45 @@ class TextAppDrawerState extends State<TextAppDrawer>
   bool _settingsDrawer = false;
   bool settingsDrawer = false;
   AnimationController _settingsController;
-  Animation<RelativeRect> _settingsAnimation;
-  Animation<RelativeRect> _favoritesAnimation;
+
+  // Settings Drawer
+  Animation<Offset> _settingsAnimation;
+
+  // Favorites Drawer, favorites and settings top indicator
+  Animation<Offset> _toTopAnimation;
+  Animation<Offset> _toBottomAnimation;
+
+  // Bottom tile animation
+  Animation<Offset> _settingsTileAnimation;
+  Animation<Offset> _favoritesTileAnimation;
 
   @override
   void initState() {
     super.initState();
+    // Shared
     _settingsController = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 400));
-    _settingsAnimation = _settingsController.drive(RelativeRectTween(
-        begin: RelativeRect.fromLTRB(0.0, 0.0, 400.0, 0.0),
-        end: RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0)));
-    _favoritesAnimation = _settingsController.drive(RelativeRectTween(
-        begin: RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0),
-        end: RelativeRect.fromLTRB(0.0, 0.0, 400.0, 0.0)));
+    final Animation curvedAnimation = CurvedAnimation(
+        parent: _settingsController, curve: Curves.easeInOut);
+
+
+    _settingsAnimation =
+        Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset.zero)
+            .animate(curvedAnimation);
+
+    _toTopAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, -1.3))
+        .animate(curvedAnimation);
+    _toBottomAnimation =
+        Tween<Offset>(begin: Offset(0.0, -1.0), end: Offset.zero)
+            .animate(curvedAnimation);
+
+    _settingsTileAnimation =
+        Tween<Offset>(begin: Offset(0.0, 2.0), end: Offset.zero)
+            .animate(curvedAnimation);
+    _favoritesTileAnimation =
+        Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 2.0))
+            .animate(curvedAnimation);
+
     _settingsController.value = 0.0;
   }
 
@@ -71,41 +96,60 @@ class TextAppDrawerState extends State<TextAppDrawer>
                         .padding
                         .top,
                   ),
-                  Center(
-                      child: Text(
-                        _settingsDrawer
-                            ? Constants.textConfigs
-                            : Constants.textFavs,
-                        style: Constants().textstyleText(store.state.textSize),
-                      )),
-                  Expanded(
-                      child: ClipRect(
-                        child: Stack(
-                          children: <Widget>[
-                            PositionedTransition(
-                              rect: _settingsAnimation,
-                              child: SettingsDrawer(store: store),
-                            ),
-                            PositionedTransition(
-                              rect: _favoritesAnimation,
-                              child: FavoritesDrawer(
-                                  textSize: store.state.textSize,
-                                  favoriteSet: store.state.favoritesSet,
-                                  author: store.state.author,
-                                  tapHandler: FavoritesTap(store: store)),
-                            )
-                          ],
-                        ),
-                  )),
-                  ListTile(
-                      title: Text(
-                        _settingsDrawer
-                            ? Constants.textFavs
-                            : Constants.textConfigs,
-                        style: Constants()
-                            .textstyleTitle(store.state.textSize / 16 * 9),
-                        textAlign: TextAlign.center,
+                  Stack(
+                    children: <Widget>[
+                      Center(
+                        child: SlideTransition(
+                            position: _toBottomAnimation,
+                            child: Text(Constants.textConfigs,
+                                style: Constants().textstyleText(
+                                    store.state.textSize))),
                       ),
+                      Center(
+                        child: SlideTransition(
+                            position: _toTopAnimation,
+                            child: Text(Constants.textFavs,
+                                style: Constants().textstyleText(
+                                    store.state.textSize))),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                      child: Stack(
+                        children: <Widget>[
+                          SlideTransition(
+                            position: _settingsAnimation,
+                            child: SettingsDrawer(store: store),
+                          ),
+                          SlideTransition(
+                            position: _toTopAnimation,
+                            child: FavoritesDrawer(
+                                textSize: store.state.textSize,
+                                favoriteSet: store.state.favoritesSet,
+                                author: store.state.author,
+                                tapHandler: FavoritesTap(store: store)),
+                          )
+                        ],
+                      )),
+                  ListTile(
+                      title: Stack(children: <Widget>[
+                        Center(
+                            child: SlideTransition(
+                                position: _settingsTileAnimation,
+                                child: Text(Constants.textConfigs,
+                                    style: Constants().textstyleTitle(
+                                        store.state.textSize / 16 * 9),
+                                    textAlign: TextAlign.center))
+                        ),
+                        Center(
+                            child: SlideTransition(
+                                position: _favoritesTileAnimation,
+                                child: Text(Constants.textFavs,
+                                    style: Constants().textstyleTitle(
+                                        store.state.textSize / 16 * 9),
+                                    textAlign: TextAlign.center))
+                        ),
+                      ]),
                       onTap: () =>
                           setState(() {
                             settingsDrawer = !_settingsDrawer;

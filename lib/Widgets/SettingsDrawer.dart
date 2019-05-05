@@ -17,108 +17,90 @@ class SettingsDrawer extends StatelessWidget {
         Constants().textstyleTitle(store.state.textSize / 16 * 7);
     return Column(
       children: <Widget>[
-        Container(
-            height: 10 + settingsStyle.fontSize * 3.5,
-            child: ClipRect(
-                child: SwitchListTile(
-                    title: Text(Constants.textTextTheme, style: settingsStyle),
-                    secondary: Icon(Icons.color_lens),
-                    value: store.state.enableDarkMode,
-                    activeColor: Theme
-                        .of(context)
-                        .accentColor,
-                    activeTrackColor:
-                    Theme
-                        .of(context)
-                        .accentColor
-                        .withAlpha(170),
-                    onChanged: (map) =>
-                        store.dispatch(
-                            UpdateDarkMode(
-                                enable: !store.state.enableDarkMode))))),
-        Container(
-            height: 10 + settingsStyle.fontSize * 3.5,
-            child: ClipRect(
-                child: ListTile(
-                    leading: Icon(Icons.text_fields),
-                    title: Text(Constants.textTextSize, style: settingsStyle),
-                    trailing: new Container(
-                      width: 96,
-                      child: Row(
-                        children: <Widget>[
-                          TextDecrease(store: store),
-                          TextIncrease(store: store),
-                        ],
-                      ),
-                    )))),
-        Container(
-            height: 10 + settingsStyle.fontSize * 3.5,
-            child: ClipRect(
-                child: ListTile(
-                  leading: Icon(Icons.delete_forever),
-                  title: Text(Constants.textTextTrash, style: settingsStyle),
-                  onTap: () => store.dispatch(UpdateFavorites(toClear: 1)),
-                ))),
-        Container(
-            height: 10 + settingsStyle.fontSize * 3.5,
-            child: ClipRect(
-                child: SwitchListTile(
-                    title: Text(Constants.textTextBlurDrawer,
-                        style: settingsStyle),
-                    secondary: Icon(Icons.blur_linear),
-                    value: BlurSettingsParser(
-                        blurSettings: store.state.blurSettings)
-                        .getDrawerBlur(),
-                    activeColor: Theme
-                        .of(context)
-                        .accentColor,
-                    activeTrackColor:
-                    Theme
-                        .of(context)
-                        .accentColor
-                        .withAlpha(170),
-                    onChanged: (map) =>
-                        BlurSettingsTap(store: store).setDrawerBlur()))),
-        Container(
-            height: 10 + settingsStyle.fontSize * 3.5,
-            child: ClipRect(
-                child: SwitchListTile(
-                    title: Text(Constants.textTextBlurButtons,
-                        style: settingsStyle),
-                    secondary: Icon(Icons.blur_circular),
-                    value: BlurSettingsParser(
-                        blurSettings: store.state.blurSettings)
-                        .getButtonsBlur(),
-                    activeColor: Theme
-                        .of(context)
-                        .accentColor,
-                    activeTrackColor:
-                    Theme
-                        .of(context)
-                        .accentColor
-                        .withAlpha(170),
-                    onChanged: (map) =>
-                        BlurSettingsTap(store: store).setButtonsBlur()))),
-        Container(
-            height: 10 + settingsStyle.fontSize * 3.5,
-            child: ClipRect(
-                child: SwitchListTile(
-                    title:
-                    Text(Constants.textTextBlurText, style: settingsStyle),
-                    secondary: Icon(Icons.blur_on),
-                    value: BlurSettingsParser(
-                        blurSettings: store.state.blurSettings)
-                        .getTextsBlur(),
-                    activeColor: Theme
-                        .of(context)
-                        .accentColor,
-                    activeTrackColor:
-                    Theme
-                        .of(context)
-                        .accentColor
-                        .withAlpha(170),
-                    onChanged: (map) =>
-                        BlurSettingsTap(store: store).setTextsBlur()))),
+        SwitchListTile(
+            title: Text(Constants.textTextTheme, style: settingsStyle),
+            secondary: Icon(Icons.color_lens),
+            value: store.state.enableDarkMode,
+            activeColor: Theme
+                .of(context)
+                .accentColor,
+            activeTrackColor:
+            Theme
+                .of(context)
+                .accentColor
+                .withAlpha(170),
+            onChanged: (map) =>
+                store.dispatch(
+                    UpdateDarkMode(
+                        enable: !store.state.enableDarkMode))),
+        ListTile(
+            leading: Icon(Icons.text_fields),
+            title: Text(Constants.textTextSize, style: settingsStyle),
+            trailing: new Container(
+              width: 96,
+              child: Row(
+                children: <Widget>[
+                  TextDecrease(store: store),
+                  TextIncrease(store: store),
+                ],
+              ),
+            )),
+        ListTile(
+          leading: Icon(Icons.delete_forever),
+          title: Text(Constants.textTextTrash, style: settingsStyle),
+          onTap: () => store.dispatch(UpdateFavorites(toClear: 1)),
+        ),
+        SwitchListTile(
+            title: Text(Constants.textTextBlurDrawer,
+                style: settingsStyle),
+            secondary: Icon(Icons.blur_linear),
+            value: BlurSettingsParser(
+                blurSettings: store.state.blurSettings)
+                .getDrawerBlur(),
+            activeColor: Theme
+                .of(context)
+                .accentColor,
+            activeTrackColor:
+            Theme
+                .of(context)
+                .accentColor
+                .withAlpha(170),
+            onChanged: (map) =>
+                BlurSettingsTap(store: store).setDrawerBlur()),
+        SwitchListTile(
+            title: Text(Constants.textTextBlurButtons,
+                style: settingsStyle),
+            secondary: Icon(Icons.blur_circular),
+            value: BlurSettingsParser(
+                blurSettings: store.state.blurSettings)
+                .getButtonsBlur(),
+            activeColor: Theme
+                .of(context)
+                .accentColor,
+            activeTrackColor:
+            Theme
+                .of(context)
+                .accentColor
+                .withAlpha(170),
+            onChanged: (map) =>
+                BlurSettingsTap(store: store).setButtonsBlur()),
+        SwitchListTile(
+            title:
+            Text(Constants.textTextBlurText, style: settingsStyle),
+            secondary: Icon(Icons.blur_on),
+            value: BlurSettingsParser(
+                blurSettings: store.state.blurSettings)
+                .getTextsBlur(),
+            activeColor: Theme
+                .of(context)
+                .accentColor,
+            activeTrackColor:
+            Theme
+                .of(context)
+                .accentColor
+                .withAlpha(170),
+            onChanged: (map) =>
+                BlurSettingsTap(store: store).setTextsBlur()),
       ],
     );
   }

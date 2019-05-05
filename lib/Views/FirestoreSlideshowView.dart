@@ -157,20 +157,29 @@ class TextSlideshowState extends State<TextSlideshow> {
                     ),
                   )),
             ),
-            active
-                ? Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: FavoritesCount(
-                    favorites: favorites,
-                    isFavorite: store.state.favoritesSet
-                        .any((favorite) => favorite == text),
-                    text: text,
-                    blurEnabled: BlurSettingsParser(
-                        blurSettings: store.state.blurSettings)
-                        .getTextsBlur(),
-                    favoritesTap: onFavoriteToggle,
-                    textSize: store.state.textSize))
-                : NullWidget()
+            AnimatedSwitcher(
+              duration: Duration(milliseconds: 200),
+              switchInCurve: Curves.decelerate,
+              switchOutCurve: Curves.decelerate,
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(scale: animation,
+                    child: child,
+                    alignment: FractionalOffset.bottomCenter,),
+              child: active
+                  ? Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: FavoritesCount(
+                      favorites: favorites,
+                      isFavorite: store.state.favoritesSet
+                          .any((favorite) => favorite == text),
+                      text: text,
+                      blurEnabled: BlurSettingsParser(
+                          blurSettings: store.state.blurSettings)
+                          .getTextsBlur(),
+                      favoritesTap: onFavoriteToggle,
+                      textSize: store.state.textSize))
+                  : NullWidget(),
+            )
           ],
         ),
         onTap: () async {

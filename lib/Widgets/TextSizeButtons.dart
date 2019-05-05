@@ -22,11 +22,7 @@ class TextSizeButtonState extends State<TextSizeButton>
   final Store<AppStateMain> store;
 
   AnimationController _animationController;
-  AnimationController _minusController;
-  AnimationController _plusController;
   Animation<double> _scale;
-  Animation<double> _minus;
-  Animation<double> _plus;
   double _textSize;
 
   @override
@@ -38,44 +34,16 @@ class TextSizeButtonState extends State<TextSizeButton>
     _scale = new CurvedAnimation(
         parent: _animationController, curve: Curves.easeInOut);
     _animationController.forward();
-
-    _minusController = new AnimationController(
-        duration: const Duration(milliseconds: 300), vsync: this);
-    _plusController = new AnimationController(
-        duration: const Duration(milliseconds: 300), vsync: this);
-    _minus =
-    new CurvedAnimation(parent: _minusController, curve: Curves.decelerate)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.dismissed) {
-          _minusController.forward();
-        }
-      });
-    _plus =
-    new CurvedAnimation(parent: _plusController, curve: Curves.decelerate)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.dismissed) {
-          _plusController.forward();
-        }
-      });
-    _minusController.value = 1.0;
-    _plusController.value = 1.0;
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-    _minusController.dispose();
-    _plusController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_textSize > store.state.textSize) {
-      _minusController.reverse();
-    } else if (_textSize < store.state.textSize) {
-      _plusController.reverse();
-    }
     _textSize = store.state.textSize;
     return ScaleTransition(
       scale: _scale,
@@ -90,12 +58,8 @@ class TextSizeButtonState extends State<TextSizeButton>
               .accentColor
               .withAlpha(120),
           child: Row(children: <Widget>[
-            ScaleTransition(
-                child: TextDecrease(store: store),
-                scale: Tween(begin: 0.7, end: 1.0).animate(_minus)),
-            ScaleTransition(
-                child: TextIncrease(store: store),
-                scale: Tween(begin: 1.3, end: 1.0).animate(_plus)),
+            TextDecrease(store: store),
+            TextIncrease(store: store),
           ]),
         ),
       ),
@@ -103,7 +67,7 @@ class TextSizeButtonState extends State<TextSizeButton>
   }
 }
 
-class TextIncrease extends StatelessWidget {
+class TextIncrease extends StatefulWidget {
   const TextIncrease({
     Key key,
     @required this.store,
@@ -112,21 +76,61 @@ class TextIncrease extends StatelessWidget {
   final Store<AppStateMain> store;
 
   @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.arrow_upward),
-      onPressed: () {
-        if (store.state.textSize < 6.4) {
-          store.dispatch(UpdateTextSize(size: store.state.textSize + 0.5));
+  _TextIncreaseState createState() => _TextIncreaseState();
+}
+
+class _TextIncreaseState extends State<TextIncrease>
+    with TickerProviderStateMixin {
+  AnimationController _plusController;
+  Animation<double> _plus;
+  double _textSize;
+
+  @override
+  initState() {
+    super.initState();
+    _textSize = widget.store.state.textSize;
+
+    _plusController = new AnimationController(
+        duration: const Duration(milliseconds: 300), vsync: this);
+    _plus =
+    new CurvedAnimation(parent: _plusController, curve: Curves.decelerate)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.dismissed) {
+          _plusController.forward();
         }
-      },
-      iconSize: 25,
-      tooltip: Constants.textTooltipTextSizePlus,
-    );
+      });
+    _plusController.value = 1.0;
+  }
+
+  @override
+  void dispose() {
+    _plusController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_textSize < widget.store.state.textSize) {
+      _plusController.reverse();
+    }
+    _textSize = widget.store.state.textSize;
+    return ScaleTransition(
+        child: IconButton(
+          icon: Icon(Icons.arrow_upward),
+          onPressed: () {
+            if (widget.store.state.textSize < 6.4) {
+              widget.store.dispatch(
+                  UpdateTextSize(size: widget.store.state.textSize + 0.5));
+            }
+          },
+          iconSize: 25,
+          tooltip: Constants.textTooltipTextSizePlus,
+        ),
+        scale: Tween(begin: 1.3, end: 1.0).animate(_plus));
   }
 }
 
-class TextDecrease extends StatelessWidget {
+class TextDecrease extends StatefulWidget {
   const TextDecrease({
     Key key,
     @required this.store,
@@ -135,18 +139,58 @@ class TextDecrease extends StatelessWidget {
   final Store<AppStateMain> store;
 
   @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(
-        Icons.arrow_downward,
-      ),
-      onPressed: () {
-        if (store.state.textSize > 3.1) {
-          store.dispatch(UpdateTextSize(size: store.state.textSize - 0.5));
+  _TextDecreaseState createState() => _TextDecreaseState();
+}
+
+class _TextDecreaseState extends State<TextDecrease>
+    with TickerProviderStateMixin {
+  AnimationController _minusController;
+  Animation<double> _minus;
+  double _textSize;
+
+  @override
+  initState() {
+    super.initState();
+    _textSize = widget.store.state.textSize;
+
+    _minusController = new AnimationController(
+        duration: const Duration(milliseconds: 300), vsync: this);
+    _minus =
+    new CurvedAnimation(parent: _minusController, curve: Curves.decelerate)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.dismissed) {
+          _minusController.forward();
         }
-      },
-      iconSize: 25,
-      tooltip: Constants.textTooltipTextSizeLess,
-    );
+      });
+    _minusController.value = 1.0;
+  }
+
+  @override
+  void dispose() {
+    _minusController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_textSize > widget.store.state.textSize) {
+      _minusController.reverse();
+    }
+    _textSize = widget.store.state.textSize;
+    return ScaleTransition(
+        child: IconButton(
+          icon: Icon(
+            Icons.arrow_downward,
+          ),
+          onPressed: () {
+            if (widget.store.state.textSize > 3.1) {
+              widget.store.dispatch(
+                  UpdateTextSize(size: widget.store.state.textSize - 0.5));
+            }
+          },
+          iconSize: 25,
+          tooltip: Constants.textTooltipTextSizeLess,
+        ),
+        scale: Tween(begin: 0.7, end: 1.0).animate(_minus));
   }
 }

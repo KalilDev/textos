@@ -54,19 +54,11 @@ class FavoritesDrawer extends StatelessWidget {
           ),
         ),
         onDismissed: (direction) => tapHandler.remove(favorite),
-        child: Container(
-          height:
-          32 + Constants()
-              .textstyleTitle(textSize / 16 * 9)
-              .fontSize * 3.2,
-          child: ClipRect(
-            child: ListTile(
-                title: txt,
-                onTap: () {
-                  tapHandler.open(favorite, context);
-                }),
-          ),
-        ));
+        child: ListTile(
+            title: txt,
+            onTap: () {
+              tapHandler.open(favorite, context);
+            }));
   }
 
   @override
