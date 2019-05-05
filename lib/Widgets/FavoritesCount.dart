@@ -1,54 +1,47 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:textos/Constants.dart';
+import 'package:redux/redux.dart';
+import 'package:textos/Src/BlurSettings.dart';
+import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 import 'package:textos/Widgets/Widgets.dart';
+import 'package:textos/main.dart';
 
 class FavoritesCount extends StatelessWidget {
-  const FavoritesCount({
+  FavoritesCount({
     Key key,
-    @required this.textSize,
     @required this.favorites,
-    @required this.blurEnabled,
-  }) : super(key: key);
+    @required this.store,
+    @required this.text}) : super(key: key);
 
-  final double textSize;
+  final Store<AppStateMain> store;
   final int favorites;
-  final bool blurEnabled;
+  final String text;
+
+  bool _isFavorite;
 
   @override
   Widget build(BuildContext context) {
+    _isFavorite = store.state.favoritesSet.any((favorite) => favorite == text);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         BlurOverlay(
-          enabled: blurEnabled,
+          enabled: BlurSettingsParser(blurSettings: store.state.blurSettings)
+              .getTextsBlur(),
           radius: 90,
-          child: Material(
-            color: Colors.transparent,
-            elevation: 15.0,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.red.withAlpha(160),
-                  borderRadius: BorderRadius.circular(200)),
-              height: textSize * 8.0 + 10.0,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  SizedBox(width: 5.0),
-                  Text(favorites.toString(),
-                      style: Constants().textstyleTitle(textSize)),
-                  Icon(
-                    Icons.favorite,
-                    size: textSize * 6.0,
-                  ),
-                  SizedBox(width: 5.0),
-                ],
-              ),
-            ),
-          ),
+          color: Colors.red.withAlpha(110),
+          child: FloatingActionButton.extended(
+            heroTag: Random(),
+            onPressed: () => FavoritesTap(store: store, text: text).onTap(),
+            icon: _isFavorite ? Icon(Icons.favorite) : Icon(
+                Icons.favorite_border),
+            label: Text(favorites.toString() + ' ' + Constants.textFavs,
+                style: Constants().textstyleTitle(store.state.textSize * 0.8)),
+            backgroundColor: Colors.transparent,),
         ),
-        SizedBox(height: 10.0)
+        SizedBox(height: 5.0)
       ],
     );
   }

@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Constants.dart';
-import 'package:textos/SettingsHelper.dart';
-import 'package:textos/TextCardView.dart';
+import 'package:textos/Src/BlurSettings.dart';
+import 'package:textos/Src/Constants.dart';
+import 'package:textos/Views/TextCardView.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 import 'package:vibration/vibration.dart';
@@ -129,7 +129,9 @@ class TextSlideshowState extends State<TextSlideshow> {
                         margin: EdgeInsets.all(12.5),
                         child: BlurOverlay(
                           radius: 15,
-                          enabled: BlurSettings(store: store).getTextsBlur(),
+                          enabled: BlurSettingsParser(
+                              blurSettings: store.state.blurSettings)
+                              .getTextsBlur(),
                           child: Text(title,
                               textAlign: TextAlign.center,
                               style:
@@ -139,12 +141,14 @@ class TextSlideshowState extends State<TextSlideshow> {
                       color: Colors.transparent,
                     ),
                   )),
-              Align(
+              active ? Align(
                   alignment: FractionalOffset.bottomCenter,
                   child: FavoritesCount(
-                      textSize: store.state.textSize,
                       favorites: favorites,
-                      blurEnabled: BlurSettings(store: store).getTextsBlur()))
+                      store: store,
+                      text: data['title'] + ';' +
+                          Constants.authorCollections[store.state.author] +
+                          '/' + data['id'])) : NullWidget()
             ],
           ),
         ),

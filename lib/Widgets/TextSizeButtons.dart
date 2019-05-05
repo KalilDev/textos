@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Constants.dart';
-import 'package:textos/SettingsHelper.dart';
+import 'package:textos/Src/BlurSettings.dart';
+import 'package:textos/Src/Constants.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
@@ -82,7 +82,8 @@ class TextSizeButtonState extends State<TextSizeButton>
     return ScaleTransition(
       scale: _scale,
       child: BlurOverlay(
-        enabled: BlurSettings(store: store).getButtonsBlur(),
+        enabled: BlurSettingsParser(blurSettings: store.state.blurSettings)
+            .getButtonsBlur(),
         radius: 80,
         intensity: 0.65,
         child: Material(

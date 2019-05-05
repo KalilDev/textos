@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:textos/Constants.dart';
-import 'package:textos/FirestoreSlideshowView.dart';
+import 'package:textos/Src/Constants.dart';
+import 'package:textos/Views/FirestoreSlideshowView.dart';
 import 'package:textos/Widgets/Widgets.dart';
 
 // TODO Document the app

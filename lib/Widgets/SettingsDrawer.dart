@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Constants.dart';
-import 'package:textos/SettingsHelper.dart';
+import 'package:textos/Src/BlurSettings.dart';
+import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/OnTapHandlers/BlurSettingsTap.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
@@ -45,24 +46,27 @@ class SettingsDrawer extends StatelessWidget {
         SwitchListTile(
             title: Text(Constants.textTextBlurDrawer, style: settingsStyle),
             secondary: Icon(Icons.blur_linear),
-            value: BlurSettings(store: store).getDrawerBlur(),
+            value: BlurSettingsParser(blurSettings: store.state.blurSettings)
+                .getDrawerBlur(),
             activeColor: Theme.of(context).accentColor,
             activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
-            onChanged: (map) => BlurSettings(store: store).setDrawerBlur()),
+            onChanged: (map) => BlurSettingsTap(store: store).setDrawerBlur()),
         SwitchListTile(
             title: Text(Constants.textTextBlurButtons, style: settingsStyle),
             secondary: Icon(Icons.blur_circular),
-            value: BlurSettings(store: store).getButtonsBlur(),
+            value: BlurSettingsParser(blurSettings: store.state.blurSettings)
+                .getButtonsBlur(),
             activeColor: Theme.of(context).accentColor,
             activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
-            onChanged: (map) => BlurSettings(store: store).setButtonsBlur()),
+            onChanged: (map) => BlurSettingsTap(store: store).setButtonsBlur()),
         SwitchListTile(
             title: Text(Constants.textTextBlurText, style: settingsStyle),
             secondary: Icon(Icons.blur_on),
-            value: BlurSettings(store: store).getTextsBlur(),
+            value: BlurSettingsParser(blurSettings: store.state.blurSettings)
+                .getTextsBlur(),
             activeColor: Theme.of(context).accentColor,
             activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
-            onChanged: (map) => BlurSettings(store: store).setTextsBlur()),
+            onChanged: (map) => BlurSettingsTap(store: store).setTextsBlur()),
       ],
     );
   }

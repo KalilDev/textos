@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Constants.dart';
-import 'package:textos/FirestoreSlideshowView.dart';
-import 'package:textos/SettingsHelper.dart';
+import 'package:textos/Src/BlurSettings.dart';
+import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
@@ -80,7 +80,8 @@ class FavoriteFABState extends State<FavoriteFAB>
     return ScaleTransition(
       scale: _scale,
       child: BlurOverlay(
-        enabled: BlurSettings(store: store).getButtonsBlur(),
+        enabled: BlurSettingsParser(blurSettings: store.state.blurSettings)
+            .getButtonsBlur(),
         radius: 100,
         intensity: 0.65,
         child: FloatingActionButton(
@@ -108,25 +109,7 @@ class FavoriteFABState extends State<FavoriteFAB>
                     .primaryColor),
           ),
           onPressed: () {
-            if (text.split(';')[1].split('/')[1] !=
-                Constants.textNoTextAvailable['id']) {
-              final idx = TextSlideshowState.slideList.indexWhere((map) {
-                return map['id'] == text.split(';')[1].split('/')[1];
-              });
-              if (_favorite) {
-                final int current =
-                    TextSlideshowState.slideList[idx]['favorites'] ?? 1;
-                TextSlideshowState.slideList[idx]['favorites'] =
-                current == 0 ? 0 : current - 1;
-                store.dispatch(UpdateFavorites(toRemove: text));
-              } else {
-                final int current =
-                    TextSlideshowState.slideList[idx]['favorites'] ?? 0;
-                TextSlideshowState.slideList[idx]['favorites'] =
-                current == -1 ? 1 : current + 1;
-                store.dispatch(UpdateFavorites(toAdd: text));
-              }
-            }
+            FavoritesTap(store: store, text: text).onTap();
           },
           tooltip: Constants.textTooltipFav,
         ),

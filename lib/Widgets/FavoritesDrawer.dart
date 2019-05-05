@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Constants.dart';
-import 'package:textos/FirestoreSlideshowView.dart';
-import 'package:textos/TextCardView.dart';
+import 'package:textos/Src/Constants.dart';
+import 'package:textos/Views/FirestoreSlideshowView.dart';
+import 'package:textos/Views/TextCardView.dart';
 import 'package:textos/main.dart';
 
 class FavoritesDrawer extends StatelessWidget {

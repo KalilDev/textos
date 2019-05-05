@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Constants.dart';
-import 'package:textos/SettingsHelper.dart';
+import 'package:textos/Src/BlurSettings.dart';
+import 'package:textos/Src/Constants.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
@@ -100,7 +100,9 @@ class TextCard extends StatelessWidget {
                     child: Material(
                         color: Colors.transparent,
                         child: BlurOverlay(
-                          enabled: BlurSettings(store: store).getTextsBlur(),
+                          enabled: BlurSettingsParser(
+                              blurSettings: store.state.blurSettings)
+                              .getTextsBlur(),
                           radius: 20,
                           child: Container(
                               padding: EdgeInsets.all(5),

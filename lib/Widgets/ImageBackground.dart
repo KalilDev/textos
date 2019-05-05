@@ -25,7 +25,7 @@ class ImageBackground extends StatelessWidget {
                       imageUrl: img,
                       fit: BoxFit.cover,
                     )
-                  : null,
+                  : NullWidget(),
               radius: 20,
               enabled: enabled));
     });
