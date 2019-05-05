@@ -49,9 +49,6 @@ class TextCard extends StatelessWidget {
     final date = data['date'] ?? Constants.placeholderDate;
     final img = data['img'] ?? Constants.placeholderImg;
 
-    final double blur = 30;
-    final double offset = 10;
-
     return Stack(
       children: <Widget>[
         Dismissible(

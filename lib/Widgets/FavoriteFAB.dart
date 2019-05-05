@@ -47,8 +47,7 @@ class FavoriteFABState extends State<FavoriteFAB>
     _heartScale =
     new CurvedAnimation(parent: _heartController, curve: Curves.easeInOut);
 
-    //_scaleController.forward();
-    _scaleController.value = 1.0;
+    _scaleController.forward();
     _heartController.value = 1.0;
     Future.delayed(Duration(milliseconds: 1200), () =>
         _heartController.notifyStatusListeners(AnimationStatus.completed));
