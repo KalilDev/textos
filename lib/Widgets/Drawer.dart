@@ -31,14 +31,14 @@ class TextAppDrawerState extends State<TextAppDrawer>
   @override
   void initState() {
     super.initState();
-    _settingsController =
-    new AnimationController(vsync: this, duration: Duration(milliseconds: 400));
-    _settingsAnimation = _settingsController.drive(
-        RelativeRectTween(begin: RelativeRect.fromLTRB(0.0, 0.0, 400.0, 0.0),
-            end: RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0)));
-    _favoritesAnimation = _settingsController.drive(
-        RelativeRectTween(begin: RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0),
-            end: RelativeRect.fromLTRB(0.0, 0.0, 400.0, 0.0)));
+    _settingsController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 400));
+    _settingsAnimation = _settingsController.drive(RelativeRectTween(
+        begin: RelativeRect.fromLTRB(0.0, 0.0, 400.0, 0.0),
+        end: RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0)));
+    _favoritesAnimation = _settingsController.drive(RelativeRectTween(
+        begin: RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0),
+        end: RelativeRect.fromLTRB(0.0, 0.0, 400.0, 0.0)));
     _settingsController.value = 0.0;
   }
 
@@ -51,16 +51,18 @@ class TextAppDrawerState extends State<TextAppDrawer>
   @override
   Widget build(BuildContext context) {
     if (_settingsDrawer != settingsDrawer) {
-      settingsDrawer ? _settingsController.forward() : _settingsController
-          .reverse();
+      settingsDrawer
+          ? _settingsController.forward()
+          : _settingsController.reverse();
       _settingsDrawer = settingsDrawer;
     }
     return Theme(
       data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
       child: Drawer(
           child: BlurOverlay(
-              enabled: BlurSettingsParser(
-                  blurSettings: store.state.blurSettings).getDrawerBlur(),
+              enabled:
+              BlurSettingsParser(blurSettings: store.state.blurSettings)
+                  .getDrawerBlur(),
               child: Column(
                 children: <Widget>[
                   SizedBox(
@@ -74,40 +76,40 @@ class TextAppDrawerState extends State<TextAppDrawer>
                         _settingsDrawer
                             ? Constants.textConfigs
                             : Constants.textFavs,
-                        style: Constants().textstyleText(
-                            store.state.textSize),
+                        style: Constants().textstyleText(store.state.textSize),
                       )),
-                  Expanded(child: ClipRect(
-                    child: Stack(children: <Widget>[
-                      PositionedTransition(
-                        rect: _settingsAnimation,
-                        child: SettingsDrawer(
-                            store: store),
-                      ),
-                      PositionedTransition(
-                        rect: _favoritesAnimation,
-                        child: FavoritesDrawer(
-                            textSize: store.state.textSize,
-                            favoriteSet: store.state.favoritesSet,
-                            author: store.state.author,
-                            tapHandler: FavoritesTap(store: store)),
-                      )
-                    ],),
+                  Expanded(
+                      child: ClipRect(
+                        child: Stack(
+                          children: <Widget>[
+                            PositionedTransition(
+                              rect: _settingsAnimation,
+                              child: SettingsDrawer(store: store),
+                            ),
+                            PositionedTransition(
+                              rect: _favoritesAnimation,
+                              child: FavoritesDrawer(
+                                  textSize: store.state.textSize,
+                                  favoriteSet: store.state.favoritesSet,
+                                  author: store.state.author,
+                                  tapHandler: FavoritesTap(store: store)),
+                            )
+                          ],
+                        ),
                   )),
                   ListTile(
                       title: Text(
                         _settingsDrawer
                             ? Constants.textFavs
                             : Constants.textConfigs,
-                        style: Constants().textstyleTitle(
-                            store.state.textSize / 16 * 9),
+                        style: Constants()
+                            .textstyleTitle(store.state.textSize / 16 * 9),
                         textAlign: TextAlign.center,
                       ),
                       onTap: () =>
                           setState(() {
                             settingsDrawer = !_settingsDrawer;
-                          })
-                  )
+                          }))
                 ],
               ))),
     );

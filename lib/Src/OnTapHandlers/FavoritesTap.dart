@@ -24,18 +24,17 @@ class FavoritesTap {
 
   void toggle(String text) {
     bool favorite = store.state.favoritesSet.any((string) => string == text);
-    if (_getId(text) !=
-        Constants.textNoTextAvailable['id']) {
+    if (_getId(text) != Constants.textNoTextAvailable['id']) {
       final index = _getIndexOnSlides(text);
       if (favorite) {
-        final int current = TextSlideshowState.slideList[index]['favorites'] ??
-            1;
+        final int current =
+            TextSlideshowState.slideList[index]['favorites'] ?? 1;
         TextSlideshowState.slideList[index]['favorites'] =
             current == 0 ? 0 : current - 1;
         store.dispatch(UpdateFavorites(toRemove: text));
       } else {
-        final int current = TextSlideshowState.slideList[index]['favorites'] ??
-            0;
+        final int current =
+            TextSlideshowState.slideList[index]['favorites'] ?? 0;
         TextSlideshowState.slideList[index]['favorites'] =
             current == -1 ? 1 : current + 1;
         store.dispatch(UpdateFavorites(toAdd: text));

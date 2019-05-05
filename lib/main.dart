@@ -19,8 +19,8 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   final _enableDarkMode = prefs?.getBool('isDark') ?? false;
-  final _favoritesSet = prefs?.getStringList('favorites')?.toSet() ??
-      Set<String>();
+  final _favoritesSet =
+      prefs?.getStringList('favorites')?.toSet() ?? Set<String>();
   final _textSize = prefs?.getDouble('textSize') ?? 4.5;
   final _blurSettings = prefs?.getInt('blurSettings') ?? 1;
 
@@ -90,36 +90,32 @@ class StoreViewState extends State<StoreView> {
   void initState() {
     super.initState();
     _firebaseMessaging.subscribeToTopic('debug');
-    _firebaseMessaging.configure(
-        onResume: (Map<String, dynamic> map) {
-          final Map<String, String> data = map['data'];
-          print('onResume: ' + data.toString());
-          final String collection = data['collection'];
-          final String id = data['id'];
-          print(collection + '/' + id);
-          //final snapshot = await Firestore.instance.collection(collection).document(id).get();
-          //print(snapshot.data);
-          //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
-        },
-        onMessage: (Map<String, dynamic> map) {
-          final Map<String, String> data = map['data'];
-          print('onMessage: ' + data.toString());
-          final String collection = data['collection'];
-          final String id = data['id'];
-          print(collection + '/' + id);
-          //final snapshot = await Firestore.instance.collection(collection).document(id).get();
-          //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
-        },
-        onLaunch: (Map<String, dynamic> map) {
-          final Map<String, String> data = map['data'];
-          print('onLaunch: ' + data.toString());
-          final String collection = data['collection'];
-          final String id = data['id'];
-          print(collection + '/' + id);
-          //final snapshot = await Firestore.instance.collection(collection).document(id).get();
-          //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
-        }
-    );
+    _firebaseMessaging.configure(onResume: (Map<String, dynamic> map) {
+      final Map<String, String> data = map['data'];
+      print('onResume: ' + data.toString());
+      final String collection = data['collection'];
+      final String id = data['id'];
+      print(collection + '/' + id);
+      //final snapshot = await Firestore.instance.collection(collection).document(id).get();
+      //print(snapshot.data);
+      //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
+    }, onMessage: (Map<String, dynamic> map) {
+      final Map<String, String> data = map['data'];
+      print('onMessage: ' + data.toString());
+      final String collection = data['collection'];
+      final String id = data['id'];
+      print(collection + '/' + id);
+      //final snapshot = await Firestore.instance.collection(collection).document(id).get();
+      //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
+    }, onLaunch: (Map<String, dynamic> map) {
+      final Map<String, String> data = map['data'];
+      print('onLaunch: ' + data.toString());
+      final String collection = data['collection'];
+      final String id = data['id'];
+      print(collection + '/' + id);
+      //final snapshot = await Firestore.instance.collection(collection).document(id).get();
+      //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
+    });
     _firebaseMessaging.getToken().then((token) => print(token));
   }
 

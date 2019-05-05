@@ -5,15 +5,14 @@ import 'package:textos/Src/Constants.dart';
 import 'package:textos/Widgets/Widgets.dart';
 
 class FavoritesCount extends StatelessWidget {
-  FavoritesCount({
-    Key key,
+  FavoritesCount({Key key,
     @required this.favorites,
     @required this.text,
     @required this.isFavorite,
     @required this.blurEnabled,
     @required this.favoritesTap,
-    @required this.textSize
-  }) : super(key: key);
+    @required this.textSize})
+      : super(key: key);
 
   final int favorites;
   final String text;
@@ -37,7 +36,8 @@ class FavoritesCount extends StatelessWidget {
             icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
             label: Text(favorites.toString() + ' ' + Constants.textFavs,
                 style: Constants().textstyleTitle(textSize * 0.8)),
-            backgroundColor: Colors.transparent,),
+            backgroundColor: Colors.transparent,
+          ),
         ),
         SizedBox(height: 25.0)
       ],

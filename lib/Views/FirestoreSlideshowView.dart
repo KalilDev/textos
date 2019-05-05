@@ -92,9 +92,11 @@ class TextSlideshowState extends State<TextSlideshow> {
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;
     final favorites = data['favorites'] ?? 0;
-    final text = data['title'] + ';' +
+    final text = data['title'] +
+        ';' +
         Constants.authorCollections[store.state.author] +
-        '/' + data['id'];
+        '/' +
+        data['id'];
 
     onFavoriteToggle() {
       FavoritesTap(store: store).toggle(text);
@@ -155,17 +157,20 @@ class TextSlideshowState extends State<TextSlideshow> {
                     ),
                   )),
             ),
-            active ? Align(
+            active
+                ? Align(
                 alignment: FractionalOffset.bottomCenter,
                 child: FavoritesCount(
                     favorites: favorites,
-                    isFavorite: store.state.favoritesSet.any((
-                        favorite) => favorite == text),
+                    isFavorite: store.state.favoritesSet
+                        .any((favorite) => favorite == text),
                     text: text,
                     blurEnabled: BlurSettingsParser(
-                        blurSettings: store.state.blurSettings).getTextsBlur(),
+                        blurSettings: store.state.blurSettings)
+                        .getTextsBlur(),
                     favoritesTap: onFavoriteToggle,
-                    textSize: store.state.textSize)) : NullWidget()
+                    textSize: store.state.textSize))
+                : NullWidget()
           ],
         ),
         onTap: () async {
@@ -209,13 +214,13 @@ class TextSlideshowState extends State<TextSlideshow> {
                         DropdownMenuItem(
                             value: 0,
                             child: Text(Constants.authorNames[0],
-                                style: Constants().textstyleTitle(
-                                    store.state.textSize))),
+                                style: Constants()
+                                    .textstyleTitle(store.state.textSize))),
                         DropdownMenuItem(
                             value: 1,
                             child: Text(Constants.authorNames[1],
-                                style: Constants().textstyleTitle(
-                                    store.state.textSize))),
+                                style: Constants()
+                                    .textstyleTitle(store.state.textSize))),
                       ],
                       onChanged: (val) async {
                         store.dispatch(UpdateAuthor(author: val));
@@ -246,8 +251,11 @@ class TextSlideshowState extends State<TextSlideshow> {
           initialData: [],
           builder: (context, AsyncSnapshot snap) {
             final data = snap.data.toList();
-            slideList =
-            data.length == 0 ? [Constants.textNoTextAvailable,] : data;
+            slideList = data.length == 0
+                ? [
+              Constants.textNoTextAvailable,
+            ]
+                : data;
 
             return PageView.builder(
                 controller: ctrl,

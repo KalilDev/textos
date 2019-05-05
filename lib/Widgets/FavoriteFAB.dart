@@ -49,8 +49,10 @@ class FavoriteFABState extends State<FavoriteFAB>
 
     _scaleController.forward();
     _heartController.value = 1.0;
-    Future.delayed(Duration(milliseconds: 1200), () =>
-        _heartController.notifyStatusListeners(AnimationStatus.completed));
+    Future.delayed(
+        Duration(milliseconds: 1200),
+            () =>
+            _heartController.notifyStatusListeners(AnimationStatus.completed));
   }
 
   @override

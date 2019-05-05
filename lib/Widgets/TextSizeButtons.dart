@@ -90,9 +90,11 @@ class TextSizeButtonState extends State<TextSizeButton>
               .accentColor
               .withAlpha(120),
           child: Row(children: <Widget>[
-            ScaleTransition(child: TextDecrease(store: store),
+            ScaleTransition(
+                child: TextDecrease(store: store),
                 scale: Tween(begin: 0.7, end: 1.0).animate(_minus)),
-            ScaleTransition(child: TextIncrease(store: store),
+            ScaleTransition(
+                child: TextIncrease(store: store),
                 scale: Tween(begin: 1.3, end: 1.0).animate(_plus)),
           ]),
         ),
