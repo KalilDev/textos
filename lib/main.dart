@@ -11,7 +11,6 @@ import 'package:textos/Widgets/Widgets.dart';
 // TODO Document the app
 // TODO Implement tutorial
 // TODO Implement Firebase analytics
-// TODO Fix heartbeat not stopping if you dismiss the favorite from the drawer
 // TODO Let authors upload texts from the app
 // TODO Let authors specify their own tags
 // TODO Make tapping the notification open the respective text
