@@ -27,6 +27,7 @@ dependencies:
   redux: ^3.0.0
   firebase_messaging: ^4.0.0+4
   vibration: ^1.0.2
+  flutter_udid: ^1.0.0
 
 dev_dependencies:
   flutter_test:

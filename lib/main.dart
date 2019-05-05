@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_udid/flutter_udid.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/Src/Constants.dart';
@@ -22,12 +23,24 @@ void main() async {
       prefs?.getStringList('favorites')?.toSet() ?? Set<String>();
   final _textSize = prefs?.getDouble('textSize') ?? 4.5;
   final _blurSettings = prefs?.getInt('blurSettings') ?? 1;
+  String _udid;
 
   // Clear favorites if the data doesn't contain the documentID needed for
   // setting the statistics on the database
   if (!_favoritesSet.any((string) => string.contains(';'))) {
     _favoritesSet.clear();
     prefs.setStringList('favorites', _favoritesSet.toList());
+  }
+
+  // Check if we already stored an uuid
+  if (prefs?.getString('udid') ?? null != null) {
+    // Get the stored UDID, in order to preserve the favorites if the user either
+    // upgraded the system or reinstalled the app
+    _udid = prefs.getString('udid');
+  } else {
+    // Get an fresh UDID
+    _udid = await FlutterUdid.udid;
+    prefs.setString('udid', _udid);
   }
 
   final store = Store<AppStateMain>(
@@ -37,7 +50,8 @@ void main() async {
         enableDarkMode: _enableDarkMode,
         favoritesSet: _favoritesSet,
         textSize: _textSize,
-        blurSettings: _blurSettings),
+        blurSettings: _blurSettings,
+        udid: _udid),
   );
 
   runApp(StoreProvider<AppStateMain>(
@@ -58,6 +72,7 @@ class MyApp extends StatelessWidget {
           store.state.textSize,
           store.state.blurSettings,
           store.state.author,
+          store.state.udid,
         ];
       },
       builder: (_, List list) {
@@ -139,13 +154,15 @@ class AppStateMain {
     @required this.favoritesSet,
     @required this.textSize,
     @required this.blurSettings,
-    this.author = 0});
+    this.author = 0,
+    @required this.udid,});
 
   bool enableDarkMode;
   Set<String> favoritesSet;
   double textSize;
   int blurSettings;
   int author;
+  String udid;
 }
 
 class UpdateDarkMode {
@@ -191,7 +208,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
         blurSettings: state.blurSettings,
-        author: state.author);
+        author: state.author,
+        udid: state.udid);
   }
 
   if (action is UpdateFavorites) {
@@ -244,7 +262,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: _fav,
         textSize: state.textSize,
         blurSettings: state.blurSettings,
-        author: state.author);
+        author: state.author,
+        udid: state.udid);
   }
 
   if (action is UpdateTextSize) {
@@ -257,7 +276,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: action.size,
         blurSettings: state.blurSettings,
-        author: state.author);
+        author: state.author,
+        udid: state.udid);
   }
 
   if (action is UpdateBlurSettings) {
@@ -270,7 +290,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
         blurSettings: action.integer,
-        author: state.author);
+        author: state.author,
+        udid: state.udid);
   }
 
   if (action is UpdateAuthor) {
@@ -279,7 +300,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
         blurSettings: state.blurSettings,
-        author: action.author);
+        author: action.author,
+        udid: state.udid);
   }
 
   return state;
