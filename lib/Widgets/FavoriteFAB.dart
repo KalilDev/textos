@@ -109,7 +109,7 @@ class FavoriteFABState extends State<FavoriteFAB>
                     .primaryColor),
           ),
           onPressed: () {
-            FavoritesTap(store: store, text: text).onTap();
+            FavoritesTap(store: store).toggle(text);
           },
           tooltip: Constants.textTooltipFav,
         ),

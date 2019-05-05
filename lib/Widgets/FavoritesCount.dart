@@ -34,7 +34,7 @@ class FavoritesCount extends StatelessWidget {
           color: Colors.red.withAlpha(110),
           child: FloatingActionButton.extended(
             heroTag: Random(),
-            onPressed: () => FavoritesTap(store: store, text: text).onTap(),
+            onPressed: () => FavoritesTap(store: store).toggle(text),
             icon: _isFavorite ? Icon(Icons.favorite) : Icon(
                 Icons.favorite_border),
             label: Text(favorites.toString() + ' ' + Constants.textFavs,

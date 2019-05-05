@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Src/BlurSettings.dart';
 import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 import 'package:textos/Widgets/FavoritesDrawer.dart';
 import 'package:textos/Widgets/SettingsDrawer.dart';
 import 'package:textos/Widgets/Widgets.dart';
@@ -47,7 +48,11 @@ class TextAppDrawerState extends State<TextAppDrawer> {
                             store.state.textSize),
                       )),
                   Expanded(child: _settingsDrawer ? SettingsDrawer(
-                      store: store) : FavoritesDrawer(store: store)),
+                      store: store) : FavoritesDrawer(
+                      textSize: store.state.textSize,
+                      favoriteSet: store.state.favoritesSet,
+                      author: store.state.author,
+                      tapHandler: FavoritesTap(store: store))),
                   ListTile(
                     title: Text(
                       _settingsDrawer
