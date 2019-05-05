@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
 }
 
 class StoreView extends StatefulWidget {
-  Store store;
+  final Store store;
 
   StoreView({@required this.store});
 
