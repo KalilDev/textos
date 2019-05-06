@@ -194,14 +194,28 @@ class TextSlideshowState extends State<TextSlideshow> {
   }
 
   Widget _buildButton(int id) {
-    Color color = id == activeTag ? Constants.themeAccent : Colors.transparent;
-    return FlatButton(
-        color: color,
-        child: Text(
-          '#' + Constants.textTag[id],
-          style: Constants().textStyleButton(store.state.textSize),
-        ),
-        onPressed: () => _queryDb(tag: id));
+    if (id == activeTag) {
+      return FlatButton(
+          color: Theme
+              .of(context)
+              .accentColor,
+          child: Text(
+            '#' + Constants.textTag[id],
+            style: Constants().textStyleButton(store.state.textSize),
+          ),
+          onPressed: () => _queryDb(tag: id));
+    } else {
+      return OutlineButton(
+          borderSide: BorderSide(color: Theme
+              .of(context)
+              .accentColor),
+          child: Text(
+            '#' + Constants.textTag[id],
+            style: Constants().textStyleButton(store.state.textSize).copyWith(
+                color: Constants.themeAccent.shade400),
+          ),
+          onPressed: () => _queryDb(tag: id));
+    }
   }
 
   _buildTagPage() {
