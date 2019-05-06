@@ -100,10 +100,17 @@ class StoreViewState extends State<StoreView> {
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
+  // Check if we are running debug mode
+  bool get isInDebugMode {
+    bool inDebugMode = false;
+    assert(inDebugMode = true);
+    return inDebugMode;
+  }
+
+
   @override
   void initState() {
     super.initState();
-    _firebaseMessaging.subscribeToTopic('debug');
     _firebaseMessaging.configure(onResume: (Map<String, dynamic> map) {
       final Map<String, String> data = map['data'];
       print('onResume: ' + data.toString());
@@ -130,7 +137,10 @@ class StoreViewState extends State<StoreView> {
       //final snapshot = await Firestore.instance.collection(collection).document(id).get();
       //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
     });
-    _firebaseMessaging.getToken().then((token) => print(token));
+    if (isInDebugMode) {
+      _firebaseMessaging.subscribeToTopic('debug');
+      _firebaseMessaging.getToken().then((token) => print(token));
+    }
   }
 
   @override
