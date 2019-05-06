@@ -56,24 +56,32 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
 
   @override
   Widget build(BuildContext context) {
+    Animation curved =
+    new CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+    _animation = new LinearGradientTween(
+        begin: LinearGradient(
+            colors: widget.colors, stops: widget.falseValues),
+        end:
+        LinearGradient(colors: widget.colors, stops: widget.trueValues))
+        .animate(curved);
     if (_isEnabled != widget.isEnabled) {
       widget.isEnabled ? _controller.forward() : _controller.reverse();
       _isEnabled = widget.isEnabled;
     }
     return LayoutBuilder(
       builder: (context, constrains) => AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Container(
-                height: widget.height,
-                width: widget.width,
-                decoration: BoxDecoration(
-                  gradient: _animation.value,
-                ),
-                child: widget.child,
-              );
-            },
-          ),
+        animation: _animation,
+        builder: (context, child) {
+          return Container(
+            height: widget.height,
+            width: widget.width,
+            decoration: BoxDecoration(
+              gradient: _animation.value,
+            ),
+            child: widget.child,
+          );
+        },
+      ),
     );
   }
 }
