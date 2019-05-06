@@ -86,34 +86,40 @@ class FavoriteFABState extends State<FavoriteFAB>
             .getButtonsBlur(),
         radius: 100,
         intensity: 0.65,
-        child: FloatingActionButton(
-          backgroundColor: _favorite
-              ? Theme
+        child: AnimatedGradientContainer(
+          colors: <Color>[ Theme
               .of(context)
               .backgroundColor
-              .withAlpha(120)
-              : Theme
+              .withAlpha(120),
+          Theme
               .of(context)
               .accentColor
-              .withAlpha(120),
-          child: ScaleTransition(
-            scale: _favorite
-                ? Tween(begin: 0.7, end: 1.3).animate(_heartScale)
-                : Tween(
-                begin: Tween(begin: 0.7, end: 1.3)
-                    .animate(_heartScale)
-                    .value,
-                end: 1.0)
-                .animate(_heartScale),
-            child: Icon(_favorite ? Icons.favorite : Icons.favorite_border,
-                color: _favorite ? Colors.red : Theme
-                    .of(context)
-                    .primaryColor),
+              .withAlpha(120)
+          ],
+          trueValues: [1.0, 2.0],
+          falseValues: [-1.0, 0.0],
+          isEnabled: _favorite,
+          child: FloatingActionButton(
+            backgroundColor: Colors.transparent,
+            child: ScaleTransition(
+              scale: _favorite
+                  ? Tween(begin: 0.7, end: 1.3).animate(_heartScale)
+                  : Tween(
+                  begin: Tween(begin: 0.7, end: 1.3)
+                      .animate(_heartScale)
+                      .value,
+                  end: 1.0)
+                  .animate(_heartScale),
+              child: Icon(_favorite ? Icons.favorite : Icons.favorite_border,
+                  color: _favorite ? Colors.red : Theme
+                      .of(context)
+                      .primaryColor),
+            ),
+            onPressed: () {
+              FavoritesTap(store: store).toggle(text);
+            },
+            tooltip: Constants.textTooltipFav,
           ),
-          onPressed: () {
-            FavoritesTap(store: store).toggle(text);
-          },
-          tooltip: Constants.textTooltipFav,
         ),
       ),
     );

@@ -21,19 +21,19 @@ class BlurOverlay extends StatelessWidget {
         ? Theme
         .of(context)
         .backgroundColor
-        .withAlpha(140)
+        .withAlpha(120)
         : Theme
         .of(context)
         .backgroundColor
-        .withAlpha(200);
+        .withAlpha(170);
     _overlayColor = color ?? defaultColor;
     final sigma = 4 * intensity;
     if (enabled) {
       return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-          child: Container(color: _overlayColor.withAlpha(140), child: child));
+          child: Container(color: _overlayColor, child: child));
     } else {
-      return Container(color: _overlayColor.withAlpha(200), child: child);
+      return Container(color: _overlayColor, child: child);
     }
   }
 

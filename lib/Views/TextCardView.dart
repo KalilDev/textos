@@ -63,77 +63,80 @@ class TextCard extends StatelessWidget {
           },
           child: GestureDetector(
             onTap: () => exit(),
-            child: Stack(
-              children: <Widget>[
-                Hero(
-                    tag: 'image' + data['id'],
-                    child: ImageBackground(
-                        img: img,
-                        enabled: false,
-                        key: Key('image' + data['id']))),
-                Hero(
-                  tag: 'body' + data['id'],
-                  child: Material(
-                      color: Colors.transparent,
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: BlurOverlay(
-                          enabled: BlurSettingsParser(
-                              blurSettings: store.state.blurSettings)
-                              .getTextsBlur(),
-                          radius: 20,
-                          child: Column(
-                            children: <Widget>[
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  child: SingleChildScrollView(
-                                    child: Column(children: <Widget>[
-                                      Text(title,
-                                          textAlign: TextAlign.center,
-                                          style: Constants().textstyleTitle(
-                                              store.state.textSize)),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(text,
-                                          style: Constants().textstyleText(
-                                              store.state.textSize)),
-                                      SizedBox(
-                                        height: 55,
-                                        child: Center(
-                                          child: Text(date,
-                                              style: Constants().textstyleDate(
-                                                  store.state.textSize)),
+            child: SafeArea(
+              child: Stack(
+                children: <Widget>[
+                  Hero(
+                      tag: 'image' + data['id'],
+                      child: ImageBackground(
+                          img: img,
+                          enabled: false,
+                          key: Key('image' + data['id']))),
+                  Hero(
+                    tag: 'body' + data['id'],
+                    child: Material(
+                        color: Colors.transparent,
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)),
+                          child: BlurOverlay(
+                            enabled: BlurSettingsParser(
+                                blurSettings: store.state.blurSettings)
+                                .getTextsBlur(),
+                            radius: 20,
+                            child: Column(
+                              children: <Widget>[
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    child: SingleChildScrollView(
+                                      child: Column(children: <Widget>[
+                                        Text(title,
+                                            textAlign: TextAlign.center,
+                                            style: Constants().textstyleTitle(
+                                                store.state.textSize)),
+                                        SizedBox(
+                                          height: 10,
                                         ),
-                                      ),
-                                    ]),
+                                        Text(text,
+                                            style: Constants().textstyleText(
+                                                store.state.textSize)),
+                                        SizedBox(
+                                          height: 55,
+                                          child: Center(
+                                            child: Text(date,
+                                                style: Constants()
+                                                    .textstyleDate(
+                                                    store.state.textSize)),
+                                          ),
+                                        ),
+                                      ]),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      )),
-                ),
-                Positioned(
-                  child: new FavoriteFAB(
-                      store: store,
-                      title: title,
-                      id: Constants.authorCollections[store.state.author] +
-                          '/' +
-                          data['id']),
-                  right: 10,
-                  bottom: 10,
-                ),
-                Positioned(
-                  child: new TextSizeButton(store: store),
-                  left: 10,
-                  bottom: 13.5,
-                ),
-              ],
+                        )),
+                  ),
+                  Positioned(
+                    child: new FavoriteFAB(
+                        store: store,
+                        title: title,
+                        id: Constants.authorCollections[store.state.author] +
+                            '/' +
+                            data['id']),
+                    right: 10,
+                    bottom: 10,
+                  ),
+                  Positioned(
+                    child: new TextSizeButton(store: store),
+                    left: 10,
+                    bottom: 13.5,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

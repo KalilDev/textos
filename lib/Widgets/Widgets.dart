@@ -1,5 +1,6 @@
 library kalil_widgets;
 
+export 'package:textos/Widgets/AnimatedGradientContainer.dart';
 export 'package:textos/Widgets/BlurOverlay.dart';
 export 'package:textos/Widgets/Drawer.dart';
 export 'package:textos/Widgets/FavoriteFAB.dart';

@@ -42,7 +42,7 @@ class TextAppDrawerState extends State<TextAppDrawer>
     super.initState();
     // Shared
     _settingsController = new AnimationController(
-        vsync: this, duration: Duration(milliseconds: 400));
+        vsync: this, duration: Duration(milliseconds: 500));
     final Animation curvedAnimation = CurvedAnimation(
         parent: _settingsController, curve: Curves.easeInOut);
 
@@ -51,14 +51,14 @@ class TextAppDrawerState extends State<TextAppDrawer>
         Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset.zero)
             .animate(curvedAnimation);
 
-    _toTopAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, -1.3))
+    _toTopAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, -5.0))
         .animate(curvedAnimation);
     _toBottomAnimation =
-        Tween<Offset>(begin: Offset(0.0, -1.0), end: Offset.zero)
+        Tween<Offset>(begin: Offset(0.0, -5.0), end: Offset.zero)
             .animate(curvedAnimation);
 
     _settingsTileAnimation =
-        Tween<Offset>(begin: Offset(0.0, 2.0), end: Offset.zero)
+        Tween<Offset>(begin: Offset(0.0, 3.0), end: Offset.zero)
             .animate(curvedAnimation);
     _favoritesTileAnimation =
         Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 2.0))

@@ -32,12 +32,12 @@ void main() async {
     prefs.setStringList('favorites', _favoritesSet.toList());
   }
 
+  // Get the stored UDID, in order to preserve the favorites if the user either
+  // upgraded the system or reinstalled the app
+  _udid = prefs?.getString('udid') ?? null;
+
   // Check if we already stored an uuid
-  if (prefs?.getString('udid') ?? null != null) {
-    // Get the stored UDID, in order to preserve the favorites if the user either
-    // upgraded the system or reinstalled the app
-    _udid = prefs.getString('udid');
-  } else {
+  if (_udid == null) {
     // Get an fresh UDID
     _udid = await FlutterUdid.udid;
     prefs.setString('udid', _udid);
