@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Src/BlurSettings.dart';
 import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/OnTapHandlers/TextSizeTap.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
@@ -30,7 +31,8 @@ class TextSizeButtonState extends State<TextSizeButton>
     super.initState();
     _textSize = store.state.textSize;
     _animationController = new AnimationController(
-        duration: const Duration(milliseconds: 1200), vsync: this);
+        duration: Constants.durationAnimationMedium +
+            Constants.durationAnimationRoute, vsync: this);
     _scale = new CurvedAnimation(
         parent: _animationController, curve: Curves.easeInOut);
     _animationController.forward();
@@ -91,7 +93,7 @@ class _TextIncreaseState extends State<TextIncrease>
     _textSize = widget.store.state.textSize;
 
     _plusController = new AnimationController(
-        duration: const Duration(milliseconds: 300), vsync: this);
+        duration: Constants.durationAnimationMedium, vsync: this);
     _plus =
     new CurvedAnimation(parent: _plusController, curve: Curves.decelerate)
       ..addStatusListener((status) {
@@ -118,10 +120,7 @@ class _TextIncreaseState extends State<TextIncrease>
         child: IconButton(
           icon: Icon(Icons.arrow_upward),
           onPressed: () {
-            if (widget.store.state.textSize < 6.4) {
-              widget.store.dispatch(
-                  UpdateTextSize(size: widget.store.state.textSize + 0.5));
-            }
+            TextSizeTap(store: widget.store).increase();
           },
           iconSize: 25,
           tooltip: Constants.textTooltipTextSizePlus,
@@ -154,7 +153,7 @@ class _TextDecreaseState extends State<TextDecrease>
     _textSize = widget.store.state.textSize;
 
     _minusController = new AnimationController(
-        duration: const Duration(milliseconds: 300), vsync: this);
+        duration: Constants.durationAnimationMedium, vsync: this);
     _minus =
     new CurvedAnimation(parent: _minusController, curve: Curves.decelerate)
       ..addStatusListener((status) {
@@ -183,10 +182,7 @@ class _TextDecreaseState extends State<TextDecrease>
             Icons.arrow_downward,
           ),
           onPressed: () {
-            if (widget.store.state.textSize > 3.1) {
-              widget.store.dispatch(
-                  UpdateTextSize(size: widget.store.state.textSize - 0.5));
-            }
+            TextSizeTap(store: widget.store).decrease();
           },
           iconSize: 25,
           tooltip: Constants.textTooltipTextSizeLess,
