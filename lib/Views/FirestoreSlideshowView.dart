@@ -70,7 +70,7 @@ class TextSlideshowState extends State<TextSlideshow> {
       int next = ctrl.page.round();
 
       if (currentPage != next) {
-        Vibration.vibrate(duration: 90);
+        Vibration.vibrate(duration: 60);
         setState(() {
           currentPage = next;
         });
@@ -194,28 +194,35 @@ class TextSlideshowState extends State<TextSlideshow> {
   }
 
   Widget _buildButton(int id) {
-    if (id == activeTag) {
-      return FlatButton(
-          color: Theme
-              .of(context)
-              .accentColor,
-          child: Text(
-            '#' + Constants.textTag[id],
-            style: Constants().textStyleButton(store.state.textSize),
-          ),
-          onPressed: () => _queryDb(tag: id));
-    } else {
-      return OutlineButton(
-          borderSide: BorderSide(color: Theme
-              .of(context)
-              .accentColor),
-          child: Text(
-            '#' + Constants.textTag[id],
-            style: Constants().textStyleButton(store.state.textSize).copyWith(
-                color: Constants.themeAccent.shade400),
-          ),
-          onPressed: () => _queryDb(tag: id));
-    }
+    return AnimatedSwitcher(duration: Duration(milliseconds: 400),
+        switchOutCurve: Curves.easeInOut,
+        switchInCurve: Curves.easeInOut,
+        transitionBuilder: (widget, animation) {
+          Vibration.vibrate(duration: 90);
+          return FadeTransition(
+              opacity: Tween(begin: 0.0, end: 1.0).animate(animation),
+              child: widget);
+        },
+        child: id == activeTag ? FlatButton(
+            color: Theme
+                .of(context)
+                .accentColor,
+            child: Text(
+              '#' + Constants.textTag[id],
+              style: Constants().textStyleButton(store.state.textSize),
+            ),
+            onPressed: () => _queryDb(tag: id))
+
+            : OutlineButton(
+            borderSide: BorderSide(color: Theme
+                .of(context)
+                .accentColor),
+            child: Text(
+              '#' + Constants.textTag[id],
+              style: Constants().textStyleButton(store.state.textSize).copyWith(
+                  color: Constants.themeAccent.shade400),
+            ),
+            onPressed: () => _queryDb(tag: id)));
   }
 
   _buildTagPage() {
