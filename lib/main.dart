@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_udid/flutter_udid.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/FirestoreHelper.dart';
 import 'package:textos/Views/FirestoreSlideshowView.dart';
 import 'package:textos/Widgets/Widgets.dart';
 
@@ -141,8 +141,10 @@ class StoreViewState extends State<StoreView> {
       _firebaseMessaging.subscribeToTopic('debug');
       _firebaseMessaging.getToken().then((token) => print(token));
       print('udid: ' + store.state.udid);
-      print('udid: ' + store.state.favoritesSet.toString());
+      print('favorites: ' + store.state.favoritesSet.toString());
     }
+    FirestoreHelper(udid: store.state.udid).syncDatabase(
+        store.state.favoritesSet);
   }
 
   @override
@@ -226,34 +228,17 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
 
   if (action is UpdateFavorites) {
     var _fav = state.favoritesSet;
-
-    void _updateFavoritesDB(String path, int operation) async {
-      Firestore db = Firestore.instance;
-      final collection = path.split('/')[0];
-      final docID = path.split('/')[1];
-      db.runTransaction((transaction) async {
-        final reference = db.collection(collection).document(docID);
-        await transaction.update(
-            reference, {'favorites': FieldValue.increment(operation)});
-      });
-    }
-
     if (action.toClear != null) {
-      state.favoritesSet.forEach((string) {
-        final path = string.split(';')[1];
-        _updateFavoritesDB(path, -1);
-      });
       _fav.clear();
+      FirestoreHelper(udid: state.udid).syncDatabase(_fav);
     }
     if (action.toAdd != null) {
-      final path = action.toAdd.split(';')[1];
-      _updateFavoritesDB(path, 1);
       _fav.add(action.toAdd);
+      FirestoreHelper(udid: state.udid).addFavorite(action.toAdd);
     }
     if (action.toRemove != null) {
-      final path = action.toRemove.split(';')[1];
-      _updateFavoritesDB(path, -1);
       _fav.remove(action.toRemove);
+      FirestoreHelper(udid: state.udid).removeFavorite(action.toRemove);
     }
 
     SharedPreferences.getInstance().then((pref) {
