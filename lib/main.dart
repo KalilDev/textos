@@ -140,6 +140,8 @@ class StoreViewState extends State<StoreView> {
     if (isInDebugMode) {
       _firebaseMessaging.subscribeToTopic('debug');
       _firebaseMessaging.getToken().then((token) => print(token));
+      print('udid: ' + store.state.udid);
+      print('udid: ' + store.state.favoritesSet.toString());
     }
   }
 
@@ -231,17 +233,8 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
       final docID = path.split('/')[1];
       db.runTransaction((transaction) async {
         final reference = db.collection(collection).document(docID);
-        final snapshot = await transaction.get(reference);
-        final int current = snapshot?.data['favorites'];
-        int target;
-        if (current == null) {
-          target = 0 + operation;
-        } else {
-          target = current + operation;
-        }
-        target = target <= -1 ? 0 : target;
-
-        await transaction.update(reference, {'favorites': target});
+        await transaction.update(
+            reference, {'favorites': FieldValue.increment(operation)});
       });
     }
 
