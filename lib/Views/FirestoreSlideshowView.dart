@@ -184,7 +184,7 @@ class TextSlideshowState extends State<TextSlideshow> {
               curve: Curves.decelerate);
           Navigator.push(
               context,
-              CustomRoute(
+              FadeRoute(
                   builder: (context) =>
                       TextCardView(data: data, store: store)));
         });
@@ -198,10 +198,10 @@ class TextSlideshowState extends State<TextSlideshow> {
       stream: tagStream,
       initialData: [{'title': 'Textos do ',
         'authorName': 'Kalil',
-        'tags': ['Todos']}
+        'tags': []}
       ],
       builder: (context, snapshot) {
-        List<Map<dynamic, dynamic>> metadatas = snapshot.data.toList();
+        List metadatas = snapshot.data.toList();
         return PageView.builder(
             onPageChanged: (index) {
               authorCollection = metadatas[index]['collection'];
@@ -250,23 +250,10 @@ class TextSlideshowState extends State<TextSlideshow> {
           }),
     );
   }
-}
-
-class CustomRoute<T> extends MaterialPageRoute<T> {
-  CustomRoute({WidgetBuilder builder, RouteSettings settings})
-      : super(builder: builder, settings: settings);
-
+  
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 700);
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    if (animation.status == AnimationStatus.reverse) {
-      return FadeTransition(
-          opacity: Tween(begin: 0.0, end: 0.2).animate(animation),
-          child: child);
-    }
-    return FadeTransition(opacity: animation, child: child);
+  void dispose() {
+    textPageController.dispose();
+    super.dispose();
   }
 }
