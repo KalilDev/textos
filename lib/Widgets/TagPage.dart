@@ -1,32 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/Controllers/QueryController.dart';
+import 'package:textos/Src/Controllers/TagPageController.dart';
 import 'package:vibration/vibration.dart';
 
 class TagPage extends StatefulWidget {
-  final Map<String, dynamic> data;
+  final int index;
   final bool enableDarkMode;
   final double textSize;
+  final TagPageController tagPageController;
+  final QueryController queryController;
 
-  TagPage(
-      {@required this.data,
+  TagPage({@required this.index,
       @required this.enableDarkMode,
-      @required this.textSize});
+    @required this.textSize,
+    @required this.tagPageController,
+    @required this.queryController});
 
   @override
   _TagPageState createState() => _TagPageState();
 }
 
 class _TagPageState extends State<TagPage> {
+  String activeTag;
+
+  Map get data => widget.tagPageController.metadatas[widget.index];
+
   @override
   void initState() {
     super.initState();
+    setState(() => activeTag = Constants.textAllTag);
   }
 
-  List get tags => widget.data['tags'];
-
-  String get activeTag => tags[0];
-
-  set activeTag(String tag) => tag;
+  List get tags => data['tags'];
 
   Widget _buildButton(String tag) {
     return AnimatedSwitcher(
@@ -40,37 +46,38 @@ class _TagPageState extends State<TagPage> {
         },
         child: tag == activeTag
             ? FlatButton(
-                color: Theme.of(context).accentColor,
-                child: Text(
-                  '#' + tag,
-                  style: Constants().textStyleButton(widget.textSize),
-                ),
-                onPressed: () {
-                  Vibration.vibrate(duration: 90);
-                  setState(() {
-                    activeTag = tag;
-                  });
-                  //_queryDb(tag: tag);
-                })
+            color: Theme.of(context).accentColor,
+            child: Text(
+              '#' + tag,
+              style: Constants().textStyleButton(widget.textSize),
+            ),
+            onPressed: () {
+              Vibration.vibrate(duration: 90);
+              setState(() {
+                activeTag = tag;
+              });
+              widget.queryController.queryParameters = MapEntry('tag', tag);
+            })
             : OutlineButton(
-                borderSide: BorderSide(color: Theme.of(context).accentColor),
-                child: Text(
-                  '#' + tag,
-                  style: Constants()
-                      .textStyleButton(widget.textSize)
-                      .copyWith(color: Constants.themeAccent.shade400),
-                ),
-                onPressed: () {
-                  Vibration.vibrate(duration: 90);
-                  setState(() {
-                    activeTag = tag;
-                  });
-                  //_queryDb(tag: tag);
-                }));
+            borderSide: BorderSide(color: Theme.of(context).accentColor),
+            child: Text(
+              '#' + tag,
+              style: Constants()
+                  .textStyleButton(widget.textSize)
+                  .copyWith(color: Constants.themeAccent.shade400),
+            ),
+            onPressed: () {
+              Vibration.vibrate(duration: 90);
+              setState(() {
+                activeTag = tag;
+              });
+              widget.queryController.queryParameters = MapEntry('tag', tag);
+            }));
   }
 
   List<Widget> _buildButtons() {
     List<Widget> widgets = [];
+    widgets.add(_buildButton(Constants.textAllTag));
     tags.forEach((tag) => widgets.add(_buildButton(tag)));
     return widgets;
   }
@@ -79,18 +86,24 @@ class _TagPageState extends State<TagPage> {
   Widget build(context) {
     return Container(
         child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.data['title'] + widget.data['authorName'],
-          style: Constants().textstyleTitle(widget.textSize),
-        ),
-        Text(Constants.textFilter,
-            style: Constants()
-                .textstyleFilter(widget.textSize, widget.enableDarkMode)),
-        Column(children: _buildButtons())
-      ],
-    ));
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              data['title'] + data['authorName'],
+              style: Constants().textstyleTitle(widget.textSize),
+            ),
+            Text(Constants.textFilter,
+                style: Constants()
+                    .textstyleFilter(widget.textSize, widget.enableDarkMode)),
+            Container(
+              margin: EdgeInsets.only(left: 1.0),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _buildButtons()),
+            )
+          ],
+        ));
   }
 }

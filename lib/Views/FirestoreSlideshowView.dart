@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Src/BlurSettings.dart';
 import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/Controllers/QueryController.dart';
+import 'package:textos/Src/Controllers/TagPageController.dart';
 import 'package:textos/Src/Controllers/TextPageController.dart';
 import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 import 'package:textos/Views/TextCardView.dart';
@@ -28,38 +30,16 @@ class TextSlideshowState extends State<TextSlideshow> {
   TextSlideshowState({@required this.store});
 
   static TextPageController textPageController;
-
-  static Query metadataQuery;
-  String authorCollection = 'stories';
-  
-  // Make a Query
-  static Query query;
-
-  void _queryDb({int tag = 0}) {
-    query = db.collection(authorCollection);
-
-    //if (tag != 0)
-    //  query = query.where('tags', arrayContains: Constants.textTag[tag]);
-
-    // Map the documents to the data payload
-    slides = query.snapshots().map((list) =>
-        list.documents.map((doc) {
-          final Map data = doc.data;
-          data['id'] = doc.documentID;
-          data['localFavorites'] = 0;
-          return data;
-        }));
-  }
-
-  final Firestore db = Firestore.instance;
-  Stream slides;
+  static TagPageController tagPageController;
+  static QueryController queryController;
 
   @override
   void initState() {
     super.initState();
+    tagPageController = new TagPageController();
     textPageController = new TextPageController();
     textPageController.addListener(() => setState(() {}));
-    _queryDb();
+    queryController = new QueryController(tagPageController: tagPageController);
   }
 
   _buildStoryPage(Map data, int index) {
@@ -140,7 +120,8 @@ class TextSlideshowState extends State<TextSlideshow> {
             ),
             FutureBuilder(
                 future:
-                db.document('favorites/_stats_').get().then((docSnapshot) {
+                Firestore.instance.document('favorites/_stats_').get().then((
+                    docSnapshot) {
                   final String textPath =
                   text.split(';')[1].replaceAll('/', '_');
                   final Map<String, dynamic> map =
@@ -190,8 +171,9 @@ class TextSlideshowState extends State<TextSlideshow> {
         });
   }
 
+  static Query metadataQuery;
   _buildTagPages() {
-    metadataQuery = db.collection('metadata').orderBy('order');
+    metadataQuery = Firestore.instance.collection('metadata').orderBy('order');
     Stream tagStream = metadataQuery.snapshots().map((list) =>
         list.documents.map((doc) => doc.data));
     return StreamBuilder(
@@ -202,15 +184,17 @@ class TextSlideshowState extends State<TextSlideshow> {
       ],
       builder: (context, snapshot) {
         List metadatas = snapshot.data.toList();
+        tagPageController.metadatas = metadatas;
+        tagPageController.addListener(() => setState(() {}), queryController);
         return PageView.builder(
-            onPageChanged: (index) {
-              authorCollection = metadatas[index]['collection'];
-              _queryDb();
-            },
+            controller: tagPageController.pageController,
             itemCount: metadatas.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) =>
-                TagPage(data: metadatas[index],
+                TagPage(
+                    queryController: queryController,
+                    tagPageController: tagPageController,
+                    index: index,
                     enableDarkMode: store.state.enableDarkMode,
                     textSize: store.state.textSize)
         );
@@ -225,7 +209,7 @@ class TextSlideshowState extends State<TextSlideshow> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: StreamBuilder(
-          stream: slides,
+          stream: queryController.dataStream,
           initialData: [],
           builder: (context, AsyncSnapshot snap) {
             final data = snap.data.toList();
@@ -250,10 +234,11 @@ class TextSlideshowState extends State<TextSlideshow> {
           }),
     );
   }
-  
+
   @override
   void dispose() {
     textPageController.dispose();
+    tagPageController.dispose();
     super.dispose();
   }
 }
