@@ -98,6 +98,12 @@ class Constants {
   static const placeholderDate = '01/01/1970';
   static const placeholderImg = 'https://i.imgur.com/95fvCBU.jpg';
 
+  // Animation durations
+  static const durationAnimationShort = Duration(milliseconds: 200);
+  static const durationAnimationMedium = Duration(milliseconds: 400);
+  static const durationAnimationLong = Duration(milliseconds: 600);
+  static const durationAnimationRoute = Duration(milliseconds: 700);
+
   // AppBar
   Widget appbarTransparent(bool isDark) =>
       AppBar(
