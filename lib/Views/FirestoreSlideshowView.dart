@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Src/BlurSettings.dart';
 import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/Controllers/TextPageController.dart';
 import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 import 'package:textos/Views/TextCardView.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
-import 'package:vibration/vibration.dart';
 
 // Implement optimization for the slideshow:
 // Idea: Only load the Decoration image for the current ∓3 pages
@@ -26,6 +26,8 @@ class TextSlideshowState extends State<TextSlideshow> {
   final Store<AppStateMain> store;
 
   TextSlideshowState({@required this.store});
+
+  static TextPageController textPageController;
 
   static Query metadataQuery;
   String authorCollection = 'stories';
@@ -49,39 +51,22 @@ class TextSlideshowState extends State<TextSlideshow> {
         }));
   }
 
-  static final PageController ctrl = PageController(viewportFraction: 0.85);
-
   final Firestore db = Firestore.instance;
   Stream slides;
-
-  // Keep track of current page to avoid unnecessary renders
-  int currentPage = 0;
 
   @override
   void initState() {
     super.initState();
+    textPageController = new TextPageController();
+    textPageController.addListener(() => setState(() {}));
     _queryDb();
-
-    // Set state when page changes
-    ctrl.addListener(() {
-      int next = ctrl.page.round();
-
-      if (currentPage != next) {
-        Vibration.vibrate(duration: 60);
-        setState(() {
-          currentPage = next;
-        });
-      }
-    });
   }
 
   _buildStoryPage(Map data, int index) {
-    // Active page
-    bool active = index == currentPage;
     // Animated Properties
-    final double blur = active ? 30 : 0;
-    final double offset = active ? 20 : 0;
-    final double top = active ? MediaQuery
+    final double blur = textPageController.isCurrent(index) ? 30 : 0;
+    final double offset = textPageController.isCurrent(index) ? 20 : 0;
+    final double top = textPageController.isCurrent(index) ? MediaQuery
         .of(context)
         .padding
         .top + 10 : 180;
@@ -175,7 +160,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                             child: child,
                             alignment: FractionalOffset.bottomCenter,
                           ),
-                      child: active
+                      child: textPageController.isCurrent(index)
                           ? Align(
                           alignment: FractionalOffset.bottomCenter,
                           child: FavoritesCount(
@@ -194,7 +179,7 @@ class TextSlideshowState extends State<TextSlideshow> {
           ],
         ),
         onTap: () async {
-          ctrl.animateToPage(index,
+          textPageController.pageController.animateToPage(index,
               duration: Constants.durationAnimationMedium,
               curve: Curves.decelerate);
           Navigator.push(
@@ -251,7 +236,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                 : data;
 
             return PageView.builder(
-                controller: ctrl,
+                controller: textPageController.pageController,
                 itemCount: slideList.length + 1,
                 pageSnapping: false,
                 itemBuilder: (context, int currentIdx) {

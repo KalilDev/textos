@@ -43,7 +43,8 @@ class FavoritesTap {
   void open(String text, BuildContext context) {
     final index = _getIndexOnSlides(text);
     if (index != -1) {
-      TextSlideshowState.ctrl.jumpToPage(index + 1);
+      TextSlideshowState.textPageController.pageController.jumpToPage(
+          index + 1);
       Navigator.pop(context);
       Navigator.push(
         context,
