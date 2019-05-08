@@ -8,3 +8,5 @@ export 'package:textos/Widgets/FavoritesCount.dart';
 export 'package:textos/Widgets/ImageBackground.dart';
 export 'package:textos/Widgets/NullWidget.dart';
 export 'package:textos/Widgets/TextSizeButtons.dart';
+
+export 'TagPage.dart';

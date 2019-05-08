@@ -27,35 +27,32 @@ class TextSlideshowState extends State<TextSlideshow> {
 
   TextSlideshowState({@required this.store});
 
+  static Query metadataQuery;
+  String authorCollection = 'stories';
+  
   // Make a Query
   static Query query;
 
   void _queryDb({int tag = 0}) {
-    query = db.collection(Constants.authorCollections[store.state.author]);
+    query = db.collection(authorCollection);
 
-    if (tag != 0)
-      query = query.where('tags', arrayContains: Constants.textTag[tag]);
+    //if (tag != 0)
+    //  query = query.where('tags', arrayContains: Constants.textTag[tag]);
 
     // Map the documents to the data payload
     slides = query.snapshots().map((list) =>
         list.documents.map((doc) {
           final Map data = doc.data;
           data['id'] = doc.documentID;
+          data['localFavorites'] = 0;
           return data;
         }));
-
-    // Update the active tag
-    setState(() {
-      activeTag = tag;
-    });
   }
 
   static final PageController ctrl = PageController(viewportFraction: 0.85);
 
   final Firestore db = Firestore.instance;
   Stream slides;
-
-  int activeTag = 0;
 
   // Keep track of current page to avoid unnecessary renders
   int currentPage = 0;
@@ -91,8 +88,7 @@ class TextSlideshowState extends State<TextSlideshow> {
 
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;
-    final favorites = data['favorites'] ?? 0;
-    final text = data['title'] +
+    final String text = data['title'] +
         ';' +
         Constants.authorCollections[store.state.author] +
         '/' +
@@ -106,7 +102,7 @@ class TextSlideshowState extends State<TextSlideshow> {
         child: Stack(
           children: <Widget>[
             AnimatedContainer(
-              duration: Duration(milliseconds: 500),
+              duration: Constants.durationAnimationMedium,
               curve: Curves.decelerate,
               margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
               decoration: BoxDecoration(
@@ -131,7 +127,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                       key: Key('image' + data['id']))),
             ),
             AnimatedContainer(
-              duration: Duration(milliseconds: 600),
+              duration: Constants.durationAnimationLong,
               curve: Curves.easeInOut,
               margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
               child: Center(
@@ -157,34 +153,50 @@ class TextSlideshowState extends State<TextSlideshow> {
                     ),
                   )),
             ),
-            AnimatedSwitcher(
-              duration: Duration(milliseconds: 200),
-              switchInCurve: Curves.decelerate,
-              switchOutCurve: Curves.decelerate,
-              transitionBuilder: (child, animation) =>
-                  ScaleTransition(scale: animation,
-                    child: child,
-                    alignment: FractionalOffset.bottomCenter,),
-              child: active
-                  ? Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  child: FavoritesCount(
-                      favorites: favorites,
-                      isFavorite: store.state.favoritesSet
-                          .any((favorite) => favorite == text),
-                      text: text,
-                      blurEnabled: BlurSettingsParser(
-                          blurSettings: store.state.blurSettings)
-                          .getTextsBlur(),
-                      favoritesTap: onFavoriteToggle,
-                      textSize: store.state.textSize))
-                  : NullWidget(),
-            )
+            FutureBuilder(
+                future:
+                db.document('favorites/_stats_').get().then((docSnapshot) {
+                  final String textPath =
+                  text.split(';')[1].replaceAll('/', '_');
+                  final Map<String, dynamic> map =
+                      docSnapshot?.data ?? {textPath: 0};
+                  final favoriteCount = map[textPath] ?? 0;
+                  return favoriteCount;
+                }),
+                initialData: 0,
+                builder: (context, snapshot) {
+                  return AnimatedSwitcher(
+                      duration: Constants.durationAnimationShort,
+                      switchInCurve: Curves.decelerate,
+                      switchOutCurve: Curves.decelerate,
+                      transitionBuilder: (child, animation) =>
+                          ScaleTransition(
+                            scale: animation,
+                            child: child,
+                            alignment: FractionalOffset.bottomCenter,
+                          ),
+                      child: active
+                          ? Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: FavoritesCount(
+                              favorites: snapshot.data,
+                              isFavorite: store.state.favoritesSet
+                                  .any((favorite) => favorite == text),
+                              text: text,
+                              blurEnabled: BlurSettingsParser(
+                                  blurSettings:
+                                  store.state.blurSettings)
+                                  .getTextsBlur(),
+                              favoritesTap: onFavoriteToggle,
+                              textSize: store.state.textSize))
+                          : NullWidget());
+                })
           ],
         ),
         onTap: () async {
           ctrl.animateToPage(index,
-              duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+              duration: Constants.durationAnimationMedium,
+              curve: Curves.decelerate);
           Navigator.push(
               context,
               CustomRoute(
@@ -193,81 +205,32 @@ class TextSlideshowState extends State<TextSlideshow> {
         });
   }
 
-  Widget _buildButton(int id) {
-    return AnimatedSwitcher(duration: Duration(milliseconds: 400),
-        switchOutCurve: Curves.easeInOut,
-        switchInCurve: Curves.easeInOut,
-        transitionBuilder: (widget, animation) {
-          Vibration.vibrate(duration: 90);
-          return FadeTransition(
-              opacity: Tween(begin: 0.0, end: 1.0).animate(animation),
-              child: widget);
-        },
-        child: id == activeTag ? FlatButton(
-            color: Theme
-                .of(context)
-                .accentColor,
-            child: Text(
-              '#' + Constants.textTag[id],
-              style: Constants().textStyleButton(store.state.textSize),
-            ),
-            onPressed: () => _queryDb(tag: id))
-
-            : OutlineButton(
-            borderSide: BorderSide(color: Theme
-                .of(context)
-                .accentColor),
-            child: Text(
-              '#' + Constants.textTag[id],
-              style: Constants().textStyleButton(store.state.textSize).copyWith(
-                  color: Constants.themeAccent.shade400),
-            ),
-            onPressed: () => _queryDb(tag: id)));
-  }
-
-  _buildTagPage() {
-    return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: <Widget>[
-                Text(
-                  Constants.textTextos,
-                  style: Constants().textstyleTitle(store.state.textSize),
-                ),
-                ClipRect(
-                  child: DropdownButton(
-                      value: store.state.author,
-                      items: <DropdownMenuItem>[
-                        DropdownMenuItem(
-                            value: 0,
-                            child: Text(Constants.authorNames[0],
-                                style: Constants()
-                                    .textstyleTitle(store.state.textSize))),
-                        DropdownMenuItem(
-                            value: 1,
-                            child: Text(Constants.authorNames[1],
-                                style: Constants()
-                                    .textstyleTitle(store.state.textSize))),
-                      ],
-                      onChanged: (val) async {
-                        store.dispatch(UpdateAuthor(author: val));
-                        _queryDb();
-                      }),
-                )
-              ],
-            ),
-            Text(Constants.textFilter,
-                style: Constants().textstyleFilter(
-                    store.state.textSize, store.state.enableDarkMode)),
-            _buildButton(0),
-            _buildButton(1),
-            _buildButton(2),
-            _buildButton(3)
-          ],
-        ));
+  _buildTagPages() {
+    metadataQuery = db.collection('metadata').orderBy('order');
+    Stream tagStream = metadataQuery.snapshots().map((list) =>
+        list.documents.map((doc) => doc.data));
+    return StreamBuilder(
+      stream: tagStream,
+      initialData: [{'title': 'Textos do ',
+        'authorName': 'Kalil',
+        'tags': ['Todos']}
+      ],
+      builder: (context, snapshot) {
+        List<Map<dynamic, dynamic>> metadatas = snapshot.data.toList();
+        return PageView.builder(
+            onPageChanged: (index) {
+              authorCollection = metadatas[index]['collection'];
+              _queryDb();
+            },
+            itemCount: metadatas.length,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) =>
+                TagPage(data: metadatas[index],
+                    enableDarkMode: store.state.enableDarkMode,
+                    textSize: store.state.textSize)
+        );
+      },
+    );
   }
 
   static List slideList;
@@ -293,7 +256,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                 pageSnapping: false,
                 itemBuilder: (context, int currentIdx) {
                   if (currentIdx == 0) {
-                    return _buildTagPage();
+                    return _buildTagPages();
                   } else if (slideList.length >= currentIdx) {
                     return _buildStoryPage(
                         slideList[currentIdx - 1], currentIdx);

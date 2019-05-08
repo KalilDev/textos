@@ -4,12 +4,7 @@ class Constants {
   // Text
   static const textTextos = 'Textos ';
   static const textFilter = 'FILTRO';
-  static const List<String> textTag = [
-    'Todos',
-    'Crônicas',
-    'Reflexões',
-    'Desabafos'
-  ];
+  static const textAllTag = 'Todos';
   static const textTema = 'Tema';
   static const textConfigs = 'Configurações';
   static const textFavs = 'Favoritos';
@@ -31,7 +26,6 @@ class Constants {
     'favorites': 0,
     'date':
     DateTime.now().toIso8601String().replaceAll('-', '/').substring(0, 10),
-    'tags': textTag,
     'id': 'TEXTNOTFOUNDID'
   };
 
