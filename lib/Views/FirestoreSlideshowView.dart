@@ -50,7 +50,7 @@ class TextSlideshowState extends State<TextSlideshow> {
         ? MediaQuery
         .of(context)
         .padding
-        .top + 10
+        .top + 60
         : 180;
 
     final title = data['title'] ?? Constants.placeholderTitle;
@@ -193,49 +193,61 @@ class TextSlideshowState extends State<TextSlideshow> {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
-      child: StreamBuilder(
-          stream: queryController.dataStream,
-          initialData: [],
-          builder: (context, AsyncSnapshot snap) {
-            final data = snap.data.toList();
-            _slideList = data.length == 0
-                ? [
-              Constants.textNoTextAvailable,
-            ]
-                : data;
+      child: Stack(
+        children: <Widget>[
+          StreamBuilder(
+              stream: queryController.dataStream,
+              initialData: [],
+              builder: (context, AsyncSnapshot snap) {
+                final data = snap.data.toList();
+                _slideList = data.length == 0
+                    ? [
+                  Constants.textNoTextAvailable,
+                ]
+                    : data;
 
-            return StreamBuilder(
-              stream: queryController.favoritesStream,
-              builder: (context, AsyncSnapshot favoritesSnap) {
-                if (favoritesSnap.hasData) {
-                  print(favoritesSnap.data);
-                  favoritesData = favoritesSnap.data;
-                  favoritesData.forEach((textPath, favoriteInt) {
-                    int targetIndex = _slideList
-                        .indexWhere((element) =>
-                    element['path'] ==
-                        textPath.toString().replaceAll('_', '/'));
-                    if (targetIndex >= 0)
-                      _slideList.elementAt(targetIndex)['favoriteCount'] =
-                          favoriteInt;
-                  });
-                }
+                return StreamBuilder(
+                  stream: queryController.favoritesStream,
+                  builder: (context, AsyncSnapshot favoritesSnap) {
+                    if (favoritesSnap.hasData) {
+                      print(favoritesSnap.data);
+                      favoritesData = favoritesSnap.data;
+                      favoritesData.forEach((textPath, favoriteInt) {
+                        int targetIndex = _slideList
+                            .indexWhere((element) =>
+                        element['path'] ==
+                            textPath.toString().replaceAll('_', '/'));
+                        if (targetIndex >= 0)
+                          _slideList.elementAt(targetIndex)['favoriteCount'] =
+                              favoriteInt;
+                      });
+                    }
 
-                return PageView.builder(
-                    controller: textPageController.pageController,
-                    itemCount: _slideList.length + 1,
-                    pageSnapping: false,
-                    itemBuilder: (context, int currentIdx) {
-                      if (currentIdx == 0) {
-                        return _buildTagPages();
-                      } else if (_slideList.length >= currentIdx) {
-                        return _buildStoryPage(
-                            _slideList[currentIdx - 1], currentIdx);
-                      }
-                    });
-              },
-            );
-          }),
+                    return PageView.builder(
+                        controller: textPageController.pageController,
+                        itemCount: _slideList.length + 1,
+                        pageSnapping: false,
+                        itemBuilder: (context, int currentIdx) {
+                          if (currentIdx == 0) {
+                            return _buildTagPages();
+                          } else if (_slideList.length >= currentIdx) {
+                            return _buildStoryPage(
+                                _slideList[currentIdx - 1], currentIdx);
+                          }
+                        });
+                  },
+                );
+              }),
+          Positioned(
+            child: MenuButton(),
+            top: MediaQuery
+                .of(context)
+                .padding
+                .top - 2.5,
+            left: -2.5,
+          ),
+        ],
+      ),
     );
   }
 

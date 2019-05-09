@@ -139,13 +139,7 @@ class TextCard extends StatelessWidget {
           ),
         ),
         Positioned(
-          child: Tooltip(
-              message: Constants.textTooltipDrawer,
-              child: InkWell(
-                  customBorder: CircleBorder(),
-                  child:
-                  Container(height: 60, width: 60, child: Icon(Icons.menu)),
-                  onTap: () => Scaffold.of(context).openDrawer())),
+          child: MenuButton(),
           top: MediaQuery
               .of(context)
               .padding

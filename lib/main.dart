@@ -153,7 +153,6 @@ class StoreViewState extends State<StoreView> {
           ? Constants.themeDataDark
           : Constants.themeDataLight,
       home: Scaffold(
-        appBar: Constants().appbarTransparent(store.state.enableDarkMode),
         body: TextSlideshow(store: store),
         drawer: TextAppDrawer(store: store),
       ),

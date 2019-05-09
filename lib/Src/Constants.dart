@@ -106,13 +106,4 @@ class Constants {
   static const durationAnimationMedium = Duration(milliseconds: 400);
   static const durationAnimationLong = Duration(milliseconds: 600);
   static const durationAnimationRoute = Duration(milliseconds: 700);
-
-  // AppBar
-  Widget appbarTransparent(bool isDark) =>
-      AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          iconTheme: IconThemeData(
-            color: isDark ? themeForegroundDark : themeForegroundLight,
-          ));
 }
