@@ -13,7 +13,6 @@ import 'package:textos/Widgets/Widgets.dart';
 // TODO Implement tutorial
 // TODO Implement Firebase analytics
 // TODO Let authors upload texts from the app
-// TODO Let authors specify their own tags
 // TODO Make tapping the notification open the respective text
 void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
