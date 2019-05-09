@@ -83,8 +83,7 @@ class FavoriteFABState extends State<FavoriteFAB>
     return ScaleTransition(
       scale: _scale,
       child: BlurOverlay(
-        enabled: BlurSettingsParser(blurSettings: store.state.blurSettings)
-            .getButtonsBlur(),
+        enabled: BlurSettings(store.state.blurSettings).buttonsBlur,
         radius: 100,
         intensity: 0.65,
         child: AnimatedGradientContainer(

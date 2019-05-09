@@ -19,10 +19,16 @@ class TextCardView extends StatelessWidget {
       Navigator.pop(context);
     }
 
+    ThemeData overrideTheme;
+    if (store.state.enableDarkMode) {
+      overrideTheme = Constants.themeDataDark;
+    } else {
+      overrideTheme = Constants.themeDataLight;
+    }
+
     return MaterialApp(
-        theme: store.state.enableDarkMode
-            ? Constants.themeDataDark
-            : Constants.themeDataLight,
+        darkTheme: Constants.themeDataDark,
+        theme: overrideTheme,
         home: new Scaffold(
             drawer: TextAppDrawer(store: store),
             body: new TextCard(data: data, store: store, exit: exit)));
@@ -48,6 +54,10 @@ class TextCard extends StatelessWidget {
     final text = data['text'] ?? Constants.placeholderText;
     final date = data['date'] ?? Constants.placeholderDate;
     final img = data['img'] ?? Constants.placeholderImg;
+
+    final textTheme = Theme
+        .of(context)
+        .textTheme;
 
     return Stack(
       children: <Widget>[
@@ -81,9 +91,8 @@ class TextCard extends StatelessWidget {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20)),
                           child: BlurOverlay(
-                            enabled: BlurSettingsParser(
-                                blurSettings: store.state.blurSettings)
-                                .getTextsBlur(),
+                            enabled: BlurSettings(store.state.blurSettings)
+                                .textsBlur,
                             radius: 20,
                             child: Column(
                               children: <Widget>[
@@ -94,21 +103,19 @@ class TextCard extends StatelessWidget {
                                       child: Column(children: <Widget>[
                                         Text(title,
                                             textAlign: TextAlign.center,
-                                            style: Constants().textstyleTitle(
-                                                store.state.textSize)),
+                                            style: textTheme.display2),
                                         SizedBox(
                                           height: 10,
                                         ),
                                         Text(text,
-                                            style: Constants().textstyleText(
-                                                store.state.textSize)),
+                                            style: textTheme.body1.copyWith(
+                                                fontSize: store.state.textSize *
+                                                    4.5)),
                                         SizedBox(
                                           height: 55,
                                           child: Center(
                                             child: Text(date,
-                                                style: Constants()
-                                                    .textstyleDate(
-                                                    store.state.textSize)),
+                                                style: textTheme.title),
                                           ),
                                         ),
                                       ]),

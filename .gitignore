@@ -73,11 +73,9 @@ build/
 android/app/google-services.json
 android/key.properties
 google-services.json
-res/Merriweather-Black.ttf
 res/Merriweather-BlackItalic.ttf
 res/Merriweather-BoldItalic.ttf
 res/Merriweather-Italic.ttf
-res/Merriweather-Light.ttf
 res/Merriweather-LightItalic.ttf
 res/Muli-Black.ttf
 res/Muli-BlackItalic.ttf
@@ -87,7 +85,5 @@ res/Muli-ExtraBoldItalic.ttf
 res/Muli-ExtraLight.ttf
 res/Muli-ExtraLightItalic.ttf
 res/Muli-Italic.ttf
-res/Muli-Light.ttf
 res/Muli-LightItalic.ttf
-res/Muli-SemiBold.ttf
 res/Muli-SemiBoldItalic.ttf

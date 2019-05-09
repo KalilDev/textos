@@ -9,32 +9,20 @@ class BlurSettingsTap {
   BlurSettingsTap({@required this.store});
 
   void setDrawerBlur() {
-    final int currentSettings = store.state.blurSettings;
-    double settingsDouble =
-        BlurSettingsParser(blurSettings: store.state.blurSettings)
-                .getDrawerBlur()
-            ? currentSettings / BlurSettingsParser.settingsTable[0]
-            : currentSettings * BlurSettingsParser.settingsTable[0];
-    store.dispatch(UpdateBlurSettings(integer: settingsDouble.round()));
+    BlurSettings settings = BlurSettings(store.state.blurSettings);
+    settings.drawerBlur = !settings.drawerBlur;
+    store.dispatch(UpdateBlurSettings(integer: settings.blurSettings));
   }
 
   void setButtonsBlur() {
-    final int currentSettings = store.state.blurSettings;
-    double settingsDouble =
-        BlurSettingsParser(blurSettings: store.state.blurSettings)
-                .getButtonsBlur()
-            ? currentSettings / BlurSettingsParser.settingsTable[1]
-            : currentSettings * BlurSettingsParser.settingsTable[1];
-    store.dispatch(UpdateBlurSettings(integer: settingsDouble.round()));
+    BlurSettings settings = BlurSettings(store.state.blurSettings);
+    settings.buttonsBlur = !settings.buttonsBlur;
+    store.dispatch(UpdateBlurSettings(integer: settings.blurSettings));
   }
 
   void setTextsBlur() {
-    final int currentSettings = store.state.blurSettings;
-    double settingsDouble =
-        BlurSettingsParser(blurSettings: store.state.blurSettings)
-                .getTextsBlur()
-            ? currentSettings / BlurSettingsParser.settingsTable[2]
-            : currentSettings * BlurSettingsParser.settingsTable[2];
-    store.dispatch(UpdateBlurSettings(integer: settingsDouble.round()));
+    BlurSettings settings = BlurSettings(store.state.blurSettings);
+    settings.textsBlur = !settings.textsBlur;
+    store.dispatch(UpdateBlurSettings(integer: settings.blurSettings));
   }
 }

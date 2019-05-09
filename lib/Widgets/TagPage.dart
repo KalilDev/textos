@@ -6,14 +6,10 @@ import 'package:vibration/vibration.dart';
 
 class TagPage extends StatefulWidget {
   final int index;
-  final bool enableDarkMode;
-  final double textSize;
   final TagPageController tagPageController;
   final QueryController queryController;
 
   TagPage({@required this.index,
-      @required this.enableDarkMode,
-    @required this.textSize,
     @required this.tagPageController,
     @required this.queryController});
 
@@ -49,7 +45,6 @@ class _TagPageState extends State<TagPage> {
             color: Theme.of(context).accentColor,
             child: Text(
               '#' + tag,
-              style: Constants().textStyleButton(widget.textSize),
             ),
             onPressed: () {
               Vibration.vibrate(duration: 90);
@@ -62,8 +57,10 @@ class _TagPageState extends State<TagPage> {
             borderSide: BorderSide(color: Theme.of(context).accentColor),
             child: Text(
               '#' + tag,
-              style: Constants()
-                  .textStyleButton(widget.textSize)
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .button
                   .copyWith(color: Constants.themeAccent.shade400),
             ),
             onPressed: () {
@@ -97,11 +94,12 @@ class _TagPageState extends State<TagPage> {
           children: [
             Text(
               data['title'] + data['authorName'],
-              style: Constants().textstyleTitle(widget.textSize),
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .display2,
             ),
-            Text(Constants.textFilter,
-                style: Constants()
-                    .textstyleFilter(widget.textSize, widget.enableDarkMode)),
+            Text(Constants.textFilter),
             Container(
               margin: EdgeInsets.only(left: 1.0),
               child: Column(

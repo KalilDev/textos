@@ -8,8 +8,7 @@ class FavoritesCount extends StatelessWidget {
     @required this.text,
     @required this.isFavorite,
     @required this.blurEnabled,
-    @required this.favoritesTap,
-    @required this.textSize})
+    @required this.favoritesTap})
       : super(key: key);
 
   final int favorites;
@@ -17,7 +16,6 @@ class FavoritesCount extends StatelessWidget {
   final bool isFavorite;
   final bool blurEnabled;
   final Function favoritesTap;
-  final double textSize;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +41,10 @@ class FavoritesCount extends StatelessWidget {
                     Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
                     const SizedBox(width: 8.0),
                     Text(favorites.toString() + ' ' + Constants.textFavs,
-                        style: Constants().textstyleTitle(textSize * 0.8)),
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .title),
                     const SizedBox(width: 20.0),
                   ],),
                 color: Colors.transparent,

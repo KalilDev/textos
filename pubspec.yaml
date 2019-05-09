@@ -7,7 +7,7 @@ description: Aplicativo para visualizar os textos do kalil e cria-los
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 4.0.1
+version: 4.1.0
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -43,17 +43,31 @@ flutter:
     - family: Merriweather
       fonts:
         - asset: res/Merriweather-Regular.ttf
+        - asset: res/Merriweather-Light.ttf
+          weight: 100
+        - asset: res/Merriweather-Regular.ttf
+          weight: 400
+        - asset: res/Merriweather-Black.ttf
+          weight: 500
         - asset: res/Merriweather-Bold.ttf
           weight: 700
     - family: Muli
       fonts:
         - asset: res/Muli-Regular.ttf
+        - asset: res/Muli-Light.ttf
+          weight: 100
+        - asset: res/Muli-Regular.ttf
+          weight: 400
+        - asset: res/Muli-SemiBold.ttf
+          weight: 500
         - asset: res/Muli-Bold.ttf
           weight: 700
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - res/baseline_lock_white_96dp.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

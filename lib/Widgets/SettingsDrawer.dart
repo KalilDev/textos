@@ -13,14 +13,18 @@ class SettingsDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle settingsStyle =
-        Constants().textstyleTitle(store.state.textSize / 16 * 7);
+    final TextStyle settingsStyle = Theme
+        .of(context)
+        .textTheme
+        .subhead;
     return Column(
       children: <Widget>[
         SwitchListTile(
             title: Text(Constants.textTextTheme, style: settingsStyle),
             secondary: Icon(Icons.color_lens),
-            value: store.state.enableDarkMode,
+            value: store.state.enableDarkMode ? true : MediaQuery
+                .of(context)
+                .platformBrightness == Brightness.dark ? true : false,
             activeColor: Theme
                 .of(context)
                 .accentColor,
@@ -29,7 +33,11 @@ class SettingsDrawer extends StatelessWidget {
                 .of(context)
                 .accentColor
                 .withAlpha(170),
-            onChanged: (map) =>
+            inactiveThumbImage: AssetImage('res/baseline_lock_white_96dp.png'),
+            onChanged: MediaQuery
+                .of(context)
+                .platformBrightness == Brightness.dark ? null
+                : (map) =>
                 store.dispatch(
                     UpdateDarkMode(
                         enable: !store.state.enableDarkMode))),
@@ -54,9 +62,7 @@ class SettingsDrawer extends StatelessWidget {
             title: Text(Constants.textTextBlurDrawer,
                 style: settingsStyle),
             secondary: Icon(Icons.blur_linear),
-            value: BlurSettingsParser(
-                blurSettings: store.state.blurSettings)
-                .getDrawerBlur(),
+            value: BlurSettings(store.state.blurSettings).drawerBlur,
             activeColor: Theme
                 .of(context)
                 .accentColor,
@@ -71,9 +77,7 @@ class SettingsDrawer extends StatelessWidget {
             title: Text(Constants.textTextBlurButtons,
                 style: settingsStyle),
             secondary: Icon(Icons.blur_circular),
-            value: BlurSettingsParser(
-                blurSettings: store.state.blurSettings)
-                .getButtonsBlur(),
+            value: BlurSettings(store.state.blurSettings).buttonsBlur,
             activeColor: Theme
                 .of(context)
                 .accentColor,
@@ -88,9 +92,7 @@ class SettingsDrawer extends StatelessWidget {
             title:
             Text(Constants.textTextBlurText, style: settingsStyle),
             secondary: Icon(Icons.blur_on),
-            value: BlurSettingsParser(
-                blurSettings: store.state.blurSettings)
-                .getTextsBlur(),
+            value: BlurSettings(store.state.blurSettings).textsBlur,
             activeColor: Theme
                 .of(context)
                 .accentColor,

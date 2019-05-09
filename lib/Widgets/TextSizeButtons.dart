@@ -50,8 +50,7 @@ class TextSizeButtonState extends State<TextSizeButton>
     return ScaleTransition(
       scale: _scale,
       child: BlurOverlay(
-        enabled: BlurSettingsParser(blurSettings: store.state.blurSettings)
-            .getButtonsBlur(),
+        enabled: BlurSettings(store.state.blurSettings).buttonsBlur,
         radius: 80,
         intensity: 0.65,
         child: Material(

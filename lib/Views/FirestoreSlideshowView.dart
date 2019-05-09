@@ -63,6 +63,10 @@ class TextSlideshowState extends State<TextSlideshow> {
       FavoritesTap(store: store).toggle(text);
     }
 
+    final textTheme = Theme
+        .of(context)
+        .textTheme;
+
     return GestureDetector(
         child: Stack(
           children: <Widget>[
@@ -105,13 +109,11 @@ class TextSlideshowState extends State<TextSlideshow> {
                         margin: EdgeInsets.all(12.5),
                         child: BlurOverlay(
                           radius: 15,
-                          enabled: BlurSettingsParser(
-                              blurSettings: store.state.blurSettings)
-                              .getTextsBlur(),
+                            enabled: BlurSettings(store.state.blurSettings)
+                                .textsBlur,
                           child: Text(title,
                               textAlign: TextAlign.center,
-                              style:
-                              Constants().textstyleTitle(store.state.textSize)),
+                              style: textTheme.display2)
                         ),
                       ),
                       color: Colors.transparent,
@@ -136,11 +138,9 @@ class TextSlideshowState extends State<TextSlideshow> {
                         isFavorite: store.state.favoritesSet
                             .any((favorite) => favorite == text),
                         text: text,
-                        blurEnabled: BlurSettingsParser(
-                            blurSettings: store.state.blurSettings)
-                            .getTextsBlur(),
-                        favoritesTap: onFavoriteToggle,
-                        textSize: store.state.textSize))
+                        blurEnabled: BlurSettings(store.state.blurSettings)
+                            .textsBlur,
+                        favoritesTap: onFavoriteToggle))
                     : NullWidget())
           ],
         ),
@@ -179,9 +179,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                 TagPage(
                     queryController: queryController,
                     tagPageController: tagPageController,
-                    index: index,
-                    enableDarkMode: store.state.enableDarkMode,
-                    textSize: store.state.textSize));
+                    index: index));
       },
     );
   }
@@ -210,7 +208,6 @@ class TextSlideshowState extends State<TextSlideshow> {
                   stream: queryController.favoritesStream,
                   builder: (context, AsyncSnapshot favoritesSnap) {
                     if (favoritesSnap.hasData) {
-                      print(favoritesSnap.data);
                       favoritesData = favoritesSnap.data;
                       favoritesData.forEach((textPath, favoriteInt) {
                         int targetIndex = _slideList

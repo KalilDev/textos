@@ -1,22 +1,55 @@
-import 'package:flutter/material.dart';
-
-class BlurSettingsParser {
+class BlurSettings {
   int blurSettings;
 
-  BlurSettingsParser({@required this.blurSettings});
+  BlurSettings(this.blurSettings);
 
-  static const List<double> settingsTable = [2.0, 3.0, 5.0];
+  static const List<int> settingsTable = [2, 3, 5];
 
-  bool getDrawerBlur() {
-    // Return true if drawer blur is enabled
-    return blurSettings % settingsTable[0] == 0;
+  bool get drawerBlur => blurSettings % settingsTable[0] == 0;
+
+  set drawerBlur(bool target) {
+    print(drawerBlur);
+    print(target);
+    print(blurSettings);
+    if (drawerBlur != target) {
+      blurSettings = drawerBlur ? (blurSettings / settingsTable[0]).round()
+          : (blurSettings * settingsTable[0]).round();
+    }
   }
 
-  bool getButtonsBlur() {
-    return blurSettings % settingsTable[1] == 0;
+  bool get buttonsBlur => blurSettings % settingsTable[1] == 0;
+
+  set buttonsBlur(bool target) {
+    print(drawerBlur);
+    print(target);
+    print(blurSettings);
+    if (buttonsBlur != target) {
+      blurSettings = buttonsBlur ? (blurSettings / settingsTable[1]).round()
+          : (blurSettings * settingsTable[1]).round();
+    }
   }
 
-  bool getTextsBlur() {
-    return blurSettings % settingsTable[2] == 0;
+  bool get textsBlur => blurSettings % settingsTable[2] == 0;
+
+  set textsBlur(bool target) {
+    print(drawerBlur);
+    print(target);
+    print(blurSettings);
+    if (textsBlur != target) {
+      blurSettings = textsBlur ? (blurSettings / settingsTable[2]).round()
+          : (blurSettings * settingsTable[2]).round();
+    }
+  }
+
+  @override
+  String toString() {
+    return ('drawerBlur: ' +
+        drawerBlur.toString() +
+        '\n' +
+        'buttonsBlur: ' +
+        buttonsBlur.toString() +
+        '\n' +
+        'textsBlur: ' +
+        textsBlur.toString());
   }
 }

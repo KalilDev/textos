@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
-import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 
 class FavoritesDrawer extends StatelessWidget {
-  final double textSize;
   final Set<String> favoriteSet;
   final FavoritesTap tapHandler;
 
-  FavoritesDrawer({@required this.textSize,
+  FavoritesDrawer({
     @required this.favoriteSet,
     @required this.tapHandler});
 
@@ -20,14 +18,20 @@ class FavoritesDrawer extends StatelessWidget {
       txt = Container(
           child: Marquee(
               text: favoriteTitle,
-              style: Constants().textstyleTitle(textSize),
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .title,
               blankSpace: 15,
               velocity: 35.0),
           height: 50.0);
     } else {
       txt = Text(
         favoriteTitle,
-        style: Constants().textstyleTitle(textSize),
+        style: Theme
+            .of(context)
+            .textTheme
+            .title,
       );
     }
     return Dismissible(

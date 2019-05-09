@@ -81,13 +81,15 @@ class TextAppDrawerState extends State<TextAppDrawer>
           : _settingsController.reverse();
       _settingsDrawer = settingsDrawer;
     }
+    final textTheme = Theme
+        .of(context)
+        .textTheme;
     return Theme(
       data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
       child: Drawer(
           child: BlurOverlay(
               enabled:
-              BlurSettingsParser(blurSettings: store.state.blurSettings)
-                  .getDrawerBlur(),
+              BlurSettings(store.state.blurSettings).drawerBlur,
               child: Column(
                 children: <Widget>[
                   SizedBox(
@@ -102,15 +104,13 @@ class TextAppDrawerState extends State<TextAppDrawer>
                         child: SlideTransition(
                             position: _toBottomAnimation,
                             child: Text(Constants.textConfigs,
-                                style: Constants().textstyleText(
-                                    store.state.textSize))),
+                                style: textTheme.body1)),
                       ),
                       Center(
                         child: SlideTransition(
                             position: _toTopAnimation,
                             child: Text(Constants.textFavs,
-                                style: Constants().textstyleText(
-                                    store.state.textSize))),
+                                style: textTheme.body1)),
                       ),
                     ],
                   ),
@@ -124,7 +124,6 @@ class TextAppDrawerState extends State<TextAppDrawer>
                           SlideTransition(
                             position: _toTopAnimation,
                             child: FavoritesDrawer(
-                                textSize: store.state.textSize,
                                 favoriteSet: store.state.favoritesSet,
                                 tapHandler: FavoritesTap(store: store)),
                           )
@@ -136,16 +135,14 @@ class TextAppDrawerState extends State<TextAppDrawer>
                             child: SlideTransition(
                                 position: _settingsTileAnimation,
                                 child: Text(Constants.textConfigs,
-                                    style: Constants().textstyleTitle(
-                                        store.state.textSize / 16 * 9),
+                                    style: textTheme.subhead,
                                     textAlign: TextAlign.center))
                         ),
                         Center(
                             child: SlideTransition(
                                 position: _favoritesTileAnimation,
                                 child: Text(Constants.textFavs,
-                                    style: Constants().textstyleTitle(
-                                        store.state.textSize / 16 * 9),
+                                    style: textTheme.subhead,
                                     textAlign: TextAlign.center))
                         ),
                       ]),

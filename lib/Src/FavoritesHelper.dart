@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class FirestoreHelper {
+class FavoritesHelper {
   final String udid;
 
-  FirestoreHelper({@required this.udid});
+  FavoritesHelper({@required this.udid});
 
   final Firestore db = Firestore.instance;
   final CollectionReference favoritesCollection =

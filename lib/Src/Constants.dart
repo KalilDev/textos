@@ -41,7 +41,11 @@ class Constants {
       dividerColor: themeForegroundLight.withAlpha(70),
       primaryColor: themeForegroundLight,
       primaryColorBrightness: Brightness.dark,
-      backgroundColor: themeBackgroundLight);
+      backgroundColor: themeBackgroundLight,
+      accentTextTheme: textThemeMuli.apply(
+          bodyColor: themeForegroundLight, displayColor: themeForegroundLight),
+      textTheme: textThemeMerriweather.apply(
+          bodyColor: themeForegroundLight, displayColor: themeForegroundLight));
 
   // Theme Dark
   static const themeBackgroundDark = Colors.black;
@@ -55,38 +59,79 @@ class Constants {
       dividerColor: themeForegroundDark.withAlpha(70),
       primaryColor: themeForegroundDark,
       primaryColorBrightness: Brightness.light,
-      backgroundColor: themeBackgroundDark);
+      backgroundColor: themeBackgroundDark,
+      accentTextTheme: textThemeMuli.apply(
+          bodyColor: themeForegroundDark, displayColor: themeForegroundDark),
+      textTheme: textThemeMerriweather.apply(
+          bodyColor: themeForegroundDark, displayColor: themeForegroundDark));
+
+  // BaseTextStyles
+  static final _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
+  static final _baseTextStyleMerriweather = TextStyle(
+      fontFamily: 'Merriweather');
+
+  // TextTheme
+  static final textThemeMuli = TextTheme(
+    display4: _baseTextStyleMuli.copyWith(
+        fontSize: 112.0, fontWeight: FontWeight.w100),
+    display3: _baseTextStyleMuli.copyWith(
+        fontSize: 56.0, fontWeight: FontWeight.w400),
+    display2: _baseTextStyleMuli.copyWith(
+        fontSize: 45.0, fontWeight: FontWeight.w400),
+    display1: _baseTextStyleMuli.copyWith(
+        fontSize: 34.0, fontWeight: FontWeight.w400),
+    headline: _baseTextStyleMuli.copyWith(
+        fontSize: 24.0, fontWeight: FontWeight.w400),
+    title: _baseTextStyleMuli.copyWith(
+        fontSize: 20.0, fontWeight: FontWeight.w500),
+    subhead: _baseTextStyleMuli.copyWith(
+        fontSize: 16.0, fontWeight: FontWeight.w400),
+    body2: _baseTextStyleMuli.copyWith(
+        fontSize: 14.0, fontWeight: FontWeight.w500),
+    body1: _baseTextStyleMuli.copyWith(
+        fontSize: 14.0, fontWeight: FontWeight.w400),
+    caption: _baseTextStyleMuli.copyWith(
+        fontSize: 12.0, fontWeight: FontWeight.w400),
+    button: _baseTextStyleMuli.copyWith(
+        fontSize: 14.0, fontWeight: FontWeight.w500),
+    subtitle: _baseTextStyleMuli.copyWith(
+        fontSize: 14.0, fontWeight: FontWeight.w500),
+    overline: _baseTextStyleMuli.copyWith(
+        fontSize: 10.0, fontWeight: FontWeight.w400),
+  );
+  static final textThemeMerriweather = TextTheme(
+    display4: _baseTextStyleMerriweather.copyWith(
+        fontSize: 112.0, fontWeight: FontWeight.w100),
+    display3: _baseTextStyleMerriweather.copyWith(
+        fontSize: 56.0, fontWeight: FontWeight.w400),
+    display2: _baseTextStyleMerriweather.copyWith(
+        fontSize: 45.0, fontWeight: FontWeight.w400),
+    display1: _baseTextStyleMerriweather.copyWith(
+        fontSize: 34.0, fontWeight: FontWeight.w400),
+    headline: _baseTextStyleMerriweather.copyWith(
+        fontSize: 24.0, fontWeight: FontWeight.w400),
+    title: _baseTextStyleMerriweather.copyWith(
+        fontSize: 20.0, fontWeight: FontWeight.w500),
+    subhead: _baseTextStyleMerriweather.copyWith(
+        fontSize: 16.0, fontWeight: FontWeight.w400),
+    body2: _baseTextStyleMerriweather.copyWith(
+        fontSize: 14.0, fontWeight: FontWeight.w500),
+    body1: _baseTextStyleMerriweather.copyWith(
+        fontSize: 14.0, fontWeight: FontWeight.w400),
+    caption: _baseTextStyleMerriweather.copyWith(
+        fontSize: 12.0, fontWeight: FontWeight.w400),
+    button: _baseTextStyleMerriweather.copyWith(
+        fontSize: 14.0, fontWeight: FontWeight.w500),
+    subtitle: _baseTextStyleMerriweather.copyWith(
+        fontSize: 14.0, fontWeight: FontWeight.w500),
+    overline: _baseTextStyleMerriweather.copyWith(
+        fontSize: 10.0, fontWeight: FontWeight.w400),
+  );
 
   // Themes
   static const themeAccent = Colors.indigo;
 
   static double textInt;
-
-  TextStyle textstyleTitle(double size) =>
-      TextStyle(
-          fontSize: size * 8,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'Merriweather');
-
-  TextStyle textstyleFilter(double size, bool isDark) =>
-      TextStyle(
-          fontSize: size * 3,
-          color: isDark
-              ? themeForegroundDark.withAlpha(150)
-              : themeForegroundLight.withAlpha(150),
-          fontFamily: 'Merriweather');
-
-  TextStyle textstyleText(double size) =>
-      TextStyle(fontSize: size * 4.5, fontFamily: 'Muli');
-
-  TextStyle textstyleDate(double size) =>
-      TextStyle(
-        fontSize: size * 5,
-        fontFamily: 'Merriweather',
-      );
-
-  TextStyle textStyleButton(double size) =>
-      TextStyle(fontSize: size * 3, fontFamily: 'Merriweather');
 
   // Placeholders
   static const placeholderTitle = 'Titulo';

@@ -5,7 +5,7 @@ import 'package:flutter_udid/flutter_udid.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/Src/Constants.dart';
-import 'package:textos/Src/FirestoreHelper.dart';
+import 'package:textos/Src/FavoritesHelper.dart';
 import 'package:textos/Views/FirestoreSlideshowView.dart';
 import 'package:textos/Widgets/Widgets.dart';
 
@@ -141,16 +141,23 @@ class StoreViewState extends State<StoreView> {
       print('udid: ' + store.state.udid);
       print('favorites: ' + store.state.favoritesSet.toString());
     }
-    FirestoreHelper(udid: store.state.udid).syncDatabase(
+    FavoritesHelper(udid: store.state.udid).syncDatabase(
         store.state.favoritesSet);
   }
 
   @override
   Widget build(BuildContext context) {
+    ThemeData overrideTheme;
+
+    if (store.state.enableDarkMode) {
+      overrideTheme = Constants.themeDataDark;
+    } else {
+      overrideTheme = Constants.themeDataLight;
+    }
     return MaterialApp(
-      theme: store.state.enableDarkMode
-          ? Constants.themeDataDark
-          : Constants.themeDataLight,
+      debugShowCheckedModeBanner: false,
+      darkTheme: Constants.themeDataDark,
+      theme: overrideTheme,
       home: Scaffold(
         body: TextSlideshow(store: store),
         drawer: TextAppDrawer(store: store),
@@ -218,15 +225,15 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
     var _fav = state.favoritesSet;
     if (action.toClear != null) {
       _fav.clear();
-      FirestoreHelper(udid: state.udid).syncDatabase(_fav);
+      FavoritesHelper(udid: state.udid).syncDatabase(_fav);
     }
     if (action.toAdd != null) {
       _fav.add(action.toAdd);
-      FirestoreHelper(udid: state.udid).addFavorite(action.toAdd);
+      FavoritesHelper(udid: state.udid).addFavorite(action.toAdd);
     }
     if (action.toRemove != null) {
       _fav.remove(action.toRemove);
-      FirestoreHelper(udid: state.udid).removeFavorite(action.toRemove);
+      FavoritesHelper(udid: state.udid).removeFavorite(action.toRemove);
     }
 
     SharedPreferences.getInstance().then((pref) {
