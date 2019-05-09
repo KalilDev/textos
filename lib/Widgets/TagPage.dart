@@ -83,6 +83,12 @@ class _TagPageState extends State<TagPage> {
   }
 
   @override
+  void deactivate() {
+    super.deactivate();
+    widget.tagPageController.shouldJump = true;
+  }
+
+  @override
   Widget build(context) {
     return Container(
         child: Column(

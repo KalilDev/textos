@@ -4,6 +4,8 @@ import 'package:vibration/vibration.dart';
 
 class TagPageController {
   PageController pageController;
+  bool shouldJump = false;
+  bool justJumped = false;
 
   TagPageController() {
     pageController = new PageController(viewportFraction: 0.90);
@@ -19,12 +21,19 @@ class TagPageController {
     pageController.addListener(() {
       int next = pageController.page.round();
 
-      if (currentPage != next) {
-        Vibration.vibrate(duration: 60);
-        currentPage = next;
-        authorCollection = metadatas[currentPage]['collection'];
-        queryController.updateQuery();
-        setState();
+      if (justJumped) {
+        if (next == currentPage) {
+          justJumped = false;
+        }
+      } else {
+        if (currentPage != next) {
+          Vibration.vibrate(duration: 60);
+          currentPage = next;
+          authorCollection =
+              metadatas[currentPage]['collection'] ?? authorCollection;
+          queryController.updateQuery();
+          setState();
+        }
       }
     });
   }
@@ -37,12 +46,31 @@ class TagPageController {
     pageController.dispose();
   }
 
+  void jump() {
+    if (shouldJump) {
+      shouldJump = false;
+      justJumped = true;
+      pageController.jumpToPage(currentPage);
+      Vibration.vibrate(duration: 60);
+    }
+  }
+
   @override
   String toString() {
-    String page =
-        pageController.hasClients ? pageController.page.toString() : 'null';
+    String page;
+    try {
+      page = pageController.page.toString();
+    } catch (e) {
+      page = 'null';
+    }
     return ('currentPage: ' +
         currentPage.toString() +
+        '\n' +
+        'shouldJump: ' +
+        shouldJump.toString() +
+        '\n' +
+        'justJumped: ' +
+        justJumped.toString() +
         '\n' +
         'pageController.page: ' +
         page +

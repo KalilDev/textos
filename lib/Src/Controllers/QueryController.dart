@@ -21,25 +21,25 @@ class QueryController {
     updateQuery();
   }
 
-  set queryParameters(MapEntry<String, String> todo) {
-    print(todo);
-    if (todo.key == 'collection') {
-      authorCollection = todo.value;
+  set queryParameters(MapEntry<String, String> queryParameters) {
+    //print(queryParameters);
+    if (queryParameters.key == 'collection') {
+      authorCollection = queryParameters.value;
       tag = null;
-      print('newCollection: ' + authorCollection);
-    } else if (todo.key == 'tag') {
-      if (todo.value != Constants.textAllTag) {
-        tag = todo.value;
+      //print('newCollection: ' + authorCollection);
+    } else if (queryParameters.key == 'tag') {
+      if (queryParameters.value != Constants.textAllTag) {
+        tag = queryParameters.value;
         query =
             db.collection(authorCollection).where('tags', arrayContains: tag);
-        print('newTag: ' + tag);
+        //print('newTag: ' + tag);
         return updateDataStream();
       } else {
         tag = null;
-        print('allTags');
+        //print('allTags');
       }
     } else {
-      print('allFromCollection: ' + authorCollection);
+      //print('allFromCollection: ' + authorCollection);
     }
     query = db.collection(authorCollection);
     updateDataStream();

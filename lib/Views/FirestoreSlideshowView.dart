@@ -38,7 +38,7 @@ class TextSlideshowState extends State<TextSlideshow> {
     super.initState();
     tagPageController = new TagPageController();
     textPageController = new TextPageController();
-    textPageController.addListener(() => setState(() {}));
+    textPageController.addListener(() => setState(() {}), tagPageController);
     queryController = new QueryController(tagPageController: tagPageController);
   }
 
@@ -180,7 +180,8 @@ class TextSlideshowState extends State<TextSlideshow> {
       stream: tagStream,
       initialData: [{'title': 'Textos do ',
         'authorName': 'Kalil',
-        'tags': []}
+        'tags': [],
+        'collection': 'stories'}
       ],
       builder: (context, snapshot) {
         List metadatas = snapshot.data.toList();

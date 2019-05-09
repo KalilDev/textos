@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:textos/Src/Controllers/TagPageController.dart';
 import 'package:vibration/vibration.dart';
 
 class TextPageController {
@@ -11,11 +12,12 @@ class TextPageController {
   // Keep track of current page to avoid unnecessary renders
   int currentPage = 0;
 
-  void addListener(VoidCallback setState) {
+  void addListener(VoidCallback setState, TagPageController tagPageController) {
     pageController.addListener(() {
       int next = pageController.page.round();
-
-      if (currentPage != next) {
+      if (tagPageController.pageController.hasClients) {
+        tagPageController.jump();
+      } else if (currentPage != next) {
         Vibration.vibrate(duration: 60);
         currentPage = next;
         setState();
