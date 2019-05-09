@@ -11,8 +11,10 @@ class FadeRoute<T> extends MaterialPageRoute<T> {
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     if (animation.status == AnimationStatus.reverse) {
+      Animation curved = new CurvedAnimation(
+          parent: animation, curve: Curves.easeInOut);
       return FadeTransition(
-          opacity: Tween(begin: 0.0, end: 0.2).animate(animation),
+          opacity: Tween(begin: 0.0, end: 1.0).animate(animation),
           child: child);
     }
     return FadeTransition(opacity: animation, child: child);

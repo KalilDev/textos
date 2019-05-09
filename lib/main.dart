@@ -71,7 +71,6 @@ class MyApp extends StatelessWidget {
           store.state.favoritesSet,
           store.state.textSize,
           store.state.blurSettings,
-          store.state.author,
           store.state.udid,
         ];
       },
@@ -168,14 +167,12 @@ class AppStateMain {
     @required this.favoritesSet,
     @required this.textSize,
     @required this.blurSettings,
-    this.author = 0,
     @required this.udid,});
 
   bool enableDarkMode;
   Set<String> favoritesSet;
   double textSize;
   int blurSettings;
-  int author;
   String udid;
 }
 
@@ -205,12 +202,6 @@ class UpdateBlurSettings {
   final int integer;
 }
 
-class UpdateAuthor {
-  UpdateAuthor({@required this.author});
-
-  final int author;
-}
-
 AppStateMain reducer(AppStateMain state, dynamic action) {
   if (action is UpdateDarkMode) {
     SharedPreferences.getInstance().then((pref) {
@@ -222,7 +213,6 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
         blurSettings: state.blurSettings,
-        author: state.author,
         udid: state.udid);
   }
 
@@ -250,7 +240,6 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: _fav,
         textSize: state.textSize,
         blurSettings: state.blurSettings,
-        author: state.author,
         udid: state.udid);
   }
 
@@ -264,7 +253,6 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: action.size,
         blurSettings: state.blurSettings,
-        author: state.author,
         udid: state.udid);
   }
 
@@ -278,17 +266,6 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
         blurSettings: action.integer,
-        author: state.author,
-        udid: state.udid);
-  }
-
-  if (action is UpdateAuthor) {
-    return AppStateMain(
-        enableDarkMode: state.enableDarkMode,
-        favoritesSet: state.favoritesSet,
-        textSize: state.textSize,
-        blurSettings: state.blurSettings,
-        author: action.author,
         udid: state.udid);
   }
 

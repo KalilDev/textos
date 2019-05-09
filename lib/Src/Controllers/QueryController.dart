@@ -10,6 +10,7 @@ class QueryController {
   Query query;
   String tag;
   Stream dataStream;
+  Stream favoritesStream;
 
   String get authorCollection => tagPageController.authorCollection;
 
@@ -19,6 +20,9 @@ class QueryController {
   QueryController({this.tagPageController}) {
     query = db.collection(authorCollection);
     updateQuery();
+    favoritesStream =
+        db.collection('favorites').document('_stats_').snapshots().map((
+            documentSnapshot) => documentSnapshot.data);
   }
 
   set queryParameters(MapEntry<String, String> queryParameters) {
@@ -52,8 +56,8 @@ class QueryController {
   void updateDataStream() {
     dataStream = query.snapshots().map((list) => list.documents.map((doc) {
           final Map data = doc.data;
-          data['id'] = doc.documentID;
-          data['localFavorites'] = 0;
+          data['path'] = doc.reference.path;
+          data['favoriteCount'] = 0;
           return data;
         }));
   }

@@ -6,12 +6,10 @@ import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 class FavoritesDrawer extends StatelessWidget {
   final double textSize;
   final Set<String> favoriteSet;
-  final int author;
   final FavoritesTap tapHandler;
 
   FavoritesDrawer({@required this.textSize,
     @required this.favoriteSet,
-    @required this.author,
     @required this.tapHandler});
 
   Widget buildFavoritesItem(BuildContext context, String favorite) {
@@ -63,16 +61,10 @@ class FavoritesDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> favorites = [];
-    favoriteSet.forEach((string) {
-      if (string.contains(Constants.authorCollections[author])) {
-        favorites.add(string);
-      }
-    });
     return new ListView.separated(
-      itemCount: favorites.length,
+      itemCount: favoriteSet.length,
       itemBuilder: (BuildContext context, int index) =>
-          buildFavoritesItem(context, favorites[index]),
+          buildFavoritesItem(context, favoriteSet.toList()[index]),
       separatorBuilder: (BuildContext context, int index) => Divider(),
     );
   }

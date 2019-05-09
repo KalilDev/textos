@@ -67,13 +67,13 @@ class TextCard extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   Hero(
-                      tag: 'image' + data['id'],
+                      tag: 'image' + data['path'],
                       child: ImageBackground(
                           img: img,
                           enabled: false,
-                          key: Key('image' + data['id']))),
+                          key: Key('image' + data['path']))),
                   Hero(
-                    tag: 'body' + data['id'],
+                    tag: 'body' + data['path'],
                     child: Material(
                         color: Colors.transparent,
                         child: Container(
@@ -124,9 +124,7 @@ class TextCard extends StatelessWidget {
                     child: new FavoriteFAB(
                         store: store,
                         title: title,
-                        id: Constants.authorCollections[store.state.author] +
-                            '/' +
-                            data['id']),
+                        path: data['path']),
                     right: 10,
                     bottom: 10,
                   ),

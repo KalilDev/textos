@@ -46,18 +46,18 @@ class TextSlideshowState extends State<TextSlideshow> {
     // Animated Properties
     final double blur = textPageController.isCurrent(index) ? 30 : 0;
     final double offset = textPageController.isCurrent(index) ? 20 : 0;
-    final double top = textPageController.isCurrent(index) ? MediaQuery
+    final double top = textPageController.isCurrent(index)
+        ? MediaQuery
         .of(context)
         .padding
-        .top + 10 : 180;
+        .top + 10
+        : 180;
 
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;
     final String text = data['title'] +
         ';' +
-        Constants.authorCollections[store.state.author] +
-        '/' +
-        data['id'];
+        data['path'];
 
     onFavoriteToggle() {
       FavoritesTap(store: store).toggle(text);
@@ -85,11 +85,11 @@ class TextSlideshowState extends State<TextSlideshow> {
                         offset: Offset(offset, offset))
                   ]),
               child: Hero(
-                  tag: 'image' + data['id'],
+                  tag: 'image' + data['path'],
                   child: ImageBackground(
                       img: img,
                       enabled: false,
-                      key: Key('image' + data['id']))),
+                      key: Key('image' + data['path']))),
             ),
             AnimatedContainer(
               duration: Constants.durationAnimationLong,
@@ -97,7 +97,7 @@ class TextSlideshowState extends State<TextSlideshow> {
               margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
               child: Center(
                   child: Hero(
-                    tag: 'body' + data['id'],
+                    tag: 'body' + data['path'],
                     child: Material(
                       child: Container(
                         decoration:
@@ -118,45 +118,30 @@ class TextSlideshowState extends State<TextSlideshow> {
                     ),
                   )),
             ),
-            FutureBuilder(
-                future:
-                Firestore.instance.document('favorites/_stats_').get().then((
-                    docSnapshot) {
-                  final String textPath =
-                  text.split(';')[1].replaceAll('/', '_');
-                  final Map<String, dynamic> map =
-                      docSnapshot?.data ?? {textPath: 0};
-                  final favoriteCount = map[textPath] ?? 0;
-                  return favoriteCount;
-                }),
-                initialData: 0,
-                builder: (context, snapshot) {
-                  return AnimatedSwitcher(
-                      duration: Constants.durationAnimationShort,
-                      switchInCurve: Curves.decelerate,
-                      switchOutCurve: Curves.decelerate,
-                      transitionBuilder: (child, animation) =>
-                          ScaleTransition(
-                            scale: animation,
-                            child: child,
-                            alignment: FractionalOffset.bottomCenter,
-                          ),
-                      child: textPageController.isCurrent(index)
-                          ? Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: FavoritesCount(
-                              favorites: snapshot.data,
-                              isFavorite: store.state.favoritesSet
-                                  .any((favorite) => favorite == text),
-                              text: text,
-                              blurEnabled: BlurSettingsParser(
-                                  blurSettings:
-                                  store.state.blurSettings)
-                                  .getTextsBlur(),
-                              favoritesTap: onFavoriteToggle,
-                              textSize: store.state.textSize))
-                          : NullWidget());
-                })
+            AnimatedSwitcher(
+                duration: Constants.durationAnimationShort,
+                switchInCurve: Curves.decelerate,
+                switchOutCurve: Curves.decelerate,
+                transitionBuilder: (child, animation) =>
+                    ScaleTransition(
+                      scale: animation,
+                      child: child,
+                      alignment: FractionalOffset.bottomCenter,
+                    ),
+                child: textPageController.isCurrent(index)
+                    ? Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: FavoritesCount(
+                        favorites: data['favoriteCount'],
+                        isFavorite: store.state.favoritesSet
+                            .any((favorite) => favorite == text),
+                        text: text,
+                        blurEnabled: BlurSettingsParser(
+                            blurSettings: store.state.blurSettings)
+                            .getTextsBlur(),
+                        favoritesTap: onFavoriteToggle,
+                        textSize: store.state.textSize))
+                    : NullWidget())
           ],
         ),
         onTap: () async {
@@ -174,14 +159,13 @@ class TextSlideshowState extends State<TextSlideshow> {
   static Query metadataQuery;
   _buildTagPages() {
     metadataQuery = Firestore.instance.collection('metadata').orderBy('order');
-    Stream tagStream = metadataQuery.snapshots().map((list) =>
-        list.documents.map((doc) => doc.data));
+    Stream tagStream = metadataQuery
+        .snapshots()
+        .map((list) => list.documents.map((doc) => doc.data));
     return StreamBuilder(
       stream: tagStream,
-      initialData: [{'title': 'Textos do ',
-        'authorName': 'Kalil',
-        'tags': [],
-        'collection': 'stories'}
+      initialData: [
+        Constants.placeholderTagMetadata
       ],
       builder: (context, snapshot) {
         List metadatas = snapshot.data.toList();
@@ -197,13 +181,13 @@ class TextSlideshowState extends State<TextSlideshow> {
                     tagPageController: tagPageController,
                     index: index,
                     enableDarkMode: store.state.enableDarkMode,
-                    textSize: store.state.textSize)
-        );
+                    textSize: store.state.textSize));
       },
     );
   }
 
-  static List slideList;
+  List<Map<dynamic, dynamic>> _slideList;
+  static Map<dynamic, dynamic> favoritesData;
 
   @override
   Widget build(BuildContext context) {
@@ -214,24 +198,43 @@ class TextSlideshowState extends State<TextSlideshow> {
           initialData: [],
           builder: (context, AsyncSnapshot snap) {
             final data = snap.data.toList();
-            slideList = data.length == 0
+            _slideList = data.length == 0
                 ? [
               Constants.textNoTextAvailable,
             ]
                 : data;
 
-            return PageView.builder(
-                controller: textPageController.pageController,
-                itemCount: slideList.length + 1,
-                pageSnapping: false,
-                itemBuilder: (context, int currentIdx) {
-                  if (currentIdx == 0) {
-                    return _buildTagPages();
-                  } else if (slideList.length >= currentIdx) {
-                    return _buildStoryPage(
-                        slideList[currentIdx - 1], currentIdx);
-                  }
-                });
+            return StreamBuilder(
+              stream: queryController.favoritesStream,
+              builder: (context, AsyncSnapshot favoritesSnap) {
+                if (favoritesSnap.hasData) {
+                  print(favoritesSnap.data);
+                  favoritesData = favoritesSnap.data;
+                  favoritesData.forEach((textPath, favoriteInt) {
+                    int targetIndex = _slideList
+                        .indexWhere((element) =>
+                    element['path'] ==
+                        textPath.toString().replaceAll('_', '/'));
+                    if (targetIndex >= 0)
+                      _slideList.elementAt(targetIndex)['favoriteCount'] =
+                          favoriteInt;
+                  });
+                }
+
+                return PageView.builder(
+                    controller: textPageController.pageController,
+                    itemCount: _slideList.length + 1,
+                    pageSnapping: false,
+                    itemBuilder: (context, int currentIdx) {
+                      if (currentIdx == 0) {
+                        return _buildTagPages();
+                      } else if (_slideList.length >= currentIdx) {
+                        return _buildStoryPage(
+                            _slideList[currentIdx - 1], currentIdx);
+                      }
+                    });
+              },
+            );
           }),
     );
   }

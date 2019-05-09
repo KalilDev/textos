@@ -22,16 +22,12 @@ class Constants {
     'title': 'Não há nenhum texto nessa categoria',
     'img': 'https://i.imgur.com/yugoBNL.jpg',
     'text':
-    'Nenhum texto foi encontrado nessa categoria, tente o seguinte: Espere o autor publicar algum texto nessa categoria, desconecte e reconecte a internet, ou entre em contato com o criador do aplicativo caso tenha certeza que deveria ter um texto aqui',
-    'favorites': 0,
+    'Nenhum texto foi encontrado nessa categoria, tente o seguinte: Desconecte e reconecte seu telefone à internet',
+    'favoriteCount': 0,
     'date':
     DateTime.now().toIso8601String().replaceAll('-', '/').substring(0, 10),
-    'id': 'TEXTNOTFOUNDID'
+    'path': 'NULL/TEXTNOTFOUNDID'
   };
-
-  // Authors
-  static const List<String> authorNames = ['do Kalil', 'da Maria'];
-  static const List<String> authorCollections = ['stories', 'maria'];
 
   // Theme Light
   static const themeBackgroundLight = Colors.white;
@@ -97,6 +93,13 @@ class Constants {
   static const placeholderText = 'Texto';
   static const placeholderDate = '01/01/1970';
   static const placeholderImg = 'https://i.imgur.com/95fvCBU.jpg';
+  static const placeholderTagMetadata = {
+    'title': 'Textos do ',
+    'authorName': 'Kalil',
+    'collection': 'stories',
+    'type': 'texts',
+    'tags': [],
+  };
 
   // Animation durations
   static const durationAnimationShort = Duration(milliseconds: 200);

@@ -17,7 +17,8 @@ class TextPageController {
       int next = pageController.page.round();
       if (tagPageController.pageController.hasClients) {
         tagPageController.jump();
-      } else if (currentPage != next) {
+      }
+      if (currentPage != next) {
         Vibration.vibrate(duration: 60);
         currentPage = next;
         setState();

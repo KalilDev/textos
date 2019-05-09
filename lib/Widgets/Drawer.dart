@@ -126,7 +126,6 @@ class TextAppDrawerState extends State<TextAppDrawer>
                             child: FavoritesDrawer(
                                 textSize: store.state.textSize,
                                 favoriteSet: store.state.favoritesSet,
-                                author: store.state.author,
                                 tapHandler: FavoritesTap(store: store)),
                           )
                         ],

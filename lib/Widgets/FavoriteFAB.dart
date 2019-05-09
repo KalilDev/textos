@@ -11,11 +11,12 @@ import 'package:textos/main.dart';
 class FavoriteFAB extends StatefulWidget {
   final Store store;
   final String title;
-  final String id;
+  final String path;
 
-  FavoriteFAB({@required this.store, @required this.title, @required this.id});
+  FavoriteFAB(
+      {@required this.store, @required this.title, @required this.path});
 
-  createState() => FavoriteFABState(store: store, text: title + ';' + id);
+  createState() => FavoriteFABState(store: store, text: title + ';' + path);
 }
 
 class FavoriteFABState extends State<FavoriteFAB>
