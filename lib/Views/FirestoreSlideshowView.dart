@@ -111,9 +111,16 @@ class TextSlideshowState extends State<TextSlideshow> {
                           radius: 15,
                             enabled: BlurSettings(store.state.blurSettings)
                                 .textsBlur,
-                          child: Text(title,
-                              textAlign: TextAlign.center,
-                              style: textTheme.display1)
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                SizedBox(width: 5.0),
+                                Text(title,
+                                    textAlign: TextAlign.center,
+                                    style: textTheme.display1),
+                                SizedBox(width: 5.0)
+                              ],
+                            )
                         ),
                       ),
                       color: Colors.transparent,

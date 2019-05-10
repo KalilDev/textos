@@ -43,9 +43,6 @@ class TextPageController {
         page +
         '\n' +
         'pageController.hasClients: ' +
-        pageController.hasClients.toString() +
-        '\n' +
-        'pageController.hasListeners: ' +
-        pageController.hasListeners.toString());
+        pageController.hasClients.toString());
   }
 }

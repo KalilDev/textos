@@ -12,10 +12,6 @@ class FavoritesTap {
 
   FavoritesTap({@required this.store});
 
-  String _getId(String text) {
-    return text.split(';')[1].split('/')[1];
-  }
-
   String _getPath(String text) {
     return text.split(';')[1];
   }
