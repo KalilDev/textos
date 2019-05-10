@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutter_udid/flutter_udid.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/Src/Constants.dart';
@@ -22,7 +23,7 @@ void main() async {
       prefs?.getStringList('favorites')?.toSet() ?? Set<String>();
   final _textSize = prefs?.getDouble('textSize') ?? 4.5;
   final _blurSettings = prefs?.getInt('blurSettings') ?? 1;
-  String _udid;
+  String _uid;
 
   // Clear favorites if the data doesn't contain the documentID needed for
   // setting the statistics on the database
@@ -33,13 +34,17 @@ void main() async {
 
   // Get the stored UDID, in order to preserve the favorites if the user either
   // upgraded the system or reinstalled the app
-  _udid = prefs?.getString('udid') ?? null;
+  _uid = prefs?.getString('uid') ?? null;
 
   // Check if we already stored an uuid
-  if (_udid == null) {
-    // Get an fresh UDID
-    _udid = await FlutterUdid.udid;
-    prefs.setString('udid', _udid);
+  if (_uid == null) {
+    /// Firebase Login.
+    FirebaseAuth _fireBaseAuth = FirebaseAuth.fromApp(Firestore.instance.app);
+    final user = await _fireBaseAuth.signInAnonymously();
+    if (user != null) {
+      _uid = user.uid;
+      prefs.setString('uid', _uid);
+    }
   }
 
   final store = Store<AppStateMain>(
@@ -50,7 +55,7 @@ void main() async {
         favoritesSet: _favoritesSet,
         textSize: _textSize,
         blurSettings: _blurSettings,
-        udid: _udid),
+        uid: _uid),
   );
 
   runApp(StoreProvider<AppStateMain>(
@@ -70,7 +75,7 @@ class MyApp extends StatelessWidget {
           store.state.favoritesSet,
           store.state.textSize,
           store.state.blurSettings,
-          store.state.udid,
+          store.state.uid,
         ];
       },
       builder: (_, List list) {
@@ -138,10 +143,10 @@ class StoreViewState extends State<StoreView> {
     if (isInDebugMode) {
       _firebaseMessaging.subscribeToTopic('debug');
       _firebaseMessaging.getToken().then((token) => print(token));
-      print('udid: ' + store.state.udid);
+      print('udid: ' + store.state.uid);
       print('favorites: ' + store.state.favoritesSet.toString());
     }
-    FavoritesHelper(udid: store.state.udid).syncDatabase(
+    FavoritesHelper(userId: store.state.uid).syncDatabase(
         store.state.favoritesSet);
   }
 
@@ -172,13 +177,13 @@ class AppStateMain {
     @required this.favoritesSet,
     @required this.textSize,
     @required this.blurSettings,
-    @required this.udid,});
+    @required this.uid,});
 
   bool enableDarkMode;
   Set<String> favoritesSet;
   double textSize;
   int blurSettings;
-  String udid;
+  String uid;
 }
 
 class UpdateDarkMode {
@@ -218,22 +223,22 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
         blurSettings: state.blurSettings,
-        udid: state.udid);
+        uid: state.uid);
   }
 
   if (action is UpdateFavorites) {
     var _fav = state.favoritesSet;
     if (action.toClear != null) {
       _fav.clear();
-      FavoritesHelper(udid: state.udid).syncDatabase(_fav);
+      FavoritesHelper(userId: state.uid).syncDatabase(_fav);
     }
     if (action.toAdd != null) {
       _fav.add(action.toAdd);
-      FavoritesHelper(udid: state.udid).addFavorite(action.toAdd);
+      FavoritesHelper(userId: state.uid).addFavorite(action.toAdd);
     }
     if (action.toRemove != null) {
       _fav.remove(action.toRemove);
-      FavoritesHelper(udid: state.udid).removeFavorite(action.toRemove);
+      FavoritesHelper(userId: state.uid).removeFavorite(action.toRemove);
     }
 
     SharedPreferences.getInstance().then((pref) {
@@ -245,7 +250,7 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: _fav,
         textSize: state.textSize,
         blurSettings: state.blurSettings,
-        udid: state.udid);
+        uid: state.uid);
   }
 
   if (action is UpdateTextSize) {
@@ -258,7 +263,7 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: action.size,
         blurSettings: state.blurSettings,
-        udid: state.udid);
+        uid: state.uid);
   }
 
   if (action is UpdateBlurSettings) {
@@ -271,7 +276,7 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
         favoritesSet: state.favoritesSet,
         textSize: state.textSize,
         blurSettings: action.integer,
-        udid: state.udid);
+        uid: state.uid);
   }
 
   return state;
