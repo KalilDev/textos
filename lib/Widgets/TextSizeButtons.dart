@@ -32,7 +32,8 @@ class TextSizeButtonState extends State<TextSizeButton>
     _textSize = store.state.textSize;
     _animationController = new AnimationController(
         duration: Constants.durationAnimationMedium +
-            Constants.durationAnimationRoute, vsync: this);
+            Constants.durationAnimationRoute,
+        vsync: this);
     _scale = new CurvedAnimation(
         parent: _animationController, curve: Curves.easeInOut);
     _animationController.forward();
@@ -45,7 +46,8 @@ class TextSizeButtonState extends State<TextSizeButton>
   }
 
   double get animationStart =>
-      0 - (Constants.durationAnimationRoute.inMilliseconds /
+      0 -
+          (Constants.durationAnimationRoute.inMilliseconds /
           Constants.durationAnimationMedium.inMilliseconds);
 
   @override

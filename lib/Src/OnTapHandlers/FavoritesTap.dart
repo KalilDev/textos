@@ -23,8 +23,8 @@ class FavoritesTap {
   void toggle(String text) {
     bool favorite = store.state.favoritesSet.any((string) => string == text);
     if (_getPath(text) != Constants.textNoTextAvailable['path']) {
-      int currentFavs = TextSlideshowState.favoritesData[_getKeyOnSlides(
-          text)] ?? 0;
+      int currentFavs =
+          TextSlideshowState.favoritesData[_getKeyOnSlides(text)] ?? 0;
       if (favorite) {
         TextSlideshowState.favoritesData[_getKeyOnSlides(text)] =
             currentFavs - 1;
@@ -42,8 +42,8 @@ class FavoritesTap {
   }
 
   void open(String text, BuildContext context) async {
-    final documentSnapshot = await Firestore.instance.document(_getPath(text))
-        .get();
+    final documentSnapshot =
+    await Firestore.instance.document(_getPath(text)).get();
     var data = documentSnapshot.data;
     data['path'] = _getPath(text);
     Navigator.pop(context);

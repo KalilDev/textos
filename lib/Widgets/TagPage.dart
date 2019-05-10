@@ -42,7 +42,9 @@ class _TagPageState extends State<TagPage> {
         },
         child: tag == activeTag
             ? FlatButton(
-            color: Theme.of(context).accentColor,
+            color: Theme
+                .of(context)
+                .accentColor,
             child: Text(
               '#' + tag,
             ),
@@ -54,7 +56,9 @@ class _TagPageState extends State<TagPage> {
               widget.queryController.queryParameters = MapEntry('tag', tag);
             })
             : OutlineButton(
-            borderSide: BorderSide(color: Theme.of(context).accentColor),
+            borderSide: BorderSide(color: Theme
+                .of(context)
+                .accentColor),
             child: Text(
               '#' + tag,
               style: Theme

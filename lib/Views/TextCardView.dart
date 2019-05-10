@@ -129,9 +129,7 @@ class TextCard extends StatelessWidget {
                   ),
                   Positioned(
                     child: new FavoriteFAB(
-                        store: store,
-                        title: title,
-                        path: data['path']),
+                        store: store, title: title, path: data['path']),
                     right: 10,
                     bottom: 10,
                   ),

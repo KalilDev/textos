@@ -27,8 +27,9 @@ class FavoritesCount extends StatelessWidget {
           radius: 90,
           color: Colors.transparent,
           child: new AnimatedGradientContainer(
-            colors: <Color>[Colors.red.shade900.withAlpha(180),
-            Colors.indigo.shade400.withAlpha(150)
+            colors: <Color>[
+              Colors.red.shade900.withAlpha(180),
+              Colors.indigo.shade400.withAlpha(150)
             ],
             isEnabled: isFavorite,
             height: 50,
@@ -47,11 +48,12 @@ class FavoritesCount extends StatelessWidget {
                             .textTheme
                             .title),
                     const SizedBox(width: 20.0),
-                  ],),
+                  ],
+                ),
                 color: Colors.transparent,
-                onPressed: () => favoritesTap()
-            ),),
+                onPressed: () => favoritesTap()),
           ),
+        ),
         SizedBox(height: 25.0)
       ],
     );

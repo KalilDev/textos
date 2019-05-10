@@ -110,7 +110,6 @@ class StoreViewState extends State<StoreView> {
     return inDebugMode;
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -146,8 +145,8 @@ class StoreViewState extends State<StoreView> {
       print('udid: ' + store.state.uid);
       print('favorites: ' + store.state.favoritesSet.toString());
     }
-    FavoritesHelper(userId: store.state.uid).syncDatabase(
-        store.state.favoritesSet);
+    FavoritesHelper(userId: store.state.uid)
+        .syncDatabase(store.state.favoritesSet);
   }
 
   @override
@@ -173,11 +172,13 @@ class StoreViewState extends State<StoreView> {
 
 // Redux
 class AppStateMain {
-  AppStateMain({@required this.enableDarkMode,
+  AppStateMain({
+    @required this.enableDarkMode,
     @required this.favoritesSet,
     @required this.textSize,
     @required this.blurSettings,
-    @required this.uid,});
+    @required this.uid,
+  });
 
   bool enableDarkMode;
   Set<String> favoritesSet;

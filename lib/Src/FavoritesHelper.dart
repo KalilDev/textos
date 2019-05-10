@@ -15,8 +15,9 @@ class FavoritesHelper {
       Firestore.instance.collection('favorites').document('_stats_');
 
   Future<DocumentSnapshot> get userDocumentSnapshot async {
-    final queryResult =
-    await favoritesCollection.where('userId', isEqualTo: userId).getDocuments();
+    final queryResult = await favoritesCollection
+        .where('userId', isEqualTo: userId)
+        .getDocuments();
     List snapshots = queryResult.documents;
     if (snapshots.length == 0) {
       DocumentReference document;
@@ -58,8 +59,15 @@ class FavoritesHelper {
     return delta;
   }
 
+  // Check if we are running debug mode
+  bool get isInDebugMode {
+    bool inDebugMode = false;
+    assert(inDebugMode = true);
+    return inDebugMode;
+  }
+
   void syncDatabase(Set<String> favorites) async {
-    if (userId != null) {
+    if (userId != null || isInDebugMode == true) {
       DocumentSnapshot snapshot = await userDocumentSnapshot;
       DocumentReference document = await userDocument;
 
@@ -97,7 +105,7 @@ class FavoritesHelper {
   }
 
   void addFavorite(String favorite) async {
-    if (userId != null) {
+    if (userId != null || isInDebugMode == true) {
       final title = favorite.split(';')[0];
       final reference = db.document(favorite.split(';')[1]);
       final path = reference.path.replaceAll('/', '_');
@@ -121,7 +129,7 @@ class FavoritesHelper {
   }
 
   void removeFavorite(String favorite) async {
-    if (userId != null) {
+    if (userId != null || isInDebugMode == true) {
       final title = favorite.split(';')[0];
       final reference = db.document(favorite.split(';')[1]);
       final path = reference.path.replaceAll('/', '_');

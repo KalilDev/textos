@@ -12,7 +12,8 @@ class BlurSettings {
     print(target);
     print(blurSettings);
     if (drawerBlur != target) {
-      blurSettings = drawerBlur ? (blurSettings / settingsTable[0]).round()
+      blurSettings = drawerBlur
+          ? (blurSettings / settingsTable[0]).round()
           : (blurSettings * settingsTable[0]).round();
     }
   }
@@ -24,7 +25,8 @@ class BlurSettings {
     print(target);
     print(blurSettings);
     if (buttonsBlur != target) {
-      blurSettings = buttonsBlur ? (blurSettings / settingsTable[1]).round()
+      blurSettings = buttonsBlur
+          ? (blurSettings / settingsTable[1]).round()
           : (blurSettings * settingsTable[1]).round();
     }
   }
@@ -36,7 +38,8 @@ class BlurSettings {
     print(target);
     print(blurSettings);
     if (textsBlur != target) {
-      blurSettings = textsBlur ? (blurSettings / settingsTable[2]).round()
+      blurSettings = textsBlur
+          ? (blurSettings / settingsTable[2]).round()
           : (blurSettings * settingsTable[2]).round();
     }
   }

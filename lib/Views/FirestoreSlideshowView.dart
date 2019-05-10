@@ -55,9 +55,7 @@ class TextSlideshowState extends State<TextSlideshow> {
 
     final title = data['title'] ?? Constants.placeholderTitle;
     final img = data['img'] ?? Constants.placeholderImg;
-    final String text = data['title'] +
-        ';' +
-        data['path'];
+    final String text = data['title'] + ';' + data['path'];
 
     onFavoriteToggle() {
       FavoritesTap(store: store).toggle(text);
@@ -108,9 +106,9 @@ class TextSlideshowState extends State<TextSlideshow> {
                         BoxDecoration(borderRadius: BorderRadius.circular(20)),
                         margin: EdgeInsets.all(12.5),
                         child: BlurOverlay(
-                          radius: 15,
-                            enabled: BlurSettings(store.state.blurSettings)
-                                .textsBlur,
+                            radius: 15,
+                            enabled:
+                            BlurSettings(store.state.blurSettings).textsBlur,
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
@@ -120,8 +118,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                                     style: textTheme.display1),
                                 SizedBox(width: 5.0)
                               ],
-                            )
-                        ),
+                            )),
                       ),
                       color: Colors.transparent,
                     ),
@@ -171,9 +168,7 @@ class TextSlideshowState extends State<TextSlideshow> {
         .map((list) => list.documents.map((doc) => doc.data));
     return StreamBuilder(
       stream: tagStream,
-      initialData: [
-        Constants.placeholderTagMetadata
-      ],
+      initialData: [Constants.placeholderTagMetadata],
       builder: (context, snapshot) {
         List metadatas = snapshot.data.toList();
         tagPageController.metadatas = metadatas;
@@ -217,8 +212,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                     if (favoritesSnap.hasData) {
                       favoritesData = favoritesSnap.data;
                       favoritesData.forEach((textPath, favoriteInt) {
-                        int targetIndex = _slideList
-                            .indexWhere((element) =>
+                        int targetIndex = _slideList.indexWhere((element) =>
                         element['path'] ==
                             textPath.toString().replaceAll('_', '/'));
                         if (targetIndex >= 0)

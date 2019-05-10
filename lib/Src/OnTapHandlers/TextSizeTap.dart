@@ -8,13 +8,13 @@ class TextSizeTap {
   TextSizeTap({@required this.store});
 
   void increase() {
-    if (store.state.textSize < 5.4) {
+    if (store.state.textSize < 6.4) {
       store.dispatch(UpdateTextSize(size: store.state.textSize + 0.5));
     }
   }
 
   void decrease() {
-    if (store.state.textSize > 2.1) {
+    if (store.state.textSize > 3.1) {
       store.dispatch(UpdateTextSize(size: store.state.textSize - 0.5));
     }
   }

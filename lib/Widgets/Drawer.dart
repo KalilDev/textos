@@ -39,9 +39,8 @@ class TextAppDrawerState extends State<TextAppDrawer>
     // Shared
     _settingsController = new AnimationController(
         vsync: this, duration: Constants.durationAnimationMedium);
-    final Animation curvedAnimation = CurvedAnimation(
-        parent: _settingsController, curve: Curves.easeInOut);
-
+    final Animation curvedAnimation =
+    CurvedAnimation(parent: _settingsController, curve: Curves.easeInOut);
 
     _settingsAnimation =
         Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset.zero)
@@ -77,8 +76,7 @@ class TextAppDrawerState extends State<TextAppDrawer>
       data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
       child: Drawer(
           child: BlurOverlay(
-              enabled:
-              BlurSettings(store.state.blurSettings).drawerBlur,
+              enabled: BlurSettings(store.state.blurSettings).drawerBlur,
               child: Stack(
                 children: <Widget>[
                   Column(
@@ -128,8 +126,10 @@ class TextAppDrawerState extends State<TextAppDrawer>
                   ),
                   Align(
                     alignment: FractionalOffset.bottomCenter,
-                    child: settingsDrawer ? MaterialButton(
-                        onPressed: () => setState(() => settingsDrawer = false),
+                    child: settingsDrawer
+                        ? MaterialButton(
+                        onPressed: () =>
+                            setState(() => settingsDrawer = false),
                         color: Theme
                             .of(context)
                             .accentColor,
@@ -137,7 +137,8 @@ class TextAppDrawerState extends State<TextAppDrawer>
                             style: textTheme.subhead,
                             textAlign: TextAlign.center))
                         : MaterialButton(
-                        onPressed: () => setState(() => settingsDrawer = true),
+                        onPressed: () =>
+                            setState(() => settingsDrawer = true),
                         color: Theme
                             .of(context)
                             .accentColor,

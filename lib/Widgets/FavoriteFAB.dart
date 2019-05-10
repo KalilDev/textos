@@ -40,7 +40,8 @@ class FavoriteFABState extends State<FavoriteFAB>
     super.initState();
     _scaleController = new AnimationController(
         duration: Constants.durationAnimationRoute +
-            Constants.durationAnimationMedium, vsync: this);
+            Constants.durationAnimationMedium,
+        vsync: this);
     _heartController = new AnimationController(
         duration: Constants.durationAnimationMedium, vsync: this);
 
@@ -65,7 +66,8 @@ class FavoriteFABState extends State<FavoriteFAB>
   }
 
   double get animationStart =>
-      0 - (Constants.durationAnimationRoute.inMilliseconds /
+      0 -
+          (Constants.durationAnimationRoute.inMilliseconds /
           Constants.durationAnimationMedium.inMilliseconds);
 
   @override
@@ -92,14 +94,15 @@ class FavoriteFABState extends State<FavoriteFAB>
         radius: 100,
         intensity: 0.65,
         child: AnimatedGradientContainer(
-          colors: <Color>[ Theme
-              .of(context)
-              .backgroundColor
-              .withAlpha(120),
-          Theme
-              .of(context)
-              .accentColor
-              .withAlpha(120)
+          colors: <Color>[
+            Theme
+                .of(context)
+                .backgroundColor
+                .withAlpha(120),
+            Theme
+                .of(context)
+                .accentColor
+                .withAlpha(120)
           ],
           trueValues: [1.0, 2.0],
           falseValues: [-1.0, 0.0],
@@ -116,7 +119,8 @@ class FavoriteFABState extends State<FavoriteFAB>
                   end: 1.0)
                   .animate(_heartScale),
               child: Icon(_favorite ? Icons.favorite : Icons.favorite_border,
-                  color: _favorite ? Colors.red : Theme
+                  color:
+                  _favorite ? Colors.red : Theme
                       .of(context)
                       .primaryColor),
             ),

@@ -7,9 +7,7 @@ class FavoritesDrawer extends StatelessWidget {
   final Set<String> favoriteSet;
   final FavoritesTap tapHandler;
 
-  FavoritesDrawer({
-    @required this.favoriteSet,
-    @required this.tapHandler});
+  FavoritesDrawer({@required this.favoriteSet, @required this.tapHandler});
 
   Widget buildFavoritesItem(BuildContext context, String favorite) {
     final favoriteTitle = favorite.split(';')[0];
@@ -74,9 +72,7 @@ class FavoritesDrawer extends StatelessWidget {
           ? Divider()
           : buildFavoritesItem(context, favoriteSet.toList()[index - 1]),
       separatorBuilder: (BuildContext context, int index) =>
-      index == 0
-          ? NullWidget()
-          : Divider(),
+      index == 0 ? NullWidget() : Divider(),
     );
   }
 }

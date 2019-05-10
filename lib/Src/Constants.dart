@@ -70,8 +70,8 @@ class Constants {
 
   // BaseTextStyles
   static final _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
-  static final _baseTextStyleMerriweather = TextStyle(
-      fontFamily: 'Merriweather');
+  static final _baseTextStyleMerriweather =
+  TextStyle(fontFamily: 'Merriweather');
 
   // TextTheme
   static final textThemeMuli = TextTheme(

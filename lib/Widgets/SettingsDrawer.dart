@@ -24,38 +24,45 @@ class SettingsDrawer extends StatelessWidget {
         .of(context)
         .textTheme
         .subhead;
-    final TextStyle description = settingsStyle.copyWith(
-        color: settingsStyle.color.withAlpha(190));
+    final TextStyle description =
+    settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
     return Column(
       children: <Widget>[
         Divider(),
-        Text(Constants.textTema,
-            style: description),
+        Text(Constants.textTema, style: description),
         SwitchListTile(
             title: Text(Constants.textTextTheme, style: settingsStyle),
             secondary: Icon(Icons.color_lens),
-            value: store.state.enableDarkMode ? true : MediaQuery
+            value: store.state.enableDarkMode
+                ? true
+                : MediaQuery
                 .of(context)
-                .platformBrightness == Brightness.dark ? true : false,
+                .platformBrightness == Brightness.dark
+                ? true
+                : false,
             activeColor: Theme
                 .of(context)
                 .accentColor,
-            activeTrackColor:
-            Theme
+            activeTrackColor: Theme
                 .of(context)
                 .accentColor
                 .withAlpha(170),
-            inactiveThumbImage: AssetImage('res/baseline_lock_white_96dp.png'),
-            onChanged: MediaQuery
+            inactiveThumbImage:
+            MediaQuery
                 .of(context)
-                .platformBrightness == Brightness.dark ? null
+                .platformBrightness == Brightness.dark
+                ? AssetImage('res/baseline_lock_white_96dp.png')
+                : null,
+            onChanged:
+            MediaQuery
+                .of(context)
+                .platformBrightness == Brightness.dark
+                ? null
                 : (map) =>
                 store.dispatch(
-                    UpdateDarkMode(
-                        enable: !store.state.enableDarkMode))),
+                    UpdateDarkMode(enable: !store.state.enableDarkMode))),
         Divider(),
-        Text(Constants.textText,
-            style: description),
+        Text(Constants.textText, style: description),
         ListTile(
             leading: Icon(Icons.text_fields),
             title: Text(Constants.textTextSize, style: settingsStyle),
@@ -69,61 +76,50 @@ class SettingsDrawer extends StatelessWidget {
               ),
             )),
         Divider(),
-        Text(Constants.textFavs,
-            style: description),
+        Text(Constants.textFavs, style: description),
         ListTile(
           leading: Icon(Icons.delete),
           title: Text(Constants.textCleanFavs, style: settingsStyle),
           onTap: () => store.dispatch(UpdateFavorites(toClear: 1)),
         ),
         Divider(),
-        Text(Constants.textBlur,
-            style: description),
+        Text(Constants.textBlur, style: description),
         SwitchListTile(
-            title: Text(Constants.textTextBlurDrawer,
-                style: settingsStyle),
+            title: Text(Constants.textTextBlurDrawer, style: settingsStyle),
             secondary: Icon(Icons.blur_linear),
             value: BlurSettings(store.state.blurSettings).drawerBlur,
             activeColor: Theme
                 .of(context)
                 .accentColor,
-            activeTrackColor:
-            Theme
+            activeTrackColor: Theme
                 .of(context)
                 .accentColor
                 .withAlpha(170),
-            onChanged: (map) =>
-                BlurSettingsTap(store: store).setDrawerBlur()),
+            onChanged: (map) => BlurSettingsTap(store: store).setDrawerBlur()),
         SwitchListTile(
-            title: Text(Constants.textTextBlurButtons,
-                style: settingsStyle),
+            title: Text(Constants.textTextBlurButtons, style: settingsStyle),
             secondary: Icon(Icons.blur_circular),
             value: BlurSettings(store.state.blurSettings).buttonsBlur,
             activeColor: Theme
                 .of(context)
                 .accentColor,
-            activeTrackColor:
-            Theme
+            activeTrackColor: Theme
                 .of(context)
                 .accentColor
                 .withAlpha(170),
-            onChanged: (map) =>
-                BlurSettingsTap(store: store).setButtonsBlur()),
+            onChanged: (map) => BlurSettingsTap(store: store).setButtonsBlur()),
         SwitchListTile(
-            title:
-            Text(Constants.textTextBlurText, style: settingsStyle),
+            title: Text(Constants.textTextBlurText, style: settingsStyle),
             secondary: Icon(Icons.blur_on),
             value: BlurSettings(store.state.blurSettings).textsBlur,
             activeColor: Theme
                 .of(context)
                 .accentColor,
-            activeTrackColor:
-            Theme
+            activeTrackColor: Theme
                 .of(context)
                 .accentColor
                 .withAlpha(170),
-            onChanged: (map) =>
-                BlurSettingsTap(store: store).setTextsBlur()),
+            onChanged: (map) => BlurSettingsTap(store: store).setTextsBlur()),
         Divider(),
         Spacer(),
         ListTile(

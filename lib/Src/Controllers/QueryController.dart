@@ -20,9 +20,11 @@ class QueryController {
   QueryController({this.tagPageController}) {
     query = db.collection(authorCollection);
     updateQuery();
-    favoritesStream =
-        db.collection('favorites').document('_stats_').snapshots().map((
-            documentSnapshot) => documentSnapshot.data);
+    favoritesStream = db
+        .collection('favorites')
+        .document('_stats_')
+        .snapshots()
+        .map((documentSnapshot) => documentSnapshot.data);
   }
 
   set queryParameters(MapEntry<String, String> queryParameters) {
