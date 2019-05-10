@@ -39,9 +39,10 @@ class FavoriteFABState extends State<FavoriteFAB>
   void initState() {
     super.initState();
     _scaleController = new AnimationController(
-        duration: Duration(milliseconds: 1200), vsync: this);
+        duration: Constants.durationAnimationRoute +
+            Constants.durationAnimationMedium, vsync: this);
     _heartController = new AnimationController(
-        duration: Duration(milliseconds: 500), vsync: this);
+        duration: Constants.durationAnimationMedium, vsync: this);
 
     _scale =
     new CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut);
@@ -51,7 +52,7 @@ class FavoriteFABState extends State<FavoriteFAB>
     _scaleController.forward();
     _heartController.value = 1.0;
     Future.delayed(
-        Duration(milliseconds: 1200),
+        Constants.durationAnimationRoute + Constants.durationAnimationMedium,
             () =>
             _heartController.notifyStatusListeners(AnimationStatus.completed));
   }
@@ -62,6 +63,10 @@ class FavoriteFABState extends State<FavoriteFAB>
     _scaleController.dispose();
     super.dispose();
   }
+
+  double get animationStart =>
+      0 - (Constants.durationAnimationRoute.inMilliseconds /
+          Constants.durationAnimationMedium.inMilliseconds);
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +86,7 @@ class FavoriteFABState extends State<FavoriteFAB>
       }
     });
     return ScaleTransition(
-      scale: _scale,
+      scale: Tween(begin: animationStart, end: 1.0).animate(_scale),
       child: BlurOverlay(
         enabled: BlurSettings(store.state.blurSettings).buttonsBlur,
         radius: 100,

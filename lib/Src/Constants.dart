@@ -10,7 +10,7 @@ class Constants {
   static const textFavs = 'Favoritos';
   static const textTextSize = 'Tamanho do texto';
   static const textTextTheme = 'Tema Escuro';
-  static const textTextTrash = 'Limpar favoritos';
+  static const textTextTrash = 'Restaurar o Padrão';
   static const textTextBlurDrawer = 'Borrar a gaveta';
   static const textTextBlurButtons = 'Borrar os botões';
   static const textTextBlurText = 'Borrar fundo dos textos';
@@ -18,6 +18,9 @@ class Constants {
   static const textTooltipTextSizePlus = 'Aumentar tamanho do texto';
   static const textTooltipFav = 'Adicionar aos favoritos';
   static const textTooltipDrawer = 'Abrir gaveta';
+  static const textText = 'Texto';
+  static const textCleanFavs = 'Limpar Favoritos';
+  static const textBlur = 'Borrado';
   static final Map<String, dynamic> textNoTextAvailable = {
     'title': 'Não há nenhum texto nessa categoria',
     'img': 'https://i.imgur.com/yugoBNL.jpg',

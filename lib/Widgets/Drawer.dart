@@ -33,16 +33,12 @@ class TextAppDrawerState extends State<TextAppDrawer>
   Animation<Offset> _toTopAnimation;
   Animation<Offset> _toBottomAnimation;
 
-  // Bottom tile animation
-  Animation<Offset> _settingsTileAnimation;
-  Animation<Offset> _favoritesTileAnimation;
-
   @override
   void initState() {
     super.initState();
     // Shared
     _settingsController = new AnimationController(
-        vsync: this, duration: Duration(milliseconds: 500));
+        vsync: this, duration: Constants.durationAnimationMedium);
     final Animation curvedAnimation = CurvedAnimation(
         parent: _settingsController, curve: Curves.easeInOut);
 
@@ -55,13 +51,6 @@ class TextAppDrawerState extends State<TextAppDrawer>
         .animate(curvedAnimation);
     _toBottomAnimation =
         Tween<Offset>(begin: Offset(0.0, -5.0), end: Offset.zero)
-            .animate(curvedAnimation);
-
-    _settingsTileAnimation =
-        Tween<Offset>(begin: Offset(0.0, 3.0), end: Offset.zero)
-            .animate(curvedAnimation);
-    _favoritesTileAnimation =
-        Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 2.0))
             .animate(curvedAnimation);
 
     _settingsController.value = 0.0;
@@ -90,66 +79,72 @@ class TextAppDrawerState extends State<TextAppDrawer>
           child: BlurOverlay(
               enabled:
               BlurSettings(store.state.blurSettings).drawerBlur,
-              child: Column(
+              child: Stack(
                 children: <Widget>[
-                  SizedBox(
-                    height: MediaQuery
-                        .of(context)
-                        .padding
-                        .top,
-                  ),
-                  Stack(
+                  Column(
                     children: <Widget>[
-                      Center(
-                        child: SlideTransition(
-                            position: _toBottomAnimation,
-                            child: Text(Constants.textConfigs,
-                                style: textTheme.body1)),
+                      SizedBox(
+                        height: MediaQuery
+                            .of(context)
+                            .padding
+                            .top,
                       ),
-                      Center(
-                        child: SlideTransition(
-                            position: _toTopAnimation,
-                            child: Text(Constants.textFavs,
-                                style: textTheme.body1)),
+                      Stack(
+                        children: <Widget>[
+                          Center(
+                            child: SlideTransition(
+                                position: _toBottomAnimation,
+                                child: Text(Constants.textConfigs,
+                                    style: textTheme.subhead.copyWith(
+                                        color: textTheme.subhead.color
+                                            .withAlpha(190)))),
+                          ),
+                          Center(
+                            child: SlideTransition(
+                                position: _toTopAnimation,
+                                child: Text(Constants.textFavs,
+                                    style: textTheme.subhead.copyWith(
+                                        color: textTheme.subhead.color
+                                            .withAlpha(190)))),
+                          ),
+                        ],
                       ),
+                      Expanded(
+                          child: Stack(
+                            children: <Widget>[
+                              SlideTransition(
+                                position: _settingsAnimation,
+                                child: SettingsDrawer(store: store),
+                              ),
+                              SlideTransition(
+                                position: _toTopAnimation,
+                                child: FavoritesDrawer(
+                                    favoriteSet: store.state.favoritesSet,
+                                    tapHandler: FavoritesTap(store: store)),
+                              )
+                            ],
+                          ))
                     ],
                   ),
-                  Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          SlideTransition(
-                            position: _settingsAnimation,
-                            child: SettingsDrawer(store: store),
-                          ),
-                          SlideTransition(
-                            position: _toTopAnimation,
-                            child: FavoritesDrawer(
-                                favoriteSet: store.state.favoritesSet,
-                                tapHandler: FavoritesTap(store: store)),
-                          )
-                        ],
-                      )),
-                  ListTile(
-                      title: Stack(children: <Widget>[
-                        Center(
-                            child: SlideTransition(
-                                position: _settingsTileAnimation,
-                                child: Text(Constants.textConfigs,
-                                    style: textTheme.subhead,
-                                    textAlign: TextAlign.center))
-                        ),
-                        Center(
-                            child: SlideTransition(
-                                position: _favoritesTileAnimation,
-                                child: Text(Constants.textFavs,
-                                    style: textTheme.subhead,
-                                    textAlign: TextAlign.center))
-                        ),
-                      ]),
-                      onTap: () =>
-                          setState(() {
-                            settingsDrawer = !_settingsDrawer;
-                          }))
+                  Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: settingsDrawer ? MaterialButton(
+                        onPressed: () => setState(() => settingsDrawer = false),
+                        color: Theme
+                            .of(context)
+                            .accentColor,
+                        child: Text(Constants.textConfigs,
+                            style: textTheme.subhead,
+                            textAlign: TextAlign.center))
+                        : MaterialButton(
+                        onPressed: () => setState(() => settingsDrawer = true),
+                        color: Theme
+                            .of(context)
+                            .accentColor,
+                        child: Text(Constants.textFavs,
+                            style: textTheme.subhead,
+                            textAlign: TextAlign.center)),
+                  ),
                 ],
               ))),
     );

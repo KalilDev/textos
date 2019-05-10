@@ -44,11 +44,15 @@ class TextSizeButtonState extends State<TextSizeButton>
     super.dispose();
   }
 
+  double get animationStart =>
+      0 - (Constants.durationAnimationRoute.inMilliseconds /
+          Constants.durationAnimationMedium.inMilliseconds);
+
   @override
   Widget build(BuildContext context) {
     _textSize = store.state.textSize;
     return ScaleTransition(
-      scale: _scale,
+      scale: Tween(begin: animationStart, end: 1.0).animate(_scale),
       child: BlurOverlay(
         enabled: BlurSettings(store.state.blurSettings).buttonsBlur,
         radius: 80,

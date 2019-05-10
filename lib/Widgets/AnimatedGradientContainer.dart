@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:textos/Src/Constants.dart';
 
 class AnimatedGradientContainer extends StatefulWidget {
   const AnimatedGradientContainer({
@@ -36,7 +37,7 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
   void initState() {
     super.initState();
     _controller = new AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1200));
+        vsync: this, duration: Constants.durationAnimationMedium * 2);
     Animation curved =
         new CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _animation = new LinearGradientTween(

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:textos/Src/Constants.dart';
 
 class FadeRoute<T> extends MaterialPageRoute<T> {
   FadeRoute({WidgetBuilder builder, RouteSettings settings})
       : super(builder: builder, settings: settings);
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 700);
+  Duration get transitionDuration => Constants.durationAnimationRoute;
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,

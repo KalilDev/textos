@@ -11,14 +11,26 @@ class SettingsDrawer extends StatelessWidget {
 
   SettingsDrawer({@required this.store});
 
+  void cleanAll() {
+    store.dispatch(UpdateFavorites(toClear: 1));
+    store.dispatch(UpdateBlurSettings(integer: 1));
+    store.dispatch(UpdateDarkMode(enable: false));
+    store.dispatch(UpdateTextSize(size: 4.5));
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextStyle settingsStyle = Theme
         .of(context)
         .textTheme
         .subhead;
+    final TextStyle description = settingsStyle.copyWith(
+        color: settingsStyle.color.withAlpha(190));
     return Column(
       children: <Widget>[
+        Divider(),
+        Text(Constants.textTema,
+            style: description),
         SwitchListTile(
             title: Text(Constants.textTextTheme, style: settingsStyle),
             secondary: Icon(Icons.color_lens),
@@ -41,6 +53,9 @@ class SettingsDrawer extends StatelessWidget {
                 store.dispatch(
                     UpdateDarkMode(
                         enable: !store.state.enableDarkMode))),
+        Divider(),
+        Text(Constants.textText,
+            style: description),
         ListTile(
             leading: Icon(Icons.text_fields),
             title: Text(Constants.textTextSize, style: settingsStyle),
@@ -53,11 +68,17 @@ class SettingsDrawer extends StatelessWidget {
                 ],
               ),
             )),
+        Divider(),
+        Text(Constants.textFavs,
+            style: description),
         ListTile(
-          leading: Icon(Icons.delete_forever),
-          title: Text(Constants.textTextTrash, style: settingsStyle),
+          leading: Icon(Icons.delete),
+          title: Text(Constants.textCleanFavs, style: settingsStyle),
           onTap: () => store.dispatch(UpdateFavorites(toClear: 1)),
         ),
+        Divider(),
+        Text(Constants.textBlur,
+            style: description),
         SwitchListTile(
             title: Text(Constants.textTextBlurDrawer,
                 style: settingsStyle),
@@ -103,6 +124,14 @@ class SettingsDrawer extends StatelessWidget {
                 .withAlpha(170),
             onChanged: (map) =>
                 BlurSettingsTap(store: store).setTextsBlur()),
+        Divider(),
+        Spacer(),
+        ListTile(
+          leading: Icon(Icons.delete_forever),
+          title: Text(Constants.textTextTrash, style: settingsStyle),
+          onTap: () => cleanAll(),
+        ),
+        SizedBox(height: 50)
       ],
     );
   }

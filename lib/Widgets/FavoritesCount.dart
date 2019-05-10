@@ -31,6 +31,7 @@ class FavoritesCount extends StatelessWidget {
             Colors.indigo.shade400.withAlpha(150)
             ],
             isEnabled: isFavorite,
+            height: 50,
             child: RaisedButton(
                 elevation: 6.0,
                 highlightElevation: 14.0,

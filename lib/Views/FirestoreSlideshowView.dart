@@ -113,7 +113,7 @@ class TextSlideshowState extends State<TextSlideshow> {
                                 .textsBlur,
                           child: Text(title,
                               textAlign: TextAlign.center,
-                              style: textTheme.display2)
+                              style: textTheme.display1)
                         ),
                       ),
                       color: Colors.transparent,

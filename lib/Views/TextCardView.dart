@@ -63,7 +63,7 @@ class TextCard extends StatelessWidget {
       children: <Widget>[
         Dismissible(
           key: Key(title),
-          movementDuration: Duration(milliseconds: 250),
+          movementDuration: Constants.durationAnimationShort,
           confirmDismiss: (callback) {
             if (callback == DismissDirection.startToEnd) {
               Scaffold.of(context).openDrawer();
@@ -103,7 +103,7 @@ class TextCard extends StatelessWidget {
                                       child: Column(children: <Widget>[
                                         Text(title,
                                             textAlign: TextAlign.center,
-                                            style: textTheme.display2),
+                                            style: textTheme.display1),
                                         SizedBox(
                                           height: 10,
                                         ),

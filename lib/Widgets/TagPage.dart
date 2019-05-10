@@ -97,7 +97,7 @@ class _TagPageState extends State<TagPage> {
               style: Theme
                   .of(context)
                   .textTheme
-                  .display2,
+                  .display1,
             ),
             Text(Constants.textFilter),
             Container(

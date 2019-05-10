@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
+import 'package:textos/Widgets/Widgets.dart';
 
 class FavoritesDrawer extends StatelessWidget {
   final Set<String> favoriteSet;
@@ -14,16 +15,17 @@ class FavoritesDrawer extends StatelessWidget {
     final favoriteTitle = favorite.split(';')[0];
 
     Widget txt;
-    if (favoriteTitle.length > 25) {
+    if (favoriteTitle.length > 20) {
       txt = Container(
           child: Marquee(
               text: favoriteTitle,
               style: Theme
                   .of(context)
                   .textTheme
-                  .title,
-              blankSpace: 15,
-              velocity: 35.0),
+                  .display2,
+              blankSpace: 25,
+              pauseAfterRound: Duration(seconds: 1),
+              velocity: 60.0),
           height: 50.0);
     } else {
       txt = Text(
@@ -31,7 +33,7 @@ class FavoritesDrawer extends StatelessWidget {
         style: Theme
             .of(context)
             .textTheme
-            .title,
+            .display2,
       );
     }
     return Dismissible(
@@ -66,10 +68,15 @@ class FavoritesDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new ListView.separated(
-      itemCount: favoriteSet.length,
+      itemCount: favoriteSet.length + 1,
       itemBuilder: (BuildContext context, int index) =>
-          buildFavoritesItem(context, favoriteSet.toList()[index]),
-      separatorBuilder: (BuildContext context, int index) => Divider(),
+      index == 0
+          ? Divider()
+          : buildFavoritesItem(context, favoriteSet.toList()[index - 1]),
+      separatorBuilder: (BuildContext context, int index) =>
+      index == 0
+          ? NullWidget()
+          : Divider(),
     );
   }
 }
