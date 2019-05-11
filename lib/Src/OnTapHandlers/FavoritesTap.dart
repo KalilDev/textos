@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:textos/Src/Constants.dart';
 import 'package:textos/Views/FirestoreSlideshowView.dart';
-import 'package:textos/Views/TextCardView.dart';
-import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
 class FavoritesTap {
@@ -47,11 +45,11 @@ class FavoritesTap {
     var data = documentSnapshot.data;
     data['path'] = _getPath(text);
     Navigator.pop(context);
-    Navigator.push(
+    /*Navigator.push(
       context,
       FadeRoute(
           builder: (context) =>
               TextCardView(data: documentSnapshot.data, store: store)),
-    );
+    );*/
   }
 }

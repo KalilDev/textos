@@ -1,60 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:redux/redux.dart';
-import 'package:textos/Src/BlurSettings.dart';
+import 'package:provider/provider.dart';
 import 'package:textos/Src/Constants.dart';
+import 'package:textos/Src/Providers/Providers.dart';
+import 'package:textos/Src/TextContent.dart';
 import 'package:textos/Widgets/Widgets.dart';
-import 'package:textos/main.dart';
 
 class TextCardView extends StatelessWidget {
-  // Declare a field that holds the data map, and a field that holds the index
-  final Map data;
-  final Store<AppStateMain> store;
+  const TextCardView({Key key,
+    @required this.textContent,
+    @required this.darkModeProvider,
+    @required this.textSizeProvider,
+    @required this.blurProvider})
+      : super(key: key);
 
-  // In the constructor, require the data map and index
-  TextCardView({@required this.data, this.store});
+  final TextContent textContent;
+  final DarkModeProvider darkModeProvider;
+  final BlurProvider blurProvider;
+  final TextSizeProvider textSizeProvider;
 
   @override
   Widget build(BuildContext context) {
-    exit() {
-      Navigator.pop(context);
-    }
-
     ThemeData overrideTheme;
-    if (store.state.enableDarkMode) {
+    if (darkModeProvider.isDarkMode) {
       overrideTheme = Constants.themeDataDark;
     } else {
       overrideTheme = Constants.themeDataLight;
     }
+    exit() {
+      Navigator.pop(context);
+    }
 
-    return MaterialApp(
-        darkTheme: Constants.themeDataDark,
-        theme: overrideTheme,
-        home: new Scaffold(
-            drawer: TextAppDrawer(store: store),
-            body: new TextCard(data: data, store: store, exit: exit)));
+    return ChangeNotifierProvider<DarkModeProvider>(
+        builder: (_) => darkModeProvider.copy(),
+        child: ChangeNotifierProvider<BlurProvider>(
+            builder: (_) => blurProvider.copy(),
+            child: ChangeNotifierProvider<TextSizeProvider>(
+                builder: (_) => textSizeProvider.copy(),
+                child: MaterialApp(
+                    darkTheme: Constants.themeDataDark,
+                    theme: overrideTheme,
+                    home: new Scaffold(
+                      //drawer: TextAppDrawer(store: store),
+                        body: TextCard(
+                            textContent: textContent, exit: exit))))));
   }
 }
 
 class TextCard extends StatelessWidget {
-  const TextCard({
-    Key key,
-    @required this.data,
-    @required this.store,
-    @required this.exit,
-  }) : super(key: key);
-
-  final Map data;
-  final Store<AppStateMain> store;
+  final TextContent textContent;
   final Function exit;
+
+  TextCard({@required this.textContent, @required this.exit});
 
   @override
   Widget build(BuildContext context) {
-    // Sanitize input
-    final title = data['title'] ?? Constants.placeholderTitle;
-    final text = data['text'] ?? Constants.placeholderText;
-    final date = data['date'] ?? Constants.placeholderDate;
-    final img = data['img'] ?? Constants.placeholderImg;
-
     final textTheme = Theme
         .of(context)
         .textTheme;
@@ -62,7 +61,7 @@ class TextCard extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Dismissible(
-          key: Key(title),
+          key: Key(textContent.title),
           movementDuration: Constants.durationAnimationShort,
           confirmDismiss: (callback) {
             if (callback == DismissDirection.startToEnd) {
@@ -77,13 +76,13 @@ class TextCard extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   Hero(
-                      tag: 'image' + data['path'],
+                      tag: 'image' + textContent.textPath,
                       child: ImageBackground(
-                          img: img,
+                          img: textContent.imgUrl,
                           enabled: false,
-                          key: Key('image' + data['path']))),
+                          key: Key('image' + textContent.textPath))),
                   Hero(
-                    tag: 'body' + data['path'],
+                    tag: 'body' + textContent.textPath,
                     child: Material(
                         color: Colors.transparent,
                         child: Container(
@@ -91,7 +90,9 @@ class TextCard extends StatelessWidget {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20)),
                           child: BlurOverlay(
-                            enabled: BlurSettings(store.state.blurSettings)
+                            enabled:
+                            Provider
+                                .of<BlurProvider>(context)
                                 .textsBlur,
                             radius: 20,
                             child: Column(
@@ -101,20 +102,24 @@ class TextCard extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(20.0),
                                     child: SingleChildScrollView(
                                       child: Column(children: <Widget>[
-                                        Text(title,
+                                        Text(textContent.title,
                                             textAlign: TextAlign.center,
                                             style: textTheme.display1),
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        Text(text,
+                                        Text(textContent.text,
                                             style: textTheme.body1.copyWith(
-                                                fontSize: store.state.textSize *
+                                                fontSize:
+                                                Provider
+                                                    .of<TextSizeProvider>(
+                                                    context)
+                                                    .textSize *
                                                     4.5)),
                                         SizedBox(
                                           height: 55,
                                           child: Center(
-                                            child: Text(date,
+                                            child: Text(textContent.date,
                                                 style: textTheme.title),
                                           ),
                                         ),
@@ -127,14 +132,14 @@ class TextCard extends StatelessWidget {
                           ),
                         )),
                   ),
+                  /*Positioned(
+                          child: new FavoriteFAB(
+                              store: store, title: title, path: data['path']),
+                          right: 10,
+                          bottom: 10,
+                        ),*/
                   Positioned(
-                    child: new FavoriteFAB(
-                        store: store, title: title, path: data['path']),
-                    right: 10,
-                    bottom: 10,
-                  ),
-                  Positioned(
-                    child: new TextSizeButton(store: store),
+                    child: TextSizeButton(),
                     left: 10,
                     bottom: 13.5,
                   ),

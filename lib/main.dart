@@ -3,10 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/FavoritesHelper.dart';
+import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Views/FirestoreSlideshowView.dart';
 import 'package:textos/Widgets/Widgets.dart';
 
@@ -51,10 +53,7 @@ void main() async {
     reducer,
     distinct: true,
     initialState: AppStateMain(
-        enableDarkMode: _enableDarkMode,
         favoritesSet: _favoritesSet,
-        textSize: _textSize,
-        blurSettings: _blurSettings,
         uid: _uid),
   );
 
@@ -71,10 +70,7 @@ class MyApp extends StatelessWidget {
       distinct: true,
       converter: (store) {
         return [
-          store.state.enableDarkMode,
           store.state.favoritesSet,
-          store.state.textSize,
-          store.state.blurSettings,
           store.state.uid,
         ];
       },
@@ -153,18 +149,27 @@ class StoreViewState extends State<StoreView> {
   Widget build(BuildContext context) {
     ThemeData overrideTheme;
 
-    if (store.state.enableDarkMode) {
+    if (false) {
       overrideTheme = Constants.themeDataDark;
     } else {
       overrideTheme = Constants.themeDataLight;
     }
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      darkTheme: Constants.themeDataDark,
-      theme: overrideTheme,
-      home: Scaffold(
-        body: TextSlideshow(store: store),
-        drawer: TextAppDrawer(store: store),
+    return ChangeNotifierProvider<DarkModeProvider>(
+      builder: (_) => DarkModeProvider(false),
+      child: ChangeNotifierProvider<BlurProvider>(
+        builder: (_) => BlurProvider(1),
+        child: ChangeNotifierProvider<TextSizeProvider>(
+          builder: (_) => TextSizeProvider(4.5),
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            darkTheme: Constants.themeDataDark,
+            theme: overrideTheme,
+            home: Scaffold(
+              body: TextSlideshow(store: store),
+              drawer: TextAppDrawer(store: store),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -173,24 +178,12 @@ class StoreViewState extends State<StoreView> {
 // Redux
 class AppStateMain {
   AppStateMain({
-    @required this.enableDarkMode,
     @required this.favoritesSet,
-    @required this.textSize,
-    @required this.blurSettings,
     @required this.uid,
   });
 
-  bool enableDarkMode;
   Set<String> favoritesSet;
-  double textSize;
-  int blurSettings;
   String uid;
-}
-
-class UpdateDarkMode {
-  UpdateDarkMode({@required this.enable});
-
-  final bool enable;
 }
 
 class UpdateFavorites {
@@ -201,31 +194,8 @@ class UpdateFavorites {
   final String toRemove;
 }
 
-class UpdateTextSize {
-  UpdateTextSize({@required this.size});
-
-  final double size;
-}
-
-class UpdateBlurSettings {
-  UpdateBlurSettings({@required this.integer});
-
-  final int integer;
-}
 
 AppStateMain reducer(AppStateMain state, dynamic action) {
-  if (action is UpdateDarkMode) {
-    SharedPreferences.getInstance().then((pref) {
-      pref.setBool('isDark', action.enable);
-    });
-
-    return AppStateMain(
-        enableDarkMode: action.enable,
-        favoritesSet: state.favoritesSet,
-        textSize: state.textSize,
-        blurSettings: state.blurSettings,
-        uid: state.uid);
-  }
 
   if (action is UpdateFavorites) {
     var _fav = state.favoritesSet;
@@ -247,36 +217,7 @@ AppStateMain reducer(AppStateMain state, dynamic action) {
     });
 
     return AppStateMain(
-        enableDarkMode: state.enableDarkMode,
         favoritesSet: _fav,
-        textSize: state.textSize,
-        blurSettings: state.blurSettings,
-        uid: state.uid);
-  }
-
-  if (action is UpdateTextSize) {
-    SharedPreferences.getInstance().then((pref) {
-      pref.setDouble('textSize', action.size);
-    });
-
-    return AppStateMain(
-        enableDarkMode: state.enableDarkMode,
-        favoritesSet: state.favoritesSet,
-        textSize: action.size,
-        blurSettings: state.blurSettings,
-        uid: state.uid);
-  }
-
-  if (action is UpdateBlurSettings) {
-    SharedPreferences.getInstance().then((pref) {
-      pref.setInt('blurSettings', action.integer);
-    });
-
-    return AppStateMain(
-        enableDarkMode: state.enableDarkMode,
-        favoritesSet: state.favoritesSet,
-        textSize: state.textSize,
-        blurSettings: action.integer,
         uid: state.uid);
   }
 

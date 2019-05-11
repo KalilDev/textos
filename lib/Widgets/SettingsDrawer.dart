@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Src/BlurSettings.dart';
 import 'package:textos/Src/Constants.dart';
-import 'package:textos/Src/OnTapHandlers/BlurSettingsTap.dart';
+import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
@@ -11,11 +11,11 @@ class SettingsDrawer extends StatelessWidget {
 
   SettingsDrawer({@required this.store});
 
-  void cleanAll() {
+  void cleanAll(BuildContext context) {
     store.dispatch(UpdateFavorites(toClear: 1));
-    store.dispatch(UpdateBlurSettings(integer: 1));
-    store.dispatch(UpdateDarkMode(enable: false));
-    store.dispatch(UpdateTextSize(size: 4.5));
+    Provider.of<BlurProvider>(context).clearSettings();
+    Provider.of<DarkModeProvider>(context).reset();
+    Provider.of<TextSizeProvider>(context).reset();
   }
 
   @override
@@ -33,7 +33,9 @@ class SettingsDrawer extends StatelessWidget {
         SwitchListTile(
             title: Text(Constants.textTextTheme, style: settingsStyle),
             secondary: Icon(Icons.color_lens),
-            value: store.state.enableDarkMode
+            value: Provider
+                .of<DarkModeProvider>(context)
+                .isDarkMode
                 ? true
                 : MediaQuery
                 .of(context)
@@ -59,8 +61,7 @@ class SettingsDrawer extends StatelessWidget {
                 .platformBrightness == Brightness.dark
                 ? null
                 : (map) =>
-                store.dispatch(
-                    UpdateDarkMode(enable: !store.state.enableDarkMode))),
+                Provider.of<DarkModeProvider>(context).toggle()),
         Divider(),
         Text(Constants.textText, style: description),
         ListTile(
@@ -70,8 +71,8 @@ class SettingsDrawer extends StatelessWidget {
               width: 96,
               child: Row(
                 children: <Widget>[
-                  TextDecrease(store: store),
-                  TextIncrease(store: store),
+                  TextDecrease(),
+                  TextIncrease(),
                 ],
               ),
             )),
@@ -87,7 +88,9 @@ class SettingsDrawer extends StatelessWidget {
         SwitchListTile(
             title: Text(Constants.textTextBlurDrawer, style: settingsStyle),
             secondary: Icon(Icons.blur_linear),
-            value: BlurSettings(store.state.blurSettings).drawerBlur,
+            value: Provider
+                .of<BlurProvider>(context)
+                .drawerBlur,
             activeColor: Theme
                 .of(context)
                 .accentColor,
@@ -95,11 +98,14 @@ class SettingsDrawer extends StatelessWidget {
                 .of(context)
                 .accentColor
                 .withAlpha(170),
-            onChanged: (map) => BlurSettingsTap(store: store).setDrawerBlur()),
+            onChanged: (map) =>
+                Provider.of<BlurProvider>(context).toggleDrawerBlur()),
         SwitchListTile(
             title: Text(Constants.textTextBlurButtons, style: settingsStyle),
             secondary: Icon(Icons.blur_circular),
-            value: BlurSettings(store.state.blurSettings).buttonsBlur,
+            value: Provider
+                .of<BlurProvider>(context)
+                .buttonsBlur,
             activeColor: Theme
                 .of(context)
                 .accentColor,
@@ -107,11 +113,14 @@ class SettingsDrawer extends StatelessWidget {
                 .of(context)
                 .accentColor
                 .withAlpha(170),
-            onChanged: (map) => BlurSettingsTap(store: store).setButtonsBlur()),
+            onChanged: (map) =>
+                Provider.of<BlurProvider>(context).toggleButtonsBlur()),
         SwitchListTile(
             title: Text(Constants.textTextBlurText, style: settingsStyle),
             secondary: Icon(Icons.blur_on),
-            value: BlurSettings(store.state.blurSettings).textsBlur,
+            value: Provider
+                .of<BlurProvider>(context)
+                .textsBlur,
             activeColor: Theme
                 .of(context)
                 .accentColor,
@@ -119,13 +128,14 @@ class SettingsDrawer extends StatelessWidget {
                 .of(context)
                 .accentColor
                 .withAlpha(170),
-            onChanged: (map) => BlurSettingsTap(store: store).setTextsBlur()),
+            onChanged: (map) =>
+                Provider.of<BlurProvider>(context).toggleTextsBlur()),
         Divider(),
         Spacer(),
         ListTile(
           leading: Icon(Icons.delete_forever),
           title: Text(Constants.textTextTrash, style: settingsStyle),
-          onTap: () => cleanAll(),
+          onTap: () => cleanAll(context),
         ),
         SizedBox(height: 50)
       ],

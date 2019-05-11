@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Src/BlurSettings.dart';
 import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
+import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Widgets/Widgets.dart';
 import 'package:textos/main.dart';
 
@@ -90,7 +91,9 @@ class FavoriteFABState extends State<FavoriteFAB>
     return ScaleTransition(
       scale: Tween(begin: animationStart, end: 1.0).animate(_scale),
       child: BlurOverlay(
-        enabled: BlurSettings(store.state.blurSettings).buttonsBlur,
+        enabled: Provider
+            .of<BlurProvider>(context)
+            .buttonsBlur,
         radius: 100,
         intensity: 0.65,
         child: AnimatedGradientContainer(

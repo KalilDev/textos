@@ -1,35 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:redux/redux.dart';
-import 'package:textos/Src/BlurSettings.dart';
+import 'package:provider/provider.dart';
 import 'package:textos/Src/Constants.dart';
-import 'package:textos/Src/OnTapHandlers/TextSizeTap.dart';
+import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Widgets/Widgets.dart';
-import 'package:textos/main.dart';
 
 class TextSizeButton extends StatefulWidget {
-  final Store store;
-
-  TextSizeButton({@required this.store});
-
-  createState() => TextSizeButtonState(store: store);
+  createState() => TextSizeButtonState();
 }
 
 class TextSizeButtonState extends State<TextSizeButton>
     with TickerProviderStateMixin {
-  TextSizeButtonState({
-    @required this.store,
-  });
-
-  final Store<AppStateMain> store;
 
   AnimationController _animationController;
   Animation<double> _scale;
-  double _textSize;
 
   @override
   initState() {
     super.initState();
-    _textSize = store.state.textSize;
     _animationController = new AnimationController(
         duration: Constants.durationAnimationMedium +
             Constants.durationAnimationRoute,
@@ -52,11 +39,12 @@ class TextSizeButtonState extends State<TextSizeButton>
 
   @override
   Widget build(BuildContext context) {
-    _textSize = store.state.textSize;
     return ScaleTransition(
       scale: Tween(begin: animationStart, end: 1.0).animate(_scale),
       child: BlurOverlay(
-        enabled: BlurSettings(store.state.blurSettings).buttonsBlur,
+        enabled: Provider
+            .of<BlurProvider>(context)
+            .buttonsBlur,
         radius: 80,
         intensity: 0.65,
         child: Material(
@@ -65,8 +53,8 @@ class TextSizeButtonState extends State<TextSizeButton>
               .accentColor
               .withAlpha(120),
           child: Row(children: <Widget>[
-            TextDecrease(store: store),
-            TextIncrease(store: store),
+            TextDecrease(),
+            TextIncrease(),
           ]),
         ),
       ),
@@ -75,13 +63,6 @@ class TextSizeButtonState extends State<TextSizeButton>
 }
 
 class TextIncrease extends StatefulWidget {
-  const TextIncrease({
-    Key key,
-    @required this.store,
-  }) : super(key: key);
-
-  final Store<AppStateMain> store;
-
   @override
   _TextIncreaseState createState() => _TextIncreaseState();
 }
@@ -90,13 +71,10 @@ class _TextIncreaseState extends State<TextIncrease>
     with TickerProviderStateMixin {
   AnimationController _plusController;
   Animation<double> _plus;
-  double _textSize;
 
   @override
   initState() {
     super.initState();
-    _textSize = widget.store.state.textSize;
-
     _plusController = new AnimationController(
         duration: Constants.durationAnimationMedium, vsync: this);
     _plus =
@@ -117,15 +95,19 @@ class _TextIncreaseState extends State<TextIncrease>
 
   @override
   Widget build(BuildContext context) {
-    if (_textSize < widget.store.state.textSize) {
+    if (Provider
+        .of<TextSizeProvider>(context)
+        .increased) {
+      Provider
+          .of<TextSizeProvider>(context)
+          .increased = false;
       _plusController.reverse();
     }
-    _textSize = widget.store.state.textSize;
     return ScaleTransition(
         child: IconButton(
           icon: Icon(Icons.arrow_upward),
           onPressed: () {
-            TextSizeTap(store: widget.store).increase();
+            Provider.of<TextSizeProvider>(context).increase();
           },
           iconSize: 25,
           tooltip: Constants.textTooltipTextSizePlus,
@@ -135,13 +117,6 @@ class _TextIncreaseState extends State<TextIncrease>
 }
 
 class TextDecrease extends StatefulWidget {
-  const TextDecrease({
-    Key key,
-    @required this.store,
-  }) : super(key: key);
-
-  final Store<AppStateMain> store;
-
   @override
   _TextDecreaseState createState() => _TextDecreaseState();
 }
@@ -150,13 +125,10 @@ class _TextDecreaseState extends State<TextDecrease>
     with TickerProviderStateMixin {
   AnimationController _minusController;
   Animation<double> _minus;
-  double _textSize;
 
   @override
   initState() {
     super.initState();
-    _textSize = widget.store.state.textSize;
-
     _minusController = new AnimationController(
         duration: Constants.durationAnimationMedium, vsync: this);
     _minus =
@@ -177,17 +149,21 @@ class _TextDecreaseState extends State<TextDecrease>
 
   @override
   Widget build(BuildContext context) {
-    if (_textSize > widget.store.state.textSize) {
+    if (Provider
+        .of<TextSizeProvider>(context)
+        .decreased) {
+      Provider
+          .of<TextSizeProvider>(context)
+          .decreased = false;
       _minusController.reverse();
     }
-    _textSize = widget.store.state.textSize;
     return ScaleTransition(
         child: IconButton(
           icon: Icon(
             Icons.arrow_downward,
           ),
           onPressed: () {
-            TextSizeTap(store: widget.store).decrease();
+            Provider.of<TextSizeProvider>(context).decrease();
           },
           iconSize: 25,
           tooltip: Constants.textTooltipTextSizeLess,

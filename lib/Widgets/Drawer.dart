@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
-import 'package:textos/Src/BlurSettings.dart';
 import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
+import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Widgets/FavoritesDrawer.dart';
 import 'package:textos/Widgets/SettingsDrawer.dart';
 import 'package:textos/Widgets/Widgets.dart';
@@ -76,7 +77,9 @@ class TextAppDrawerState extends State<TextAppDrawer>
       data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
       child: Drawer(
           child: BlurOverlay(
-              enabled: BlurSettings(store.state.blurSettings).drawerBlur,
+              enabled: Provider
+                  .of<BlurProvider>(context)
+                  .drawerBlur,
               child: Stack(
                 children: <Widget>[
                   Column(
