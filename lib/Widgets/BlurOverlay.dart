@@ -41,16 +41,16 @@ class BlurOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (radius) {
       case 0:
-        return ClipRect(clipBehavior: Clip.hardEdge, child: blur(context));
+        return ClipRect(clipBehavior: Clip.antiAlias, child: blur(context));
         break;
       case 100:
-        return ClipOval(clipBehavior: Clip.hardEdge, child: blur(context));
+        return ClipOval(clipBehavior: Clip.antiAlias, child: blur(context));
         break;
     }
 
     return ClipRRect(
         borderRadius: BorderRadius.circular(radius.toDouble()),
-        clipBehavior: Clip.hardEdge,
+        clipBehavior: Clip.antiAlias,
         child: blur(context));
   }
 }

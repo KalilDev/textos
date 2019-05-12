@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BlurProvider with ChangeNotifier {
   int _settings;
@@ -15,6 +16,7 @@ class BlurProvider with ChangeNotifier {
     _settings = drawerBlur
         ? (_settings / settingsTable[0]).round()
         : (_settings * settingsTable[0]).round();
+    settingsSync();
     notifyListeners();
   }
 
@@ -24,6 +26,7 @@ class BlurProvider with ChangeNotifier {
     _settings = buttonsBlur
         ? (_settings / settingsTable[1]).round()
         : (_settings * settingsTable[1]).round();
+    settingsSync();
     notifyListeners();
   }
 
@@ -33,19 +36,25 @@ class BlurProvider with ChangeNotifier {
     _settings = textsBlur
         ? (_settings / settingsTable[2]).round()
         : (_settings * settingsTable[2]).round();
+    settingsSync();
     notifyListeners();
   }
 
   clearSettings() {
     _settings = 1;
+    settingsSync();
     notifyListeners();
   }
 
   int get blurSettings => _settings;
   BlurProvider copy() => BlurProvider(_settings);
-
   sync(int blurSettings) {
     _settings = blurSettings;
     notifyListeners();
+  }
+
+  settingsSync() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('blurSettings', _settings);
   }
 }

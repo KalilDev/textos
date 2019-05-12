@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Src/TextContent.dart';
 import 'package:textos/Views/TextCardView.dart';
@@ -36,16 +37,19 @@ class FavoritesProvider with ChangeNotifier {
 
   add(String favorite) {
     _favoritesSet.add(favorite);
+    settingsSync();
     notifyListeners();
   }
 
   remove(String favorite) {
     _favoritesSet.remove(favorite);
+    settingsSync();
     notifyListeners();
   }
 
   clear() {
     _favoritesSet.clear();
+    settingsSync();
     notifyListeners();
   }
 
@@ -79,9 +83,13 @@ class FavoritesProvider with ChangeNotifier {
   List get favoritesList => _favoritesSet.toList();
 
   FavoritesProvider copy() => FavoritesProvider(_favoritesSet.toList());
-
   sync(List favoritesList) {
     _favoritesSet = favoritesList.toSet();
     notifyListeners();
+  }
+
+  settingsSync() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('favorites', _favoritesSet.toList());
   }
 }
