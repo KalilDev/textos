@@ -79,4 +79,9 @@ class FavoritesProvider with ChangeNotifier {
   List get favoritesList => _favoritesSet.toList();
 
   FavoritesProvider copy() => FavoritesProvider(_favoritesSet.toList());
+
+  sync(List favoritesList) {
+    _favoritesSet = favoritesList.toSet();
+    notifyListeners();
+  }
 }

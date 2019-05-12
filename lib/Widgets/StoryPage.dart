@@ -151,7 +151,7 @@ class _StoryPage extends StatelessWidget {
             pageController.animateToPage(index,
                 duration: Constants.durationAnimationMedium,
                 curve: Curves.decelerate);
-          Navigator.push(
+          final result = await Navigator.push(
               context,
               FadeRoute(
                   builder: (context) => TextCardView(
@@ -164,6 +164,11 @@ class _StoryPage extends StatelessWidget {
                     Provider.of<FavoritesProvider>(context),
                         textContent: textContent,
                       )));
+          List resultList = result;
+          Provider.of<FavoritesProvider>(context).sync(resultList[0]);
+          Provider.of<DarkModeProvider>(context).sync(resultList[1]);
+          Provider.of<BlurProvider>(context).sync(resultList[2]);
+          Provider.of<TextSizeProvider>(context).sync(resultList[3]);
         });
   }
 }

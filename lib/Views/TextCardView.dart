@@ -28,9 +28,9 @@ class TextCardView extends StatelessWidget {
     } else {
       overrideTheme = Constants.themeDataLight;
     }
-    exit() async {
+    exit(List data) async {
       await Future.delayed(Duration(milliseconds: 1));
-      if (Navigator.of(context).canPop()) Navigator.pop(context);
+      if (Navigator.of(context).canPop()) Navigator.pop(context, data);
     }
 
     return ChangeNotifierProvider<FavoritesProvider>(
@@ -66,6 +66,21 @@ class TextCard extends StatelessWidget {
     final textTheme = Theme
         .of(context)
         .textTheme;
+    void pop(BuildContext context) {
+      exit([Provider
+          .of<FavoritesProvider>(context)
+          .favoritesList,
+      Provider
+          .of<DarkModeProvider>(context)
+          .isDarkMode,
+      Provider
+          .of<BlurProvider>(context)
+          .blurSettings,
+      Provider
+          .of<TextSizeProvider>(context)
+          .textSize
+      ]);
+    }
 
     return LayoutBuilder(
       builder: (context, mainConstraints) =>
@@ -76,11 +91,11 @@ class TextCard extends StatelessWidget {
               builder: (context, controller) =>
                   LayoutBuilder(builder: (context, constraints) {
                     if ((constraints.maxHeight / mainConstraints.maxHeight) ==
-                        minSize) exit();
+                        minSize) pop(context);
                     return Stack(
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () => exit(),
+                          onTap: () => pop(context),
                           child: SafeArea(
                             child: Stack(
                               children: <Widget>[

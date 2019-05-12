@@ -41,5 +41,11 @@ class BlurProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  int get blurSettings => _settings;
   BlurProvider copy() => BlurProvider(_settings);
+
+  sync(int blurSettings) {
+    _settings = blurSettings;
+    notifyListeners();
+  }
 }

@@ -29,4 +29,9 @@ class TextSizeProvider with ChangeNotifier {
   }
 
   TextSizeProvider copy() => TextSizeProvider(_textSize);
+
+  sync(double textSize) {
+    _textSize = textSize;
+    notifyListeners();
+  }
 }

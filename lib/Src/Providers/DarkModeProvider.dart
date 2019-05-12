@@ -20,4 +20,9 @@ class DarkModeProvider with ChangeNotifier {
   }
 
   DarkModeProvider copy() => DarkModeProvider(_enabled);
+
+  sync(bool isDarkMode) {
+    _enabled = isDarkMode;
+    notifyListeners();
+  }
 }
