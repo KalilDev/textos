@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:textos/Src/FavoritesHelper.dart';
 import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Src/TextContent.dart';
 import 'package:textos/Views/TextCardView.dart';
@@ -12,6 +13,7 @@ import 'package:textos/Widgets/Widgets.dart';
 
 class FavoritesProvider with ChangeNotifier {
   Set<String> _favoritesSet;
+  FavoritesHelper _helper;
 
   void streamTransformer(data, EventSink sink) {
     Map<String, dynamic> localdata = data;
@@ -28,7 +30,8 @@ class FavoritesProvider with ChangeNotifier {
     sink.add(localdata);
   }
 
-  FavoritesProvider(List<String> favorites) {
+  FavoritesProvider(List<String> favorites, FavoritesHelper helper) {
+    _helper = helper;
     _favoritesSet = favorites.toSet();
   }
 
@@ -38,18 +41,21 @@ class FavoritesProvider with ChangeNotifier {
   add(String favorite) {
     _favoritesSet.add(favorite);
     settingsSync();
+    _helper.addFavorite(favorite);
     notifyListeners();
   }
 
   remove(String favorite) {
     _favoritesSet.remove(favorite);
     settingsSync();
+    _helper.removeFavorite(favorite);
     notifyListeners();
   }
 
   clear() {
     _favoritesSet.clear();
     settingsSync();
+    _helper.syncDatabase(_favoritesSet.toList());
     notifyListeners();
   }
 
@@ -82,7 +88,8 @@ class FavoritesProvider with ChangeNotifier {
 
   List get favoritesList => _favoritesSet.toList();
 
-  FavoritesProvider copy() => FavoritesProvider(_favoritesSet.toList());
+  FavoritesProvider copy() =>
+      FavoritesProvider(_favoritesSet.toList(), _helper);
   sync(List favoritesList) {
     _favoritesSet = favoritesList.toSet();
     notifyListeners();

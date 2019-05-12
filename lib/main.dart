@@ -137,7 +137,9 @@ class StateBuilderState extends State<StateBuilder> {
       overrideTheme = Constants.themeDataLight;
     }
     return ChangeNotifierProvider<FavoritesProvider>(
-      builder: (_) => FavoritesProvider(widget.favoritesList),
+      builder: (_) =>
+          FavoritesProvider(
+              widget.favoritesList, FavoritesHelper(userId: widget.uid)),
       child: ChangeNotifierProvider<DarkModeProvider>(
         builder: (_) => DarkModeProvider(widget.enableDarkMode),
         child: ChangeNotifierProvider<BlurProvider>(
