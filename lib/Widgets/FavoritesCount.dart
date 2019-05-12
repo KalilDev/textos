@@ -40,9 +40,9 @@ class FavoritesCount extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           const SizedBox(width: 16.0),
-                          Icon(
-                              provider.isFavorite(text) ? Icons.favorite : Icons
-                                  .favorite_border),
+                          Icon(provider.isFavorite(text)
+                              ? Icons.favorite
+                              : Icons.favorite_border),
                           const SizedBox(width: 8.0),
                           Text(favorites.toString() + ' ' + Constants.textFavs,
                               style: Theme

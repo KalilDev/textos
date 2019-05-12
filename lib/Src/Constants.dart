@@ -30,13 +30,17 @@ class Constants {
     'date': DateTime
         .now()
         .day
-        .toString() + '/' + DateTime
-        .now()
-        .month
-        .toString() + '/' + DateTime
-        .now()
-        .year
-        .toString(),
+        .toString() +
+        '/' +
+        DateTime
+            .now()
+            .month
+            .toString() +
+        '/' +
+        DateTime
+            .now()
+            .year
+            .toString(),
     'path': 'NULL/TEXTNOTFOUNDID'
   };
 

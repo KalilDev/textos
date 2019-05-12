@@ -17,7 +17,6 @@ class FavoriteFAB extends StatefulWidget {
 
 class FavoriteFABState extends State<FavoriteFAB>
     with TickerProviderStateMixin {
-
   String get text => (widget.title + ';' + widget.path);
 
   AnimationController _scaleController;

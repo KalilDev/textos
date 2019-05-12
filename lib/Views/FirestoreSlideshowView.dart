@@ -21,8 +21,7 @@ class TextSlideshowState extends State<TextSlideshow> {
 
   @override
   void initState() {
-    _favoritesStream = Firestore
-        .instance
+    _favoritesStream = Firestore.instance
         .collection('favorites')
         .document('_stats_')
         .snapshots()
@@ -51,10 +50,11 @@ class TextSlideshowState extends State<TextSlideshow> {
                         ]
                             : data;
 
-                        StreamTransformer favsTransformer = new StreamTransformer
-                            .fromHandlers(handleData: Provider
-                            .of<FavoritesProvider>(context)
-                            .streamTransformer);
+                        StreamTransformer favsTransformer =
+                        new StreamTransformer.fromHandlers(
+                            handleData: Provider
+                                .of<FavoritesProvider>(context)
+                                .streamTransformer);
 
                         return StreamBuilder(
                           stream: _favoritesStream.transform(favsTransformer),
@@ -75,8 +75,7 @@ class TextSlideshowState extends State<TextSlideshow> {
 
                             return ChangeNotifierProvider<TextPageProvider>(
                                 builder: (_) => TextPageProvider(),
-                                child: StoryPages(slideList: _slideList)
-                            );
+                                child: StoryPages(slideList: _slideList));
                           },
                         );
                       }),

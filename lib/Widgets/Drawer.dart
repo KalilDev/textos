@@ -12,7 +12,6 @@ class TextAppDrawer extends StatefulWidget {
 
 class TextAppDrawerState extends State<TextAppDrawer>
     with TickerProviderStateMixin {
-
   bool _settingsDrawer = false;
   bool settingsDrawer = false;
   AnimationController _settingsController;

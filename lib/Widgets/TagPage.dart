@@ -22,7 +22,9 @@ class _TagPagesState extends State<TagPages> {
 
   @override
   void initState() {
-    _tagStream = Firestore.instance.collection('metadata').orderBy('order')
+    _tagStream = Firestore.instance
+        .collection('metadata')
+        .orderBy('order')
         .snapshots()
         .map((list) => list.documents.map((doc) => doc.data));
     super.initState();
@@ -54,8 +56,7 @@ class _TagPagesState extends State<TagPages> {
 
   @override
   Widget build(BuildContext context) {
-    if (provider == null) provider = Provider
-        .of<QueryProvider>(context);
+    if (provider == null) provider = Provider.of<QueryProvider>(context);
 
     if (!widget.tagPageController.hasListeners) _addControllerListener();
     return StreamBuilder(
@@ -71,7 +72,8 @@ class _TagPagesState extends State<TagPages> {
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
               final data = _metadatas[index];
-              return _TagPage(index: index,
+              return _TagPage(
+                  index: index,
                   tags: data['tags'],
                   title: data['title'],
                   authorName: data['authorName']);
@@ -99,13 +101,19 @@ class _TagPage extends StatefulWidget {
 class _TagPageState extends State<_TagPage> {
   List<Widget> _buildButtons() {
     List<Widget> widgets = [];
-    widgets.add(_CustomButton(isCurrent: widget.index == Provider
-        .of<QueryProvider>(context)
-        .currentTagPage, tag: Constants.textAllTag));
-    widget.tags.forEach((tag) =>
-        widgets.add(_CustomButton(isCurrent: widget.index == Provider
+    widgets.add(_CustomButton(
+        isCurrent:
+        widget.index == Provider
             .of<QueryProvider>(context)
-            .currentTagPage, tag: tag)));
+            .currentTagPage,
+        tag: Constants.textAllTag));
+    widget.tags.forEach((tag) =>
+        widgets.add(_CustomButton(
+            isCurrent:
+            widget.index == Provider
+                .of<QueryProvider>(context)
+                .currentTagPage,
+            tag: tag)));
     return widgets;
   }
 
@@ -137,11 +145,8 @@ class _TagPageState extends State<_TagPage> {
 }
 
 class _CustomButton extends StatelessWidget {
-  const _CustomButton({
-    Key key,
-    @required this.tag,
-    @required this.isCurrent
-  }) : super(key: key);
+  const _CustomButton({Key key, @required this.tag, @required this.isCurrent})
+      : super(key: key);
 
   final String tag;
   final bool isCurrent;
@@ -158,9 +163,10 @@ class _CustomButton extends StatelessWidget {
               opacity: Tween(begin: 0.0, end: 1.0).animate(animation),
               child: widget);
         },
-        child: isCurrent && tag == Provider
-            .of<QueryProvider>(context)
-            .currentTag
+        child: isCurrent &&
+            tag == Provider
+                .of<QueryProvider>(context)
+                .currentTag
             ? FlatButton(
             color: Theme
                 .of(context)
@@ -170,8 +176,8 @@ class _CustomButton extends StatelessWidget {
             ),
             onPressed: () {
               HapticFeedback.selectionClick();
-              Provider.of<QueryProvider>(context).updateStream(
-                  {'tag': queryTag});
+              Provider.of<QueryProvider>(context)
+                  .updateStream({'tag': queryTag});
             })
             : OutlineButton(
             borderSide: BorderSide(color: Theme
@@ -187,8 +193,8 @@ class _CustomButton extends StatelessWidget {
             ),
             onPressed: () {
               HapticFeedback.selectionClick();
-              Provider.of<QueryProvider>(context).updateStream(
-                  {'tag': queryTag});
+              Provider.of<QueryProvider>(context)
+                  .updateStream({'tag': queryTag});
             }));
   }
 }

@@ -10,7 +10,6 @@ class TextSizeButton extends StatefulWidget {
 
 class TextSizeButtonState extends State<TextSizeButton>
     with TickerProviderStateMixin {
-
   AnimationController _animationController;
   Animation<double> _scale;
 

@@ -33,25 +33,26 @@ class TextCardView extends StatelessWidget {
       if (Navigator.of(context).canPop()) Navigator.pop(context, data);
     }
 
-    return MultiProvider(providers: [
-      ChangeNotifierProvider<FavoritesProvider>(
-          builder: (_) => favoritesProvider.copy()),
-      ChangeNotifierProvider<DarkModeProvider>(
-          builder: (_) => darkModeProvider.copy()),
-      ChangeNotifierProvider<BlurProvider>(builder: (_) => blurProvider.copy()),
-      ChangeNotifierProvider<TextSizeProvider>(
-          builder: (_) => textSizeProvider.copy()),
-    ],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<FavoritesProvider>(
+            builder: (_) => favoritesProvider.copy()),
+        ChangeNotifierProvider<DarkModeProvider>(
+            builder: (_) => darkModeProvider.copy()),
+        ChangeNotifierProvider<BlurProvider>(
+            builder: (_) => blurProvider.copy()),
+        ChangeNotifierProvider<TextSizeProvider>(
+            builder: (_) => textSizeProvider.copy()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         darkTheme: Constants.themeDataDark,
         theme: overrideTheme,
         home: Scaffold(
             drawer: TextAppDrawer(),
-            body: TextCard(
-                textContent: textContent, exit: exit)
-        ),
-      ),);
+            body: TextCard(textContent: textContent, exit: exit)),
+      ),
+    );
   }
 }
 
@@ -69,18 +70,19 @@ class TextCard extends StatelessWidget {
         .of(context)
         .textTheme;
     void pop(BuildContext context) {
-      exit([Provider
-          .of<FavoritesProvider>(context)
-          .favoritesList,
-      Provider
-          .of<DarkModeProvider>(context)
-          .isDarkMode,
-      Provider
-          .of<BlurProvider>(context)
-          .blurSettings,
-      Provider
-          .of<TextSizeProvider>(context)
-          .textSize
+      exit([
+        Provider
+            .of<FavoritesProvider>(context)
+            .favoritesList,
+        Provider
+            .of<DarkModeProvider>(context)
+            .isDarkMode,
+        Provider
+            .of<BlurProvider>(context)
+            .blurSettings,
+        Provider
+            .of<TextSizeProvider>(context)
+            .textSize
       ]);
     }
 
@@ -91,8 +93,7 @@ class TextCard extends StatelessWidget {
             child: ImageBackground(
                 img: textContent.imgUrl,
                 enabled: false,
-                key: Key(
-                    'image' + textContent.textPath))),
+                key: Key('image' + textContent.textPath))),
         LayoutBuilder(
           builder: (context, mainConstraints) =>
               DraggableScrollableSheet(
@@ -115,11 +116,10 @@ class TextCard extends StatelessWidget {
                                   child: Container(
                                     padding: EdgeInsets.all(5),
                                     decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(20)),
+                                        borderRadius: BorderRadius.circular(
+                                            20)),
                                     child: BlurOverlay(
-                                      enabled:
-                                      Provider
+                                      enabled: Provider
                                           .of<BlurProvider>(context)
                                           .textsBlur,
                                       radius: 20,
@@ -131,35 +131,36 @@ class TextCard extends StatelessWidget {
                                               BorderRadius.circular(20.0),
                                               child: SingleChildScrollView(
                                                 controller: controller,
-                                                child:
-                                                Column(children: <Widget>[
-                                                  Text(textContent.title,
-                                                      textAlign:
-                                                      TextAlign.center,
-                                                      style:
-                                                      textTheme.display1),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Text(textContent.text,
-                                                      style: textTheme.body1
-                                                          .copyWith(
-                                                          fontSize: Provider
-                                                              .of<
-                                                              TextSizeProvider>(
-                                                              context)
-                                                              .textSize *
+                                                child: Column(
+                                                    children: <Widget>[
+                                                      Text(textContent.title,
+                                                          textAlign: TextAlign
+                                                              .center,
+                                                          style: textTheme
+                                                              .display1),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Text(textContent.text,
+                                                          style: textTheme.body1
+                                                              .copyWith(
+                                                              fontSize:
+                                                              Provider
+                                                                  .of<
+                                                                  TextSizeProvider>(
+                                                                  context)
+                                                                  .textSize *
                                                               4.5)),
-                                                  SizedBox(
-                                                    height: 55,
-                                                    child: Center(
-                                                      child: Text(
-                                                          textContent.date,
-                                                          style:
-                                                          textTheme.title),
-                                                    ),
-                                                  ),
-                                                ]),
+                                                      SizedBox(
+                                                        height: 55,
+                                                        child: Center(
+                                                          child: Text(
+                                                              textContent.date,
+                                                              style: textTheme
+                                                                  .title),
+                                                        ),
+                                                      ),
+                                                    ]),
                                               ),
                                             ),
                                           ),
@@ -173,9 +174,8 @@ class TextCard extends StatelessWidget {
                       })),
         ),
         Positioned(
-          child: FavoriteFAB(
-              title: textContent.title,
-              path: textContent.textPath),
+          child:
+          FavoriteFAB(title: textContent.title, path: textContent.textPath),
           right: 10,
           bottom: 10,
         ),

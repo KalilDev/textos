@@ -19,8 +19,7 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   final bool _enableDarkMode = prefs?.getBool('isDark') ?? false;
-  final List _favoritesList =
-      prefs?.getStringList('favorites') ?? <String>[];
+  final List _favoritesList = prefs?.getStringList('favorites') ?? <String>[];
   final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
   final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
   String _uid;
@@ -123,8 +122,7 @@ class StateBuilderState extends State<StateBuilder> {
       print('udid: ' + widget.uid.toString());
       print('favorites: ' + widget.favoritesList.toString());
     }
-    FavoritesHelper(userId: widget.uid)
-        .syncDatabase(widget.favoritesList);
+    FavoritesHelper(userId: widget.uid).syncDatabase(widget.favoritesList);
   }
 
   @override
@@ -136,17 +134,19 @@ class StateBuilderState extends State<StateBuilder> {
     } else {
       overrideTheme = Constants.themeDataLight;
     }
-    return MultiProvider(providers: [
-      ChangeNotifierProvider<FavoritesProvider>(builder: (_) =>
-          FavoritesProvider(
-              widget.favoritesList, FavoritesHelper(userId: widget.uid))),
-      ChangeNotifierProvider<DarkModeProvider>(
-          builder: (_) => DarkModeProvider(widget.enableDarkMode)),
-      ChangeNotifierProvider<BlurProvider>(
-          builder: (_) => BlurProvider(widget.blurSettings)),
-      ChangeNotifierProvider<TextSizeProvider>(
-          builder: (_) => TextSizeProvider(widget.textSize)),
-    ],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<FavoritesProvider>(
+            builder: (_) =>
+                FavoritesProvider(
+                    widget.favoritesList, FavoritesHelper(userId: widget.uid))),
+        ChangeNotifierProvider<DarkModeProvider>(
+            builder: (_) => DarkModeProvider(widget.enableDarkMode)),
+        ChangeNotifierProvider<BlurProvider>(
+            builder: (_) => BlurProvider(widget.blurSettings)),
+        ChangeNotifierProvider<TextSizeProvider>(
+            builder: (_) => TextSizeProvider(widget.textSize)),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         darkTheme: Constants.themeDataDark,
@@ -155,7 +155,7 @@ class StateBuilderState extends State<StateBuilder> {
           body: TextSlideshow(),
           drawer: TextAppDrawer(),
         ),
-      ),);
+      ),
+    );
   }
 }
-

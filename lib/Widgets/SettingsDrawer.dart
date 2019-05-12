@@ -54,8 +54,7 @@ class SettingsDrawer extends StatelessWidget {
                 .of(context)
                 .platformBrightness == Brightness.dark
                 ? null
-                : (map) =>
-                Provider.of<DarkModeProvider>(context).toggle()),
+                : (map) => Provider.of<DarkModeProvider>(context).toggle()),
         Divider(),
         Text(Constants.textText, style: description),
         ListTile(
