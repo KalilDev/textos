@@ -136,29 +136,26 @@ class StateBuilderState extends State<StateBuilder> {
     } else {
       overrideTheme = Constants.themeDataLight;
     }
-    return ChangeNotifierProvider<FavoritesProvider>(
-      builder: (_) =>
+    return MultiProvider(providers: [
+      ChangeNotifierProvider<FavoritesProvider>(builder: (_) =>
           FavoritesProvider(
-              widget.favoritesList, FavoritesHelper(userId: widget.uid)),
-      child: ChangeNotifierProvider<DarkModeProvider>(
-        builder: (_) => DarkModeProvider(widget.enableDarkMode),
-        child: ChangeNotifierProvider<BlurProvider>(
-          builder: (_) => BlurProvider(widget.blurSettings),
-          child: ChangeNotifierProvider<TextSizeProvider>(
-            builder: (_) => TextSizeProvider(widget.textSize),
-            child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              darkTheme: Constants.themeDataDark,
-              theme: overrideTheme,
-              home: Scaffold(
-                body: TextSlideshow(),
-                drawer: TextAppDrawer(),
-              ),
-            ),
-          ),
+              widget.favoritesList, FavoritesHelper(userId: widget.uid))),
+      ChangeNotifierProvider<DarkModeProvider>(
+          builder: (_) => DarkModeProvider(widget.enableDarkMode)),
+      ChangeNotifierProvider<BlurProvider>(
+          builder: (_) => BlurProvider(widget.blurSettings)),
+      ChangeNotifierProvider<TextSizeProvider>(
+          builder: (_) => TextSizeProvider(widget.textSize)),
+    ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        darkTheme: Constants.themeDataDark,
+        theme: overrideTheme,
+        home: Scaffold(
+          body: TextSlideshow(),
+          drawer: TextAppDrawer(),
         ),
-      ),
-    );
+      ),);
   }
 }
 

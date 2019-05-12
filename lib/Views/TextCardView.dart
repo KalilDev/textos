@@ -33,23 +33,25 @@ class TextCardView extends StatelessWidget {
       if (Navigator.of(context).canPop()) Navigator.pop(context, data);
     }
 
-    return ChangeNotifierProvider<FavoritesProvider>(
-      builder: (_) => favoritesProvider.copy(),
-      child: ChangeNotifierProvider<DarkModeProvider>(
-          builder: (_) => darkModeProvider.copy(),
-          child: ChangeNotifierProvider<BlurProvider>(
-              builder: (_) => blurProvider.copy(),
-              child: ChangeNotifierProvider<TextSizeProvider>(
-                  builder: (_) => textSizeProvider.copy(),
-                  child: MaterialApp(
-                      darkTheme: Constants.themeDataDark,
-                      theme: overrideTheme,
-                      debugShowCheckedModeBanner: false,
-                      home: new Scaffold(
-                          drawer: TextAppDrawer(),
-                          body: TextCard(
-                              textContent: textContent, exit: exit)))))),
-    );
+    return MultiProvider(providers: [
+      ChangeNotifierProvider<FavoritesProvider>(
+          builder: (_) => favoritesProvider.copy()),
+      ChangeNotifierProvider<DarkModeProvider>(
+          builder: (_) => darkModeProvider.copy()),
+      ChangeNotifierProvider<BlurProvider>(builder: (_) => blurProvider.copy()),
+      ChangeNotifierProvider<TextSizeProvider>(
+          builder: (_) => textSizeProvider.copy()),
+    ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        darkTheme: Constants.themeDataDark,
+        theme: overrideTheme,
+        home: Scaffold(
+            drawer: TextAppDrawer(),
+            body: TextCard(
+                textContent: textContent, exit: exit)
+        ),
+      ),);
   }
 }
 
