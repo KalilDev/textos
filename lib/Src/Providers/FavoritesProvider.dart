@@ -14,7 +14,7 @@ class FavoritesProvider with ChangeNotifier {
 
   void streamTransformer(data, EventSink sink) {
     Map<String, dynamic> localdata = data;
-    List<String> favoritedList = [];
+    /*List<String> favoritedList = [];
     _favoritesSet.toList().forEach((favorite) {
       favoritedList.add(favorite.split(';')[1].replaceAll('/', '_'));
     });
@@ -23,7 +23,7 @@ class FavoritesProvider with ChangeNotifier {
     favoritedList.forEach((key) {
       print('summed one at: ' + key);
       localdata[key] = localdata[key] + 1;
-    });
+    });*/
     sink.add(localdata);
   }
 

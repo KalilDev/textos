@@ -137,8 +137,10 @@ class _StoryPage extends StatelessWidget {
                     alignment: FractionalOffset.bottomCenter,
                     child: FavoritesCount(
                         favorites: textContent.favoriteCount,
-                        text: textContent.title + ';' + textContent.textPath,
-                        blurEnabled: Provider
+                        text:
+                        textContent.title + ';' + textContent.textPath,
+                        blurEnabled:
+                        Provider
                             .of<BlurProvider>(context)
                             .textsBlur))
                     : NullWidget())
