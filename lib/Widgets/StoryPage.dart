@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Src/TextContent.dart';
 import 'package:textos/Views/TextCardView.dart';
 import 'package:textos/Widgets/Widgets.dart';
-import 'package:vibration/vibration.dart';
 
 class StoryPages extends StatefulWidget {
   final List slideList;
@@ -26,7 +26,7 @@ class _StoryPagesState extends State<StoryPages> {
     _storiesPageController.addListener(() {
       int next = _storiesPageController.page.round();
       if (Provider.of<TextPageProvider>(context).currentPage != next) {
-        Vibration.vibrate(duration: 60);
+        HapticFeedback.lightImpact();
         Provider.of<TextPageProvider>(context).currentPage = next;
       }
     });

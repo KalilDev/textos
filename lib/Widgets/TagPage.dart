@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/Providers/Providers.dart';
-import 'package:vibration/vibration.dart';
 
 class TagPages extends StatefulWidget {
   @override
@@ -48,7 +48,7 @@ class _TagPagesState extends State<TagPages> {
             {'collection': _metadatas[Provider
                 .of<QueryProvider>(context)
                 .currentTagPage]['collection']});
-        Vibration.vibrate(duration: 60);
+        HapticFeedback.lightImpact();
       }
     });
   }
@@ -74,6 +74,8 @@ class _TagPagesState extends State<TagPages> {
       initialData: [Constants.placeholderTagMetadata],
       builder: (context, snapshot) {
         _metadatas = snapshot.data.toList();
+        if (_metadatas.length == 0)
+          _metadatas = [Constants.placeholderTagMetadata];
         return PageView.builder(
             controller: _tagPageController,
             itemCount: _metadatas.length,
@@ -178,7 +180,7 @@ class _CustomButton extends StatelessWidget {
               '#' + tag,
             ),
             onPressed: () {
-              Vibration.vibrate(duration: 90);
+              HapticFeedback.selectionClick();
               Provider.of<QueryProvider>(context).updateStream(
                   {'tag': queryTag});
             })
@@ -195,7 +197,7 @@ class _CustomButton extends StatelessWidget {
                   .copyWith(color: Constants.themeAccent.shade400),
             ),
             onPressed: () {
-              Vibration.vibrate(duration: 90);
+              HapticFeedback.selectionClick();
               Provider.of<QueryProvider>(context).updateStream(
                   {'tag': queryTag});
             }));

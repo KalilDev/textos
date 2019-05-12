@@ -20,7 +20,7 @@ void main() async {
 
   final bool _enableDarkMode = prefs?.getBool('isDark') ?? false;
   final List _favoritesList =
-      prefs?.getStringList('favorites') ?? <List<String>>[];
+      prefs?.getStringList('favorites') ?? <String>[];
   final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
   final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
   String _uid;
@@ -40,7 +40,13 @@ void main() async {
   if (_uid == null) {
     /// Firebase Login.
     FirebaseAuth _fireBaseAuth = FirebaseAuth.fromApp(Firestore.instance.app);
-    final user = await _fireBaseAuth.signInAnonymously();
+    FirebaseUser user;
+    try {
+      user = await _fireBaseAuth.signInAnonymously();
+    } catch (e) {
+      user = null;
+    }
+
     if (user != null) {
       _uid = user.uid;
       prefs.setString('uid', _uid);
@@ -114,7 +120,7 @@ class StateBuilderState extends State<StateBuilder> {
     if (isInDebugMode) {
       _firebaseMessaging.subscribeToTopic('debug');
       _firebaseMessaging.getToken().then((token) => print(token));
-      print('udid: ' + widget.uid);
+      print('udid: ' + widget.uid.toString());
       print('favorites: ' + widget.favoritesList.toString());
     }
     FavoritesHelper(userId: widget.uid)

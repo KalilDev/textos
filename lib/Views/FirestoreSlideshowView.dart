@@ -17,6 +17,18 @@ class TextSlideshow extends StatefulWidget {
 class TextSlideshowState extends State<TextSlideshow> {
   List<Map<dynamic, dynamic>> _slideList;
   static Map<dynamic, dynamic> favoritesData;
+  Stream _favoritesStream;
+
+  @override
+  void initState() {
+    _favoritesStream = Firestore
+        .instance
+        .collection('favorites')
+        .document('_stats_')
+        .snapshots()
+        .map((documentSnapshot) => documentSnapshot.data);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +51,13 @@ class TextSlideshowState extends State<TextSlideshow> {
                         ]
                             : data;
 
-                        Stream _favoritesStream = Firestore
-                            .instance
-                            .collection('favorites')
-                            .document('_stats_')
-                            .snapshots()
-                            .map((documentSnapshot) => documentSnapshot.data);
+                        StreamTransformer favsTransformer = new StreamTransformer
+                            .fromHandlers(handleData: Provider
+                            .of<FavoritesProvider>(context)
+                            .streamTransformer);
 
                         return StreamBuilder(
-                          stream: _favoritesStream,
+                          stream: _favoritesStream.transform(favsTransformer),
                           builder: (context, AsyncSnapshot favoritesSnap) {
                             if (favoritesSnap.hasData) {
                               favoritesData = favoritesSnap.data;
