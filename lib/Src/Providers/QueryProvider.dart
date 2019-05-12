@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:textos/Src/Constants.dart';
 
 class QueryProvider with ChangeNotifier {
@@ -10,6 +12,8 @@ class QueryProvider with ChangeNotifier {
   String _tag = Constants.textAllTag;
   Query _query;
   int _currentTagPage = 0;
+  bool shouldJump = false;
+  bool justJumped = false;
 
   Firestore _db = Firestore.instance;
 
@@ -46,5 +50,14 @@ class QueryProvider with ChangeNotifier {
       _tag = Constants.textAllTag;
     }
     notifyListeners();
+  }
+
+  void jump(PageController tagPageController) {
+    if (shouldJump) {
+      shouldJump = false;
+      justJumped = true;
+      tagPageController.jumpToPage(_currentTagPage);
+      HapticFeedback.lightImpact();
+    }
   }
 }

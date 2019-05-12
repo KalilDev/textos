@@ -18,14 +18,21 @@ class StoryPages extends StatefulWidget {
 
 class _StoryPagesState extends State<StoryPages> {
   PageController _storiesPageController;
+  PageController _tagPageController;
 
   @override
   void initState() {
     super.initState();
     _storiesPageController = new PageController(viewportFraction: 0.85);
+    _tagPageController = new PageController(viewportFraction: 0.90);
     _storiesPageController.addListener(() {
       int next = _storiesPageController.page.round();
-      if (Provider.of<TextPageProvider>(context).currentPage != next) {
+      if (_tagPageController.hasClients) {
+        Provider.of<QueryProvider>(context).jump(_tagPageController);
+      }
+      if (Provider
+          .of<TextPageProvider>(context)
+          .currentPage != next) {
         HapticFeedback.lightImpact();
         Provider.of<TextPageProvider>(context).currentPage = next;
       }
@@ -40,7 +47,7 @@ class _StoryPagesState extends State<StoryPages> {
         pageSnapping: false,
         itemBuilder: (context, int currentIdx) {
           if (currentIdx == 0) {
-            return TagPages();
+            return TagPages(tagPageController: _tagPageController);
           } else {
             final data = widget.slideList[currentIdx - 1];
             return _StoryPage(

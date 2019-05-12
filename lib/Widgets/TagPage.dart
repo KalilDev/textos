@@ -8,46 +8,43 @@ import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/Providers/Providers.dart';
 
 class TagPages extends StatefulWidget {
+  final PageController tagPageController;
+
+  TagPages({@required this.tagPageController});
+
   @override
   _TagPagesState createState() => _TagPagesState();
 }
 
 class _TagPagesState extends State<TagPages> {
-  PageController _tagPageController;
+  QueryProvider provider;
   Stream _tagStream;
 
   @override
   void initState() {
-    _tagPageController = new PageController(viewportFraction: 0.90);
     _tagStream = Firestore.instance.collection('metadata').orderBy('order')
         .snapshots()
         .map((list) => list.documents.map((doc) => doc.data));
-    _addControllerListener();
     super.initState();
   }
 
   @override
   void deactivate() {
-    _tagPageController.dispose();
-    Provider
-        .of<QueryProvider>(context)
-        .disposed = true;
+    provider.shouldJump = true;
     super.deactivate();
   }
 
   _addControllerListener() {
-    _tagPageController.addListener(() {
-      final next = _tagPageController.page.round();
-      if (Provider
-          .of<QueryProvider>(context)
-          .currentTagPage != next) {
-        Provider
-            .of<QueryProvider>(context)
-            .currentTagPage = next;
-        Provider.of<QueryProvider>(context).updateStream(
-            {'collection': _metadatas[Provider
-                .of<QueryProvider>(context)
-                .currentTagPage]['collection']});
+    widget.tagPageController.addListener(() {
+      final next = widget.tagPageController.page.round();
+      if (provider.justJumped) {
+        if (next == provider.currentTagPage) {
+          provider.justJumped = false;
+        }
+      } else if (provider.currentTagPage != next) {
+        provider.currentTagPage = next;
+        provider.updateStream(
+            {'collection': _metadatas[provider.currentTagPage]['collection']});
         HapticFeedback.lightImpact();
       }
     });
@@ -57,18 +54,10 @@ class _TagPagesState extends State<TagPages> {
 
   @override
   Widget build(BuildContext context) {
-    if (Provider
-        .of<QueryProvider>(context)
-        .disposed) {
-      _tagPageController =
-      new PageController(viewportFraction: 0.90, initialPage: Provider
-          .of<QueryProvider>(context)
-          .currentTagPage + 1);
-      _addControllerListener();
-      Provider
-          .of<QueryProvider>(context)
-          .disposed = false;
-    }
+    if (provider == null) provider = Provider
+        .of<QueryProvider>(context);
+
+    if (!widget.tagPageController.hasListeners) _addControllerListener();
     return StreamBuilder(
       stream: _tagStream,
       initialData: [Constants.placeholderTagMetadata],
@@ -77,7 +66,7 @@ class _TagPagesState extends State<TagPages> {
         if (_metadatas.length == 0)
           _metadatas = [Constants.placeholderTagMetadata];
         return PageView.builder(
-            controller: _tagPageController,
+            controller: widget.tagPageController,
             itemCount: _metadatas.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
