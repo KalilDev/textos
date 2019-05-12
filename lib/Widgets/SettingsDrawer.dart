@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:redux/redux.dart';
 import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Widgets/Widgets.dart';
-import 'package:textos/main.dart';
 
 class SettingsDrawer extends StatelessWidget {
-  final Store<AppStateMain> store;
-
-  SettingsDrawer({@required this.store});
-
   void cleanAll(BuildContext context) {
-    store.dispatch(UpdateFavorites(toClear: 1));
+    Provider.of<FavoritesProvider>(context).clear();
     Provider.of<BlurProvider>(context).clearSettings();
     Provider.of<DarkModeProvider>(context).reset();
     Provider.of<TextSizeProvider>(context).reset();
@@ -81,7 +75,7 @@ class SettingsDrawer extends StatelessWidget {
         ListTile(
           leading: Icon(Icons.delete),
           title: Text(Constants.textCleanFavs, style: settingsStyle),
-          onTap: () => store.dispatch(UpdateFavorites(toClear: 1)),
+          onTap: () => Provider.of<FavoritesProvider>(context).clear(),
         ),
         Divider(),
         Text(Constants.textBlur, style: description),

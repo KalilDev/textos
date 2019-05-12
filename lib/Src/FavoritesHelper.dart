@@ -66,8 +66,8 @@ class FavoritesHelper {
     return inDebugMode;
   }
 
-  void syncDatabase(Set<String> favorites) async {
-    if (userId != null || isInDebugMode == true) {
+  void syncDatabase(List<String> favorites) async {
+    if (userId != null && isInDebugMode == false) {
       DocumentSnapshot snapshot = await userDocumentSnapshot;
       DocumentReference document = await userDocument;
 

@@ -6,6 +6,7 @@ class TextContent {
   String imgUrl;
   String text;
   String date;
+  int favoriteCount;
 
   TextContent.fromData(Map data) {
     title = data['title'] ?? Constants.placeholderTitle;
@@ -13,5 +14,6 @@ class TextContent {
     imgUrl = data['img'] ?? Constants.placeholderImg;
     text = data['text'] ?? Constants.placeholderText;
     date = data['date'] ?? Constants.placeholderDate;
+    favoriteCount = data['favoriteCount'] ?? 0;
   }
 }

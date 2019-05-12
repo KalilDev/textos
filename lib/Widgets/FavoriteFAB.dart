@@ -2,33 +2,23 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:redux/redux.dart';
 import 'package:textos/Src/Constants.dart';
-import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Widgets/Widgets.dart';
-import 'package:textos/main.dart';
 
 class FavoriteFAB extends StatefulWidget {
-  final Store store;
   final String title;
   final String path;
 
-  FavoriteFAB(
-      {@required this.store, @required this.title, @required this.path});
+  FavoriteFAB({@required this.title, @required this.path});
 
-  createState() => FavoriteFABState(store: store, text: title + ';' + path);
+  createState() => FavoriteFABState();
 }
 
 class FavoriteFABState extends State<FavoriteFAB>
     with TickerProviderStateMixin {
-  FavoriteFABState({
-    @required this.store,
-    @required this.text,
-  });
 
-  final Store<AppStateMain> store;
-  final String text;
+  String get text => (widget.title + ';' + widget.path);
 
   AnimationController _scaleController;
   AnimationController _heartController;
@@ -73,7 +63,7 @@ class FavoriteFABState extends State<FavoriteFAB>
 
   @override
   Widget build(BuildContext context) {
-    _favorite = store.state.favoritesSet.any((string) => string.contains(text));
+    _favorite = Provider.of<FavoritesProvider>(context).isFavorite(text);
     if (_favorite) {
       _heartController.notifyStatusListeners(AnimationStatus.completed);
     }
@@ -127,9 +117,8 @@ class FavoriteFABState extends State<FavoriteFAB>
                       .of(context)
                       .primaryColor),
             ),
-            onPressed: () {
-              FavoritesTap(store: store).toggle(text);
-            },
+            onPressed: () =>
+                Provider.of<FavoritesProvider>(context).toggle(text),
             tooltip: Constants.textTooltipFav,
           ),
         ),

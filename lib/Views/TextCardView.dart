@@ -10,13 +10,15 @@ class TextCardView extends StatelessWidget {
     @required this.textContent,
     @required this.darkModeProvider,
     @required this.textSizeProvider,
-    @required this.blurProvider})
+    @required this.blurProvider,
+    @required this.favoritesProvider})
       : super(key: key);
 
   final TextContent textContent;
   final DarkModeProvider darkModeProvider;
   final BlurProvider blurProvider;
   final TextSizeProvider textSizeProvider;
+  final FavoritesProvider favoritesProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +32,23 @@ class TextCardView extends StatelessWidget {
       Navigator.pop(context);
     }
 
-    return ChangeNotifierProvider<DarkModeProvider>(
-        builder: (_) => darkModeProvider.copy(),
-        child: ChangeNotifierProvider<BlurProvider>(
-            builder: (_) => blurProvider.copy(),
-            child: ChangeNotifierProvider<TextSizeProvider>(
-                builder: (_) => textSizeProvider.copy(),
-                child: MaterialApp(
-                    darkTheme: Constants.themeDataDark,
-                    theme: overrideTheme,
-                    home: new Scaffold(
-                      //drawer: TextAppDrawer(store: store),
-                        body: TextCard(
-                            textContent: textContent, exit: exit))))));
+    return ChangeNotifierProvider<FavoritesProvider>(
+      builder: (_) => favoritesProvider.copy(),
+      child: ChangeNotifierProvider<DarkModeProvider>(
+          builder: (_) => darkModeProvider.copy(),
+          child: ChangeNotifierProvider<BlurProvider>(
+              builder: (_) => blurProvider.copy(),
+              child: ChangeNotifierProvider<TextSizeProvider>(
+                  builder: (_) => textSizeProvider.copy(),
+                  child: MaterialApp(
+                      darkTheme: Constants.themeDataDark,
+                      theme: overrideTheme,
+                      debugShowCheckedModeBanner: false,
+                      home: new Scaffold(
+                        //drawer: TextAppDrawer(store: store),
+                          body: TextCard(
+                              textContent: textContent, exit: exit)))))),
+    );
   }
 }
 
@@ -132,12 +138,12 @@ class TextCard extends StatelessWidget {
                           ),
                         )),
                   ),
-                  /*Positioned(
-                          child: new FavoriteFAB(
-                              store: store, title: title, path: data['path']),
+                  Positioned(
+                    child: FavoriteFAB(
+                        title: textContent.title, path: textContent.textPath),
                           right: 10,
                           bottom: 10,
-                        ),*/
+                  ),
                   Positioned(
                     child: TextSizeButton(),
                     left: 10,

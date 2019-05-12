@@ -3,28 +3,18 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:redux/redux.dart';
 import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Widgets/Widgets.dart';
-import 'package:textos/main.dart';
 
 // Implement optimization for the slideshow:
 // Idea: Only load the Decoration image for the current ∓3 pages
 
 class TextSlideshow extends StatefulWidget {
-  final Store store;
-
-  TextSlideshow({@required this.store});
-
-  createState() => TextSlideshowState(store: store);
+  createState() => TextSlideshowState();
 }
 
 class TextSlideshowState extends State<TextSlideshow> {
-  final Store<AppStateMain> store;
-
-  TextSlideshowState({@required this.store});
-
   List<Map<dynamic, dynamic>> _slideList;
   static Map<dynamic, dynamic> favoritesData;
 

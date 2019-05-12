@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
-import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
+import 'package:provider/provider.dart';
+import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Widgets/Widgets.dart';
 
 class FavoritesDrawer extends StatelessWidget {
-  final Set<String> favoriteSet;
-  final FavoritesTap tapHandler;
-
-  FavoritesDrawer({@required this.favoriteSet, @required this.tapHandler});
-
   Widget buildFavoritesItem(BuildContext context, String favorite) {
     final favoriteTitle = favorite.split(';')[0];
 
@@ -55,22 +51,28 @@ class FavoritesDrawer extends StatelessWidget {
             ],
           ),
         ),
-        onDismissed: (direction) => tapHandler.remove(favorite),
+        onDismissed: (direction) =>
+            Provider.of<FavoritesProvider>(context).remove(favorite),
         child: ListTile(
             title: txt,
             onTap: () {
-              tapHandler.open(favorite, context);
+              Provider.of<FavoritesProvider>(context).open(favorite, context);
             }));
   }
 
   @override
   Widget build(BuildContext context) {
     return new ListView.separated(
-      itemCount: favoriteSet.length + 1,
+      itemCount: Provider
+          .of<FavoritesProvider>(context)
+          .favoritesList
+          .length + 1,
       itemBuilder: (BuildContext context, int index) =>
       index == 0
           ? Divider()
-          : buildFavoritesItem(context, favoriteSet.toList()[index - 1]),
+          : buildFavoritesItem(context, Provider
+          .of<FavoritesProvider>(context)
+          .favoritesList[index - 1]),
       separatorBuilder: (BuildContext context, int index) =>
       index == 0 ? NullWidget() : Divider(),
     );

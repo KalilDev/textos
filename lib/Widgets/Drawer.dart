@@ -1,27 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:redux/redux.dart';
 import 'package:textos/Src/Constants.dart';
-import 'package:textos/Src/OnTapHandlers/FavoritesTap.dart';
 import 'package:textos/Src/Providers/Providers.dart';
 import 'package:textos/Widgets/FavoritesDrawer.dart';
 import 'package:textos/Widgets/SettingsDrawer.dart';
 import 'package:textos/Widgets/Widgets.dart';
-import 'package:textos/main.dart';
 
 class TextAppDrawer extends StatefulWidget {
-  final Store<AppStateMain> store;
-
-  TextAppDrawer({@required this.store});
-
-  createState() => new TextAppDrawerState(store: store);
+  createState() => new TextAppDrawerState();
 }
 
 class TextAppDrawerState extends State<TextAppDrawer>
     with TickerProviderStateMixin {
-  final Store<AppStateMain> store;
-
-  TextAppDrawerState({@required this.store});
 
   bool _settingsDrawer = false;
   bool settingsDrawer = false;
@@ -115,13 +105,11 @@ class TextAppDrawerState extends State<TextAppDrawer>
                             children: <Widget>[
                               SlideTransition(
                                 position: _settingsAnimation,
-                                child: SettingsDrawer(store: store),
+                                child: SettingsDrawer(),
                               ),
                               SlideTransition(
                                 position: _toTopAnimation,
-                                child: FavoritesDrawer(
-                                    favoriteSet: store.state.favoritesSet,
-                                    tapHandler: FavoritesTap(store: store)),
+                                child: FavoritesDrawer(),
                               )
                             ],
                           ))

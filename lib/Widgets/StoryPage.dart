@@ -133,17 +133,14 @@ class _StoryPage extends StatelessWidget {
                       alignment: FractionalOffset.bottomCenter,
                     ),
                 child: active
-                    /*? Align(
+                    ? Align(
                     alignment: FractionalOffset.bottomCenter,
                     child: FavoritesCount(
-                        favorites: data['favoriteCount'],
-                        isFavorite: store.state.favoritesSet
-                            .any((favorite) => favorite == textPath),
-                        text: textPath,
-                        blurEnabled: BlurSettings(store.state.blurSettings)
-                            .textsBlur,
-                        favoritesTap: onFavoriteToggle))*/
-                    ? NullWidget()
+                        favorites: textContent.favoriteCount,
+                        text: textContent.title + ';' + textContent.textPath,
+                        blurEnabled: Provider
+                            .of<BlurProvider>(context)
+                            .textsBlur))
                     : NullWidget())
           ],
         ),
@@ -161,6 +158,8 @@ class _StoryPage extends StatelessWidget {
                             Provider.of<DarkModeProvider>(context),
                         textSizeProvider:
                             Provider.of<TextSizeProvider>(context),
+                    favoritesProvider:
+                    Provider.of<FavoritesProvider>(context),
                         textContent: textContent,
                       )));
         });

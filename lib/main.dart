@@ -2,9 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:provider/provider.dart';
-import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/Src/Constants.dart';
 import 'package:textos/Src/FavoritesHelper.dart';
@@ -20,18 +18,18 @@ import 'package:textos/Widgets/Widgets.dart';
 void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  final _enableDarkMode = prefs?.getBool('isDark') ?? false;
-  final _favoritesSet =
-      prefs?.getStringList('favorites')?.toSet() ?? Set<String>();
-  final _textSize = prefs?.getDouble('textSize') ?? 4.5;
-  final _blurSettings = prefs?.getInt('blurSettings') ?? 1;
+  final bool _enableDarkMode = prefs?.getBool('isDark') ?? false;
+  final List _favoritesList =
+      prefs?.getStringList('favorites') ?? <List<String>>[];
+  final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
+  final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
   String _uid;
 
   // Clear favorites if the data doesn't contain the documentID needed for
   // setting the statistics on the database
-  if (!_favoritesSet.any((string) => string.contains(';'))) {
-    _favoritesSet.clear();
-    prefs.setStringList('favorites', _favoritesSet.toList());
+  if (!_favoritesList.any((string) => string.contains(';'))) {
+    _favoritesList.clear();
+    prefs.setStringList('favorites', _favoritesList);
   }
 
   // Get the stored UDID, in order to preserve the favorites if the user either
@@ -48,55 +46,33 @@ void main() async {
       prefs.setString('uid', _uid);
     }
   }
-
-  final store = Store<AppStateMain>(
-    reducer,
-    distinct: true,
-    initialState: AppStateMain(
-        favoritesSet: _favoritesSet,
-        uid: _uid),
-  );
-
-  runApp(StoreProvider<AppStateMain>(
-    store: store,
-    child: MyApp(),
-  ));
+  runApp(StateBuilder(
+      enableDarkMode: _enableDarkMode,
+      favoritesList: _favoritesList,
+      textSize: _textSize,
+      blurSettings: _blurSettings,
+      uid: _uid));
 }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return StoreConnector<AppStateMain, List>(
-      distinct: true,
-      converter: (store) {
-        return [
-          store.state.favoritesSet,
-          store.state.uid,
-        ];
-      },
-      builder: (_, List list) {
-        return StoreBuilder(
-            builder: (BuildContext context, Store<AppStateMain> store) {
-              return StoreView(store: store);
-            });
-      },
-    );
-  }
+class StateBuilder extends StatefulWidget {
+  final bool enableDarkMode;
+  final List favoritesList;
+  final double textSize;
+  final int blurSettings;
+  final String uid;
+
+  StateBuilder({
+    @required this.enableDarkMode,
+    @required this.favoritesList,
+    @required this.textSize,
+    @required this.blurSettings,
+    @required this.uid,
+  });
+
+  createState() => StateBuilderState();
 }
 
-class StoreView extends StatefulWidget {
-  final Store store;
-
-  StoreView({@required this.store});
-
-  createState() => StoreViewState(store: store);
-}
-
-class StoreViewState extends State<StoreView> {
-  Store<AppStateMain> store;
-
-  StoreViewState({@required this.store});
-
+class StateBuilderState extends State<StateBuilder> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   // Check if we are running debug mode
@@ -138,35 +114,38 @@ class StoreViewState extends State<StoreView> {
     if (isInDebugMode) {
       _firebaseMessaging.subscribeToTopic('debug');
       _firebaseMessaging.getToken().then((token) => print(token));
-      print('udid: ' + store.state.uid);
-      print('favorites: ' + store.state.favoritesSet.toString());
+      print('udid: ' + widget.uid);
+      print('favorites: ' + widget.favoritesList.toString());
     }
-    FavoritesHelper(userId: store.state.uid)
-        .syncDatabase(store.state.favoritesSet);
+    FavoritesHelper(userId: widget.uid)
+        .syncDatabase(widget.favoritesList);
   }
 
   @override
   Widget build(BuildContext context) {
     ThemeData overrideTheme;
 
-    if (false) {
+    if (widget.enableDarkMode) {
       overrideTheme = Constants.themeDataDark;
     } else {
       overrideTheme = Constants.themeDataLight;
     }
-    return ChangeNotifierProvider<DarkModeProvider>(
-      builder: (_) => DarkModeProvider(false),
-      child: ChangeNotifierProvider<BlurProvider>(
-        builder: (_) => BlurProvider(1),
-        child: ChangeNotifierProvider<TextSizeProvider>(
-          builder: (_) => TextSizeProvider(4.5),
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            darkTheme: Constants.themeDataDark,
-            theme: overrideTheme,
-            home: Scaffold(
-              body: TextSlideshow(store: store),
-              drawer: TextAppDrawer(store: store),
+    return ChangeNotifierProvider<FavoritesProvider>(
+      builder: (_) => FavoritesProvider(widget.favoritesList),
+      child: ChangeNotifierProvider<DarkModeProvider>(
+        builder: (_) => DarkModeProvider(widget.enableDarkMode),
+        child: ChangeNotifierProvider<BlurProvider>(
+          builder: (_) => BlurProvider(widget.blurSettings),
+          child: ChangeNotifierProvider<TextSizeProvider>(
+            builder: (_) => TextSizeProvider(widget.textSize),
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              darkTheme: Constants.themeDataDark,
+              theme: overrideTheme,
+              home: Scaffold(
+                body: TextSlideshow(),
+                drawer: TextAppDrawer(),
+              ),
             ),
           ),
         ),
@@ -175,51 +154,3 @@ class StoreViewState extends State<StoreView> {
   }
 }
 
-// Redux
-class AppStateMain {
-  AppStateMain({
-    @required this.favoritesSet,
-    @required this.uid,
-  });
-
-  Set<String> favoritesSet;
-  String uid;
-}
-
-class UpdateFavorites {
-  UpdateFavorites({this.toClear, this.toAdd, this.toRemove});
-
-  final int toClear;
-  final String toAdd;
-  final String toRemove;
-}
-
-
-AppStateMain reducer(AppStateMain state, dynamic action) {
-
-  if (action is UpdateFavorites) {
-    var _fav = state.favoritesSet;
-    if (action.toClear != null) {
-      _fav.clear();
-      FavoritesHelper(userId: state.uid).syncDatabase(_fav);
-    }
-    if (action.toAdd != null) {
-      _fav.add(action.toAdd);
-      FavoritesHelper(userId: state.uid).addFavorite(action.toAdd);
-    }
-    if (action.toRemove != null) {
-      _fav.remove(action.toRemove);
-      FavoritesHelper(userId: state.uid).removeFavorite(action.toRemove);
-    }
-
-    SharedPreferences.getInstance().then((pref) {
-      pref.setStringList('favorites', _fav.toList());
-    });
-
-    return AppStateMain(
-        favoritesSet: _fav,
-        uid: state.uid);
-  }
-
-  return state;
-}
