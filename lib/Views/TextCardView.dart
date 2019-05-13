@@ -22,12 +22,6 @@ class TextCardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData overrideTheme;
-    if (darkModeProvider.isDarkMode) {
-      overrideTheme = Constants.themeDataDark;
-    } else {
-      overrideTheme = Constants.themeDataLight;
-    }
     exit(List data) async {
       await Future.delayed(Duration(milliseconds: 1));
       if (Navigator.of(context).canPop()) Navigator.pop(context, data);
@@ -44,13 +38,26 @@ class TextCardView extends StatelessWidget {
         ChangeNotifierProvider<TextSizeProvider>(
             builder: (_) => textSizeProvider.copy()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        darkTheme: Constants.themeDataDark,
-        theme: overrideTheme,
-        home: Scaffold(
-            drawer: TextAppDrawer(),
-            body: TextCard(textContent: textContent, exit: exit)),
+      child: Consumer<DarkModeProvider>(
+        builder: (context, provider, _) {
+          ThemeData overrideTheme;
+
+          if (provider.isDarkMode) {
+            overrideTheme = Constants.themeDataDark;
+          } else {
+            overrideTheme = Constants.themeDataLight;
+          }
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            darkTheme: Constants.
+            themeDataDark,
+            theme: overrideTheme,
+            home: Scaffold(
+              body: TextCard(textContent: textContent, exit: exit),
+              drawer: TextAppDrawer(),
+            ),
+          );
+        },
       ),
     );
   }

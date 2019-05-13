@@ -127,13 +127,6 @@ class StateBuilderState extends State<StateBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData overrideTheme;
-
-    if (widget.enableDarkMode) {
-      overrideTheme = Constants.themeDataDark;
-    } else {
-      overrideTheme = Constants.themeDataLight;
-    }
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FavoritesProvider>(
@@ -147,14 +140,26 @@ class StateBuilderState extends State<StateBuilder> {
         ChangeNotifierProvider<TextSizeProvider>(
             builder: (_) => TextSizeProvider(widget.textSize)),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        darkTheme: Constants.themeDataDark,
-        theme: overrideTheme,
-        home: Scaffold(
-          body: TextSlideshow(),
-          drawer: TextAppDrawer(),
-        ),
+      child: Consumer<DarkModeProvider>(
+        builder: (context, provider, _) {
+          ThemeData overrideTheme;
+
+          if (provider.isDarkMode) {
+            overrideTheme = Constants.themeDataDark;
+          } else {
+            overrideTheme = Constants.themeDataLight;
+          }
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            darkTheme: Constants.
+            themeDataDark,
+            theme: overrideTheme,
+            home: Scaffold(
+              body: TextSlideshow(),
+              drawer: TextAppDrawer(),
+            ),
+          );
+        },
       ),
     );
   }
