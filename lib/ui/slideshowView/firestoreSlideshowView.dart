@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:textos/Src/Constants.dart';
-import 'package:textos/Src/Providers/Providers.dart';
-import 'package:textos/Widgets/Widgets.dart';
+import 'package:textos/constants.dart';
+import 'package:textos/src/providers.dart';
+import 'package:textos/ui/slideshowView/storyPage.dart';
+import 'package:textos/ui/widgets.dart';
 
 // Implement optimization for the slideshow:
 // Idea: Only load the Decoration image for the current ∓3 pages

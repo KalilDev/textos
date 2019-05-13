@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
-import 'package:textos/Src/Providers/Providers.dart';
-import 'package:textos/Widgets/Widgets.dart';
+import 'package:textos/src/providers.dart';
+import 'package:textos/ui/widgets.dart';
 
 class FavoritesDrawer extends StatelessWidget {
   Widget buildFavoritesItem(BuildContext context, String favorite) {

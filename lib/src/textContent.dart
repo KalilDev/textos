@@ -1,4 +1,4 @@
-import 'package:textos/Src/Constants.dart';
+import 'package:textos/constants.dart';
 
 class TextContent {
   String title;

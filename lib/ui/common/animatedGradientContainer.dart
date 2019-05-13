@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:textos/Src/Constants.dart';
+import 'package:textos/constants.dart';
 
 class AnimatedGradientContainer extends StatefulWidget {
   const AnimatedGradientContainer({

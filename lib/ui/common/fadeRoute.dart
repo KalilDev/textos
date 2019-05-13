@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:textos/Src/Constants.dart';
+import 'package:textos/constants.dart';
 
 class FadeRoute<T> extends MaterialPageRoute<T> {
   FadeRoute({WidgetBuilder builder, RouteSettings settings})

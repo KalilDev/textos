@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:textos/Src/Constants.dart';
-import 'package:textos/Src/Providers/Providers.dart';
-import 'package:textos/Src/TextContent.dart';
-import 'package:textos/Widgets/Widgets.dart';
+import 'package:textos/constants.dart';
+import 'package:textos/src/providers.dart';
+import 'package:textos/src/textContent.dart';
+import 'package:textos/ui/cardView/favoriteFAB.dart';
+import 'package:textos/ui/drawer/drawer.dart';
+import 'package:textos/ui/widgets.dart';
 
 class TextCardView extends StatelessWidget {
   const TextCardView({Key key,
@@ -24,6 +28,7 @@ class TextCardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     exit(List data) async {
+      // Nasty
       await Future.delayed(Duration(milliseconds: 1));
       if (Navigator.of(context).canPop()) Navigator.pop(context, data);
     }

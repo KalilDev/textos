@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:textos/Src/Constants.dart';
+import 'package:textos/constants.dart';
 
 class QueryProvider with ChangeNotifier {
   String _collection = 'stories';

@@ -4,11 +4,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:textos/Src/Constants.dart';
-import 'package:textos/Src/FavoritesHelper.dart';
-import 'package:textos/Src/Providers/Providers.dart';
-import 'package:textos/Views/FirestoreSlideshowView.dart';
-import 'package:textos/Widgets/Widgets.dart';
+import 'package:textos/constants.dart';
+import 'package:textos/src/favoritesHelper.dart';
+import 'package:textos/src/providers.dart';
+import 'package:textos/ui/drawer/drawer.dart';
+import 'package:textos/ui/slideshowView/firestoreSlideshowView.dart';
 
 // TODO Document the app
 // TODO Implement tutorial

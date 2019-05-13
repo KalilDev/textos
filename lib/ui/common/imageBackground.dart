@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:textos/Widgets/Widgets.dart';
+import 'package:textos/ui/widgets.dart';
 
 class ImageBackground extends StatelessWidget {
   const ImageBackground({

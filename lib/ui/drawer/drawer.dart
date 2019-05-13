@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:textos/Src/Constants.dart';
-import 'package:textos/Src/Providers/Providers.dart';
-import 'package:textos/Widgets/FavoritesDrawer.dart';
-import 'package:textos/Widgets/SettingsDrawer.dart';
-import 'package:textos/Widgets/Widgets.dart';
+import 'package:textos/constants.dart';
+import 'package:textos/src/providers.dart';
+import 'package:textos/ui/Drawer/favoritesDrawer.dart';
+import 'package:textos/ui/Drawer/settingsDrawer.dart';
+import 'package:textos/ui/widgets.dart';
 
 class TextAppDrawer extends StatefulWidget {
   createState() => new TextAppDrawerState();
