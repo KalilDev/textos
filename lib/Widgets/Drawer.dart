@@ -69,74 +69,68 @@ class TextAppDrawerState extends State<TextAppDrawer>
               enabled: Provider
                   .of<BlurProvider>(context)
                   .drawerBlur,
-              child: Stack(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery
-                            .of(context)
-                            .padding
-                            .top,
-                      ),
-                      Stack(
-                        children: <Widget>[
-                          Center(
-                            child: SlideTransition(
-                                position: _toBottomAnimation,
-                                child: Text(Constants.textConfigs,
-                                    style: textTheme.subhead.copyWith(
-                                        color: textTheme.subhead.color
-                                            .withAlpha(190)))),
-                          ),
-                          Center(
-                            child: SlideTransition(
-                                position: _toTopAnimation,
-                                child: Text(Constants.textFavs,
-                                    style: textTheme.subhead.copyWith(
-                                        color: textTheme.subhead.color
-                                            .withAlpha(190)))),
-                          ),
-                        ],
-                      ),
-                      Expanded(
+              child: SafeArea(
+                child: Stack(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Center(
                           child: Stack(
                             children: <Widget>[
                               SlideTransition(
-                                position: _settingsAnimation,
-                                child: SettingsDrawer(),
-                              ),
+                                  position: _toBottomAnimation,
+                                  child: Text(Constants.textConfigs,
+                                      style: textTheme.subhead.copyWith(
+                                          color: textTheme.subhead.color
+                                              .withAlpha(190)))),
                               SlideTransition(
-                                position: _toTopAnimation,
-                                child: FavoritesDrawer(),
-                              )
+                                  position: _toTopAnimation,
+                                  child: Text(Constants.textFavs,
+                                      style: textTheme.subhead.copyWith(
+                                          color: textTheme.subhead.color
+                                              .withAlpha(190)))),
                             ],
-                          ))
-                    ],
-                  ),
-                  Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: settingsDrawer
-                        ? MaterialButton(
-                        onPressed: () =>
-                            setState(() => settingsDrawer = false),
-                        color: Theme
-                            .of(context)
-                            .accentColor,
-                        child: Text(Constants.textConfigs,
-                            style: textTheme.subhead,
-                            textAlign: TextAlign.center))
-                        : MaterialButton(
-                        onPressed: () =>
-                            setState(() => settingsDrawer = true),
-                        color: Theme
-                            .of(context)
-                            .accentColor,
-                        child: Text(Constants.textFavs,
-                            style: textTheme.subhead,
-                            textAlign: TextAlign.center)),
-                  ),
-                ],
+                          ),
+                        ),
+                        Expanded(
+                            child: Stack(
+                              children: <Widget>[
+                                SlideTransition(
+                                  position: _settingsAnimation,
+                                  child: SettingsDrawer(),
+                                ),
+                                SlideTransition(
+                                  position: _toTopAnimation,
+                                  child: FavoritesDrawer(),
+                                )
+                              ],
+                            ))
+                      ],
+                    ),
+                    Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: settingsDrawer
+                          ? MaterialButton(
+                          onPressed: () =>
+                              setState(() => settingsDrawer = false),
+                          color: Theme
+                              .of(context)
+                              .accentColor,
+                          child: Text(Constants.textConfigs,
+                              style: textTheme.subhead,
+                              textAlign: TextAlign.center))
+                          : MaterialButton(
+                          onPressed: () =>
+                              setState(() => settingsDrawer = true),
+                          color: Theme
+                              .of(context)
+                              .accentColor,
+                          child: Text(Constants.textFavs,
+                              style: textTheme.subhead,
+                              textAlign: TextAlign.center)),
+                    ),
+                  ],
+                ),
               ))),
     );
   }

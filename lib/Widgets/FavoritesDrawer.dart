@@ -62,21 +62,23 @@ class FavoritesDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new ListView.separated(
-      itemCount:
-      Provider
-          .of<FavoritesProvider>(context)
-          .favoritesList
-          .length + 1,
-      itemBuilder: (BuildContext context, int index) =>
-      index == 0
-          ? Divider()
-          : buildFavoritesItem(context,
-          Provider
-              .of<FavoritesProvider>(context)
-              .favoritesList[index - 1]),
-      separatorBuilder: (BuildContext context, int index) =>
-      index == 0 ? NullWidget() : Divider(),
+    return SafeArea(
+      child: new ListView.separated(
+        itemCount:
+        Provider
+            .of<FavoritesProvider>(context)
+            .favoritesList
+            .length + 1,
+        itemBuilder: (BuildContext context, int index) =>
+        index == 0
+            ? Divider()
+            : buildFavoritesItem(context,
+            Provider
+                .of<FavoritesProvider>(context)
+                .favoritesList[index - 1]),
+        separatorBuilder: (BuildContext context, int index) =>
+        index == 0 ? NullWidget() : Divider(),
+      ),
     );
   }
 }
