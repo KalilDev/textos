@@ -115,16 +115,9 @@ class _StoryPage extends StatelessWidget {
                     child: BlurOverlay(
                         radius: 15,
                         enabled: Provider.of<BlurProvider>(context).textsBlur,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            SizedBox(width: 5.0),
-                            Text(textContent.title,
-                                textAlign: TextAlign.center,
-                                style: textTheme.display1),
-                            SizedBox(width: 5.0)
-                          ],
-                        )),
+                        child: Text(textContent.title,
+                            textAlign: TextAlign.center,
+                            style: textTheme.display1)),
                   ),
                   color: Colors.transparent,
                 ),
