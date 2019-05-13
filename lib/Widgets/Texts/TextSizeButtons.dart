@@ -40,22 +40,34 @@ class TextSizeButtonState extends State<TextSizeButton>
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _scale,
-      child: BlurOverlay(
-        enabled: Provider
-            .of<BlurProvider>(context)
-            .buttonsBlur,
-        radius: 80,
-        intensity: 0.65,
-        child: Material(
-          color: Theme
-              .of(context)
-              .accentColor
-              .withAlpha(120),
-          child: Row(children: <Widget>[
+      child: Stack(
+        children: <Widget>[
+          BlurOverlay(
+            enabled: Provider
+                .of<BlurProvider>(context)
+                .buttonsBlur,
+            radius: 80,
+            intensity: 0.65,
+            child: IgnorePointer(
+              child: Material(
+                color: Theme
+                    .of(context)
+                    .accentColor
+                    .withAlpha(120),
+                child: Row(children: <Widget>[
+                  SizedBox(height: 48,
+                    width: 48,),
+                  SizedBox(height: 48,
+                    width: 48,)
+                ]),
+              ),
+            ),
+          ),
+          Row(children: <Widget>[
             TextDecrease(),
             TextIncrease(),
           ]),
-        ),
+        ],
       ),
     );
   }
@@ -108,7 +120,6 @@ class _TextIncreaseState extends State<TextIncrease>
           onPressed: () {
             Provider.of<TextSizeProvider>(context).increase();
           },
-          iconSize: 25,
           tooltip: Constants.textTooltipTextSizePlus,
         ),
         scale: Tween(begin: 1.3, end: 1.0).animate(_plus));
@@ -164,7 +175,6 @@ class _TextDecreaseState extends State<TextDecrease>
           onPressed: () {
             Provider.of<TextSizeProvider>(context).decrease();
           },
-          iconSize: 25,
           tooltip: Constants.textTooltipTextSizeLess,
         ),
         scale: Tween(begin: 0.7, end: 1.0).animate(_minus));

@@ -50,8 +50,7 @@ class TextCardView extends StatelessWidget {
           }
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            darkTheme: Constants.
-            themeDataDark,
+            darkTheme: Constants.themeDataDark,
             theme: overrideTheme,
             home: Scaffold(
               body: TextCard(textContent: textContent, exit: exit),
@@ -72,26 +71,6 @@ class TextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme
-        .of(context)
-        .textTheme;
-    void pop(BuildContext context) {
-      exit([
-        Provider
-            .of<FavoritesProvider>(context)
-            .favoritesList,
-        Provider
-            .of<DarkModeProvider>(context)
-            .isDarkMode,
-        Provider
-            .of<BlurProvider>(context)
-            .blurSettings,
-        Provider
-            .of<TextSizeProvider>(context)
-            .textSize
-      ]);
-    }
-
     return Stack(
       children: <Widget>[
         Hero(
@@ -100,83 +79,16 @@ class TextCard extends StatelessWidget {
                 img: textContent.imgUrl,
                 enabled: false,
                 key: Key('image' + textContent.textPath))),
-              DraggableScrollableSheet(
-                  initialChildSize: 1.0,
-                  maxChildSize: 1.0,
-                  minChildSize: 0.8,
-                  builder: (context, controller) {
-                    if (controller.hasClients &&
-                        controller.position.userScrollDirection ==
-                            ScrollDirection.idle && controller.offset <=
-                        controller.position.minScrollExtent &&
-                        !controller.position.outOfRange) pop(context);
-
-                    return GestureDetector(
-                      onTap: () => pop(context),
-                      child: SafeArea(
-                        child: Hero(
-                          tag: 'body' + textContent.textPath,
-                          child: Material(
-                              color: Colors.transparent,
-                              child: Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        20)),
-                                child: BlurOverlay(
-                                  enabled: Provider
-                                      .of<BlurProvider>(context)
-                                      .textsBlur,
-                                  radius: 20,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: ClipRRect(
-                                          borderRadius:
-                                          BorderRadius.circular(20.0),
-                                          child: SingleChildScrollView(
-                                            controller: controller,
-                                            child: Column(
-                                                children: <Widget>[
-                                                  Text(textContent.title,
-                                                      textAlign: TextAlign
-                                                          .center,
-                                                      style: textTheme
-                                                          .display1),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Text(textContent.text,
-                                                      style: textTheme.body1
-                                                          .copyWith(
-                                                          fontSize:
-                                                          Provider
-                                                              .of<
-                                                              TextSizeProvider>(
-                                                              context)
-                                                              .textSize *
-                                                              4.5)),
-                                                  SizedBox(
-                                                    height: 55,
-                                                    child: Center(
-                                                      child: Text(
-                                                          textContent.date,
-                                                          style: textTheme
-                                                              .title),
-                                                    ),
-                                                  ),
-                                                ]),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )),
-                        ),
-                      ),
-                    );
-                  }),
+        DraggableScrollableSheet(
+            initialChildSize: 1.0,
+            maxChildSize: 1.0,
+            minChildSize: 0.8,
+            builder: (context, controller) =>
+                _TextWidget(
+                  controller: controller,
+                  exit: exit,
+                  textContent: textContent,
+                )),
         Positioned(
           child:
           FavoriteFAB(title: textContent.title, path: textContent.textPath),
@@ -197,6 +109,118 @@ class TextCard extends StatelessWidget {
           left: -2.5,
         ),
       ],
+    );
+  }
+}
+
+class _TextWidget extends StatefulWidget {
+  final ScrollController controller;
+  final Function exit;
+  final TextContent textContent;
+
+  _TextWidget({@required this.controller,
+    @required this.exit,
+    @required this.textContent});
+
+  @override
+  __TextWidgetState createState() => __TextWidgetState();
+}
+
+class __TextWidgetState extends State<_TextWidget> {
+  bool hasMoved;
+
+  void pop(BuildContext context) {
+    widget.exit([
+      Provider
+          .of<FavoritesProvider>(context)
+          .favoritesList,
+      Provider
+          .of<DarkModeProvider>(context)
+          .isDarkMode,
+      Provider
+          .of<BlurProvider>(context)
+          .blurSettings,
+      Provider
+          .of<TextSizeProvider>(context)
+          .textSize
+    ]);
+  }
+
+  @override
+  void initState() {
+    hasMoved = false;
+    widget.controller.addListener(() {
+      setState(() => hasMoved = true);
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.controller.hasClients &&
+        widget.controller.position.userScrollDirection ==
+            ScrollDirection.idle &&
+        widget.controller.offset <=
+            widget.controller.position.minScrollExtent &&
+        hasMoved) pop(context);
+    final textTheme = Theme
+        .of(context)
+        .textTheme;
+
+    return GestureDetector(
+      onTap: () => pop(context),
+      child: SafeArea(
+        child: Hero(
+          tag: 'body' + widget.textContent.textPath,
+          child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: EdgeInsets.all(5),
+                decoration:
+                BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                child: BlurOverlay(
+                  enabled: Provider
+                      .of<BlurProvider>(context)
+                      .textsBlur,
+                  radius: 20,
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: SingleChildScrollView(
+                            controller: widget.controller,
+                            child: Column(children: <Widget>[
+                              Text(widget.textContent.title,
+                                  textAlign: TextAlign.center,
+                                  style: textTheme.display1),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(widget.textContent.text,
+                                  style: textTheme.body1.copyWith(
+                                      fontSize:
+                                      Provider
+                                          .of<TextSizeProvider>(context)
+                                          .textSize *
+                                          4.5)),
+                              SizedBox(
+                                height: 55,
+                                child: Center(
+                                  child: Text(widget.textContent.date,
+                                      style: textTheme.title),
+                                ),
+                              ),
+                            ]),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )),
+        ),
+      ),
     );
   }
 }
