@@ -36,7 +36,8 @@ class FavoriteFABState extends State<FavoriteFAB>
         duration: Constants.durationAnimationMedium, vsync: this);
 
     _scale =
-    new CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut);
+        Tween(begin: animationStart, end: 1.0).animate(
+            CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
     _heartScale =
     new CurvedAnimation(parent: _heartController, curve: Curves.easeInOut);
 
@@ -78,7 +79,7 @@ class FavoriteFABState extends State<FavoriteFAB>
       }
     });
     return ScaleTransition(
-      scale: Tween(begin: animationStart, end: 1.0).animate(_scale),
+      scale: _scale,
       child: BlurOverlay(
         enabled: Provider
             .of<BlurProvider>(context)

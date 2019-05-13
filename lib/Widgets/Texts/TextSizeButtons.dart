@@ -20,8 +20,8 @@ class TextSizeButtonState extends State<TextSizeButton>
         duration: Constants.durationAnimationMedium +
             Constants.durationAnimationRoute,
         vsync: this);
-    _scale = new CurvedAnimation(
-        parent: _animationController, curve: Curves.easeInOut);
+    _scale = Tween(begin: animationStart, end: 1.0).animate(CurvedAnimation(
+        parent: _animationController, curve: Curves.easeInOut));
     _animationController.forward();
   }
 
@@ -39,7 +39,7 @@ class TextSizeButtonState extends State<TextSizeButton>
   @override
   Widget build(BuildContext context) {
     return ScaleTransition(
-      scale: Tween(begin: animationStart, end: 1.0).animate(_scale),
+      scale: _scale,
       child: BlurOverlay(
         enabled: Provider
             .of<BlurProvider>(context)
