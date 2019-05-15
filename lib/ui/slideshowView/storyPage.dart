@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
+import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/src/textContent.dart';
 import 'package:textos/ui/cardView/textCardView.dart';
 import 'package:textos/ui/slideshowView/favoritesCount.dart';
 import 'package:textos/ui/slideshowView/tagPage.dart';
@@ -18,13 +18,24 @@ class StoryPages extends StatefulWidget {
   _StoryPagesState createState() => _StoryPagesState();
 }
 
-class _StoryPagesState extends State<StoryPages> {
+class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
   PageController _storiesPageController;
   PageController _tagPageController;
+  AnimationController _animationController;
+  Animation<double> _opacity;
 
   @override
   void initState() {
     super.initState();
+    _animationController = new AnimationController(
+        vsync: this, duration: Constants.durationAnimationShort);
+    _opacity =
+    new CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    _animationController.addListener(() {
+      if (_animationController.status ==
+          AnimationStatus.dismissed) _animationController.forward();
+    });
+    _animationController.value = 1.0;
     _storiesPageController = new PageController(viewportFraction: 0.85);
     _tagPageController = new PageController(viewportFraction: 0.90);
     _storiesPageController.addListener(() {
@@ -43,6 +54,14 @@ class _StoryPagesState extends State<StoryPages> {
 
   @override
   Widget build(BuildContext context) {
+    if (Provider
+        .of<QueryProvider>(context)
+        .shouldAnimate) {
+      Provider
+          .of<QueryProvider>(context)
+          .shouldAnimate = false;
+      _animationController.reverse();
+    }
     return PageView.builder(
         controller: _storiesPageController,
         itemCount: widget.slideList.length + 1,
@@ -52,17 +71,23 @@ class _StoryPagesState extends State<StoryPages> {
             return TagPages(tagPageController: _tagPageController);
           } else {
             final data = widget.slideList[currentIdx - 1];
-            return _StoryPage(
-                index: currentIdx,
-                textContent: TextContent.fromData(data),
-                pageController: _storiesPageController);
+            return ScaleTransition(
+              scale: Tween(begin: 1.1, end: 1.0).animate(_opacity),
+              child: FadeTransition(
+                opacity: Tween(begin: 0.7, end: 1.0).animate(_opacity),
+                child: _StoryPage(
+                    index: currentIdx,
+                    textContent: Content.fromData(data),
+                    pageController: _storiesPageController),
+              ),
+            );
           }
         });
   }
 }
 
 class _StoryPage extends StatelessWidget {
-  final TextContent textContent;
+  final Content textContent;
   final int index;
   final PageController pageController;
 

@@ -14,6 +14,7 @@ class QueryProvider with ChangeNotifier {
   int _currentTagPage = 0;
   bool shouldJump = false;
   bool justJumped = false;
+  bool shouldAnimate = false;
 
   Firestore _db = Firestore.instance;
 
@@ -49,6 +50,7 @@ class QueryProvider with ChangeNotifier {
       _query = _db.collection(_collection);
       _tag = Constants.textAllTag;
     }
+    shouldAnimate = true;
     notifyListeners();
   }
 

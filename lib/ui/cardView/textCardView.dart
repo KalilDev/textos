@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
+import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/src/textContent.dart';
 import 'package:textos/ui/cardView/favoriteFAB.dart';
 import 'package:textos/ui/drawer/drawer.dart';
 import 'package:textos/ui/widgets.dart';
@@ -19,7 +19,7 @@ class TextCardView extends StatelessWidget {
     @required this.favoritesProvider})
       : super(key: key);
 
-  final TextContent textContent;
+  final Content textContent;
   final DarkModeProvider darkModeProvider;
   final BlurProvider blurProvider;
   final TextSizeProvider textSizeProvider;
@@ -69,7 +69,7 @@ class TextCardView extends StatelessWidget {
 }
 
 class TextCard extends StatelessWidget {
-  final TextContent textContent;
+  final Content textContent;
   final Function exit;
 
   TextCard({@required this.textContent, @required this.exit});
@@ -121,7 +121,7 @@ class TextCard extends StatelessWidget {
 class _TextWidget extends StatefulWidget {
   final ScrollController controller;
   final Function exit;
-  final TextContent textContent;
+  final Content textContent;
 
   _TextWidget({@required this.controller,
     @required this.exit,

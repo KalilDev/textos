@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:textos/src/content.dart';
 import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/src/textContent.dart';
 import 'package:textos/ui/cardView/textCardView.dart';
 import 'package:textos/ui/widgets.dart';
 
@@ -69,7 +69,7 @@ class FavoritesProvider with ChangeNotifier {
       context,
       FadeRoute(
           builder: (context) => TextCardView(
-            textContent: TextContent.fromData(data),
+            textContent: Content.fromData(data),
             darkModeProvider: Provider.of<DarkModeProvider>(context).copy(),
             blurProvider: Provider.of<BlurProvider>(context).copy(),
             textSizeProvider: Provider.of<TextSizeProvider>(context).copy(),

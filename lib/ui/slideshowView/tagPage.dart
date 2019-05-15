@@ -119,27 +119,51 @@ class _TagPageState extends State<_TagPage> {
 
   @override
   Widget build(context) {
-    return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.title + widget.authorName,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .display1,
-            ),
-            Text(Constants.textFilter),
-            Container(
-              margin: EdgeInsets.only(left: 1.0),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _buildButtons()),
-            )
-          ],
+    return AnimatedTheme(
+        duration: Constants.durationAnimationMedium,
+        data: Theme.of(context).copyWith(
+            canvasColor: widget.index ==
+                Provider
+                    .of<QueryProvider>(context)
+                    .currentTagPage
+                ? Colors.transparent
+                : Colors.indigo),
+        child: LayoutBuilder(
+          builder: (context, constraints) =>
+              Container(
+                height: constraints.maxHeight,
+                width: constraints.maxWidth,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Theme
+                        .of(context)
+                        .canvasColor)),
+                margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
+                child: Container(
+                  margin: EdgeInsets.all(5.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.title + widget.authorName,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .display1,
+                      ),
+                      Text(Constants.textFilter),
+                      Container(
+                        margin: EdgeInsets.only(left: 1.0),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: _buildButtons()),
+                      )
+                    ],
+                  ),
+                ),
+              ),
         ));
   }
 }

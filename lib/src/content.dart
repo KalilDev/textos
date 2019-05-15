@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:textos/constants.dart';
 
-class TextContent {
+class Content {
   String title;
   String textPath;
   String imgUrl;
@@ -13,7 +13,7 @@ class TextContent {
 
   bool get hasText => _text != null;
 
-  TextContent.fromData(Map data) {
+  Content.fromData(Map data) {
     title = data['title'] ?? Constants.placeholderTitle;
     textPath = data['path'];
     imgUrl = data['img'] ?? Constants.placeholderImg;
