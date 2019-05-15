@@ -41,10 +41,15 @@ flutter:
     - family: Merriweather
       fonts:
         - asset: res/Merriweather-Regular.ttf
+        - asset: res/Merriweather-Italic.ttf
+          style: italic
         - asset: res/Merriweather-Light.ttf
           weight: 100
         - asset: res/Merriweather-Regular.ttf
           weight: 400
+        - asset: res/Merriweather-Italic.ttf
+          weight: 400
+          style: italic
         - asset: res/Merriweather-Black.ttf
           weight: 500
         - asset: res/Merriweather-Bold.ttf

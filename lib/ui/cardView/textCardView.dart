@@ -100,11 +100,11 @@ class TextCard extends StatelessWidget {
           right: 10,
           bottom: 10,
         ),
-        Positioned(
+        textContent.hasText ? Positioned(
           child: TextSizeButton(),
           left: 10,
           bottom: 13.5,
-        ),
+        ) : NullWidget(),
         Positioned(
           child: MenuButton(),
           top: MediaQuery
@@ -202,13 +202,14 @@ class __TextWidgetState extends State<_TextWidget> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text(widget.textContent.text,
-                                  style: textTheme.body1.copyWith(
+                              widget.textContent.hasText ? RichText(
+                                  text: (TextSpan(children: widget.textContent
+                                      .formattedText(textTheme.body1.copyWith(
                                       fontSize:
                                       Provider
                                           .of<TextSizeProvider>(context)
                                           .textSize *
-                                          4.5)),
+                                          4.5))))) : NullWidget(),
                               SizedBox(
                                 height: 55,
                                 child: Center(
