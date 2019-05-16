@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/cardView/textCardView.dart';
+import 'package:textos/ui/cardView/cardView.dart';
 import 'package:textos/ui/widgets.dart';
 
 class FavoritesProvider with ChangeNotifier {
@@ -68,7 +68,8 @@ class FavoritesProvider with ChangeNotifier {
     Navigator.push(
       context,
       FadeRoute(
-          builder: (context) => TextCardView(
+          builder: (context) =>
+              CardView(
             textContent: Content.fromData(data),
             darkModeProvider: Provider.of<DarkModeProvider>(context).copy(),
             blurProvider: Provider.of<BlurProvider>(context).copy(),

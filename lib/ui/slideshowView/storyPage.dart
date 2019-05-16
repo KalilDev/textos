@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/cardView/textCardView.dart';
+import 'package:textos/ui/cardView/cardView.dart';
 import 'package:textos/ui/slideshowView/favoritesCount.dart';
 import 'package:textos/ui/slideshowView/tagPage.dart';
 import 'package:textos/ui/widgets.dart';
@@ -141,7 +141,9 @@ class _StoryPage extends StatelessWidget {
                     margin: EdgeInsets.all(12.5),
                     child: BlurOverlay(
                         radius: 15,
-                        enabled: Provider.of<BlurProvider>(context).textsBlur,
+                        enabled: Provider
+                            .of<BlurProvider>(context)
+                            .buttonsBlur,
                         child: Container(
                           margin: EdgeInsets.only(left: 5.0, right: 5.0),
                           child: Text(textContent.title,
@@ -184,7 +186,8 @@ class _StoryPage extends StatelessWidget {
           final result = await Navigator.push(
               context,
               FadeRoute(
-                  builder: (context) => TextCardView(
+                  builder: (context) =>
+                      CardView(
                         blurProvider: Provider.of<BlurProvider>(context),
                         darkModeProvider:
                             Provider.of<DarkModeProvider>(context),

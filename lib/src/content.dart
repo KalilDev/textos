@@ -9,9 +9,12 @@ class Content {
   String imgUrl;
   String _text;
   String date;
+  String music;
   int favoriteCount;
 
-  bool get hasText => _text != null;
+  bool get hasText => _text != 'null';
+
+  bool get hasMusic => music != null;
 
   Content.fromData(Map data) {
     title = data['title'] ?? Constants.placeholderTitle;
@@ -33,6 +36,7 @@ class Content {
                 .year
                 .toString();
     favoriteCount = data['favoriteCount'] ?? 0;
+    music = data['music'];
     _text = data['text'].toString().replaceAll('\^TAB', '         ').replaceAll(
         '\^NL', '\n');
   }

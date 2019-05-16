@@ -127,7 +127,9 @@ class _TagPageState extends State<_TagPage> {
                     .of<QueryProvider>(context)
                     .currentTagPage
                 ? Colors.transparent
-                : Colors.indigo),
+                : Theme
+                .of(context)
+                .accentColor),
         child: LayoutBuilder(
           builder: (context, constraints) =>
               Container(

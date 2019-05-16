@@ -7,11 +7,12 @@ import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView/favoriteFAB.dart';
+import 'package:textos/ui/cardView/playbackButton.dart';
 import 'package:textos/ui/drawer/drawer.dart';
 import 'package:textos/ui/widgets.dart';
 
-class TextCardView extends StatelessWidget {
-  const TextCardView({Key key,
+class CardView extends StatelessWidget {
+  const CardView({Key key,
     @required this.textContent,
     @required this.darkModeProvider,
     @required this.textSizeProvider,
@@ -58,7 +59,7 @@ class TextCardView extends StatelessWidget {
             darkTheme: Constants.themeDataDark,
             theme: overrideTheme,
             home: Scaffold(
-              body: TextCard(textContent: textContent, exit: exit),
+              body: CardContent(textContent: textContent, exit: exit),
               drawer: TextAppDrawer(),
             ),
           );
@@ -68,11 +69,11 @@ class TextCardView extends StatelessWidget {
   }
 }
 
-class TextCard extends StatelessWidget {
+class CardContent extends StatelessWidget {
   final Content textContent;
   final Function exit;
 
-  TextCard({@required this.textContent, @required this.exit});
+  CardContent({@required this.textContent, @required this.exit});
 
   @override
   Widget build(BuildContext context) {
@@ -100,11 +101,19 @@ class TextCard extends StatelessWidget {
           right: 10,
           bottom: 10,
         ),
-        textContent.hasText ? Positioned(
+        textContent.hasMusic
+            ? Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(margin: EdgeInsets.only(bottom: 13.5),
+                child: PlaybackButton(url: textContent.music)))
+            : NullWidget(),
+        textContent.hasText
+            ? Positioned(
           child: TextSizeButton(),
           left: 10,
           bottom: 13.5,
-        ) : NullWidget(),
+        )
+            : NullWidget(),
         Positioned(
           child: MenuButton(),
           top: MediaQuery
@@ -202,21 +211,27 @@ class __TextWidgetState extends State<_TextWidget> {
                               SizedBox(
                                 height: 10,
                               ),
-                              widget.textContent.hasText ? RichText(
-                                  text: (TextSpan(children: widget.textContent
-                                      .formattedText(textTheme.body1.copyWith(
-                                      fontSize:
-                                      Provider
-                                          .of<TextSizeProvider>(context)
-                                          .textSize *
-                                          4.5))))) : NullWidget(),
+                              widget.textContent.hasText
+                                  ? RichText(
+                                  text: (TextSpan(
+                                      children: widget.textContent
+                                          .formattedText(textTheme.body1
+                                          .copyWith(
+                                          fontSize:
+                                          Provider
+                                              .of<TextSizeProvider>(
+                                              context)
+                                              .textSize *
+                                              4.5)))))
+                                  : NullWidget(),
                               SizedBox(
-                                height: 55,
-                                child: Center(
-                                  child: Text(widget.textContent.date,
-                                      style: textTheme.title),
-                                ),
-                              ),
+                                  height: 55,
+                                  child: Center(
+                                      child: Text(widget.textContent.date,
+                                          style: textTheme.title))),
+                              widget.textContent.hasMusic
+                                  ? SizedBox(height: 55)
+                                  : NullWidget(),
                             ]),
                           ),
                         ),

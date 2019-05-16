@@ -116,7 +116,7 @@ class TextAppDrawerState extends State<TextAppDrawer>
                           color: Theme
                               .of(context)
                               .accentColor,
-                          child: Text(Constants.textConfigs,
+                          child: Text(Constants.textFavs,
                               style: textTheme.subhead,
                               textAlign: TextAlign.center))
                           : MaterialButton(
@@ -125,7 +125,7 @@ class TextAppDrawerState extends State<TextAppDrawer>
                           color: Theme
                               .of(context)
                               .accentColor,
-                          child: Text(Constants.textFavs,
+                          child: Text(Constants.textConfigs,
                               style: textTheme.subhead,
                               textAlign: TextAlign.center)),
                     ),
