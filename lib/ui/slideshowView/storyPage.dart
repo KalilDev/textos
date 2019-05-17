@@ -143,7 +143,7 @@ class _StoryPage extends StatelessWidget {
                         radius: 15,
                         enabled: Provider
                             .of<BlurProvider>(context)
-                            .buttonsBlur,
+                            .textsBlur,
                         child: Container(
                           margin: EdgeInsets.only(left: 5.0, right: 5.0),
                           child: Text(textContent.title,
@@ -174,7 +174,7 @@ class _StoryPage extends StatelessWidget {
                         blurEnabled:
                         Provider
                             .of<BlurProvider>(context)
-                            .textsBlur))
+                            .buttonsBlur))
                     : NullWidget())
           ],
         ),
