@@ -116,7 +116,7 @@ class _StoryPage extends StatelessWidget {
                   color: Theme.of(context).backgroundColor,
                   boxShadow: [
                     BoxShadow(
-                        color: Theme.of(context).primaryColor.withAlpha(80),
+                        color: Colors.black.withAlpha(80),
                         blurRadius: blur,
                         offset: Offset(offset, offset))
                   ]),

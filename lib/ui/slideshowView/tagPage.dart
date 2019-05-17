@@ -126,10 +126,10 @@ class _TagPageState extends State<_TagPage> {
                 Provider
                     .of<QueryProvider>(context)
                     .currentTagPage
-                ? Colors.transparent
+                ? Constants.themeBackgroundDark
                 : Theme
                 .of(context)
-                .accentColor),
+                .canvasColor),
         child: LayoutBuilder(
           builder: (context, constraints) =>
               Container(
@@ -139,7 +139,7 @@ class _TagPageState extends State<_TagPage> {
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Theme
                         .of(context)
-                        .canvasColor)),
+                        .canvasColor, width: 2.0)),
                 margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
                 child: Container(
                   margin: EdgeInsets.all(5.0),
@@ -215,7 +215,14 @@ class _CustomButton extends StatelessWidget {
                   .of(context)
                   .textTheme
                   .button
-                  .copyWith(color: Constants.themeAccent.shade400),
+                  .copyWith(color: Color.alphaBlend(Theme
+                  .of(context)
+                  .accentColor
+                  .withAlpha(120), Theme
+                  .of(context)
+                  .textTheme
+                  .button
+                  .color)),
             ),
             onPressed: () {
               HapticFeedback.selectionClick();

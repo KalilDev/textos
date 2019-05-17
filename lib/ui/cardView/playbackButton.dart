@@ -60,8 +60,8 @@ class _PlaybackButtonState extends State<PlaybackButton>
         duration: Constants.durationAnimationMedium +
             Constants.durationAnimationRoute,
         vsync: this);
-    _scale = Tween(begin: animationStart, end: 1.0).animate(CurvedAnimation(
-        parent: _scaleController, curve: Curves.easeInOut));
+    _scale = Tween(begin: animationStart, end: 1.0).animate(
+        CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
     _scaleController.forward();
   }
 
@@ -88,31 +88,42 @@ class _PlaybackButtonState extends State<PlaybackButton>
         ? _position.inMilliseconds / _duration.inMilliseconds
         : 0.0;
     return ScaleTransition(
-      scale: _scale,
-      child: Container(
-        height: 48,
-        child: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            LayoutBuilder(builder: (context, constraints) {
-              return BlurOverlay(
-                intensity: 0.65,
-                radius: 80,
-                enabled: Provider.of<BlurProvider>(context).buttonsBlur,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    child: Container(
-                        height: constraints.maxHeight,
-                        width: constraints.maxWidth,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(colors: [
-                              Colors.red.shade900.withAlpha(150),
-                              Colors.indigo.withAlpha(120)
-                            ], stops: [
-                              -1 + playbackProportion,
-                              2 * playbackProportion
-                            ])),
+        scale: _scale,
+        child: Material(
+          color: Colors.transparent,
+          elevation: 16.0,
+          child: BlurOverlay(
+            intensity: 0.65,
+            radius: 80,
+            enabled: Provider
+                .of<BlurProvider>(context)
+                .buttonsBlur,
+            child: Container(
+              height: 48,
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: Provider
+                          .of<BlurProvider>(context)
+                          .buttonsBlur
+                          ? [
+                        Colors.red.shade900.withAlpha(150),
+                        Theme
+                            .of(context)
+                            .accentColor
+                            .withAlpha(120)
+                      ]
+                          : [Colors.red.shade900, Theme
+                          .of(context)
+                          .accentColor
+                      ],
+                      stops: [-1 + playbackProportion, 2 * playbackProportion
+                      ])),
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
                         child: Center(
                             child: _playerState == PlayerState.stopped
                                 ? Icon(playbackProportion == 0.0
@@ -120,42 +131,46 @@ class _PlaybackButtonState extends State<PlaybackButton>
                                 : Icons.refresh)
                                 : AnimatedIcon(
                                 icon: AnimatedIcons.play_pause,
-                                progress: _playAnim))),
-                    onTap: _isPlaying ? _pause : _play,
+                                progress: _playAnim)),
+                      onTap: _isPlaying ? _pause : _play,
+                    ),
                   ),
-                ),
-              );
-            }),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: AbsorbPointer(child: Container(height: 15)),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: AbsorbPointer(child: Container(height: 15)),
+                  ),
+                  Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                          height: 15,
+                          child: SliderTheme(
+                            data: Theme
+                                .of(context)
+                                .sliderTheme
+                                .copyWith(
+                                trackHeight: 15.0,
+                                activeTrackColor: Colors.transparent,
+                                inactiveTrackColor: Colors.transparent),
+                            child: Slider(
+                              max: _duration?.inMilliseconds?.toDouble() ?? 1.0,
+                              value: (_position != null &&
+                                  _duration != null &&
+                                  _position.inMilliseconds > 0 &&
+                                  _position.inMilliseconds <
+                                      _duration.inMilliseconds)
+                                  ? _position.inMilliseconds.toDouble()
+                                  : 0.0,
+                              onChanged: (value) =>
+                                  _audioPlayer
+                                      .seek(
+                                      Duration(milliseconds: value.round())),
+                            ),
+                          ))),
+                ],
+              ),
             ),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                    height: 15,
-                    child: SliderTheme(
-                      data: Theme.of(context).sliderTheme.copyWith(
-                          trackHeight: 15.0,
-                          activeTrackColor: Colors.transparent,
-                          inactiveTrackColor: Colors.transparent),
-                      child: Slider(
-                        max: _duration?.inMilliseconds?.toDouble() ?? 1.0,
-                        value: (_position != null &&
-                                _duration != null &&
-                                _position.inMilliseconds > 0 &&
-                                _position.inMilliseconds <
-                                    _duration.inMilliseconds)
-                            ? _position.inMilliseconds.toDouble()
-                            : 0.0,
-                        onChanged: (value) => _audioPlayer
-                            .seek(Duration(milliseconds: value.round())),
-                      ),
-                    ))),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   @override

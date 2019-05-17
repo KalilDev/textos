@@ -63,7 +63,10 @@ class TextAppDrawerState extends State<TextAppDrawer>
         .of(context)
         .textTheme;
     return Theme(
-      data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
+      data: Provider
+          .of<BlurProvider>(context)
+          .drawerBlur ? Theme.of(context).copyWith(
+          canvasColor: Colors.transparent) : Theme.of(context),
       child: Drawer(
           child: BlurOverlay(
               enabled: Provider

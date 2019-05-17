@@ -108,7 +108,8 @@ class CardContent extends StatelessWidget {
                         left: 10.0, right: 10.0, bottom: 10.0),
                     child: LayoutBuilder(builder: (context, constraints) {
                       final musicSize = constraints.maxWidth +
-                          (textContent.hasText ? -96.0 - 5.0 : 0.0) - 48.0 -
+                          (textContent.hasText ? -96.0 - 5.0 - 5.0 : 0.0) -
+                          48.0 -
                           5.0;
                       return Row(
                         children: <Widget>[

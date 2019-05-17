@@ -80,46 +80,58 @@ class FavoriteFABState extends State<FavoriteFAB>
     });
     return ScaleTransition(
       scale: _scale,
-      child: BlurOverlay(
-        enabled: Provider
-            .of<BlurProvider>(context)
-            .buttonsBlur,
-        radius: 100,
-        intensity: 0.65,
-        child: AnimatedGradientContainer(
-          colors: <Color>[
-            Theme
+      child: Material(
+        color: Colors.transparent,
+        elevation: 16.0,
+        child: BlurOverlay(
+          enabled: Provider
+              .of<BlurProvider>(context)
+              .buttonsBlur,
+          radius: 100,
+          intensity: 0.65,
+          child: AnimatedGradientContainer(
+            colors: Provider
+                .of<BlurProvider>(context)
+                .buttonsBlur ? <Color>[
+              Theme
+                  .of(context)
+                  .backgroundColor
+                  .withAlpha(120),
+              Theme
+                  .of(context)
+                  .accentColor
+                  .withAlpha(120)
+            ] : [Theme
                 .of(context)
-                .backgroundColor
-                .withAlpha(120),
+                .backgroundColor,
             Theme
                 .of(context)
                 .accentColor
-                .withAlpha(120)
-          ],
-          trueValues: [1.0, 2.0],
-          falseValues: [-1.0, 0.0],
-          isEnabled: _favorite,
-          child: FloatingActionButton(
-            backgroundColor: Colors.transparent,
-            child: ScaleTransition(
-              scale: _favorite
-                  ? Tween(begin: 0.7, end: 1.3).animate(_heartScale)
-                  : Tween(
-                  begin: Tween(begin: 0.7, end: 1.3)
-                      .animate(_heartScale)
-                      .value,
-                  end: 1.0)
-                  .animate(_heartScale),
-              child: Icon(_favorite ? Icons.favorite : Icons.favorite_border,
-                  color:
-                  _favorite ? Colors.red : Theme
-                      .of(context)
-                      .primaryColor),
+            ],
+            trueValues: [1.0, 2.0],
+            falseValues: [-1.0, 0.0],
+            isEnabled: _favorite,
+            child: FloatingActionButton(
+              backgroundColor: Colors.transparent,
+              child: ScaleTransition(
+                scale: _favorite
+                    ? Tween(begin: 0.7, end: 1.3).animate(_heartScale)
+                    : Tween(
+                    begin: Tween(begin: 0.7, end: 1.3)
+                        .animate(_heartScale)
+                        .value,
+                    end: 1.0)
+                    .animate(_heartScale),
+                child: Icon(_favorite ? Icons.favorite : Icons.favorite_border,
+                    color:
+                    _favorite ? Colors.red : Theme
+                        .of(context)
+                        .primaryColor),
+              ),
+              onPressed: () =>
+                  Provider.of<FavoritesProvider>(context).toggle(text),
+              tooltip: Constants.textTooltipFav,
             ),
-            onPressed: () =>
-                Provider.of<FavoritesProvider>(context).toggle(text),
-            tooltip: Constants.textTooltipFav,
           ),
         ),
       ),
