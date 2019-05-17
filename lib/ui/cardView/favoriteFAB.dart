@@ -113,6 +113,7 @@ class FavoriteFABState extends State<FavoriteFAB>
             isEnabled: _favorite,
             child: FloatingActionButton(
               backgroundColor: Colors.transparent,
+              elevation: 0.0,
               child: ScaleTransition(
                 scale: _favorite
                     ? Tween(begin: 0.7, end: 1.3).animate(_heartScale)

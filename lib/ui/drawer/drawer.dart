@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
@@ -62,7 +63,8 @@ class TextAppDrawerState extends State<TextAppDrawer>
     final textTheme = Theme
         .of(context)
         .textTheme;
-    return Theme(
+    return AnimatedTheme(
+      duration: Constants.durationAnimationMedium,
       data: Provider
           .of<BlurProvider>(context)
           .drawerBlur ? Theme.of(context).copyWith(
@@ -112,23 +114,17 @@ class TextAppDrawerState extends State<TextAppDrawer>
                     ),
                     Align(
                       alignment: FractionalOffset.bottomCenter,
-                      child: settingsDrawer
-                          ? MaterialButton(
-                          onPressed: () =>
-                              setState(() => settingsDrawer = false),
+                      child: MaterialButton(
+                          onPressed: () {
+                            HapticFeedback.selectionClick();
+                            setState(() => settingsDrawer = !settingsDrawer);
+                          },
                           color: Theme
                               .of(context)
                               .accentColor,
-                          child: Text(Constants.textFavs,
-                              style: textTheme.subhead,
-                              textAlign: TextAlign.center))
-                          : MaterialButton(
-                          onPressed: () =>
-                              setState(() => settingsDrawer = true),
-                          color: Theme
-                              .of(context)
-                              .accentColor,
-                          child: Text(Constants.textConfigs,
+                          child: Text(
+                              settingsDrawer ? Constants.textFavs : Constants
+                                  .textConfigs,
                               style: textTheme.subhead,
                               textAlign: TextAlign.center)),
                     ),

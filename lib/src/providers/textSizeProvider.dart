@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TextSizeProvider with ChangeNotifier {
@@ -13,6 +14,7 @@ class TextSizeProvider with ChangeNotifier {
   double get textSize => _textSize;
 
   increase() {
+    HapticFeedback.selectionClick();
     _textSize = _textSize < 6.4 ? _textSize = _textSize + 0.5 : _textSize;
     increased = true;
     settingsSync();
@@ -20,6 +22,7 @@ class TextSizeProvider with ChangeNotifier {
   }
 
   decrease() {
+    HapticFeedback.selectionClick();
     _textSize = _textSize > 3.1 ? _textSize = _textSize - 0.5 : _textSize;
     decreased = true;
     settingsSync();

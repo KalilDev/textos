@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/src/content.dart';
@@ -39,6 +40,7 @@ class FavoritesProvider with ChangeNotifier {
       _favoritesSet.any((string) => string.contains(favorite));
 
   add(String favorite) {
+    HapticFeedback.selectionClick();
     _favoritesSet.add(favorite);
     settingsSync();
     _helper.addFavorite(favorite);
@@ -46,6 +48,7 @@ class FavoritesProvider with ChangeNotifier {
   }
 
   remove(String favorite) {
+    HapticFeedback.selectionClick();
     _favoritesSet.remove(favorite);
     settingsSync();
     _helper.removeFavorite(favorite);
@@ -53,6 +56,7 @@ class FavoritesProvider with ChangeNotifier {
   }
 
   clear() {
+    HapticFeedback.selectionClick();
     _favoritesSet.clear();
     settingsSync();
     _helper.syncDatabase(_favoritesSet.toList());
@@ -60,23 +64,35 @@ class FavoritesProvider with ChangeNotifier {
   }
 
   open(String favorite, BuildContext context) async {
+    final List providerList = [
+      Provider.of<FavoritesProvider>(context),
+      Provider.of<DarkModeProvider>(context),
+      Provider.of<BlurProvider>(context),
+      Provider.of<TextSizeProvider>(context),
+    ];
     final documentSnapshot =
     await Firestore.instance.document(_getPath(favorite)).get();
     var data = documentSnapshot.data;
     data['path'] = _getPath(favorite);
     Navigator.pop(context);
-    Navigator.push(
+    HapticFeedback.selectionClick();
+    final result = await Navigator.push(
       context,
       FadeRoute(
           builder: (context) =>
               CardView(
-            textContent: Content.fromData(data),
-            darkModeProvider: Provider.of<DarkModeProvider>(context).copy(),
-            blurProvider: Provider.of<BlurProvider>(context).copy(),
-            textSizeProvider: Provider.of<TextSizeProvider>(context).copy(),
-            favoritesProvider: this,
-          )),
+                textContent: Content.fromData(data),
+                favoritesProvider: providerList[0].copy(),
+                darkModeProvider: providerList[1].copy(),
+                blurProvider: providerList[2].copy(),
+                textSizeProvider: providerList[3].copy(),
+              )),
     );
+    List resultList = result;
+    providerList[0].sync(resultList[0]);
+    providerList[1].sync(resultList[1]);
+    providerList[2].sync(resultList[2]);
+    providerList[3].sync(resultList[3]);
   }
 
   toggle(String favorite) {

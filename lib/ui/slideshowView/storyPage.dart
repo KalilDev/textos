@@ -179,6 +179,7 @@ class _StoryPage extends StatelessWidget {
           ],
         ),
         onTap: () async {
+          HapticFeedback.selectionClick();
           if (pageController != null)
             pageController.animateToPage(index,
                 duration: Constants.durationAnimationMedium,
@@ -190,11 +191,11 @@ class _StoryPage extends StatelessWidget {
                       CardView(
                         blurProvider: Provider.of<BlurProvider>(context),
                         darkModeProvider:
-                            Provider.of<DarkModeProvider>(context),
+                        Provider.of<DarkModeProvider>(context),
                         textSizeProvider:
-                            Provider.of<TextSizeProvider>(context),
-                    favoritesProvider:
-                    Provider.of<FavoritesProvider>(context),
+                        Provider.of<TextSizeProvider>(context),
+                        favoritesProvider:
+                        Provider.of<FavoritesProvider>(context),
                         textContent: textContent,
                       )));
           List resultList = result;

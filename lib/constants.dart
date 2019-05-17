@@ -47,13 +47,15 @@ class Constants {
   // Theme Light
   static const themeAccentLight = Colors.indigo;
   static const themeBackgroundLight = Colors.white;
+  static final themeBackgroundElevatedLight = Color.alphaBlend(
+      Colors.black.withAlpha(25), themeBackgroundLight);
   static const themeForegroundLight = Colors.black;
   static final themeDataLight = ThemeData(
       brightness: Brightness.light,
       accentColor: themeAccentLight,
       accentColorBrightness: Brightness.light,
       scaffoldBackgroundColor: themeBackgroundLight,
-      canvasColor: themeBackgroundLight,
+      canvasColor: themeBackgroundElevatedLight,
       dividerColor: themeForegroundLight.withAlpha(70),
       primaryColor: themeForegroundLight,
       primaryColorBrightness: Brightness.dark,

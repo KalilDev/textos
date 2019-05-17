@@ -45,6 +45,8 @@ class FavoritesCount extends StatelessWidget {
                     isEnabled: provider.isFavorite(text),
                     height: 50,
                     child: RaisedButton(
+                        elevation: 0.0,
+                        highlightElevation: 0.0,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[

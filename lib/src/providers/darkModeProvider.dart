@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeProvider with ChangeNotifier {
@@ -11,6 +12,7 @@ class DarkModeProvider with ChangeNotifier {
   bool get isDarkMode => _enabled;
 
   toggle() {
+    HapticFeedback.selectionClick();
     _enabled = !_enabled;
     settingsSync();
     notifyListeners();

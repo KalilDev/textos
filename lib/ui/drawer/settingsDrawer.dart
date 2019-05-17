@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
@@ -6,6 +7,7 @@ import 'package:textos/ui/widgets.dart';
 
 class SettingsDrawer extends StatelessWidget {
   void cleanAll(BuildContext context) {
+    HapticFeedback.heavyImpact();
     Provider.of<FavoritesProvider>(context).clear();
     Provider.of<BlurProvider>(context).clearSettings();
     Provider.of<DarkModeProvider>(context).reset();

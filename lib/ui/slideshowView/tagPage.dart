@@ -27,6 +27,7 @@ class _TagPagesState extends State<TagPages> {
         .orderBy('order')
         .snapshots()
         .map((list) => list.documents.map((doc) => doc.data));
+    _addControllerListener();
     super.initState();
   }
 
@@ -38,6 +39,7 @@ class _TagPagesState extends State<TagPages> {
 
   _addControllerListener() {
     widget.tagPageController.addListener(() {
+      provider.currentTagPosition = widget.tagPageController.page;
       final next = widget.tagPageController.page.round();
       if (provider.justJumped) {
         if (next == provider.currentTagPage) {
@@ -57,8 +59,6 @@ class _TagPagesState extends State<TagPages> {
   @override
   Widget build(BuildContext context) {
     if (provider == null) provider = Provider.of<QueryProvider>(context);
-
-    if (!widget.tagPageController.hasListeners) _addControllerListener();
     return StreamBuilder(
       stream: _tagStream,
       initialData: [Constants.placeholderTagMetadata],
@@ -73,10 +73,11 @@ class _TagPagesState extends State<TagPages> {
             itemBuilder: (context, index) {
               final data = _metadatas[index];
               return _TagPage(
-                  index: index,
-                  tags: data['tags'],
-                  title: data['title'],
-                  authorName: data['authorName']);
+                index: index,
+                tags: data['tags'],
+                title: data['title'],
+                authorName: data['authorName'],
+              );
             });
       },
     );
@@ -117,29 +118,59 @@ class _TagPageState extends State<_TagPage> {
     return widgets;
   }
 
+  BoxDecoration getDecoration(Color color) {
+    if (Theme
+        .of(context)
+        .brightness == Brightness.dark) {
+      return BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          /*border: Border.all(
+                        color: Theme.of(context).canvasColor, width: 2.0)*/
+          color: color);
+    } else {
+      return BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Theme
+              .of(context)
+              .backgroundColor,
+          boxShadow: [
+            BoxShadow(
+                color: color,
+                blurRadius: 10.0,
+                offset: Offset(10.0, 10.0))
+          ]);
+    }
+  }
+
   @override
   Widget build(context) {
-    return AnimatedTheme(
-        duration: Constants.durationAnimationMedium,
+    final diff = (widget.index == Provider
+        .of<QueryProvider>(context)
+        .currentTagPosition
+        .floor() ||
+        widget.index == Provider
+            .of<QueryProvider>(context)
+            .currentTagPosition
+            .ceil())
+        ? (widget.index - Provider
+        .of<QueryProvider>(context)
+        .currentTagPosition).abs()
+        : 1.0;
+    return Theme(
         data: Theme.of(context).copyWith(
-            canvasColor: widget.index ==
-                Provider
-                    .of<QueryProvider>(context)
-                    .currentTagPage
-                ? Constants.themeBackgroundDark
-                : Theme
+            canvasColor: Color.lerp(Theme
                 .of(context)
-                .canvasColor),
+                .backgroundColor, Theme
+                .of(context)
+                .canvasColor, diff)),
         child: LayoutBuilder(
           builder: (context, constraints) =>
               Container(
                 height: constraints.maxHeight,
                 width: constraints.maxWidth,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Theme
-                        .of(context)
-                        .canvasColor, width: 2.0)),
+                decoration: getDecoration(Theme
+                    .of(context)
+                    .canvasColor),
                 margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
                 child: Container(
                   margin: EdgeInsets.all(5.0),
@@ -215,14 +246,17 @@ class _CustomButton extends StatelessWidget {
                   .of(context)
                   .textTheme
                   .button
-                  .copyWith(color: Color.alphaBlend(Theme
-                  .of(context)
-                  .accentColor
-                  .withAlpha(120), Theme
-                  .of(context)
-                  .textTheme
-                  .button
-                  .color)),
+                  .copyWith(
+                  color: Color.alphaBlend(
+                      Theme
+                          .of(context)
+                          .accentColor
+                          .withAlpha(120),
+                      Theme
+                          .of(context)
+                          .textTheme
+                          .button
+                          .color)),
             ),
             onPressed: () {
               HapticFeedback.selectionClick();

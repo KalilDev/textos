@@ -12,6 +12,7 @@ class QueryProvider with ChangeNotifier {
   String _tag = Constants.textAllTag;
   Query _query;
   int _currentTagPage = 0;
+  double _currentTagPosition = 0.0;
   bool shouldJump = false;
   bool justJumped = false;
   bool shouldAnimate = false;
@@ -61,5 +62,12 @@ class QueryProvider with ChangeNotifier {
       tagPageController.jumpToPage(_currentTagPage);
       HapticFeedback.lightImpact();
     }
+  }
+
+  double get currentTagPosition => _currentTagPosition;
+
+  set currentTagPosition(double next) {
+    _currentTagPosition = next;
+    notifyListeners();
   }
 }

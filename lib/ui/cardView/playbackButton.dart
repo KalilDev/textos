@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
@@ -218,10 +219,11 @@ class _PlaybackButtonState extends State<PlaybackButton>
   }
 
   Future<int> _play() async {
+    HapticFeedback.selectionClick();
     final playPosition = (_position != null &&
-            _duration != null &&
-            _position.inMilliseconds > 0 &&
-            _position.inMilliseconds < _duration.inMilliseconds)
+        _duration != null &&
+        _position.inMilliseconds > 0 &&
+        _position.inMilliseconds < _duration.inMilliseconds)
         ? _position
         : null;
     _playController.forward();
@@ -232,6 +234,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
   }
 
   Future<int> _pause() async {
+    HapticFeedback.selectionClick();
     _playController.reverse();
     final result = await _audioPlayer.pause();
     if (result == 1) setState(() => _playerState = PlayerState.paused);

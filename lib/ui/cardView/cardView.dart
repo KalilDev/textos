@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
@@ -29,6 +31,7 @@ class CardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     exit(List data) async {
+      HapticFeedback.selectionClick();
       // Nasty
       await Future.delayed(Duration(milliseconds: 1));
       if (Navigator.of(context).canPop()) Navigator.pop(context, data);
@@ -95,39 +98,46 @@ class CardContent extends StatelessWidget {
                   exit: exit,
                   textContent: textContent,
                 )),
-        Align(alignment: Alignment.bottomCenter,
-          child: LayoutBuilder(builder: (context, contraints) =>
-              AbsorbPointer(child: Container(
-                width: contraints.maxWidth, height: 50.0,),)),),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: LayoutBuilder(
+              builder: (context, contraints) =>
+                  AbsorbPointer(
+                    child: Container(
+                      width: contraints.maxWidth,
+                      height: 50.0,
+                    ),
+                  )),
+        ),
         Align(
             alignment: Alignment.bottomCenter,
             child: Stack(
               children: <Widget>[
                 Container(
-                    margin: EdgeInsets.only(
-                        left: 10.0, right: 10.0, bottom: 10.0),
-                    child: LayoutBuilder(builder: (context, constraints) {
-                      final musicSize = constraints.maxWidth +
-                          (textContent.hasText ? -96.0 - 5.0 - 5.0 : 0.0) -
-                          48.0 -
-                          5.0;
-                      return Row(
-                        children: <Widget>[
-                          textContent.hasText
-                              ? TextSizeButton()
-                              : NullWidget(),
-                          Spacer(),
-                          textContent.hasMusic
-                              ? Container(
-                              width: musicSize,
-                              child: PlaybackButton(url: textContent.music))
-                              : NullWidget(),
-                          Spacer(),
-                          FavoriteFAB(title: textContent.title,
-                              path: textContent.textPath),
-                        ],
-                      );
-                    })),
+                  margin: EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0),
+                  child: Row(
+                    children: <Widget>[
+                      textContent.hasText
+                          ? Container(
+                          margin: EdgeInsets.only(left: 5.0),
+                          child: TextSizeButton())
+                          : NullWidget(),
+                      textContent.hasMusic
+                          ? Expanded(
+                          child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5.0),
+                              child:
+                              PlaybackButton(url: textContent.music)))
+                          : Spacer(),
+                      Container(
+                        margin: EdgeInsets.only(right: 5.0),
+                        child: FavoriteFAB(
+                            title: textContent.title,
+                            path: textContent.textPath),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             )),
         Positioned(
@@ -212,6 +222,7 @@ class __TextWidgetState extends State<_TextWidget> {
                   enabled: Provider
                       .of<BlurProvider>(context)
                       .textsBlur,
+                  key: Key(Random().toString()),
                   radius: 20,
                   child: Column(
                     children: <Widget>[
