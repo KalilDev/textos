@@ -66,7 +66,7 @@ class FavoritesProvider with ChangeNotifier {
   open(String favorite, BuildContext context) async {
     final List providerList = [
       Provider.of<FavoritesProvider>(context),
-      Provider.of<DarkModeProvider>(context),
+      Provider.of<ThemeProvider>(context),
       Provider.of<BlurProvider>(context),
       Provider.of<TextSizeProvider>(context),
     ];

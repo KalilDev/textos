@@ -88,7 +88,6 @@ class FavoriteFABState extends State<FavoriteFAB>
               .of<BlurProvider>(context)
               .buttonsBlur,
           radius: 100,
-          intensity: 0.65,
           child: AnimatedGradientContainer(
             colors: Provider
                 .of<BlurProvider>(context)
@@ -96,11 +95,11 @@ class FavoriteFABState extends State<FavoriteFAB>
               Theme
                   .of(context)
                   .backgroundColor
-                  .withAlpha(120),
+                  .withAlpha(150),
               Theme
                   .of(context)
                   .accentColor
-                  .withAlpha(120)
+                  .withAlpha(150)
             ] : [Theme
                 .of(context)
                 .backgroundColor,

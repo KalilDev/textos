@@ -21,6 +21,7 @@ class Constants {
   static const textText = 'Texto';
   static const textCleanFavs = 'Limpar Favoritos';
   static const textBlur = 'Borrado';
+  static const textPickAccent = 'Alterar cor do tema';
   static final Map<String, dynamic> textNoTextAvailable = {
     'title': 'Não há nenhum texto nessa categoria',
     'img': 'https://i.imgur.com/yugoBNL.jpg',

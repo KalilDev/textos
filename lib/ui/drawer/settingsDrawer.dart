@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/widgets.dart';
 
-class SettingsDrawer extends StatelessWidget {
+class SettingsDrawer extends StatefulWidget {
+  @override
+  _SettingsDrawerState createState() => _SettingsDrawerState();
+}
+
+class _SettingsDrawerState extends State<SettingsDrawer> {
+  bool isChoosingAccent = false;
+
   void cleanAll(BuildContext context) {
     HapticFeedback.heavyImpact();
     Provider.of<FavoritesProvider>(context).clear();
     Provider.of<BlurProvider>(context).clearSettings();
-    Provider.of<DarkModeProvider>(context).reset();
+    Provider.of<ThemeProvider>(context).reset();
     Provider.of<TextSizeProvider>(context).reset();
   }
 
@@ -23,41 +31,62 @@ class SettingsDrawer extends StatelessWidget {
     final TextStyle description =
     settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
     return SafeArea(
-      child: ListView(
+      child: isChoosingAccent
+          ? LayoutBuilder(
+          builder: (context, constraints) =>
+              Container(
+                  height: constraints.maxHeight,
+                  child: SwatchesPicker(onChanged: (color) {
+                    setState(() => isChoosingAccent = false);
+                    Provider
+                        .of<ThemeProvider>(context)
+                        .accentColor = color;
+                  })))
+          : ListView(
         children: <Widget>[
           Divider(),
           Text(Constants.textTema, style: description),
           SwitchListTile(
               title: Text(Constants.textTextTheme, style: settingsStyle),
-              secondary: Icon(Icons.color_lens),
+              secondary: Icon(Icons.invert_colors),
               value: Provider
-                  .of<DarkModeProvider>(context)
+                  .of<ThemeProvider>(context)
                   .isDarkMode
                   ? true
                   : MediaQuery
                   .of(context)
-                  .platformBrightness == Brightness.dark
+                  .platformBrightness ==
+                  Brightness.dark
                   ? true
                   : false,
               activeColor: Theme
                   .of(context)
                   .accentColor,
-              activeTrackColor: Theme
+              activeTrackColor:
+              Theme
                   .of(context)
                   .accentColor
                   .withAlpha(170),
               inactiveThumbImage:
               MediaQuery
                   .of(context)
-                  .platformBrightness == Brightness.dark
+                  .platformBrightness ==
+                  Brightness.dark
                   ? AssetImage('res/baseline_lock_white_96dp.png')
                   : null,
-              onChanged:
-              MediaQuery
+              onChanged: MediaQuery
                   .of(context)
-                  .platformBrightness == Brightness.dark
+                  .platformBrightness ==
+                  Brightness.dark
                   ? null
-                  : (map) => Provider.of<DarkModeProvider>(context).toggle()),
+                  : (map) =>
+                  Provider.of<ThemeProvider>(context)
+                      .toggleDarkMode()),
+          ListTile(
+            leading: Icon(Icons.color_lens),
+            title: Text(Constants.textPickAccent, style: settingsStyle),
+            onTap: () => setState(() => isChoosingAccent = true),
+          ),
           Divider(),
           Text(Constants.textText, style: description),
           ListTile(
@@ -82,7 +111,8 @@ class SettingsDrawer extends StatelessWidget {
           Divider(),
           Text(Constants.textBlur, style: description),
           SwitchListTile(
-              title: Text(Constants.textTextBlurDrawer, style: settingsStyle),
+              title: Text(Constants.textTextBlurDrawer,
+                  style: settingsStyle),
               secondary: Icon(Icons.blur_linear),
               value: Provider
                   .of<BlurProvider>(context)
@@ -90,14 +120,16 @@ class SettingsDrawer extends StatelessWidget {
               activeColor: Theme
                   .of(context)
                   .accentColor,
-              activeTrackColor: Theme
+              activeTrackColor:
+              Theme
                   .of(context)
                   .accentColor
                   .withAlpha(170),
               onChanged: (map) =>
                   Provider.of<BlurProvider>(context).toggleDrawerBlur()),
           SwitchListTile(
-              title: Text(Constants.textTextBlurButtons, style: settingsStyle),
+              title: Text(Constants.textTextBlurButtons,
+                  style: settingsStyle),
               secondary: Icon(Icons.blur_circular),
               value: Provider
                   .of<BlurProvider>(context)
@@ -105,14 +137,16 @@ class SettingsDrawer extends StatelessWidget {
               activeColor: Theme
                   .of(context)
                   .accentColor,
-              activeTrackColor: Theme
+              activeTrackColor:
+              Theme
                   .of(context)
                   .accentColor
                   .withAlpha(170),
               onChanged: (map) =>
                   Provider.of<BlurProvider>(context).toggleButtonsBlur()),
           SwitchListTile(
-              title: Text(Constants.textTextBlurText, style: settingsStyle),
+              title:
+              Text(Constants.textTextBlurText, style: settingsStyle),
               secondary: Icon(Icons.blur_on),
               value: Provider
                   .of<BlurProvider>(context)
@@ -120,13 +154,13 @@ class SettingsDrawer extends StatelessWidget {
               activeColor: Theme
                   .of(context)
                   .accentColor,
-              activeTrackColor: Theme
+              activeTrackColor:
+              Theme
                   .of(context)
                   .accentColor
                   .withAlpha(170),
               onChanged: (map) =>
                   Provider.of<BlurProvider>(context).toggleTextsBlur()),
-          Divider(),
           ListTile(
             leading: Icon(Icons.delete_forever),
             title: Text(Constants.textTextTrash, style: settingsStyle),

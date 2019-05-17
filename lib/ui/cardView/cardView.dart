@@ -23,7 +23,7 @@ class CardView extends StatelessWidget {
       : super(key: key);
 
   final Content textContent;
-  final DarkModeProvider darkModeProvider;
+  final ThemeProvider darkModeProvider;
   final BlurProvider blurProvider;
   final TextSizeProvider textSizeProvider;
   final FavoritesProvider favoritesProvider;
@@ -41,21 +41,25 @@ class CardView extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<FavoritesProvider>(
             builder: (_) => favoritesProvider.copy()),
-        ChangeNotifierProvider<DarkModeProvider>(
+        ChangeNotifierProvider<ThemeProvider>(
             builder: (_) => darkModeProvider.copy()),
         ChangeNotifierProvider<BlurProvider>(
             builder: (_) => blurProvider.copy()),
         ChangeNotifierProvider<TextSizeProvider>(
             builder: (_) => textSizeProvider.copy()),
       ],
-      child: Consumer<DarkModeProvider>(
+      child: Consumer<ThemeProvider>(
         builder: (context, provider, _) {
           ThemeData overrideTheme;
+          final dark = Constants.themeDataDark.copyWith(
+              accentColor: provider.accentColor);
+          final light = Constants.themeDataLight.copyWith(
+              accentColor: provider.accentColor);
 
           if (provider.isDarkMode) {
-            overrideTheme = Constants.themeDataDark;
+            overrideTheme = dark;
           } else {
-            overrideTheme = Constants.themeDataLight;
+            overrideTheme = light;
           }
           return MaterialApp(
             debugShowCheckedModeBanner: false,
@@ -175,8 +179,8 @@ class __TextWidgetState extends State<_TextWidget> {
           .of<FavoritesProvider>(context)
           .favoritesList,
       Provider
-          .of<DarkModeProvider>(context)
-          .isDarkMode,
+          .of<ThemeProvider>(context)
+          .info,
       Provider
           .of<BlurProvider>(context)
           .blurSettings,

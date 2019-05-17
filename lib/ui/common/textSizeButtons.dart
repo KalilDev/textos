@@ -48,7 +48,6 @@ class TextSizeButtonState extends State<TextSizeButton>
               .of<BlurProvider>(context)
               .buttonsBlur,
           radius: 80,
-          intensity: 0.65,
           child: Material(
             color: Provider
                 .of<BlurProvider>(context)
@@ -56,7 +55,7 @@ class TextSizeButtonState extends State<TextSizeButton>
                 ? Theme
                 .of(context)
                 .accentColor
-                .withAlpha(120)
+                .withAlpha(150)
                 : Theme
                 .of(context)
                 .accentColor,

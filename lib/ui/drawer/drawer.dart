@@ -74,61 +74,64 @@ class TextAppDrawerState extends State<TextAppDrawer>
               enabled: Provider
                   .of<BlurProvider>(context)
                   .drawerBlur,
-              child: SafeArea(
-                child: Stack(
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Center(
-                          child: Stack(
-                            children: <Widget>[
-                              SlideTransition(
-                                  position: _toBottomAnimation,
-                                  child: Text(Constants.textConfigs,
-                                      style: textTheme.subhead.copyWith(
-                                          color: textTheme.subhead.color
-                                              .withAlpha(190)))),
-                              SlideTransition(
-                                  position: _toTopAnimation,
-                                  child: Text(Constants.textFavs,
-                                      style: textTheme.subhead.copyWith(
-                                          color: textTheme.subhead.color
-                                              .withAlpha(190)))),
-                            ],
-                          ),
-                        ),
-                        Expanded(
+              child: Theme(
+                data: Theme.of(context),
+                child: SafeArea(
+                  child: Stack(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Center(
                             child: Stack(
                               children: <Widget>[
                                 SlideTransition(
-                                  position: _settingsAnimation,
-                                  child: SettingsDrawer(),
-                                ),
+                                    position: _toBottomAnimation,
+                                    child: Text(Constants.textConfigs,
+                                        style: textTheme.subhead.copyWith(
+                                            color: textTheme.subhead.color
+                                                .withAlpha(190)))),
                                 SlideTransition(
-                                  position: _toTopAnimation,
-                                  child: FavoritesDrawer(),
-                                )
+                                    position: _toTopAnimation,
+                                    child: Text(Constants.textFavs,
+                                        style: textTheme.subhead.copyWith(
+                                            color: textTheme.subhead.color
+                                                .withAlpha(190)))),
                               ],
-                            ))
-                      ],
-                    ),
-                    Align(
-                      alignment: FractionalOffset.bottomCenter,
-                      child: MaterialButton(
-                          onPressed: () {
-                            HapticFeedback.selectionClick();
-                            setState(() => settingsDrawer = !settingsDrawer);
-                          },
-                          color: Theme
-                              .of(context)
-                              .accentColor,
-                          child: Text(
-                              settingsDrawer ? Constants.textFavs : Constants
-                                  .textConfigs,
-                              style: textTheme.subhead,
-                              textAlign: TextAlign.center)),
-                    ),
-                  ],
+                            ),
+                          ),
+                          Expanded(
+                              child: Stack(
+                                children: <Widget>[
+                                  SlideTransition(
+                                    position: _settingsAnimation,
+                                    child: SettingsDrawer(),
+                                  ),
+                                  SlideTransition(
+                                    position: _toTopAnimation,
+                                    child: FavoritesDrawer(),
+                                  )
+                                ],
+                              ))
+                        ],
+                      ),
+                      Align(
+                        alignment: FractionalOffset.bottomCenter,
+                        child: MaterialButton(
+                            onPressed: () {
+                              HapticFeedback.selectionClick();
+                              setState(() => settingsDrawer = !settingsDrawer);
+                            },
+                            color: Theme
+                                .of(context)
+                                .accentColor,
+                            child: Text(
+                                settingsDrawer ? Constants.textFavs : Constants
+                                    .textConfigs,
+                                style: textTheme.subhead,
+                                textAlign: TextAlign.center)),
+                      ),
+                    ],
+                  ),
                 ),
               ))),
     );

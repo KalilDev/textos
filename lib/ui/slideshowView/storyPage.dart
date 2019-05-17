@@ -191,7 +191,7 @@ class _StoryPage extends StatelessWidget {
                       CardView(
                         blurProvider: Provider.of<BlurProvider>(context),
                         darkModeProvider:
-                        Provider.of<DarkModeProvider>(context),
+                        Provider.of<ThemeProvider>(context),
                         textSizeProvider:
                         Provider.of<TextSizeProvider>(context),
                         favoritesProvider:
@@ -200,7 +200,7 @@ class _StoryPage extends StatelessWidget {
                       )));
           List resultList = result;
           Provider.of<FavoritesProvider>(context).sync(resultList[0]);
-          Provider.of<DarkModeProvider>(context).sync(resultList[1]);
+          Provider.of<ThemeProvider>(context).sync(resultList[1]);
           Provider.of<BlurProvider>(context).sync(resultList[2]);
           Provider.of<TextSizeProvider>(context).sync(resultList[3]);
         });

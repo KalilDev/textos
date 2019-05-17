@@ -23,6 +23,7 @@ void main() async {
   final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
   final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
   String _uid;
+  final Color _accentColor = Color(prefs?.getInt('accentColor') ?? 4281408402);
 
   // Clear favorites if the data doesn't contain the documentID needed for
   // setting the statistics on the database
@@ -56,7 +57,8 @@ void main() async {
       favoritesList: _favoritesList,
       textSize: _textSize,
       blurSettings: _blurSettings,
-      uid: _uid));
+      uid: _uid,
+      accentColor: _accentColor));
 }
 
 class StateBuilder extends StatefulWidget {
@@ -65,6 +67,7 @@ class StateBuilder extends StatefulWidget {
   final double textSize;
   final int blurSettings;
   final String uid;
+  final Color accentColor;
 
   StateBuilder({
     @required this.enableDarkMode,
@@ -72,6 +75,7 @@ class StateBuilder extends StatefulWidget {
     @required this.textSize,
     @required this.blurSettings,
     @required this.uid,
+    @required this.accentColor
   });
 
   createState() => StateBuilderState();
@@ -133,26 +137,30 @@ class StateBuilderState extends State<StateBuilder> {
             builder: (_) =>
                 FavoritesProvider(
                     widget.favoritesList, FavoritesHelper(userId: widget.uid))),
-        ChangeNotifierProvider<DarkModeProvider>(
-            builder: (_) => DarkModeProvider(widget.enableDarkMode)),
+        ChangeNotifierProvider<ThemeProvider>(
+            builder: (_) =>
+                ThemeProvider(widget.enableDarkMode, widget.accentColor)),
         ChangeNotifierProvider<BlurProvider>(
             builder: (_) => BlurProvider(widget.blurSettings)),
         ChangeNotifierProvider<TextSizeProvider>(
             builder: (_) => TextSizeProvider(widget.textSize)),
       ],
-      child: Consumer<DarkModeProvider>(
+      child: Consumer<ThemeProvider>(
         builder: (context, provider, _) {
           ThemeData overrideTheme;
+          final dark = Constants.themeDataDark.copyWith(
+              accentColor: provider.accentColor);
+          final light = Constants.themeDataLight.copyWith(
+              accentColor: provider.accentColor);
 
           if (provider.isDarkMode) {
-            overrideTheme = Constants.themeDataDark;
+            overrideTheme = dark;
           } else {
-            overrideTheme = Constants.themeDataLight;
+            overrideTheme = light;
           }
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            darkTheme: Constants.
-            themeDataDark,
+            darkTheme: dark,
             theme: overrideTheme,
             home: Scaffold(
               body: TextSlideshow(),

@@ -94,7 +94,6 @@ class _PlaybackButtonState extends State<PlaybackButton>
           color: Colors.transparent,
           elevation: 16.0,
           child: BlurOverlay(
-            intensity: 0.65,
             radius: 80,
             enabled: Provider
                 .of<BlurProvider>(context)
@@ -111,7 +110,7 @@ class _PlaybackButtonState extends State<PlaybackButton>
                         Theme
                             .of(context)
                             .accentColor
-                            .withAlpha(120)
+                            .withAlpha(150)
                       ]
                           : [Colors.red.shade900, Theme
                           .of(context)
