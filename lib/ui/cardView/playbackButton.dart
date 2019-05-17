@@ -22,15 +22,12 @@ class PlaybackButton extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return new _PlaybackButtonState(url, isLocal, mode);
+    return new _PlaybackButtonState();
   }
 }
 
-class _PlaybackButtonState extends State<PlaybackButton> {
-  String url;
-  bool isLocal;
-  PlayerMode mode;
-
+class _PlaybackButtonState extends State<PlaybackButton>
+    with TickerProviderStateMixin {
   AudioPlayer _audioPlayer;
   AudioPlayerState _audioPlayerState;
   Duration _duration;
@@ -43,21 +40,35 @@ class _PlaybackButtonState extends State<PlaybackButton> {
   StreamSubscription _playerErrorSubscription;
   StreamSubscription _playerStateSubscription;
 
+  AnimationController _playController;
+  Animation<double> _playAnim;
+  AnimationController _scaleController;
+  Animation<double> _scale;
+
   get _isPlaying => _playerState == PlayerState.playing;
-
-  get _isPaused => _playerState == PlayerState.paused;
-
-  get _durationText => _duration?.toString()?.split('.')?.first ?? '';
-
-  get _positionText => _position?.toString()?.split('.')?.first ?? '';
-
-  _PlaybackButtonState(this.url, this.isLocal, this.mode);
 
   @override
   void initState() {
     super.initState();
     _initAudioPlayer();
+    _playController = new AnimationController(
+        vsync: this, duration: Constants.durationAnimationShort);
+    _playAnim =
+    new CurvedAnimation(parent: _playController, curve: Curves.easeInOut);
+    _playController.value = 0.0;
+    _scaleController = new AnimationController(
+        duration: Constants.durationAnimationMedium +
+            Constants.durationAnimationRoute,
+        vsync: this);
+    _scale = Tween(begin: animationStart, end: 1.0).animate(CurvedAnimation(
+        parent: _scaleController, curve: Curves.easeInOut));
+    _scaleController.forward();
   }
+
+  double get animationStart =>
+      0 -
+          (Constants.durationAnimationRoute.inMilliseconds /
+              Constants.durationAnimationMedium.inMilliseconds);
 
   @override
   void dispose() {
@@ -67,6 +78,7 @@ class _PlaybackButtonState extends State<PlaybackButton> {
     _playerCompleteSubscription?.cancel();
     _playerErrorSubscription?.cancel();
     _playerStateSubscription?.cancel();
+    _playController.dispose();
     super.dispose();
   }
 
@@ -75,10 +87,10 @@ class _PlaybackButtonState extends State<PlaybackButton> {
     final playbackProportion = _position != null && _duration != null
         ? _position.inMilliseconds / _duration.inMilliseconds
         : 0.0;
-    return Container(
+    return ScaleTransition(
+      scale: _scale,
       child: Container(
         height: 48,
-        width: 150,
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
@@ -102,27 +114,29 @@ class _PlaybackButtonState extends State<PlaybackButton> {
                               2 * playbackProportion
                             ])),
                         child: Center(
-                            child: AnimatedSwitcher(
-                                duration: Constants.durationAnimationMedium,
-                                child: Icon(_playerState == PlayerState.stopped
-                                    ? playbackProportion == 0.0
+                            child: _playerState == PlayerState.stopped
+                                ? Icon(playbackProportion == 0.0
                                     ? Icons.play_arrow
-                                    : Icons.refresh
-                                    : _isPlaying ? Icons.pause : Icons
-                                    .play_arrow
-                                )))),
+                                : Icons.refresh)
+                                : AnimatedIcon(
+                                icon: AnimatedIcons.play_pause,
+                                progress: _playAnim))),
                     onTap: _isPlaying ? _pause : _play,
                   ),
                 ),
               );
             }),
             Align(
+              alignment: Alignment.bottomCenter,
+              child: AbsorbPointer(child: Container(height: 15)),
+            ),
+            Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                    height: 3,
+                    height: 15,
                     child: SliderTheme(
                       data: Theme.of(context).sliderTheme.copyWith(
-                          trackHeight: 3.0,
+                          trackHeight: 15.0,
                           activeTrackColor: Colors.transparent,
                           inactiveTrackColor: Colors.transparent),
                       child: Slider(
@@ -151,7 +165,7 @@ class _PlaybackButtonState extends State<PlaybackButton> {
   }
 
   void _initAudioPlayer() {
-    _audioPlayer = new AudioPlayer(mode: mode);
+    _audioPlayer = new AudioPlayer(mode: widget.mode);
 
     _durationSubscription =
         _audioPlayer.onDurationChanged.listen((duration) => setState(() {
@@ -195,13 +209,15 @@ class _PlaybackButtonState extends State<PlaybackButton> {
             _position.inMilliseconds < _duration.inMilliseconds)
         ? _position
         : null;
-    final result =
-        await _audioPlayer.play(url, isLocal: isLocal, position: playPosition);
+    _playController.forward();
+    final result = await _audioPlayer.play(widget.url,
+        isLocal: widget.isLocal, position: playPosition);
     if (result == 1) setState(() => _playerState = PlayerState.playing);
     return result;
   }
 
   Future<int> _pause() async {
+    _playController.reverse();
     final result = await _audioPlayer.pause();
     if (result == 1) setState(() => _playerState = PlayerState.paused);
     return result;

@@ -95,25 +95,40 @@ class CardContent extends StatelessWidget {
                   exit: exit,
                   textContent: textContent,
                 )),
-        Positioned(
-          child:
-          FavoriteFAB(title: textContent.title, path: textContent.textPath),
-          right: 10,
-          bottom: 10,
-        ),
-        textContent.hasMusic
-            ? Align(
+        Align(alignment: Alignment.bottomCenter,
+          child: LayoutBuilder(builder: (context, contraints) =>
+              AbsorbPointer(child: Container(
+                width: contraints.maxWidth, height: 50.0,),)),),
+        Align(
             alignment: Alignment.bottomCenter,
-            child: Container(margin: EdgeInsets.only(bottom: 13.5),
-                child: PlaybackButton(url: textContent.music)))
-            : NullWidget(),
-        textContent.hasText
-            ? Positioned(
-          child: TextSizeButton(),
-          left: 10,
-          bottom: 13.5,
-        )
-            : NullWidget(),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                    margin: EdgeInsets.only(
+                        left: 10.0, right: 10.0, bottom: 10.0),
+                    child: LayoutBuilder(builder: (context, constraints) {
+                      final musicSize = constraints.maxWidth +
+                          (textContent.hasText ? -96.0 - 5.0 : 0.0) - 48.0 -
+                          5.0;
+                      return Row(
+                        children: <Widget>[
+                          textContent.hasText
+                              ? TextSizeButton()
+                              : NullWidget(),
+                          Spacer(),
+                          textContent.hasMusic
+                              ? Container(
+                              width: musicSize,
+                              child: PlaybackButton(url: textContent.music))
+                              : NullWidget(),
+                          Spacer(),
+                          FavoriteFAB(title: textContent.title,
+                              path: textContent.textPath),
+                        ],
+                      );
+                    })),
+              ],
+            )),
         Positioned(
           child: MenuButton(),
           top: MediaQuery

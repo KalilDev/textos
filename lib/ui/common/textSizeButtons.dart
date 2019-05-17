@@ -40,34 +40,22 @@ class TextSizeButtonState extends State<TextSizeButton>
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _scale,
-      child: Stack(
-        children: <Widget>[
-          BlurOverlay(
-            enabled: Provider
-                .of<BlurProvider>(context)
-                .buttonsBlur,
-            radius: 80,
-            intensity: 0.65,
-            child: IgnorePointer(
-              child: Material(
-                color: Theme
-                    .of(context)
-                    .accentColor
-                    .withAlpha(120),
-                child: Row(children: <Widget>[
-                  SizedBox(height: 48,
-                    width: 48,),
-                  SizedBox(height: 48,
-                    width: 48,)
-                ]),
-              ),
-            ),
-          ),
-          Row(children: <Widget>[
+      child: BlurOverlay(
+        enabled: Provider
+            .of<BlurProvider>(context)
+            .buttonsBlur,
+        radius: 80,
+        intensity: 0.65,
+        child: Material(
+          color: Theme
+              .of(context)
+              .accentColor
+              .withAlpha(120),
+          child: Row(children: <Widget>[
             TextDecrease(),
             TextIncrease(),
           ]),
-        ],
+        ),
       ),
     );
   }
