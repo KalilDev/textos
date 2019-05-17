@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:textos/constants.dart';
 
+import 'oldGradient.dart' as old;
+
 class AnimatedGradientContainer extends StatefulWidget {
   const AnimatedGradientContainer({
     Key key,
@@ -29,7 +31,7 @@ class AnimatedGradientContainer extends StatefulWidget {
 class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
     with TickerProviderStateMixin {
   AnimationController _controller;
-  Animation<LinearGradient> _animation;
+  Animation<old.LinearGradient> _animation;
 
   bool _isEnabled;
 
@@ -41,10 +43,10 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
     Animation curved =
         new CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _animation = new LinearGradientTween(
-            begin: LinearGradient(
+        begin: old.LinearGradient(
                 colors: widget.colors, stops: widget.falseValues),
             end:
-                LinearGradient(colors: widget.colors, stops: widget.trueValues))
+            old.LinearGradient(colors: widget.colors, stops: widget.trueValues))
         .animate(curved);
     _controller.value = widget.isEnabled ? 1.0 : 0.0;
   }
@@ -60,10 +62,10 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
     Animation curved =
     new CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _animation = new LinearGradientTween(
-        begin: LinearGradient(
+        begin: old.LinearGradient(
             colors: widget.colors, stops: widget.falseValues),
         end:
-        LinearGradient(colors: widget.colors, stops: widget.trueValues))
+        old.LinearGradient(colors: widget.colors, stops: widget.trueValues))
         .animate(curved);
     if (_isEnabled != widget.isEnabled) {
       widget.isEnabled ? _controller.forward() : _controller.reverse();
@@ -76,7 +78,7 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
           return Container(
             height: widget.height,
             width: widget.width,
-            decoration: BoxDecoration(
+            decoration: old.BoxDecoration(
               gradient: _animation.value,
             ),
             child: widget.child,
@@ -87,13 +89,13 @@ class _AnimatedGradientContainerState extends State<AnimatedGradientContainer>
   }
 }
 
-class LinearGradientTween extends Tween<LinearGradient> {
+class LinearGradientTween extends Tween<old.LinearGradient> {
   /// Provide a begin and end Gradient. To fade between.
   LinearGradientTween({
-    LinearGradient begin,
-    LinearGradient end,
+    old.LinearGradient begin,
+    old.LinearGradient end,
   }) : super(begin: begin, end: end);
 
   @override
-  LinearGradient lerp(double t) => LinearGradient.lerp(begin, end, t);
+  old.LinearGradient lerp(double t) => old.LinearGradient.lerp(begin, end, t);
 }
