@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:textos/constants.dart';
 
 class QueryProvider with ChangeNotifier {
@@ -60,7 +59,6 @@ class QueryProvider with ChangeNotifier {
       shouldJump = false;
       justJumped = true;
       tagPageController.jumpToPage(_currentTagPage);
-      HapticFeedback.lightImpact();
     }
   }
 

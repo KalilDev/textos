@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +10,7 @@ import 'package:textos/ui/cardView/cardView.dart';
 import 'package:textos/ui/slideshowView/favoritesCount.dart';
 import 'package:textos/ui/slideshowView/tagPage.dart';
 import 'package:textos/ui/widgets.dart';
+import 'package:transformer_page_view/transformer_page_view.dart';
 
 class StoryPages extends StatefulWidget {
   final List slideList;
@@ -19,7 +22,7 @@ class StoryPages extends StatefulWidget {
 }
 
 class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
-  PageController _storiesPageController;
+  IndexController _indexController;
   PageController _tagPageController;
   AnimationController _animationController;
   Animation<double> _opacity;
@@ -29,27 +32,15 @@ class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
     super.initState();
     _animationController = new AnimationController(
         vsync: this, duration: Constants.durationAnimationShort);
-    _opacity =
-    new CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    _opacity = new CurvedAnimation(
+        parent: _animationController, curve: Curves.easeInOut);
     _animationController.addListener(() {
-      if (_animationController.status ==
-          AnimationStatus.dismissed) _animationController.forward();
+      if (_animationController.status == AnimationStatus.dismissed)
+        _animationController.forward();
     });
     _animationController.value = 1.0;
-    _storiesPageController = new PageController(viewportFraction: 0.85);
+    _indexController = new IndexController();
     _tagPageController = new PageController(viewportFraction: 0.90);
-    _storiesPageController.addListener(() {
-      int next = _storiesPageController.page.round();
-      if (_tagPageController.hasClients) {
-        Provider.of<QueryProvider>(context).jump(_tagPageController);
-      }
-      if (Provider
-          .of<TextPageProvider>(context)
-          .currentPage != next) {
-        HapticFeedback.lightImpact();
-        Provider.of<TextPageProvider>(context).currentPage = next;
-      }
-    });
   }
 
   @override
@@ -62,45 +53,57 @@ class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
           .shouldAnimate = false;
       _animationController.reverse();
     }
-    return PageView.builder(
-        controller: _storiesPageController,
-        itemCount: widget.slideList.length + 1,
-        pageSnapping: false,
-        itemBuilder: (context, int currentIdx) {
-          if (currentIdx == 0) {
-            return TagPages(tagPageController: _tagPageController);
-          } else {
-            final data = widget.slideList[currentIdx - 1];
-            return ScaleTransition(
-              scale: Tween(begin: 1.1, end: 1.0).animate(_opacity),
-              child: FadeTransition(
-                opacity: Tween(begin: 0.7, end: 1.0).animate(_opacity),
-                child: _StoryPage(
-                    index: currentIdx,
-                    textContent: Content.fromData(data),
-                    pageController: _storiesPageController),
-              ),
-            );
-          }
-        });
+    return new TransformerPageView(
+      pageSnapping: false,
+      controller: _indexController,
+      viewportFraction: 0.80,
+      transformer: new PageTransformerBuilder(
+          builder: (Widget child, TransformInfo info) {
+            if (info.index == 0) {
+              return TagPages(tagPageController: _tagPageController);
+            } else {
+              final data = widget.slideList[info.index - 1];
+              return ScaleTransition(
+                scale: Tween(begin: 1.1, end: 1.0).animate(_opacity),
+                child: FadeTransition(
+                  opacity: Tween(begin: 0.7, end: 1.0).animate(_opacity),
+                  child: _StoryPage(
+                      info: info,
+                      textContent: Content.fromData(data),
+                      indexController: _indexController),
+                ),
+              );
+            }
+          }),
+      onPageChanged: (page) {
+        HapticFeedback.lightImpact();
+        if (_tagPageController.hasClients) {
+          Provider.of<QueryProvider>(context).jump(_tagPageController);
+        }
+      },
+      itemCount: widget.slideList.length + 1,
+    );
   }
 }
 
 class _StoryPage extends StatelessWidget {
   final Content textContent;
-  final int index;
-  final PageController pageController;
+  final TransformInfo info;
+  final IndexController indexController;
 
   _StoryPage(
-      {@required this.index, @required this.textContent, this.pageController});
+      {@required this.info, @required this.textContent, this.indexController});
 
   @override
   Widget build(BuildContext context) {
-    bool active = index == Provider.of<TextPageProvider>(context).currentPage;
+    final bool active = info.position.round() == 0.0 && info.position >= -0.35;
     // Animated Properties
-    final double blur = active ? 30 : 0;
-    final double offset = active ? 20 : 0;
-    final double top = active ? MediaQuery.of(context).padding.top + 60 : 180;
+    final double blur = lerpDouble(30, 0, info.position.abs());
+    final double offset = lerpDouble(20, 0, info.position.abs());
+    final double top = MediaQuery
+        .of(context)
+        .padding
+        .top + 60;
 
     final textTheme = Theme.of(context).textTheme;
 
@@ -110,7 +113,8 @@ class _StoryPage extends StatelessWidget {
             AnimatedContainer(
               duration: Constants.durationAnimationMedium,
               curve: Curves.decelerate,
-              margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
+              margin: EdgeInsets.only(
+                  top: active ? top : 180, bottom: 20, right: 30),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Theme.of(context).backgroundColor,
@@ -125,46 +129,53 @@ class _StoryPage extends StatelessWidget {
                   child: ImageBackground(
                       img: textContent.imgUrl,
                       enabled: false,
+                      position: info.position,
                       key: Key('image' + textContent.textPath))),
             ),
-            AnimatedContainer(
-              duration: Constants.durationAnimationLong,
-              curve: Curves.easeInOut,
-              margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
-              child: Center(
-                  child: Hero(
-                tag: 'body' + textContent.textPath,
-                child: Material(
-                  child: Container(
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                    margin: EdgeInsets.all(12.5),
-                    child: BlurOverlay(
-                        radius: 15,
-                        enabled: Provider
-                            .of<BlurProvider>(context)
-                            .textsBlur,
+            ParallaxContainer(
+              position: info.position,
+              translationFactor: 300,
+              child: AnimatedContainer(
+                duration: Constants.durationAnimationLong,
+                curve: Curves.easeInOut,
+                margin: EdgeInsets.only(top: top, bottom: 20, right: 30),
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Hero(
+                      tag: 'body' + textContent.textPath,
+                      child: Material(
                         child: Container(
-                          margin: EdgeInsets.only(left: 5.0, right: 5.0),
-                          child: Text(textContent.title,
-                              textAlign: TextAlign.center,
-                              style: textTheme.display1),
-                        )),
-                  ),
-                  color: Colors.transparent,
-                ),
-              )),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)),
+                          margin: EdgeInsets.all(12.5),
+                          child: BlurOverlay(
+                              radius: 15,
+                              enabled:
+                              Provider
+                                  .of<BlurProvider>(context)
+                                  .textsBlur,
+                              child: Container(
+                                margin: EdgeInsets.only(left: 5.0, right: 5.0),
+                                child: Text(textContent.title,
+                                    textAlign: TextAlign.center,
+                                    style: textTheme.display1),
+                              )),
+                        ),
+                        color: Colors.transparent,
+                      ),
+                    )),
+              ),
             ),
             AnimatedSwitcher(
                 duration: Constants.durationAnimationShort,
                 switchInCurve: Curves.decelerate,
                 switchOutCurve: Curves.decelerate,
                 transitionBuilder: (child, animation) => ScaleTransition(
-                      scale: animation,
-                      child: child,
-                      alignment: FractionalOffset.bottomCenter,
-                    ),
-                child: active
+                  scale: animation,
+                  child: child,
+                  alignment: FractionalOffset.bottomCenter,
+                ),
+                child: info.position.round() == 0.0
                     ? Align(
                     alignment: FractionalOffset.bottomCenter,
                     child: FavoritesCount(
@@ -180,18 +191,14 @@ class _StoryPage extends StatelessWidget {
         ),
         onTap: () async {
           HapticFeedback.selectionClick();
-          if (pageController != null)
-            pageController.animateToPage(index,
-                duration: Constants.durationAnimationMedium,
-                curve: Curves.decelerate);
+          if (indexController != null) indexController.move(info.index);
           final result = await Navigator.push(
               context,
               FadeRoute(
                   builder: (context) =>
                       CardView(
                         blurProvider: Provider.of<BlurProvider>(context),
-                        darkModeProvider:
-                        Provider.of<ThemeProvider>(context),
+                        darkModeProvider: Provider.of<ThemeProvider>(context),
                         textSizeProvider:
                         Provider.of<TextSizeProvider>(context),
                         favoritesProvider:
