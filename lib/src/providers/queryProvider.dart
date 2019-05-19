@@ -11,7 +11,6 @@ class QueryProvider with ChangeNotifier {
   String _tag = Constants.textAllTag;
   Query _query;
   int _currentTagPage = 0;
-  double _currentTagPosition = 0.0;
   bool shouldJump = false;
   bool justJumped = false;
   bool shouldAnimate = false;
@@ -51,21 +50,6 @@ class QueryProvider with ChangeNotifier {
       _tag = Constants.textAllTag;
     }
     shouldAnimate = true;
-    notifyListeners();
-  }
-
-  void jump(PageController tagPageController) {
-    if (shouldJump) {
-      shouldJump = false;
-      justJumped = true;
-      tagPageController.jumpToPage(_currentTagPage);
-    }
-  }
-
-  double get currentTagPosition => _currentTagPosition;
-
-  set currentTagPosition(double next) {
-    _currentTagPosition = next;
     notifyListeners();
   }
 }

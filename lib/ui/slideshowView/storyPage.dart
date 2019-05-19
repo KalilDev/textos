@@ -23,7 +23,6 @@ class StoryPages extends StatefulWidget {
 
 class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
   IndexController _indexController;
-  PageController _tagPageController;
   AnimationController _animationController;
   Animation<double> _opacity;
 
@@ -40,7 +39,6 @@ class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
     });
     _animationController.value = 1.0;
     _indexController = new IndexController();
-    _tagPageController = new PageController(viewportFraction: 0.90);
   }
 
   @override
@@ -60,7 +58,7 @@ class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
       transformer: new PageTransformerBuilder(
           builder: (Widget child, TransformInfo info) {
             if (info.index == 0) {
-              return TagPages(tagPageController: _tagPageController);
+              return TagPages();
             } else {
               final data = widget.slideList[info.index - 1];
               return ScaleTransition(
@@ -77,9 +75,6 @@ class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
           }),
       onPageChanged: (page) {
         HapticFeedback.lightImpact();
-        if (_tagPageController.hasClients) {
-          Provider.of<QueryProvider>(context).jump(_tagPageController);
-        }
       },
       itemCount: widget.slideList.length + 1,
     );

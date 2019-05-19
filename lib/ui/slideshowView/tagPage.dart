@@ -6,12 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
+import 'package:transformer_page_view/transformer_page_view.dart';
 
 class TagPages extends StatefulWidget {
-  final PageController tagPageController;
-
-  TagPages({@required this.tagPageController});
-
   @override
   _TagPagesState createState() => _TagPagesState();
 }
@@ -19,6 +16,7 @@ class TagPages extends StatefulWidget {
 class _TagPagesState extends State<TagPages> {
   QueryProvider provider;
   Stream _tagStream;
+  IndexController _tagIndexController;
 
   @override
   void initState() {
@@ -27,7 +25,7 @@ class _TagPagesState extends State<TagPages> {
         .orderBy('order')
         .snapshots()
         .map((list) => list.documents.map((doc) => doc.data));
-    _addControllerListener();
+    _tagIndexController = new IndexController();
     super.initState();
   }
 
@@ -37,28 +35,22 @@ class _TagPagesState extends State<TagPages> {
     super.deactivate();
   }
 
-  _addControllerListener() {
-    widget.tagPageController.addListener(() {
-      provider.currentTagPosition = widget.tagPageController.page;
-      final next = widget.tagPageController.page.round();
-      if (provider.justJumped) {
-        if (next == provider.currentTagPage) {
-          provider.justJumped = false;
-        }
-      } else if (provider.currentTagPage != next) {
-        provider.currentTagPage = next;
-        provider.updateStream(
-            {'collection': _metadatas[provider.currentTagPage]['collection']});
-        HapticFeedback.lightImpact();
-      }
-    });
-  }
-
   List<Map<String, dynamic>> _metadatas;
+
+  jump(int page) async {
+    // Dirty
+    Future.delayed(Duration(milliseconds: 1)).then((_) =>
+        _tagIndexController.move(page, animation: false));
+  }
 
   @override
   Widget build(BuildContext context) {
     if (provider == null) provider = Provider.of<QueryProvider>(context);
+    if (provider.shouldJump) {
+      provider.shouldJump = false;
+      provider.justJumped = true;
+      jump(provider.currentTagPage);
+    }
     return StreamBuilder(
       stream: _tagStream,
       initialData: [Constants.placeholderTagMetadata],
@@ -66,31 +58,44 @@ class _TagPagesState extends State<TagPages> {
         _metadatas = snapshot.data.toList();
         if (_metadatas.length == 0)
           _metadatas = [Constants.placeholderTagMetadata];
-        return PageView.builder(
-            controller: widget.tagPageController,
+        return TransformerPageView(
+          controller: _tagIndexController,
             itemCount: _metadatas.length,
             scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) {
-              final data = _metadatas[index];
+          viewportFraction: 0.90,
+          onPageChanged: (page) {
+            final provider = Provider.of<QueryProvider>(context);
+            if (provider.justJumped) {
+              if (page == provider.currentTagPage) provider.justJumped = false;
+            } else {
+              provider.currentTagPage = page;
+              provider.updateStream(
+                  {'collection': _metadatas[page]['collection']});
+              HapticFeedback.lightImpact();
+            }
+          },
+          transformer: new PageTransformerBuilder(builder: (widget, info) {
+            final data = _metadatas[info.index];
               return _TagPage(
-                index: index,
+                info: info,
                 tags: data['tags'],
                 title: data['title'],
                 authorName: data['authorName'],
               );
-            });
+          }),
+        );
       },
     );
   }
 }
 
 class _TagPage extends StatefulWidget {
-  final int index;
+  final TransformInfo info;
   final List tags;
   final String title;
   final String authorName;
 
-  _TagPage({@required this.index,
+  _TagPage({@required this.info,
     this.tags = const [],
     this.title = 'Textos do ',
     this.authorName = 'Kalil'});
@@ -104,29 +109,33 @@ class _TagPageState extends State<_TagPage> {
     List<Widget> widgets = [];
     widgets.add(_CustomButton(
         isCurrent:
-        widget.index == Provider
+        widget.info.index == Provider
             .of<QueryProvider>(context)
             .currentTagPage,
         tag: Constants.textAllTag));
     widget.tags.forEach((tag) =>
         widgets.add(_CustomButton(
             isCurrent:
-            widget.index == Provider
+            widget.info.index == Provider
                 .of<QueryProvider>(context)
                 .currentTagPage,
             tag: tag)));
     return widgets;
   }
 
-  BoxDecoration getDecoration(Color color) {
+  BoxDecoration elevation(double position) {
+    final shadowColor = Color.lerp(Theme
+        .of(context)
+        .backgroundColor, Theme
+        .of(context)
+        .canvasColor, position);
+    final offset = 10 * position;
     if (Theme
         .of(context)
         .brightness == Brightness.dark) {
       return BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          /*border: Border.all(
-                        color: Theme.of(context).canvasColor, width: 2.0)*/
-          color: color);
+          color: shadowColor);
     } else {
       return BoxDecoration(
           borderRadius: BorderRadius.circular(20),
@@ -135,69 +144,50 @@ class _TagPageState extends State<_TagPage> {
               .backgroundColor,
           boxShadow: [
             BoxShadow(
-                color: color,
-                blurRadius: 10.0,
-                offset: Offset(10.0, 10.0))
+                color: Theme
+                    .of(context)
+                    .canvasColor,
+                blurRadius: offset * 1.2,
+                offset: Offset(offset, offset))
           ]);
     }
   }
 
   @override
   Widget build(context) {
-    final diff = (widget.index == Provider
-        .of<QueryProvider>(context)
-        .currentTagPosition
-        .floor() ||
-        widget.index == Provider
-            .of<QueryProvider>(context)
-            .currentTagPosition
-            .ceil())
-        ? (widget.index - Provider
-        .of<QueryProvider>(context)
-        .currentTagPosition).abs()
-        : 1.0;
-    return Theme(
-        data: Theme.of(context).copyWith(
-            canvasColor: Color.lerp(Theme
-                .of(context)
-                .backgroundColor, Theme
-                .of(context)
-                .canvasColor, diff)),
-        child: LayoutBuilder(
-          builder: (context, constraints) =>
-              Container(
-                height: constraints.maxHeight,
-                width: constraints.maxWidth,
-                decoration: getDecoration(Theme
-                    .of(context)
-                    .canvasColor),
-                margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
-                child: Container(
-                  margin: EdgeInsets.all(5.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.title + widget.authorName,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .display1,
-                      ),
-                      Text(Constants.textFilter),
-                      Container(
-                        margin: EdgeInsets.only(left: 1.0),
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: _buildButtons()),
-                      )
-                    ],
+    return LayoutBuilder(
+      builder: (context, constraints) =>
+          Container(
+            height: constraints.maxHeight,
+            width: constraints.maxWidth,
+            decoration: elevation(widget.info.position.abs()),
+            margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
+            child: Container(
+              margin: EdgeInsets.all(5.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.title + widget.authorName,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .display1,
                   ),
-                ),
+                  Text(Constants.textFilter),
+                  Container(
+                    margin: EdgeInsets.only(left: 1.0),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _buildButtons()),
+                  )
+                ],
               ),
-        ));
+            ),
+          ),
+    );
   }
 }
 
