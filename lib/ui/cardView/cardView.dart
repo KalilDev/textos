@@ -51,10 +51,10 @@ class CardView extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, provider, _) {
           ThemeData overrideTheme;
-          final dark = Constants.themeDataDark.copyWith(
-              accentColor: provider.accentColor);
-          final light = Constants.themeDataLight.copyWith(
-              accentColor: provider.accentColor);
+          final dark = Constants.themeDataDark
+              .copyWith(accentColor: provider.accentColor);
+          final light = Constants.themeDataLight
+              .copyWith(accentColor: provider.accentColor);
 
           if (provider.isDarkMode) {
             overrideTheme = dark;
@@ -170,8 +170,12 @@ class _TextWidget extends StatefulWidget {
   __TextWidgetState createState() => __TextWidgetState();
 }
 
-class __TextWidgetState extends State<_TextWidget> {
-  bool hasMoved;
+class __TextWidgetState extends State<_TextWidget>
+    with TickerProviderStateMixin {
+  bool _hasMoved;
+  double _textSize;
+  AnimationController _textSizeController;
+  Animation<double> _textSizeAnim;
 
   void pop(BuildContext context) {
     widget.exit([
@@ -192,10 +196,25 @@ class __TextWidgetState extends State<_TextWidget> {
 
   @override
   void initState() {
-    hasMoved = false;
+    _hasMoved = false;
     widget.controller.addListener(() {
-      setState(() => hasMoved = true);
+      _hasMoved = true;
     });
+    _textSizeController = new AnimationController(
+        vsync: this, duration: Constants.durationAnimationShort);
+    _textSizeAnim = new CurvedAnimation(
+        parent: _textSizeController, curve: Curves.easeInOut);
+    _textSize = 4.5;
+    _textSizeController.addListener(() {
+      if (_textSizeController.status == AnimationStatus.completed) {
+        _textSize = Provider
+            .of<TextSizeProvider>(context)
+            .textSize;
+        _textSizeController.value = 0.0;
+      }
+      setState(() => null);
+    });
+    _textSizeController.value = 0.0;
     super.initState();
   }
 
@@ -206,7 +225,12 @@ class __TextWidgetState extends State<_TextWidget> {
             ScrollDirection.idle &&
         widget.controller.offset <=
             widget.controller.position.minScrollExtent &&
-        hasMoved) pop(context);
+        _hasMoved) pop(context);
+    if (Provider
+        .of<TextSizeProvider>(context)
+        .textSize != _textSize) {
+      _textSizeController.forward();
+    }
     final textTheme = Theme
         .of(context)
         .textTheme;
@@ -246,14 +270,19 @@ class __TextWidgetState extends State<_TextWidget> {
                                   ? RichText(
                                   text: (TextSpan(
                                       children: widget.textContent
-                                          .formattedText(textTheme.body1
-                                          .copyWith(
-                                          fontSize:
-                                          Provider
-                                              .of<TextSizeProvider>(
-                                              context)
-                                              .textSize *
-                                              4.5)))))
+                                          .formattedText(
+                                          textTheme.body1.copyWith(
+                                              fontSize: Tween(
+                                                  begin: _textSize,
+                                                  end: Provider
+                                                      .of<
+                                                      TextSizeProvider>(
+                                                      context)
+                                                      .textSize)
+                                                  .animate(
+                                                  _textSizeAnim)
+                                                  .value *
+                                                  4.5)))))
                                   : NullWidget(),
                               SizedBox(
                                   height: 55,

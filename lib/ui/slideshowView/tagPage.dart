@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
+import 'package:textos/ui/widgets.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
 class TagPages extends StatefulWidget {
@@ -63,6 +64,8 @@ class _TagPagesState extends State<TagPages> {
             itemCount: _metadatas.length,
             scrollDirection: Axis.vertical,
           viewportFraction: 0.90,
+          curve: Curves.decelerate,
+          physics: BouncingScrollPhysics(),
           onPageChanged: (page) {
             final provider = Provider.of<QueryProvider>(context);
             if (provider.justJumped) {
@@ -112,55 +115,29 @@ class _TagPageState extends State<_TagPage> {
         widget.info.index == Provider
             .of<QueryProvider>(context)
             .currentTagPage,
-        tag: Constants.textAllTag));
+      tag: Constants.textAllTag,
+      index: 0.0,
+      position: widget.info.position,));
     widget.tags.forEach((tag) =>
         widgets.add(_CustomButton(
             isCurrent:
             widget.info.index == Provider
                 .of<QueryProvider>(context)
                 .currentTagPage,
-            tag: tag)));
+          tag: tag,
+          index: widget.tags.indexOf(tag) + 1.0,
+          position: widget.info.position,)));
     return widgets;
-  }
-
-  BoxDecoration elevation(double position) {
-    final shadowColor = Color.lerp(Theme
-        .of(context)
-        .backgroundColor, Theme
-        .of(context)
-        .canvasColor, position);
-    final offset = 10 * position;
-    if (Theme
-        .of(context)
-        .brightness == Brightness.dark) {
-      return BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: shadowColor);
-    } else {
-      return BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Theme
-              .of(context)
-              .backgroundColor,
-          boxShadow: [
-            BoxShadow(
-                color: Theme
-                    .of(context)
-                    .canvasColor,
-                blurRadius: offset * 1.2,
-                offset: Offset(offset, offset))
-          ]);
-    }
   }
 
   @override
   Widget build(context) {
     return LayoutBuilder(
       builder: (context, constraints) =>
-          Container(
+          ElevatedContainer(
             height: constraints.maxHeight,
             width: constraints.maxWidth,
-            decoration: elevation(widget.info.position.abs()),
+            elevation: 16 * widget.info.position.abs(),
             margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
             child: Container(
               margin: EdgeInsets.all(5.0),
@@ -168,14 +145,23 @@ class _TagPageState extends State<_TagPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.title + widget.authorName,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .display1,
+                  ParallaxContainer(
+                    axis: Axis.vertical,
+                    position: -widget.info.position,
+                    translationFactor: 250,
+                    child: Text(
+                      widget.title + widget.authorName,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .display1,
+                    ),
                   ),
-                  Text(Constants.textFilter),
+                  ParallaxContainer(
+                      axis: Axis.vertical,
+                      position: -widget.info.position,
+                      translationFactor: 200,
+                      child: Text(Constants.textFilter)),
                   Container(
                     margin: EdgeInsets.only(left: 1.0),
                     child: Column(
@@ -192,66 +178,74 @@ class _TagPageState extends State<_TagPage> {
 }
 
 class _CustomButton extends StatelessWidget {
-  const _CustomButton({Key key, @required this.tag, @required this.isCurrent})
+  const _CustomButton(
+      {Key key, @required this.tag, @required this.isCurrent, @required this.position, @required this.index})
       : super(key: key);
 
   final String tag;
   final bool isCurrent;
+  final double position;
+  final double index;
 
   @override
   Widget build(BuildContext context) {
     final queryTag = tag == Constants.textAllTag ? null : tag;
-    return AnimatedSwitcher(
-        duration: Constants.durationAnimationMedium,
-        switchOutCurve: Curves.easeInOut,
-        switchInCurve: Curves.easeInOut,
-        transitionBuilder: (widget, animation) {
-          return FadeTransition(
-              opacity: Tween(begin: 0.0, end: 1.0).animate(animation),
-              child: widget);
-        },
-        child: isCurrent &&
-            tag == Provider
-                .of<QueryProvider>(context)
-                .currentTag
-            ? FlatButton(
-            color: Theme
-                .of(context)
-                .accentColor,
-            child: Text(
-              '#' + tag,
-            ),
-            onPressed: () {
-              HapticFeedback.selectionClick();
-              Provider.of<QueryProvider>(context)
-                  .updateStream({'tag': queryTag});
-            })
-            : OutlineButton(
-            borderSide: BorderSide(color: Theme
-                .of(context)
-                .accentColor),
-            child: Text(
-              '#' + tag,
-              style: Theme
+    return ParallaxContainer(
+      axis: Axis.vertical,
+      position: -position,
+      translationFactor: 150 + 20 * (index + 1),
+      child: AnimatedSwitcher(
+          duration: Constants.durationAnimationMedium,
+          switchOutCurve: Curves.easeInOut,
+          switchInCurve: Curves.easeInOut,
+          transitionBuilder: (widget, animation) {
+            return FadeTransition(
+                opacity: Tween(begin: 0.0, end: 1.0).animate(animation),
+                child: widget);
+          },
+          child: isCurrent &&
+              tag == Provider
+                  .of<QueryProvider>(context)
+                  .currentTag
+              ? FlatButton(
+              color: Theme
                   .of(context)
-                  .textTheme
-                  .button
-                  .copyWith(
-                  color: Color.alphaBlend(
-                      Theme
-                          .of(context)
-                          .accentColor
-                          .withAlpha(120),
-                      Theme
-                          .of(context)
-                          .textTheme
-                          .button
-                          .color)),
-            ),
-            onPressed: () {
-              HapticFeedback.selectionClick();
-              Provider.of<QueryProvider>(context)
-                  .updateStream({'tag': queryTag});
-            }));
+                  .accentColor,
+              child: Text(
+                '#' + tag,
+              ),
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                Provider.of<QueryProvider>(context)
+                    .updateStream({'tag': queryTag});
+              })
+              : OutlineButton(
+              borderSide: BorderSide(color: Theme
+                  .of(context)
+                  .accentColor),
+              child: Text(
+                '#' + tag,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .button
+                    .copyWith(
+                    color: Color.alphaBlend(
+                        Theme
+                            .of(context)
+                            .accentColor
+                            .withAlpha(120),
+                        Theme
+                            .of(context)
+                            .textTheme
+                            .button
+                            .color)),
+              ),
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                Provider.of<QueryProvider>(context)
+                    .updateStream({'tag': queryTag});
+              })),
+    );
   }
 }

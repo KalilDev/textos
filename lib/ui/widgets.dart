@@ -1,5 +1,6 @@
 library kalil_widgets;
 
+export 'package:textos/ui/common/ElevatedContainer.dart';
 export 'package:textos/ui/common/animatedGradientContainer.dart';
 export 'package:textos/ui/common/blurOverlay.dart';
 export 'package:textos/ui/common/fadeRoute.dart';

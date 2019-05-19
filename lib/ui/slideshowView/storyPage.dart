@@ -55,6 +55,8 @@ class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
       pageSnapping: false,
       controller: _indexController,
       viewportFraction: 0.80,
+      curve: Curves.decelerate,
+      physics: BouncingScrollPhysics(),
       transformer: new PageTransformerBuilder(
           builder: (Widget child, TransformInfo info) {
             if (info.index == 0) {
