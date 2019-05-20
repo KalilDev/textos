@@ -4,6 +4,7 @@ import 'package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
+import 'package:textos/ui/aboutCreatorView.dart';
 import 'package:textos/ui/widgets.dart';
 
 class SettingsDrawer extends StatefulWidget {
@@ -161,6 +162,36 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                   .withAlpha(170),
               onChanged: (map) =>
                   Provider.of<BlurProvider>(context).toggleTextsBlur()),
+          Divider(),
+          ListTile(leading: Icon(Icons.info),
+            title: Text('Sobre o criador', style: settingsStyle,),
+            onTap: () async {
+              final List providerList = [
+                Provider.of<FavoritesProvider>(context),
+                Provider.of<ThemeProvider>(context),
+                Provider.of<BlurProvider>(context),
+                Provider.of<TextSizeProvider>(context),
+              ];
+              Navigator.pop(context);
+              HapticFeedback.selectionClick();
+              final result = await Navigator.push(
+                context,
+                SlideRoute(
+                    builder: (context) =>
+                        CreatorView(
+                          favoritesProvider: providerList[0].copy(),
+                          darkModeProvider: providerList[1].copy(),
+                          blurProvider: providerList[2].copy(),
+                          textSizeProvider: providerList[3].copy(),
+                        )),
+              );
+              List resultList = result;
+              providerList[0].sync(resultList[0]);
+              providerList[1].sync(resultList[1]);
+              providerList[2].sync(resultList[2]);
+              providerList[3].sync(resultList[3]);
+            },),
+          Divider(),
           ListTile(
             leading: Icon(Icons.delete_forever),
             title: Text(Constants.textTextTrash, style: settingsStyle),

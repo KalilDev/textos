@@ -75,7 +75,9 @@ class ElevatedContainer extends StatelessWidget {
       decoration: materialCompliantElevation(
           ev: elevatedColor != null
               ? elevatedColor
-              : Theme.of(context).canvasColor,
+              : Theme
+              .of(context)
+              .primaryColor,
           bg: backgroundColor != null
               ? backgroundColor
               : Theme.of(context).backgroundColor,

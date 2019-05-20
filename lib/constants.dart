@@ -22,6 +22,7 @@ class Constants {
   static const textCleanFavs = 'Limpar Favoritos';
   static const textBlur = 'Borrado';
   static const textPickAccent = 'Alterar cor do tema';
+  static const textBack = 'Voltar';
   static final Map<String, dynamic> textNoTextAvailable = {
     'title': 'Não há nenhum texto nessa categoria',
     'img': 'https://i.imgur.com/yugoBNL.jpg',
@@ -165,4 +166,10 @@ class Constants {
   static const durationAnimationMedium = Duration(milliseconds: 400);
   static const durationAnimationLong = Duration(milliseconds: 600);
   static const durationAnimationRoute = Duration(milliseconds: 700);
+
+  // About
+  static const aboutMe = 'Sou um jovem escritor nascido em 2003, aluno do Colégio Santo Antônio desde 2016, que começou a escrever no final de 2018. Nunca gostei muito da arte da escrita, tampouco dominei-a, mas algo mudou ano passado. Com o projeto dos professores de redação, de criar um jornal para cada metade da turma, comecei a tomar gosto e a praticar a escrita, e posteriormente, com muito incentivo de um amigo, decidi publicar textos. Comecei a faze-lo por uma pagina no Instagram chamada @TextosDoKalil que eu criei no dia 28. Desde lá eu pensava sobre o quão retardado e ineficiente é isso, uma pagina para postar TEXTOS numa rede social projetada para FOTOS. Rapidamente as limitações se mostraram, e eram muitas: Um mecanismo ineficiente para compartilhar um texto rapidamente, não haver como colocar um título, formatar o texto, alterar a fonte, e não haver um modo escuro para cansar menos a vista, mas continuei usando. Continuei usando pois todos os meu amigos criadores de conteúdo autoral o utilizam: Músicos que postam suas composições junto com fotos, desenhistas que publicam maravilhosos desenhos, e escritores que expõem poemas ao lado de imagens de festas.';
+  static const aboutApp = 'Decidi então criar meu aplicativo, não só para aperfeiçoar a experiencia de consumidores de conteúdo original e de seus criadores, mas também porque já queria aprender a fazer aplicativos, e então iniciou a minha jornada em fevereiro: Baixei os programas necessários, tentei criar um aplicativo usando as ferramentas padrão e após algumas semanas, aprendi como usa-las efetivamente, mas não gostei da experiencia de uso. Para fazer qualquer alteração, era necessário muito esforço, e para visualiza-las, demorava mais um minuto até que elas apareçam no telefone. Percebi então que ou eu encontrava outra maneira, ou eu demoraria no mínimo um ano para fazer meu app dos sonhos.';
+  static const aboutFlutter = 'Me deparei então com o Flutter: Um novo kit de ferramentas para desenvolvimento de apps criado pela a Google. As mudanças são instantâneas, as funcionalidades são bem documentadas, a comunidade é bem ativa, há suporte para todas as funcionalidades essenciais, e no geral, é tudo mais conciso e eficiente. Há também outra grande vantagem: Os aplicativos criados com ele rodam em iPhones, aparelhos com Android, computadores e na web. Criei alguns aplicativos por mais umas semanas para aprender a utilizar o Flutter, e em março, em uma tarde eu tinha meu primeiro protótipo do app, que então acrescentei recursos, e embelezei a interface, até chegar no produto final que você está usando.';
+  static const aboutGreeting = 'Espero que você goste desse app criado com muito ❤, de um criador para outros.';
 }

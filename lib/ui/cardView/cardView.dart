@@ -61,14 +61,32 @@ class CardView extends StatelessWidget {
           } else {
             overrideTheme = light;
           }
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            darkTheme: Constants.themeDataDark,
-            theme: overrideTheme,
-            home: Scaffold(
-              body: CardContent(textContent: textContent, exit: exit),
-              drawer: TextAppDrawer(),
-            ),
+          return WillPopScope(
+            onWillPop: () async {
+              return exit([
+                Provider
+                    .of<FavoritesProvider>(context)
+                    .favoritesList,
+                Provider
+                    .of<ThemeProvider>(context)
+                    .info,
+                Provider
+                    .of<BlurProvider>(context)
+                    .blurSettings,
+                Provider
+                    .of<TextSizeProvider>(context)
+                    .textSize
+              ]);
+            },
+            child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                darkTheme: Constants.themeDataDark,
+                theme: overrideTheme,
+                home: Scaffold(
+                  body: CardContent(
+                      textContent: textContent, exitContext: context),
+                  drawer: TextAppDrawer(),
+                )),
           );
         },
       ),
@@ -78,12 +96,18 @@ class CardView extends StatelessWidget {
 
 class CardContent extends StatelessWidget {
   final Content textContent;
-  final Function exit;
+  final BuildContext exitContext;
 
-  CardContent({@required this.textContent, @required this.exit});
+  CardContent({@required this.textContent, @required this.exitContext});
 
   @override
   Widget build(BuildContext context) {
+    exit(List data) async {
+      HapticFeedback.selectionClick();
+      // Nasty
+      await Future.delayed(Duration(milliseconds: 1));
+      if (Navigator.of(context).canPop()) Navigator.pop(exitContext, data);
+    }
     return Stack(
       children: <Widget>[
         Hero(
@@ -145,7 +169,20 @@ class CardContent extends StatelessWidget {
               ],
             )),
         Positioned(
-          child: MenuButton(),
+          child: MenuButton(data: [
+            Provider
+                .of<FavoritesProvider>(context)
+                .favoritesList,
+            Provider
+                .of<ThemeProvider>(context)
+                .info,
+            Provider
+                .of<BlurProvider>(context)
+                .blurSettings,
+            Provider
+                .of<TextSizeProvider>(context)
+                .textSize
+          ], exitContext: exitContext),
           top: MediaQuery
               .of(context)
               .padding
