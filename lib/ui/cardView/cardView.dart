@@ -106,7 +106,7 @@ class CardContent extends StatelessWidget {
       HapticFeedback.selectionClick();
       // Nasty
       await Future.delayed(Duration(milliseconds: 1));
-      if (Navigator.of(context).canPop()) Navigator.pop(exitContext, data);
+      if (Navigator.of(exitContext).canPop()) Navigator.pop(exitContext, data);
     }
     return Stack(
       children: <Widget>[
