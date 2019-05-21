@@ -165,7 +165,7 @@ class Constants {
   static const durationAnimationShort = Duration(milliseconds: 200);
   static const durationAnimationMedium = Duration(milliseconds: 400);
   static const durationAnimationLong = Duration(milliseconds: 600);
-  static const durationAnimationRoute = Duration(milliseconds: 700);
+  static const durationAnimationRoute = Duration(milliseconds: 600);
 
   // About
   static const aboutMe = 'Sou um jovem escritor nascido em 2003, aluno do Colégio Santo Antônio desde 2016, que começou a escrever no final de 2018. Nunca gostei muito da arte da escrita, tampouco dominei-a, mas algo mudou ano passado. Com o projeto dos professores de redação, de criar um jornal para cada metade da turma, comecei a tomar gosto e a praticar a escrita, e posteriormente, com muito incentivo de um amigo, decidi publicar textos. Comecei a faze-lo por uma pagina no Instagram chamada @TextosDoKalil que eu criei no dia 28. Desde lá eu pensava sobre o quão retardado e ineficiente é isso, uma pagina para postar TEXTOS numa rede social projetada para FOTOS. Rapidamente as limitações se mostraram, e eram muitas: Um mecanismo ineficiente para compartilhar um texto rapidamente, não haver como colocar um título, formatar o texto, alterar a fonte, e não haver um modo escuro para cansar menos a vista, mas continuei usando. Continuei usando pois todos os meu amigos criadores de conteúdo autoral o utilizam: Músicos que postam suas composições junto com fotos, desenhistas que publicam maravilhosos desenhos, e escritores que expõem poemas ao lado de imagens de festas.';

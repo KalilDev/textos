@@ -12,7 +12,7 @@ class SlideRoute<T> extends MaterialPageRoute<T> {
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     Animation<double> curved =
-        new CurvedAnimation(parent: animation, curve: Curves.decelerate);
+    new CurvedAnimation(parent: animation, curve: Curves.easeInOut);
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(-1.0, 0.0),

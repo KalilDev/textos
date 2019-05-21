@@ -24,7 +24,7 @@ class ElevatedContainer extends StatelessWidget {
       this.transform,
       this.child,
       this.backgroundColor,
-      this.elevatedColor,
+        Color elevatedColor,
       @required this.elevation})
       : assert(margin == null || margin.isNonNegative),
         assert(padding == null || padding.isNonNegative),
@@ -33,18 +33,18 @@ class ElevatedContainer extends StatelessWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
+        this.elevatedColor = elevatedColor != null ? elevatedColor : Color(
+            0x50000000),
         super(key: key);
 
-  BoxDecoration materialCompliantElevation(
-      {Color ev, Color bg, Brightness brightness}) {
+  BoxDecoration materialCompliantElevation({Color bg, Brightness brightness}) {
     // 24.0dp is the highest elevation
     final fraction = elevation / 24.0;
 
     // Offset is a linear interpolation from 0 to 10 with the fraction
     final offset = 2 * fraction >= 0 ? 2 * fraction : 0.0;
     final shadowColor = offset < 0.04 ? Color.lerp(
-        Color(0x50000000), Colors.transparent, fraction / 0.04) : Color(
-        0x50000000);
+        elevatedColor, Colors.transparent, fraction / 0.04) : elevatedColor;
     if (brightness == Brightness.dark) {
       // Curve that approximates the material guidelines for dark mode
       double k;
@@ -69,7 +69,8 @@ class ElevatedContainer extends StatelessWidget {
       return BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: bg,
-          boxShadow: [
+          boxShadow: shadowColor != null || shadowColor == Colors.transparent
+              ? [
             BoxShadow(
                 color: shadowColor,
                 blurRadius: offset * 1.2,
@@ -86,7 +87,8 @@ class ElevatedContainer extends StatelessWidget {
                 color: shadowColor,
                 blurRadius: offset * 1.2,
                 offset: Offset(offset, -offset))
-          ]);
+          ]
+              : []);
     }
   }
 
@@ -94,11 +96,6 @@ class ElevatedContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: materialCompliantElevation(
-          ev: elevatedColor != null
-              ? elevatedColor
-              : Theme
-              .of(context)
-              .primaryColor,
           bg: backgroundColor != null
               ? backgroundColor
               : Theme.of(context).backgroundColor,

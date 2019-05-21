@@ -139,37 +139,40 @@ class _TagPageState extends State<_TagPage> {
             width: constraints.maxWidth,
             elevation: 16 * widget.info.position.abs(),
             margin: EdgeInsets.only(right: 20, top: 10, bottom: 10, left: 10.0),
-            child: Container(
-              margin: EdgeInsets.all(5.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ParallaxContainer(
-                    axis: Axis.vertical,
-                    position: -widget.info.position,
-                    translationFactor: 250,
-                    child: Text(
-                      widget.title + widget.authorName,
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .display1,
-                    ),
-                  ),
-                  ParallaxContainer(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: Container(
+                margin: EdgeInsets.all(5.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ParallaxContainer(
                       axis: Axis.vertical,
                       position: -widget.info.position,
-                      translationFactor: 200,
-                      child: Text(Constants.textFilter)),
-                  Container(
-                    margin: EdgeInsets.only(left: 1.0),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _buildButtons()),
-                  )
-                ],
+                      translationFactor: 100,
+                      child: Text(
+                        widget.title + widget.authorName,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .display1,
+                      ),
+                    ),
+                    ParallaxContainer(
+                        axis: Axis.vertical,
+                        position: -widget.info.position,
+                        translationFactor: 150,
+                        child: Text(Constants.textFilter)),
+                    Container(
+                      margin: EdgeInsets.only(left: 1.0),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: _buildButtons()),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -193,7 +196,8 @@ class _CustomButton extends StatelessWidget {
     return ParallaxContainer(
       axis: Axis.vertical,
       position: -position,
-      translationFactor: 150 + 20 * (index + 1),
+      translationFactor: 150 + 50 * (index + 1),
+      opacityFactor: -position.abs() + 1,
       child: AnimatedSwitcher(
           duration: Constants.durationAnimationMedium,
           switchOutCurve: Curves.easeInOut,

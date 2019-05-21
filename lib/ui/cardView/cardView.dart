@@ -116,16 +116,10 @@ class CardContent extends StatelessWidget {
                 img: textContent.imgUrl,
                 enabled: false,
                 key: Key('image' + textContent.textPath))),
-        DraggableScrollableSheet(
-            initialChildSize: 1.0,
-            maxChildSize: 1.0,
-            minChildSize: 0.8,
-            builder: (context, controller) =>
-                _TextWidget(
-                  controller: controller,
-                  exit: exit,
-                  textContent: textContent,
-                )),
+        _TextWidget(
+          exit: exit,
+          textContent: textContent,
+        ),
         Align(
           alignment: Alignment.bottomCenter,
           child: LayoutBuilder(
@@ -195,11 +189,10 @@ class CardContent extends StatelessWidget {
 }
 
 class _TextWidget extends StatefulWidget {
-  final ScrollController controller;
   final Function exit;
   final Content textContent;
 
-  _TextWidget({@required this.controller,
+  _TextWidget({
     @required this.exit,
     @required this.textContent});
 
@@ -209,7 +202,6 @@ class _TextWidget extends StatefulWidget {
 
 class __TextWidgetState extends State<_TextWidget>
     with TickerProviderStateMixin {
-  bool _hasMoved;
   double _textSize;
   AnimationController _textSizeController;
   Animation<double> _textSizeAnim;
@@ -233,10 +225,6 @@ class __TextWidgetState extends State<_TextWidget>
 
   @override
   void initState() {
-    _hasMoved = false;
-    widget.controller.addListener(() {
-      _hasMoved = true;
-    });
     _textSizeController = new AnimationController(
         vsync: this, duration: Constants.durationAnimationShort);
     _textSizeAnim = new CurvedAnimation(
@@ -257,12 +245,6 @@ class __TextWidgetState extends State<_TextWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.controller.hasClients &&
-        widget.controller.position.userScrollDirection ==
-            ScrollDirection.idle &&
-        widget.controller.offset <=
-            widget.controller.position.minScrollExtent &&
-        _hasMoved) pop(context);
     if (Provider
         .of<TextSizeProvider>(context)
         .textSize != _textSize) {
@@ -294,42 +276,52 @@ class __TextWidgetState extends State<_TextWidget>
                       Expanded(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20.0),
-                          child: SingleChildScrollView(
-                            controller: widget.controller,
-                            child: Column(children: <Widget>[
-                              Text(widget.textContent.title,
-                                  textAlign: TextAlign.center,
-                                  style: textTheme.display1),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              widget.textContent.hasText
-                                  ? RichText(
-                                  text: (TextSpan(
-                                      children: widget.textContent
-                                          .formattedText(
-                                          textTheme.body1.copyWith(
-                                              fontSize: Tween(
-                                                  begin: _textSize,
-                                                  end: Provider
-                                                      .of<
-                                                      TextSizeProvider>(
-                                                      context)
-                                                      .textSize)
-                                                  .animate(
-                                                  _textSizeAnim)
-                                                  .value *
-                                                  4.5)))))
-                                  : NullWidget(),
-                              SizedBox(
-                                  height: 55,
-                                  child: Center(
-                                      child: Text(widget.textContent.date,
-                                          style: textTheme.title))),
-                              widget.textContent.hasMusic
-                                  ? SizedBox(height: 55)
-                                  : NullWidget(),
-                            ]),
+                          child: RefreshIndicator(
+                            color: Theme
+                                .of(context)
+                                .backgroundColor,
+                            backgroundColor: Theme
+                                .of(context)
+                                .backgroundColor,
+                            onRefresh: () async {
+                              pop(context);
+                            },
+                            child: SingleChildScrollView(
+                              child: Column(children: <Widget>[
+                                Text(widget.textContent.title,
+                                    textAlign: TextAlign.center,
+                                    style: textTheme.display1),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                widget.textContent.hasText
+                                    ? RichText(
+                                    text: (TextSpan(
+                                        children: widget.textContent
+                                            .formattedText(
+                                            textTheme.body1.copyWith(
+                                                fontSize: Tween(
+                                                    begin: _textSize,
+                                                    end: Provider
+                                                        .of<
+                                                        TextSizeProvider>(
+                                                        context)
+                                                        .textSize)
+                                                    .animate(
+                                                    _textSizeAnim)
+                                                    .value *
+                                                    4.5)))))
+                                    : NullWidget(),
+                                SizedBox(
+                                    height: 55,
+                                    child: Center(
+                                        child: Text(widget.textContent.date,
+                                            style: textTheme.title))),
+                                widget.textContent.hasMusic
+                                    ? SizedBox(height: 55)
+                                    : NullWidget(),
+                              ]),
+                            ),
                           ),
                         ),
                       ),

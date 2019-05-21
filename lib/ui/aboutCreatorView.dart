@@ -93,8 +93,7 @@ class AboutCreator extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return Stack(
       children: <Widget>[
-        ElevatedContainer(
-            elevation: 8.0,
+        Container(
             margin: EdgeInsets.fromLTRB(
                 10.0, MediaQuery.of(context).padding.top, 10.0, 10.0),
             child: Column(
@@ -102,6 +101,9 @@ class AboutCreator extends StatelessWidget {
               children: <Widget>[
                 ElevatedContainer(
                   elevation: 12.0,
+                  elevatedColor: Theme
+                      .of(context)
+                      .accentColor,
                   margin: EdgeInsets.all(5.0),
                   padding: EdgeInsets.all(5.0),
                   child: Row(
