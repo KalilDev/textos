@@ -5,9 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
-import 'package:textos/src/providers.dart';
 
 enum PlayerState { stopped, playing, paused }
 
@@ -15,11 +13,13 @@ class PlaybackButton extends StatefulWidget {
   final String url;
   final bool isLocal;
   final PlayerMode mode;
+  final bool isBlurred;
 
   PlaybackButton(
       {@required this.url,
       this.isLocal = false,
-      this.mode = PlayerMode.MEDIA_PLAYER});
+        this.mode = PlayerMode.MEDIA_PLAYER,
+        @required this.isBlurred});
 
   @override
   State<StatefulWidget> createState() {
@@ -95,16 +95,12 @@ class _PlaybackButtonState extends State<PlaybackButton>
           elevation: 16.0,
           child: BlurOverlay(
             radius: 80,
-            enabled: Provider
-                .of<BlurProvider>(context)
-                .buttonsBlur,
+            enabled: widget.isBlurred,
             child: Container(
               height: 48,
               decoration: BoxDecoration(
                   gradient: LinearGradient(
-                      colors: Provider
-                          .of<BlurProvider>(context)
-                          .buttonsBlur
+                      colors: widget.isBlurred
                           ? [
                         Colors.red.shade900.withAlpha(150),
                         Theme

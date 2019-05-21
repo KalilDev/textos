@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/aboutCreatorView.dart';
-import 'package:textos/ui/textSizeButtons.dart';
+import 'package:textos/ui/incDecButtons.dart';
 
 class SettingsDrawer extends StatefulWidget {
   @override
@@ -90,8 +90,16 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             width: 96,
             child: Row(
               children: <Widget>[
-                TextDecrease(),
-                TextIncrease(),
+                DecreaseButton(value: Provider
+                    .of<TextSizeProvider>(context)
+                    .textSize,
+                  onDecrease: () =>
+                      Provider.of<TextSizeProvider>(context).decrease(),),
+                IncreaseButton(value: Provider
+                    .of<TextSizeProvider>(context)
+                    .textSize,
+                  onIncrease: () =>
+                      Provider.of<TextSizeProvider>(context).increase(),),
               ],
             ),
           )),

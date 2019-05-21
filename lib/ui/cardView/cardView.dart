@@ -9,10 +9,10 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/cardView/favoriteFAB.dart';
+import 'package:textos/ui/cardView/biStateFAB.dart';
 import 'package:textos/ui/cardView/playbackButton.dart';
 import 'package:textos/ui/drawer/drawer.dart';
-import 'package:textos/ui/textSizeButtons.dart';
+import 'package:textos/ui/incDecButtons.dart';
 
 class CardView extends StatelessWidget {
   const CardView({Key key,
@@ -143,20 +143,43 @@ class CardContent extends StatelessWidget {
                       textContent.hasText
                           ? Container(
                           margin: EdgeInsets.only(left: 5.0),
-                          child: TextSizeButton())
+                          child: IncDecButton(
+                              isBlurred: Provider
+                                  .of<BlurProvider>(context)
+                                  .buttonsBlur,
+                              onDecrease: () =>
+                                  Provider.of<TextSizeProvider>(context)
+                                      .decrease(),
+                              onIncrease: () =>
+                                  Provider.of<TextSizeProvider>(context)
+                                      .increase(),
+                              value: Provider
+                                  .of<TextSizeProvider>(context)
+                                  .textSize))
                           : SizedBox(),
                       textContent.hasMusic
                           ? Expanded(
                           child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 5.0),
                               child:
-                              PlaybackButton(url: textContent.music)))
+                              PlaybackButton(
+                                url: textContent.music, isBlurred: Provider
+                                  .of<BlurProvider>(context)
+                                  .buttonsBlur,)))
                           : Spacer(),
                       Container(
                         margin: EdgeInsets.only(right: 5.0),
-                        child: FavoriteFAB(
-                            title: textContent.title,
-                            path: textContent.textPath),
+                        child: BiStateFAB(
+                          onPressed: () =>
+                              Provider.of<FavoritesProvider>(context).toggle(
+                                  textContent.title + ';' +
+                                      textContent.textPath),
+                          isBlurred: Provider
+                              .of<BlurProvider>(context)
+                              .buttonsBlur,
+                          isEnabled: Provider.of<FavoritesProvider>(context)
+                              .isFavorite(
+                              textContent.title + ';' + textContent.textPath),),
                       ),
                     ],
                   ),
