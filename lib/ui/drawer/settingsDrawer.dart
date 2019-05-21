@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/aboutCreatorView.dart';
-import 'package:textos/ui/incDecButtons.dart';
 
 class SettingsDrawer extends StatefulWidget {
   @override

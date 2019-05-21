@@ -9,10 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/cardView/biStateFAB.dart';
-import 'package:textos/ui/cardView/playbackButton.dart';
 import 'package:textos/ui/drawer/drawer.dart';
-import 'package:textos/ui/incDecButtons.dart';
 
 class CardView extends StatelessWidget {
   const CardView({Key key,
