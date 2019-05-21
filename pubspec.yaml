@@ -31,6 +31,8 @@ dependencies:
   transformer_page_view:
       git:
         url: git://github.com/kalildev/transformer_page_view.git
+  kalil_widgets:
+      path: ../kalil_widgets
 
 dev_dependencies:
   flutter_test:

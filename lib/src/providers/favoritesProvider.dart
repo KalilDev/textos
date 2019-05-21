@@ -4,13 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView/cardView.dart';
-import 'package:textos/ui/widgets.dart';
 
 class FavoritesProvider with ChangeNotifier {
   Set<String> _favoritesSet;

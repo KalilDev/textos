@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/widgets.dart';
 
 class CreatorView extends StatelessWidget {
   const CreatorView(
@@ -94,8 +94,10 @@ class AboutCreator extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Container(
-            margin: EdgeInsets.fromLTRB(
-                10.0, MediaQuery.of(context).padding.top, 10.0, 10.0),
+            margin: EdgeInsets.only(top: MediaQuery
+                .of(context)
+                .padding
+                .top),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[

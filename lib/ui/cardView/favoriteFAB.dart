@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/widgets.dart';
 
 class FavoriteFAB extends StatefulWidget {
   final String title;

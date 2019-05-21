@@ -4,10 +4,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/widgets.dart';
 
 enum PlayerState { stopped, playing, paused }
 

@@ -17,12 +17,10 @@ class Constants {
   static const textTooltipTextSizeLess = 'Diminuir tamanho do texto';
   static const textTooltipTextSizePlus = 'Aumentar tamanho do texto';
   static const textTooltipFav = 'Adicionar aos favoritos';
-  static const textTooltipDrawer = 'Abrir gaveta';
   static const textText = 'Texto';
   static const textCleanFavs = 'Limpar Favoritos';
   static const textBlur = 'Borrado';
   static const textPickAccent = 'Alterar cor do tema';
-  static const textBack = 'Voltar';
   static const textsMisc = 'Miscelânea';
   static final Map<String, dynamic> textNoTextAvailable = {
     'title': 'Não há nenhum texto nessa categoria',

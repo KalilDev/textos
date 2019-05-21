@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
@@ -9,7 +10,6 @@ import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView/cardView.dart';
 import 'package:textos/ui/slideshowView/favoritesCount.dart';
 import 'package:textos/ui/slideshowView/tagPage.dart';
-import 'package:textos/ui/widgets.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
 class StoryPages extends StatefulWidget {
@@ -188,7 +188,7 @@ class _StoryPage extends StatelessWidget {
                         Provider
                             .of<BlurProvider>(context)
                             .buttonsBlur))
-                    : NullWidget())
+                    : SizedBox())
           ],
         ),
         onTap: () async {

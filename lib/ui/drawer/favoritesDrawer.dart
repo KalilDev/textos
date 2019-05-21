@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/widgets.dart';
 
 class FavoritesDrawer extends StatelessWidget {
   Widget buildFavoritesItem(BuildContext context, String favorite) {
@@ -106,7 +106,7 @@ class FavoritesDrawer extends StatelessWidget {
           separatorBuilder: (BuildContext context, int index) {
             return (index == 0 || !Provider
                 .of<BlurProvider>(context)
-                .drawerBlur) ? NullWidget() : Divider();
+                .drawerBlur) ? SizedBox() : Divider();
           }
       ),
     );

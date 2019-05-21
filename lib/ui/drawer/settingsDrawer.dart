@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart';
+import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/aboutCreatorView.dart';
-import 'package:textos/ui/widgets.dart';
+import 'package:textos/ui/textSizeButtons.dart';
 
 class SettingsDrawer extends StatefulWidget {
   @override

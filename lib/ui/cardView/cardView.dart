@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
@@ -11,7 +12,7 @@ import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView/favoriteFAB.dart';
 import 'package:textos/ui/cardView/playbackButton.dart';
 import 'package:textos/ui/drawer/drawer.dart';
-import 'package:textos/ui/widgets.dart';
+import 'package:textos/ui/textSizeButtons.dart';
 
 class CardView extends StatelessWidget {
   const CardView({Key key,
@@ -143,7 +144,7 @@ class CardContent extends StatelessWidget {
                           ? Container(
                           margin: EdgeInsets.only(left: 5.0),
                           child: TextSizeButton())
-                          : NullWidget(),
+                          : SizedBox(),
                       textContent.hasMusic
                           ? Expanded(
                           child: Container(
@@ -311,7 +312,7 @@ class __TextWidgetState extends State<_TextWidget>
                                                     _textSizeAnim)
                                                     .value *
                                                     4.5)))))
-                                    : NullWidget(),
+                                    : SizedBox(),
                                 SizedBox(
                                     height: 55,
                                     child: Center(
@@ -319,7 +320,7 @@ class __TextWidgetState extends State<_TextWidget>
                                             style: textTheme.title))),
                                 widget.textContent.hasMusic
                                     ? SizedBox(height: 55)
-                                    : NullWidget(),
+                                    : SizedBox(),
                               ]),
                             ),
                           ),
