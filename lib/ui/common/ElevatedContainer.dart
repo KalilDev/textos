@@ -40,22 +40,31 @@ class ElevatedContainer extends StatelessWidget {
     // 24.0dp is the highest elevation
     final fraction = elevation / 24.0;
 
-    // Linear interpolate the BG with the elevation color
-    final shadowColor = Color.lerp(bg, ev, fraction);
-
     // Offset is a linear interpolation from 0 to 10 with the fraction
-    final offset = 10 * fraction >= 0 ? 10 * fraction : 0.0;
+    final offset = 2 * fraction >= 0 ? 2 * fraction : 0.0;
+    final shadowColor = offset < 0.04 ? Color.lerp(
+        Color(0x50000000), Colors.transparent, fraction / 0.04) : Color(
+        0x50000000);
     if (brightness == Brightness.dark) {
-      // 16% of 255 white is the highest elevation on dark mode
-      final maxAlpha = 16 * 2.55;
-
       // Curve that approximates the material guidelines for dark mode
-      const k = 2.0;
-      final alpha = (1 - math.pow(math.e, -k * fraction * 2)) * maxAlpha;
+      double k;
+      double adjust = 0;
+      if (3.5 > elevation) {
+        k = -6;
+        if (elevation < 2.5 && elevation >= 1.0) adjust = 1;
+      } else if (3.5 < elevation && elevation < 7.0) {
+        k = -5;
+      } else if (elevation > 7.0) {
+        k = -4;
+      }
+      final double toSixteen = 16 / (24 * (1 - math.pow(math.e, k * 1)));
+      final alpha = (24 * (1 - math.pow(math.e, k * elevation / 24)) *
+          toSixteen) + adjust;
 
       return BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Color.alphaBlend(Colors.white.withAlpha(alpha.round()), bg));
+          color: Color.alphaBlend(
+              Colors.white.withAlpha((alpha * 2.55).round()), bg));
     } else {
       return BoxDecoration(
           borderRadius: BorderRadius.circular(20),
@@ -64,7 +73,19 @@ class ElevatedContainer extends StatelessWidget {
             BoxShadow(
                 color: shadowColor,
                 blurRadius: offset * 1.2,
-                offset: Offset(offset, offset))
+                offset: Offset(offset, offset)),
+            BoxShadow(
+                color: shadowColor,
+                blurRadius: offset * 1.2,
+                offset: Offset(-offset, -offset)),
+            BoxShadow(
+                color: shadowColor,
+                blurRadius: offset * 1.2,
+                offset: Offset(-offset, offset)),
+            BoxShadow(
+                color: shadowColor,
+                blurRadius: offset * 1.2,
+                offset: Offset(offset, -offset))
           ]);
     }
   }

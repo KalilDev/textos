@@ -138,7 +138,7 @@ class _TagPageState extends State<_TagPage> {
             height: constraints.maxHeight,
             width: constraints.maxWidth,
             elevation: 16 * widget.info.position.abs(),
-            margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
+            margin: EdgeInsets.only(right: 20, top: 10, bottom: 10, left: 10.0),
             child: Container(
               margin: EdgeInsets.all(5.0),
               child: Column(
