@@ -20,7 +20,7 @@ class FavoritesDrawer extends StatelessWidget {
               blankSpace: 25,
               pauseAfterRound: Duration(seconds: 1),
               velocity: 60.0),
-          height: 50.0);
+          height: 60.0);
     } else {
       txt = Text(
         favoriteTitle,
@@ -28,6 +28,7 @@ class FavoritesDrawer extends StatelessWidget {
             .of(context)
             .textTheme
             .display2,
+        textAlign: TextAlign.center,
       );
     }
     return Dismissible(
@@ -53,11 +54,37 @@ class FavoritesDrawer extends StatelessWidget {
         ),
         onDismissed: (direction) =>
             Provider.of<FavoritesProvider>(context).remove(favorite),
-        child: ListTile(
-            title: txt,
-            onTap: () {
-              Provider.of<FavoritesProvider>(context).open(favorite, context);
-            }));
+        child: LayoutBuilder(
+          builder: (context, constraints) =>
+          Provider
+              .of<BlurProvider>(context)
+              .drawerBlur
+              ? ListTile(
+              title: txt,
+              onTap: () {
+                Provider.of<FavoritesProvider>(context).open(favorite, context);
+              })
+              : ElevatedContainer(
+            elevation: 4.0,
+            width: constraints.maxWidth,
+            margin: EdgeInsets.fromLTRB(3, 6, 3, 3),
+            borderRadius: BorderRadius.circular(10.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                    child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 7.0),
+                        child: txt),
+                    onTap: () {
+                      Provider.of<FavoritesProvider>(context).open(
+                          favorite, context);
+                    }),
+              ),
+            ),
+          ),
+        ));
   }
 
   @override
@@ -76,8 +103,11 @@ class FavoritesDrawer extends StatelessWidget {
             Provider
                 .of<FavoritesProvider>(context)
                 .favoritesList[index - 1]),
-        separatorBuilder: (BuildContext context, int index) =>
-        index == 0 ? NullWidget() : Divider(),
+          separatorBuilder: (BuildContext context, int index) {
+            return (index == 0 || !Provider
+                .of<BlurProvider>(context)
+                .drawerBlur) ? NullWidget() : Divider();
+          }
       ),
     );
   }

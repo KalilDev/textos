@@ -12,6 +12,7 @@ class ElevatedContainer extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry margin;
   final Matrix4 transform;
+  final BorderRadius borderRadius;
 
   ElevatedContainer(
       {Key key,
@@ -24,6 +25,7 @@ class ElevatedContainer extends StatelessWidget {
       this.transform,
       this.child,
       this.backgroundColor,
+        BorderRadius borderRadius,
         Color elevatedColor,
       @required this.elevation})
       : assert(margin == null || margin.isNonNegative),
@@ -35,16 +37,11 @@ class ElevatedContainer extends StatelessWidget {
             : constraints,
         this.elevatedColor = elevatedColor != null ? elevatedColor : Color(
             0x50000000),
+        this.borderRadius = borderRadius != null ? borderRadius : BorderRadius
+            .circular(20.0),
         super(key: key);
 
   BoxDecoration materialCompliantElevation({Color bg, Brightness brightness}) {
-    // 24.0dp is the highest elevation
-    final fraction = elevation / 24.0;
-
-    // Offset is a linear interpolation from 0 to 10 with the fraction
-    final offset = 2 * fraction >= 0 ? 2 * fraction : 0.0;
-    final shadowColor = offset < 0.04 ? Color.lerp(
-        elevatedColor, Colors.transparent, fraction / 0.04) : elevatedColor;
     if (brightness == Brightness.dark) {
       // Curve that approximates the material guidelines for dark mode
       double k;
@@ -67,45 +64,36 @@ class ElevatedContainer extends StatelessWidget {
               Colors.white.withAlpha((alpha * 2.55).round()), bg));
     } else {
       return BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: bg,
-          boxShadow: shadowColor != null || shadowColor == Colors.transparent
-              ? [
-            BoxShadow(
-                color: shadowColor,
-                blurRadius: offset * 1.2,
-                offset: Offset(offset, offset)),
-            BoxShadow(
-                color: shadowColor,
-                blurRadius: offset * 1.2,
-                offset: Offset(-offset, -offset)),
-            BoxShadow(
-                color: shadowColor,
-                blurRadius: offset * 1.2,
-                offset: Offset(-offset, offset)),
-            BoxShadow(
-                color: shadowColor,
-                blurRadius: offset * 1.2,
-                offset: Offset(offset, -offset))
-          ]
-              : []);
+          borderRadius: borderRadius,
+          color: bg);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: materialCompliantElevation(
-          bg: backgroundColor != null
-              ? backgroundColor
-              : Theme.of(context).backgroundColor,
-          brightness: Theme.of(context).brightness),
       constraints: constraints,
       alignment: alignment,
-      padding: padding,
-      margin: margin,
       transform: transform,
-      child: child,
+      margin: margin,
+      child: Material(
+        shape: RoundedRectangleBorder(borderRadius: borderRadius),
+        color: Colors.transparent,
+        elevation: elevation,
+        child: Container(
+          decoration: materialCompliantElevation(
+              bg: backgroundColor != null
+                  ? backgroundColor
+                  : Theme
+                  .of(context)
+                  .backgroundColor,
+              brightness: Theme
+                  .of(context)
+                  .brightness),
+          padding: padding,
+          child: child,
+        ),
+      ),
     );
   }
 }
