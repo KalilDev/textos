@@ -232,7 +232,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     ];
   }
 
-  Widget buildCategory(List<Widget> children, {bool isBlurred}) {
+  Widget buildCategory(List<Widget> children,
+      {bool isBlurred, bool isFirst = false}) {
     List<Widget> spacedChildren = [];
     spacedChildren.add(Divider());
     spacedChildren.addAll(children);
@@ -242,7 +243,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
         switchInCurve: Curves.easeInOut,
         transitionBuilder: (child, animation) =>
             ScaleTransition(
-              scale: Tween(begin: 0.7, end: 1.0).animate(animation),
+              scale: Tween(begin: 0.9, end: 1.0).animate(animation),
               child: FadeTransition(
                 opacity: Tween(begin: 0.0, end: 1.0).animate(animation),
                 child: child,
@@ -252,7 +253,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             ? Column(children: spacedChildren)
             : ElevatedContainer(
             elevation: 4.0,
-            margin: EdgeInsets.fromLTRB(3, 6, 3, 3),
+            margin: isFirst ? EdgeInsets.fromLTRB(3, 12.5, 3, 3) : EdgeInsets
+                .fromLTRB(3, 5, 3, 3),
             padding: EdgeInsets.symmetric(vertical: 4.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20.0),
@@ -282,7 +284,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                   })))
           : ListView(
         children: <Widget>[
-          buildCategory(themeWidgets(), isBlurred: isBlurred),
+          buildCategory(themeWidgets(), isBlurred: isBlurred, isFirst: true),
           buildCategory(textWidgets(), isBlurred: isBlurred),
           buildCategory(favoriteWidgets(), isBlurred: isBlurred),
           buildCategory(blurWidgets(), isBlurred: isBlurred),

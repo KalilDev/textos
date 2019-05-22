@@ -148,7 +148,7 @@ class _StoryPage extends StatelessWidget {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20)),
                             margin: EdgeInsets.all(12.5),
-                            child: BlurOverlay(
+                            child: BlurOverlay.roundedRect(
                                 radius: 15,
                                 enabled:
                                 Provider

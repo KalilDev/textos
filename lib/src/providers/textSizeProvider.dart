@@ -4,8 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TextSizeProvider with ChangeNotifier {
   double _textSize;
-  bool increased = false;
-  bool decreased = false;
 
   TextSizeProvider(double textSize) {
     _textSize = textSize;
@@ -16,7 +14,6 @@ class TextSizeProvider with ChangeNotifier {
   increase() {
     HapticFeedback.selectionClick();
     _textSize = _textSize < 6.4 ? _textSize = _textSize + 0.5 : _textSize;
-    increased = true;
     settingsSync();
     notifyListeners();
   }
@@ -24,7 +21,6 @@ class TextSizeProvider with ChangeNotifier {
   decrease() {
     HapticFeedback.selectionClick();
     _textSize = _textSize > 3.1 ? _textSize = _textSize - 0.5 : _textSize;
-    decreased = true;
     settingsSync();
     notifyListeners();
   }

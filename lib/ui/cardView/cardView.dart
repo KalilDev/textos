@@ -286,7 +286,7 @@ class __TextWidgetState extends State<_TextWidget>
                 padding: EdgeInsets.all(5),
                 decoration:
                 BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                child: BlurOverlay(
+                child: BlurOverlay.roundedRect(
                   enabled: Provider
                       .of<BlurProvider>(context)
                       .textsBlur,

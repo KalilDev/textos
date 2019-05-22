@@ -23,9 +23,9 @@ class FavoritesCount extends StatelessWidget {
         Material(
           color: Colors.transparent,
           elevation: 16.0,
-          child: BlurOverlay(
+          child: BlurOverlay.roundedRect(
             enabled: blurEnabled,
-            radius: 90,
+            radius: 80,
             color: Colors.transparent,
             child: Consumer<FavoritesProvider>(
               builder: (context, provider, _) =>
