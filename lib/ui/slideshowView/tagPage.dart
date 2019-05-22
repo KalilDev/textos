@@ -197,7 +197,7 @@ class _CustomButton extends StatelessWidget {
       axis: Axis.vertical,
       position: -position,
       translationFactor: 150 + 50 * (index + 1),
-      opacityFactor: -position.abs() + 1,
+      opacityFactor: -position.abs() * 1.2 + 1,
       child: AnimatedSwitcher(
           duration: Constants.durationAnimationMedium,
           switchOutCurve: Curves.easeInOut,

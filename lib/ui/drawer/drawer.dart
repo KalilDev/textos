@@ -81,23 +81,25 @@ class TextAppDrawerState extends State<TextAppDrawer>
                     children: <Widget>[
                       Column(
                         children: <Widget>[
-                          Center(
-                            child: Stack(
-                              children: <Widget>[
-                                SlideTransition(
+                          Stack(
+                            children: <Widget>[
+                              Center(
+                                child: SlideTransition(
                                     position: _toBottomAnimation,
                                     child: Text(Constants.textConfigs,
                                         style: textTheme.subhead.copyWith(
                                             color: textTheme.subhead.color
                                                 .withAlpha(190)))),
-                                SlideTransition(
+                              ),
+                              Center(
+                                child: SlideTransition(
                                     position: _toTopAnimation,
                                     child: Text(Constants.textFavs,
                                         style: textTheme.subhead.copyWith(
                                             color: textTheme.subhead.color
                                                 .withAlpha(190)))),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           Expanded(
                               child: Stack(

@@ -98,7 +98,9 @@ class FavoritesDrawer extends StatelessWidget {
             .length + 1,
         itemBuilder: (BuildContext context, int index) =>
         index == 0
-            ? Divider()
+            ? Provider
+            .of<BlurProvider>(context)
+            .drawerBlur ? Divider() : SizedBox(height: 12.5)
             : buildFavoritesItem(context,
             Provider
                 .of<FavoritesProvider>(context)
