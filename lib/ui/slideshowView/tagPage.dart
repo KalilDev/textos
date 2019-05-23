@@ -34,13 +34,12 @@ class _TagPagesState extends State<TagPages>
   }
 
   @override
-
   List<Map<String, dynamic>> _metadatas;
 
   jump(int page) async {
     // Dirty
-    Future.delayed(Duration(milliseconds: 1)).then((_) =>
-        _tagIndexController.move(page, animation: false));
+    Future.delayed(Duration(milliseconds: 1))
+        .then((_) => _tagIndexController.move(page, animation: false));
   }
 
   @override
@@ -54,26 +53,26 @@ class _TagPagesState extends State<TagPages>
           _metadatas = [Constants.placeholderTagMetadata];
         return TransformerPageView(
           controller: _tagIndexController,
-            itemCount: _metadatas.length,
-            scrollDirection: Axis.vertical,
+          itemCount: _metadatas.length,
+          scrollDirection: Axis.vertical,
           viewportFraction: 0.90,
           curve: Curves.decelerate,
           physics: BouncingScrollPhysics(),
           onPageChanged: (page) {
             final provider = Provider.of<QueryProvider>(context);
-              provider.currentTagPage = page;
-              provider.updateStream(
-                  {'collection': _metadatas[page]['collection']});
-              HapticFeedback.lightImpact();
+            provider.currentTagPage = page;
+            provider
+                .updateStream({'collection': _metadatas[page]['collection']});
+            HapticFeedback.lightImpact();
           },
           transformer: new PageTransformerBuilder(builder: (widget, info) {
             final data = _metadatas[info.index];
-              return _TagPage(
-                info: info,
-                tags: data['tags'],
-                title: data['title'],
-                authorName: data['authorName'],
-              );
+            return _TagPage(
+              info: info,
+              tags: data['tags'],
+              title: data['title'],
+              authorName: data['authorName'],
+            );
           }),
         );
       },
@@ -100,22 +99,24 @@ class _TagPageState extends State<_TagPage> {
   List<Widget> _buildButtons() {
     List<Widget> widgets = [];
     widgets.add(_CustomButton(
-        isCurrent:
-        widget.info.index == Provider
-            .of<QueryProvider>(context)
-            .currentTagPage,
+      isCurrent: widget.info.index ==
+          Provider
+              .of<QueryProvider>(context)
+              .currentTagPage,
       tag: Constants.textAllTag,
       index: 0.0,
-      position: widget.info.position,));
+      position: widget.info.position,
+    ));
     widget.tags.forEach((tag) =>
         widgets.add(_CustomButton(
-            isCurrent:
-            widget.info.index == Provider
-                .of<QueryProvider>(context)
-                .currentTagPage,
+          isCurrent: widget.info.index ==
+              Provider
+                  .of<QueryProvider>(context)
+                  .currentTagPage,
           tag: tag,
           index: widget.tags.indexOf(tag) + 1.0,
-          position: widget.info.position,)));
+          position: widget.info.position,
+        )));
     return widgets;
   }
 
@@ -144,7 +145,7 @@ class _TagPageState extends State<_TagPage> {
                         widget.title + widget.authorName,
                         style: Theme
                             .of(context)
-                            .textTheme
+                            .accentTextTheme
                             .display1,
                       ),
                     ),
@@ -152,7 +153,23 @@ class _TagPageState extends State<_TagPage> {
                         axis: Axis.vertical,
                         position: -widget.info.position,
                         translationFactor: 150,
-                        child: Text(Constants.textFilter)),
+                        child: Text(Constants.textFilter,
+                            style: Theme
+                                .of(context)
+                                .accentTextTheme
+                                .body1
+                                .copyWith(
+                              color: Color.alphaBlend(
+                                  Theme
+                                      .of(context)
+                                      .accentTextTheme
+                                      .body1
+                                      .color
+                                      .withAlpha(175),
+                                  Theme
+                                      .of(context)
+                                      .backgroundColor),
+                            ))),
                     Container(
                       margin: EdgeInsets.only(left: 1.0),
                       child: Column(
@@ -170,8 +187,11 @@ class _TagPageState extends State<_TagPage> {
 }
 
 class _CustomButton extends StatelessWidget {
-  const _CustomButton(
-      {Key key, @required this.tag, @required this.isCurrent, @required this.position, @required this.index})
+  const _CustomButton({Key key,
+    @required this.tag,
+    @required this.isCurrent,
+    @required this.position,
+    @required this.index})
       : super(key: key);
 
   final String tag;
@@ -208,17 +228,21 @@ class _CustomButton extends StatelessWidget {
                 '#' + tag,
                 style: Theme
                     .of(context)
-                    .textTheme
+                    .accentTextTheme
                     .button
-                    .copyWith(color: Theme
-                    .of(context)
-                    .primaryColorBrightness != Brightness.dark ? Theme
-                    .of(context)
-                    .backgroundColor : Theme
-                    .of(context)
-                    .textTheme
-                    .display1
-                    .color),
+                    .copyWith(
+                    color: Theme
+                        .of(context)
+                        .primaryColorBrightness !=
+                        Brightness.dark
+                        ? Theme
+                        .of(context)
+                        .backgroundColor
+                        : Theme
+                        .of(context)
+                        .accentTextTheme
+                        .display1
+                        .color),
               ),
               onPressed: () {
                 HapticFeedback.selectionClick();
@@ -233,7 +257,7 @@ class _CustomButton extends StatelessWidget {
                 '#' + tag,
                 style: Theme
                     .of(context)
-                    .textTheme
+                    .accentTextTheme
                     .button
                     .copyWith(
                     color: Color.alphaBlend(
@@ -243,9 +267,10 @@ class _CustomButton extends StatelessWidget {
                             .withAlpha(120),
                         Theme
                             .of(context)
-                            .textTheme
+                            .accentTextTheme
                             .button
-                            .color)),
+                            .color)
+                        .withAlpha(175)),
               ),
               onPressed: () {
                 HapticFeedback.selectionClick();

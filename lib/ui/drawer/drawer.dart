@@ -63,6 +63,9 @@ class TextAppDrawerState extends State<TextAppDrawer>
     final textTheme = Theme
         .of(context)
         .textTheme;
+    final accentTextTheme = Theme
+        .of(context)
+        .accentTextTheme;
     return AnimatedTheme(
       duration: Constants.durationAnimationMedium,
       data: Provider
@@ -87,16 +90,16 @@ class TextAppDrawerState extends State<TextAppDrawer>
                                 child: SlideTransition(
                                     position: _toBottomAnimation,
                                     child: Text(Constants.textConfigs,
-                                        style: textTheme.subhead.copyWith(
-                                            color: textTheme.subhead.color
+                                        style: accentTextTheme.subhead.copyWith(
+                                            color: accentTextTheme.subhead.color
                                                 .withAlpha(190)))),
                               ),
                               Center(
                                 child: SlideTransition(
                                     position: _toTopAnimation,
                                     child: Text(Constants.textFavs,
-                                        style: textTheme.subhead.copyWith(
-                                            color: textTheme.subhead.color
+                                        style: accentTextTheme.subhead.copyWith(
+                                            color: accentTextTheme.subhead.color
                                                 .withAlpha(190)))),
                               ),
                             ],

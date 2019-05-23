@@ -76,6 +76,9 @@ class AboutCreator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final accentTextTheme = Theme
+        .of(context)
+        .accentTextTheme;
     return Stack(
       children: <Widget>[
         Container(
@@ -118,10 +121,12 @@ class AboutCreator extends StatelessWidget {
                           children: <Widget>[
                             Center(
                                 child: Text('Pedro Kalil',
-                                    style: textTheme.display2)),
+                                  style: accentTextTheme.display1,
+                                  textAlign: TextAlign.center,)),
                             Center(
                                 child: Text('Desenvolvedor do App',
-                                    style: textTheme.subtitle))
+                                  style: accentTextTheme.subtitle,
+                                  textAlign: TextAlign.center,))
                           ],
                         ),
                       )

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/constants.dart';
@@ -66,13 +67,11 @@ class StateBuilder extends StatefulWidget {
   final int blurSettings;
   final String uid;
 
-  StateBuilder({
-    @required this.enableDarkMode,
+  StateBuilder({@required this.enableDarkMode,
     @required this.favoritesList,
     @required this.textSize,
     @required this.blurSettings,
-    @required this.uid
-  });
+    @required this.uid});
 
   createState() => StateBuilderState();
 }
@@ -134,8 +133,7 @@ class StateBuilderState extends State<StateBuilder> {
                 FavoritesProvider(
                     widget.favoritesList, FavoritesHelper(userId: widget.uid))),
         ChangeNotifierProvider<ThemeProvider>(
-            builder: (_) =>
-                ThemeProvider(widget.enableDarkMode)),
+            builder: (_) => ThemeProvider(widget.enableDarkMode)),
         ChangeNotifierProvider<BlurProvider>(
             builder: (_) => BlurProvider(widget.blurSettings)),
         ChangeNotifierProvider<TextSizeProvider>(
@@ -154,6 +152,23 @@ class StateBuilderState extends State<StateBuilder> {
           } else {
             overrideTheme = light;
           }
+          final actualTheme = MediaQuery.platformBrightnessOf(context) ==
+              Brightness.dark
+              ? dark
+              : overrideTheme;
+
+          Brightness inverseOf(Brightness b) =>
+              b == Brightness.dark ? Brightness.light : Brightness.dark;
+
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+              systemNavigationBarColor: actualTheme.primaryColor,
+              systemNavigationBarIconBrightness: inverseOf(
+                  actualTheme.primaryColorBrightness),
+              statusBarColor: actualTheme.brightness == Brightness.dark ? Colors
+                  .black.withAlpha(100) : Colors.white.withAlpha(100),
+              statusBarIconBrightness: inverseOf(actualTheme.brightness)));
+
+          SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             darkTheme: dark,

@@ -15,7 +15,7 @@ class FavoritesDrawer extends StatelessWidget {
               text: favoriteTitle,
               style: Theme
                   .of(context)
-                  .textTheme
+                  .accentTextTheme
                   .display2,
               blankSpace: 25,
               pauseAfterRound: Duration(seconds: 1),
@@ -26,7 +26,7 @@ class FavoritesDrawer extends StatelessWidget {
         favoriteTitle,
         style: Theme
             .of(context)
-            .textTheme
+            .accentTextTheme
             .display2,
         textAlign: TextAlign.center,
       );

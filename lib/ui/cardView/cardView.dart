@@ -299,7 +299,10 @@ class __TextWidgetState extends State<_TextWidget>
                             child: Column(children: <Widget>[
                               Text(widget.textContent.title,
                                   textAlign: TextAlign.center,
-                                  style: textTheme.display1),
+                                  style: Theme
+                                      .of(context)
+                                      .accentTextTheme
+                                      .display1),
                               SizedBox(
                                 height: 10,
                               ),

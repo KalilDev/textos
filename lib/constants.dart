@@ -60,14 +60,12 @@ class Constants {
       primaryColorBrightness: Brightness.dark,
       primaryColor: themePrimaryLight,
       backgroundColor: themeBackgroundLight,
-      accentTextTheme: textThemeMuli.apply(
-          bodyColor: Color.alphaBlend(
-              themeForegroundLight.withAlpha(153), themeBackgroundLight),
+      textTheme: textThemeMuli.apply(
+          bodyColor: themeForegroundLight,
           displayColor: Color.alphaBlend(
               themeForegroundLight.withAlpha(221), themeBackgroundLight)),
-      textTheme: textThemeMerriweather.apply(
-          bodyColor: Color.alphaBlend(
-              themeForegroundLight.withAlpha(153), themeBackgroundLight),
+      accentTextTheme: textThemeMerriweather.apply(
+          bodyColor: themeForegroundLight,
           displayColor: Color.alphaBlend(
               themeForegroundLight.withAlpha(221), themeBackgroundLight)));
 
@@ -85,14 +83,14 @@ class Constants {
       dividerColor: themeForegroundDark.withAlpha(70),
       primaryColorBrightness: Brightness.light,
       backgroundColor: themeBackgroundDark,
-      accentTextTheme: textThemeMuli.apply(
+      textTheme: textThemeMuli.apply(
           bodyColor: Color.alphaBlend(
-              themeForegroundDark.withAlpha(153), themeBackgroundDark),
+              themeForegroundDark.withAlpha(221), themeBackgroundDark),
           displayColor: Color.alphaBlend(
               themeForegroundDark.withAlpha(221), themeBackgroundDark)),
-      textTheme: textThemeMerriweather.apply(
+      accentTextTheme: textThemeMerriweather.apply(
           bodyColor: Color.alphaBlend(
-              themeForegroundDark.withAlpha(153), themeBackgroundDark),
+              themeForegroundDark.withAlpha(221), themeBackgroundDark),
           displayColor: Color.alphaBlend(
               themeForegroundDark.withAlpha(221), themeBackgroundDark)));
 

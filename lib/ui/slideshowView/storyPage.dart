@@ -102,7 +102,9 @@ class _StoryPage extends StatelessWidget {
         .padding
         .top + 60;
 
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme
+        .of(context)
+        .accentTextTheme;
 
     return GestureDetector(
         child: Stack(
