@@ -50,9 +50,9 @@ class CardView extends StatelessWidget {
         builder: (context, provider, _) {
           ThemeData overrideTheme;
           final dark = Constants.themeDataDark
-              .copyWith(accentColor: provider.accentColor);
+              .copyWith(primaryColor: provider.darkPrimaryColor);
           final light = Constants.themeDataLight
-              .copyWith(accentColor: provider.accentColor);
+              .copyWith(primaryColor: provider.lightPrimaryColor);
 
           if (provider.isDarkMode) {
             overrideTheme = dark;

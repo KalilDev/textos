@@ -46,17 +46,14 @@ class Constants {
   };
 
   // Theme Light
-  static const themeAccentLight = Colors.indigo;
+  static final themeAccentLight = Colors.indigo.shade500;
   static const themeBackgroundLight = Colors.white;
   static const themeForegroundLight = Colors.black;
   static final themeDataLight = ThemeData(
       brightness: Brightness.light,
-      accentColor: themeAccentLight,
-      accentColorBrightness: Brightness.light,
       scaffoldBackgroundColor: themeBackgroundLight,
       canvasColor: themeBackgroundLight,
       dividerColor: themeForegroundLight.withAlpha(70),
-      primaryColor: themeForegroundLight,
       primaryColorBrightness: Brightness.dark,
       backgroundColor: themeBackgroundLight,
       accentTextTheme: textThemeMuli.apply(
@@ -65,17 +62,14 @@ class Constants {
           bodyColor: themeForegroundLight, displayColor: themeForegroundLight));
 
   // Theme Dark
-  static final themeAccentDark = Colors.indigo.shade700;
+  static final themeAccentDark = Colors.indigo.shade200;
   static const themeBackgroundDark = Colors.black;
   static const themeForegroundDark = Colors.white;
   static final themeDataDark = ThemeData(
       brightness: Brightness.dark,
-      accentColor: themeAccentDark,
-      accentColorBrightness: Brightness.dark,
       scaffoldBackgroundColor: themeBackgroundDark,
       canvasColor: themeBackgroundDark,
       dividerColor: themeForegroundDark.withAlpha(70),
-      primaryColor: themeForegroundDark,
       primaryColorBrightness: Brightness.light,
       backgroundColor: themeBackgroundDark,
       accentTextTheme: textThemeMuli.apply(

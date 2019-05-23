@@ -47,10 +47,10 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                   : false,
           activeColor: Theme
               .of(context)
-              .accentColor,
+              .primaryColor,
           activeTrackColor: Theme
               .of(context)
-              .accentColor
+              .primaryColor
               .withAlpha(170),
           inactiveThumbImage:
           MediaQuery
@@ -141,10 +141,10 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
               .drawerBlur,
           activeColor: Theme
               .of(context)
-              .accentColor,
+              .primaryColor,
           activeTrackColor: Theme
               .of(context)
-              .accentColor
+              .primaryColor
               .withAlpha(170),
           onChanged: (map) =>
               Provider.of<BlurProvider>(context).toggleDrawerBlur()),
@@ -156,10 +156,10 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
               .buttonsBlur,
           activeColor: Theme
               .of(context)
-              .accentColor,
+              .primaryColor,
           activeTrackColor: Theme
               .of(context)
-              .accentColor
+              .primaryColor
               .withAlpha(170),
           onChanged: (map) =>
               Provider.of<BlurProvider>(context).toggleButtonsBlur()),
@@ -171,10 +171,10 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
               .textsBlur,
           activeColor: Theme
               .of(context)
-              .accentColor,
+              .primaryColor,
           activeTrackColor: Theme
               .of(context)
-              .accentColor
+              .primaryColor
               .withAlpha(170),
           onChanged: (map) =>
               Provider.of<BlurProvider>(context).toggleTextsBlur()),

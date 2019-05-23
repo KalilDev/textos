@@ -125,11 +125,21 @@ class TextAppDrawerState extends State<TextAppDrawer>
                             },
                             color: Theme
                                 .of(context)
-                                .accentColor,
+                                .primaryColor,
                             child: Text(
                                 settingsDrawer ? Constants.textFavs : Constants
                                     .textConfigs,
-                                style: textTheme.subhead,
+                                style: textTheme.subhead.copyWith(color: Theme
+                                    .of(context)
+                                    .primaryColorBrightness != Brightness.dark
+                                    ? Theme
+                                    .of(context)
+                                    .backgroundColor
+                                    : Theme
+                                    .of(context)
+                                    .textTheme
+                                    .display1
+                                    .color),
                                 textAlign: TextAlign.center)),
                       ),
                     ],

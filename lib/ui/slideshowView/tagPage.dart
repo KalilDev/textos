@@ -214,9 +214,22 @@ class _CustomButton extends StatelessWidget {
               ? FlatButton(
               color: Theme
                   .of(context)
-                  .accentColor,
+                  .primaryColor,
               child: Text(
                 '#' + tag,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .button
+                    .copyWith(color: Theme
+                    .of(context)
+                    .primaryColorBrightness != Brightness.dark ? Theme
+                    .of(context)
+                    .backgroundColor : Theme
+                    .of(context)
+                    .textTheme
+                    .display1
+                    .color),
               ),
               onPressed: () {
                 HapticFeedback.selectionClick();
@@ -226,7 +239,7 @@ class _CustomButton extends StatelessWidget {
               : OutlineButton(
               borderSide: BorderSide(color: Theme
                   .of(context)
-                  .accentColor),
+                  .primaryColor),
               child: Text(
                 '#' + tag,
                 style: Theme
@@ -237,7 +250,7 @@ class _CustomButton extends StatelessWidget {
                     color: Color.alphaBlend(
                         Theme
                             .of(context)
-                            .accentColor
+                            .primaryColor
                             .withAlpha(120),
                         Theme
                             .of(context)

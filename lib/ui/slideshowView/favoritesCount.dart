@@ -17,6 +17,15 @@ class FavoritesCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Theme
+        .of(context)
+        .primaryColorBrightness != Brightness.dark ? Theme
+        .of(context)
+        .backgroundColor : Theme
+        .of(context)
+        .textTheme
+        .display1
+        .color;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -34,13 +43,13 @@ class FavoritesCount extends StatelessWidget {
                       Colors.red.shade900.withAlpha(180),
                       Theme
                           .of(context)
-                          .accentColor
+                          .primaryColor
                           .withAlpha(150)
                     ]
                         : [Colors.red.shade900,
                     Theme
                         .of(context)
-                        .accentColor
+                        .primaryColor
                     ],
                     isEnabled: provider.isFavorite(text),
                     height: 50,
@@ -53,14 +62,15 @@ class FavoritesCount extends StatelessWidget {
                             const SizedBox(width: 16.0),
                             Icon(provider.isFavorite(text)
                                 ? Icons.favorite
-                                : Icons.favorite_border),
+                                : Icons.favorite_border, color: color),
                             const SizedBox(width: 8.0),
                             Text(
                                 favorites.toString() + ' ' + Constants.textFavs,
                                 style: Theme
                                     .of(context)
                                     .textTheme
-                                    .title),
+                                    .title
+                                    .copyWith(color: color)),
                             const SizedBox(width: 16.0),
                           ],
                         ),
