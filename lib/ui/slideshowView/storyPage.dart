@@ -136,36 +136,36 @@ class _StoryPage extends StatelessWidget {
                   top: active ? top : 180, bottom: 20, right: 30),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
-                child: ParallaxContainer(
-                  position: info.position,
-                  translationFactor: 300,
-                  child: Align(
-                      alignment: Alignment.center,
-                      child: Hero(
-                        tag: 'body' + textContent.textPath,
-                        child: Material(
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20)),
-                            margin: EdgeInsets.all(12.5),
-                            child: BlurOverlay.roundedRect(
-                                radius: 15,
-                                enabled:
-                                Provider
-                                    .of<BlurProvider>(context)
-                                    .textsBlur,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Hero(
+                      tag: 'body' + textContent.textPath,
+                      child: Material(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)),
+                          margin: EdgeInsets.all(12.5),
+                          child: BlurOverlay.roundedRect(
+                              radius: 15,
+                              enabled:
+                              Provider
+                                  .of<BlurProvider>(context)
+                                  .textsBlur,
+                              child: ParallaxContainer(
+                                translationFactor: 300,
+                                position: info.position,
                                 child: Container(
                                   margin: EdgeInsets.only(
                                       left: 5.0, right: 5.0),
                                   child: Text(textContent.title,
                                       textAlign: TextAlign.center,
                                       style: textTheme.display1),
-                                )),
-                          ),
-                          color: Colors.transparent,
+                                ),
+                              )),
                         ),
-                      )),
-                ),
+                        color: Colors.transparent,
+                      ),
+                    )),
               ),
             ),
             AnimatedSwitcher(
