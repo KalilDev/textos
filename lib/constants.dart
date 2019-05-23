@@ -46,36 +46,55 @@ class Constants {
   };
 
   // Theme Light
-  static final themeAccentLight = Colors.indigo.shade500;
+  static final themePrimaryLight = Colors.indigo.shade500;
+  static final themeAccentLight = Color(0xff3f8cb5);
   static const themeBackgroundLight = Colors.white;
   static const themeForegroundLight = Colors.black;
   static final themeDataLight = ThemeData(
       brightness: Brightness.light,
       scaffoldBackgroundColor: themeBackgroundLight,
+      accentColorBrightness: Brightness.dark,
+      accentColor: themeAccentLight,
       canvasColor: themeBackgroundLight,
       dividerColor: themeForegroundLight.withAlpha(70),
       primaryColorBrightness: Brightness.dark,
+      primaryColor: themePrimaryLight,
       backgroundColor: themeBackgroundLight,
       accentTextTheme: textThemeMuli.apply(
-          bodyColor: themeForegroundLight, displayColor: themeForegroundLight),
+          bodyColor: Color.alphaBlend(
+              themeForegroundLight.withAlpha(221), themeBackgroundLight),
+          displayColor: Color.alphaBlend(
+              themeForegroundLight.withAlpha(221), themeBackgroundLight)),
       textTheme: textThemeMerriweather.apply(
-          bodyColor: themeForegroundLight, displayColor: themeForegroundLight));
+          bodyColor: Color.alphaBlend(
+              themeForegroundLight.withAlpha(221), themeBackgroundLight),
+          displayColor: Color.alphaBlend(
+              themeForegroundLight.withAlpha(221), themeBackgroundLight)));
 
   // Theme Dark
-  static final themeAccentDark = Colors.indigo.shade200;
+  static final themePrimaryDark = Colors.indigo.shade200;
+  static final themeAccentDark = Color(0xff9fc5da);
   static const themeBackgroundDark = Colors.black;
   static const themeForegroundDark = Colors.white;
   static final themeDataDark = ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: themeBackgroundDark,
+      accentColor: themeAccentDark,
+      accentColorBrightness: Brightness.light,
       canvasColor: themeBackgroundDark,
       dividerColor: themeForegroundDark.withAlpha(70),
       primaryColorBrightness: Brightness.light,
       backgroundColor: themeBackgroundDark,
       accentTextTheme: textThemeMuli.apply(
-          bodyColor: themeForegroundDark, displayColor: themeForegroundDark),
+          bodyColor: Color.alphaBlend(
+              themeForegroundDark.withAlpha(221), themeBackgroundDark),
+          displayColor: Color.alphaBlend(
+              themeForegroundDark.withAlpha(221), themeBackgroundDark)),
       textTheme: textThemeMerriweather.apply(
-          bodyColor: themeForegroundDark, displayColor: themeForegroundDark));
+          bodyColor: Color.alphaBlend(
+              themeForegroundDark.withAlpha(221), themeBackgroundDark),
+          displayColor: Color.alphaBlend(
+              themeForegroundDark.withAlpha(221), themeBackgroundDark)));
 
   // BaseTextStyles
   static final _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
