@@ -11,8 +11,6 @@ class QueryProvider with ChangeNotifier {
   String _tag = Constants.textAllTag;
   Query _query;
   int _currentTagPage = 0;
-  bool shouldJump = false;
-  bool justJumped = false;
   bool shouldAnimate = false;
 
   Firestore _db = Firestore.instance;
@@ -32,7 +30,7 @@ class QueryProvider with ChangeNotifier {
 
   String get currentTag => _tag;
 
-  int get currentTagPage => _currentTagPage;
+  int get currentTagPage => _currentTagPage != null ? _currentTagPage : 0;
 
   set currentTagPage(int next) {
     _currentTagPage = next;

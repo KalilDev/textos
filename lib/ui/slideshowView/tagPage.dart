@@ -14,10 +14,13 @@ class TagPages extends StatefulWidget {
   _TagPagesState createState() => _TagPagesState();
 }
 
-class _TagPagesState extends State<TagPages> {
-  QueryProvider provider;
+class _TagPagesState extends State<TagPages>
+    with AutomaticKeepAliveClientMixin {
   Stream _tagStream;
   IndexController _tagIndexController;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -31,10 +34,6 @@ class _TagPagesState extends State<TagPages> {
   }
 
   @override
-  void deactivate() {
-    provider.shouldJump = true;
-    super.deactivate();
-  }
 
   List<Map<String, dynamic>> _metadatas;
 
@@ -46,12 +45,6 @@ class _TagPagesState extends State<TagPages> {
 
   @override
   Widget build(BuildContext context) {
-    if (provider == null) provider = Provider.of<QueryProvider>(context);
-    if (provider.shouldJump) {
-      provider.shouldJump = false;
-      provider.justJumped = true;
-      jump(provider.currentTagPage);
-    }
     return StreamBuilder(
       stream: _tagStream,
       initialData: [Constants.placeholderTagMetadata],
@@ -68,14 +61,10 @@ class _TagPagesState extends State<TagPages> {
           physics: BouncingScrollPhysics(),
           onPageChanged: (page) {
             final provider = Provider.of<QueryProvider>(context);
-            if (provider.justJumped) {
-              if (page == provider.currentTagPage) provider.justJumped = false;
-            } else {
               provider.currentTagPage = page;
               provider.updateStream(
                   {'collection': _metadatas[page]['collection']});
               HapticFeedback.lightImpact();
-            }
           },
           transformer: new PageTransformerBuilder(builder: (widget, info) {
             final data = _metadatas[info.index];
