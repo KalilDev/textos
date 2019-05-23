@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -290,59 +289,47 @@ class __TextWidgetState extends State<_TextWidget>
                   enabled: Provider
                       .of<BlurProvider>(context)
                       .textsBlur,
-                  key: Key(Random().toString()),
                   radius: 20,
                   child: Column(
                     children: <Widget>[
                       Expanded(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20.0),
-                          child: RefreshIndicator(
-                            color: Theme
-                                .of(context)
-                                .backgroundColor,
-                            backgroundColor: Theme
-                                .of(context)
-                                .backgroundColor,
-                            onRefresh: () async {
-                              pop(context);
-                            },
-                            child: SingleChildScrollView(
-                              child: Column(children: <Widget>[
-                                Text(widget.textContent.title,
-                                    textAlign: TextAlign.center,
-                                    style: textTheme.display1),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                widget.textContent.hasText
-                                    ? RichText(
-                                    text: (TextSpan(
-                                        children: widget.textContent
-                                            .formattedText(
-                                            textTheme.body1.copyWith(
-                                                fontSize: Tween(
-                                                    begin: _textSize,
-                                                    end: Provider
-                                                        .of<
-                                                        TextSizeProvider>(
-                                                        context)
-                                                        .textSize)
-                                                    .animate(
-                                                    _textSizeAnim)
-                                                    .value *
-                                                    4.5)))))
-                                    : SizedBox(),
-                                SizedBox(
-                                    height: 55,
-                                    child: Center(
-                                        child: Text(widget.textContent.date,
-                                            style: textTheme.title))),
-                                widget.textContent.hasMusic
-                                    ? SizedBox(height: 55)
-                                    : SizedBox(),
-                              ]),
-                            ),
+                          child: SingleChildScrollView(
+                            child: Column(children: <Widget>[
+                              Text(widget.textContent.title,
+                                  textAlign: TextAlign.center,
+                                  style: textTheme.display1),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              widget.textContent.hasText
+                                  ? RichText(
+                                  text: (TextSpan(
+                                      children: widget.textContent
+                                          .formattedText(
+                                          textTheme.body1.copyWith(
+                                              fontSize: Tween(
+                                                  begin: _textSize,
+                                                  end: Provider
+                                                      .of<
+                                                      TextSizeProvider>(
+                                                      context)
+                                                      .textSize)
+                                                  .animate(
+                                                  _textSizeAnim)
+                                                  .value *
+                                                  4.5)))))
+                                  : SizedBox(),
+                              SizedBox(
+                                  height: 55,
+                                  child: Center(
+                                      child: Text(widget.textContent.date,
+                                          style: textTheme.title))),
+                              widget.textContent.hasMusic
+                                  ? SizedBox(height: 55)
+                                  : SizedBox(),
+                            ]),
                           ),
                         ),
                       ),
