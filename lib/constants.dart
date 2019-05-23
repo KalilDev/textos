@@ -62,12 +62,12 @@ class Constants {
       backgroundColor: themeBackgroundLight,
       accentTextTheme: textThemeMuli.apply(
           bodyColor: Color.alphaBlend(
-              themeForegroundLight.withAlpha(221), themeBackgroundLight),
+              themeForegroundLight.withAlpha(153), themeBackgroundLight),
           displayColor: Color.alphaBlend(
               themeForegroundLight.withAlpha(221), themeBackgroundLight)),
       textTheme: textThemeMerriweather.apply(
           bodyColor: Color.alphaBlend(
-              themeForegroundLight.withAlpha(221), themeBackgroundLight),
+              themeForegroundLight.withAlpha(153), themeBackgroundLight),
           displayColor: Color.alphaBlend(
               themeForegroundLight.withAlpha(221), themeBackgroundLight)));
 
@@ -87,12 +87,12 @@ class Constants {
       backgroundColor: themeBackgroundDark,
       accentTextTheme: textThemeMuli.apply(
           bodyColor: Color.alphaBlend(
-              themeForegroundDark.withAlpha(221), themeBackgroundDark),
+              themeForegroundDark.withAlpha(153), themeBackgroundDark),
           displayColor: Color.alphaBlend(
               themeForegroundDark.withAlpha(221), themeBackgroundDark)),
       textTheme: textThemeMerriweather.apply(
           bodyColor: Color.alphaBlend(
-              themeForegroundDark.withAlpha(221), themeBackgroundDark),
+              themeForegroundDark.withAlpha(153), themeBackgroundDark),
           displayColor: Color.alphaBlend(
               themeForegroundDark.withAlpha(221), themeBackgroundDark)));
 
