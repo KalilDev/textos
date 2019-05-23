@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
@@ -13,8 +12,6 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
-  bool isChoosingAccent = false;
-
   void cleanAll(BuildContext context) {
     HapticFeedback.heavyImpact();
     Provider.of<FavoritesProvider>(context).clear();
@@ -64,11 +61,6 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                   Brightness.dark
               ? null
               : (map) => Provider.of<ThemeProvider>(context).toggleDarkMode()),
-      ListTile(
-        leading: Icon(Icons.color_lens),
-        title: Text(Constants.textPickAccent, style: settingsStyle),
-        onTap: () => setState(() => isChoosingAccent = true),
-      ),
     ];
   }
 
@@ -271,18 +263,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
         .of<BlurProvider>(context)
         .drawerBlur;
     return SafeArea(
-      child: isChoosingAccent
-          ? LayoutBuilder(
-          builder: (context, constraints) =>
-              Container(
-                  height: constraints.maxHeight,
-                  child: SwatchesPicker(onChanged: (color) {
-                    setState(() => isChoosingAccent = false);
-                    Provider
-                        .of<ThemeProvider>(context)
-                        .accentColor = color;
-                  })))
-          : ListView(
+      child: ListView(
         children: <Widget>[
           buildCategory(themeWidgets(), isBlurred: isBlurred, isFirst: true),
           buildCategory(textWidgets(), isBlurred: isBlurred),
