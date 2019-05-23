@@ -190,30 +190,16 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
           style: settingsStyle,
         ),
         onTap: () async {
-          final List providerList = [
-            Provider.of<FavoritesProvider>(context),
-            Provider.of<ThemeProvider>(context),
-            Provider.of<BlurProvider>(context),
-            Provider.of<TextSizeProvider>(context),
-          ];
           Navigator.pop(context);
           HapticFeedback.selectionClick();
-          final result = await Navigator.push(
+          Navigator.push(
             context,
             SlideRoute(
                 builder: (context) =>
                     CreatorView(
-                      favoritesProvider: providerList[0].copy(),
-                      darkModeProvider: providerList[1].copy(),
-                      blurProvider: providerList[2].copy(),
-                      textSizeProvider: providerList[3].copy(),
+                      darkModeProvider: Provider.of<ThemeProvider>(context),
                     )),
           );
-          List resultList = result;
-          providerList[0].sync(resultList[0]);
-          providerList[1].sync(resultList[1]);
-          providerList[2].sync(resultList[2]);
-          providerList[3].sync(resultList[3]);
         },
       ),
       ListTile(

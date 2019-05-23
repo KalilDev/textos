@@ -11,16 +11,10 @@ import 'package:textos/src/providers.dart';
 class CreatorView extends StatelessWidget {
   const CreatorView(
       {Key key,
-      @required this.darkModeProvider,
-      @required this.textSizeProvider,
-      @required this.blurProvider,
-      @required this.favoritesProvider})
+        @required this.darkModeProvider})
       : super(key: key);
 
   final ThemeProvider darkModeProvider;
-  final BlurProvider blurProvider;
-  final TextSizeProvider textSizeProvider;
-  final FavoritesProvider favoritesProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +30,8 @@ class CreatorView extends StatelessWidget {
       }
     }
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<FavoritesProvider>(
-            builder: (_) => favoritesProvider.copy()),
-        ChangeNotifierProvider<ThemeProvider>(
-            builder: (_) => darkModeProvider.copy()),
-        ChangeNotifierProvider<BlurProvider>(
-            builder: (_) => blurProvider.copy()),
-        ChangeNotifierProvider<TextSizeProvider>(
-            builder: (_) => textSizeProvider.copy()),
-      ],
+    return Provider<ThemeProvider>(
+      builder: (_) => darkModeProvider.copy(),
       child: Consumer<ThemeProvider>(
         builder: (context, provider, _) {
           ThemeData overrideTheme;
