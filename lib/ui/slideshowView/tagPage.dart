@@ -55,6 +55,9 @@ class _TagPagesState extends State<TagPages>
           controller: _tagIndexController,
           itemCount: _metadatas.length,
           scrollDirection: Axis.vertical,
+          index: Provider
+              .of<QueryProvider>(context)
+              .currentTagPage,
           viewportFraction: 0.90,
           curve: Curves.decelerate,
           physics: BouncingScrollPhysics(),

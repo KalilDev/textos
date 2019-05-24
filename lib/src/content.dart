@@ -16,25 +16,20 @@ class Content {
 
   bool get hasMusic => music != null;
 
+  String stringDate(DateTime time) =>
+      (time.day.toString() + '/' + time.month.toString() + '/' +
+          time.year.toString());
+
   Content.fromData(Map data) {
     title = data['title'] ?? Constants.placeholderTitle;
     textPath = data['path'];
     imgUrl = data['img'] ?? Constants.placeholderImg;
-    date = data['date'] ??
-        DateTime
-            .now()
-            .day
-            .toString() +
-            '/' +
-            DateTime
-                .now()
-                .month
-                .toString() +
-            '/' +
-            DateTime
-                .now()
-                .year
-                .toString();
+    if (data['date'] == null) {
+      date = stringDate(DateTime.now());
+    } else if (data['date'] is String) {
+      date = data['date'].toString().contains('/') ? data['date'] : stringDate(
+          DateTime.parse(data['date'].toString()));
+    }
     favoriteCount = data['favoriteCount'] ?? 0;
     music = data['music'];
     _text = data['text'].toString().replaceAll('\^TAB', '         ').replaceAll(

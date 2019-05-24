@@ -16,7 +16,7 @@ class QueryProvider with ChangeNotifier {
   Firestore _db = Firestore.instance;
 
   QueryProvider() {
-    _query = _db.collection(_collection);
+    _query = _db.collection(_collection).orderBy('date', descending: true);
     disposed = false;
   }
 
@@ -41,10 +41,12 @@ class QueryProvider with ChangeNotifier {
     _collection = params['collection'] ?? _collection;
     final tag = params['tag'];
     if (tag != null) {
-      _query = _db.collection(_collection).where('tags', arrayContains: tag);
+      _query =
+          _db.collection(_collection).where('tags', arrayContains: tag).orderBy(
+              'date', descending: true);
       _tag = tag;
     } else {
-      _query = _db.collection(_collection);
+      _query = _db.collection(_collection).orderBy('date', descending: true);
       _tag = Constants.textAllTag;
     }
     shouldAnimate = true;

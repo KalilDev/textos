@@ -28,20 +28,6 @@ class Constants {
     'text':
     'Nenhum texto foi encontrado nessa categoria, tente o seguinte: Desconecte e reconecte seu telefone à internet',
     'favoriteCount': 0,
-    'date': DateTime
-        .now()
-        .day
-        .toString() +
-        '/' +
-        DateTime
-            .now()
-            .month
-            .toString() +
-        '/' +
-        DateTime
-            .now()
-            .year
-            .toString(),
     'path': 'NULL/TEXTNOTFOUNDID'
   };
 
