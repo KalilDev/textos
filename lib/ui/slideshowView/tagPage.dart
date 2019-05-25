@@ -227,6 +227,9 @@ class _CustomButton extends StatelessWidget {
               color: Theme
                   .of(context)
                   .primaryColor,
+              highlightColor: Theme
+                  .of(context)
+                  .accentColor,
               child: Text(
                 '#' + tag,
                 style: Theme
@@ -256,6 +259,9 @@ class _CustomButton extends StatelessWidget {
               borderSide: BorderSide(color: Theme
                   .of(context)
                   .primaryColor),
+              highlightColor: Theme
+                  .of(context)
+                  .accentColor,
               child: Text(
                 '#' + tag,
                 style: Theme

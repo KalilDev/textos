@@ -175,7 +175,10 @@ class CardContent extends StatelessWidget {
                               .buttonsBlur,
                           isEnabled: Provider.of<FavoritesProvider>(context)
                               .isFavorite(
-                              textContent.title + ';' + textContent.textPath),),
+                              textContent.title + ';' + textContent.textPath),
+                          disabledColor: Theme
+                              .of(context)
+                              .accentColor,),
                       ),
                     ],
                   ),

@@ -19,7 +19,7 @@ class FavoritesCount extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = Theme
         .of(context)
-        .primaryColorBrightness != Brightness.dark ? Theme
+        .accentColorBrightness != Brightness.dark ? Theme
         .of(context)
         .backgroundColor : Theme
         .of(context)
@@ -43,13 +43,13 @@ class FavoritesCount extends StatelessWidget {
                       Colors.red.shade900.withAlpha(180),
                       Theme
                           .of(context)
-                          .primaryColor
+                          .accentColor
                           .withAlpha(150)
                     ]
                         : [Colors.red.shade900,
                     Theme
                         .of(context)
-                        .primaryColor
+                        .accentColor
                     ],
                     isEnabled: provider.isFavorite(text),
                     height: 50,
