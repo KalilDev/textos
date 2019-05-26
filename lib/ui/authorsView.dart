@@ -9,12 +9,12 @@ import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
-class TagPages extends StatefulWidget {
+class AuthorsView extends StatefulWidget {
   @override
-  _TagPagesState createState() => _TagPagesState();
+  _AuthorsViewState createState() => _AuthorsViewState();
 }
 
-class _TagPagesState extends State<TagPages>
+class _AuthorsViewState extends State<AuthorsView>
     with AutomaticKeepAliveClientMixin {
   Stream _tagStream;
   IndexController _tagIndexController;
@@ -33,7 +33,6 @@ class _TagPagesState extends State<TagPages>
     super.initState();
   }
 
-  @override
   List<Map<String, dynamic>> _metadatas;
 
   jump(int page) async {
@@ -44,78 +43,69 @@ class _TagPagesState extends State<TagPages>
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: _tagStream,
-      initialData: [Constants.placeholderTagMetadata],
-      builder: (context, snapshot) {
-        _metadatas = snapshot.data.toList();
-        if (_metadatas.length == 0)
-          _metadatas = [Constants.placeholderTagMetadata];
-        return TransformerPageView(
-          controller: _tagIndexController,
-          itemCount: _metadatas.length,
-          scrollDirection: Axis.vertical,
-          index: Provider
-              .of<QueryProvider>(context)
-              .currentTagPage,
-          viewportFraction: 0.90,
-          curve: Curves.decelerate,
-          physics: BouncingScrollPhysics(),
-          onPageChanged: (page) {
-            final provider = Provider.of<QueryProvider>(context);
-            provider.currentTagPage = page;
-            provider
-                .updateStream({'collection': _metadatas[page]['collection']});
-            HapticFeedback.lightImpact();
-          },
-          transformer: new PageTransformerBuilder(builder: (widget, info) {
-            final data = _metadatas[info.index];
-            return _TagPage(
-              info: info,
-              tags: data['tags'],
-              title: data['title'],
-              authorName: data['authorName'],
-            );
-          }),
-        );
-      },
+    return Scaffold(
+      body: StreamBuilder(
+        stream: _tagStream,
+        initialData: [Constants.placeholderTagMetadata],
+        builder: (context, snapshot) {
+          _metadatas = snapshot.data.toList();
+          if (_metadatas.length == 0)
+            _metadatas = [Constants.placeholderTagMetadata];
+          return TransformerPageView(
+            controller: _tagIndexController,
+            itemCount: _metadatas.length,
+            scrollDirection: Axis.vertical,
+            viewportFraction: 0.90,
+            curve: Curves.decelerate,
+            physics: BouncingScrollPhysics(),
+            onPageChanged: (page) {
+              final provider = Provider.of<QueryInfoProvider>(context);
+              provider.collection = _metadatas[page]['collection'];
+              HapticFeedback.lightImpact();
+            },
+            transformer: new PageTransformerBuilder(builder: (widget, info) {
+              final data = _metadatas[info.index];
+              return _AuthorPage(
+                info: info,
+                tags: data['tags'],
+                title: data['title'],
+                authorName: data['authorName'],
+              );
+            }),
+          );
+        },
+      ),
     );
   }
 }
 
-class _TagPage extends StatefulWidget {
+class _AuthorPage extends StatefulWidget {
   final TransformInfo info;
   final List tags;
   final String title;
   final String authorName;
 
-  _TagPage({@required this.info,
+  _AuthorPage({@required this.info,
     this.tags = const [],
     this.title = 'Textos do ',
     this.authorName = 'Kalil'});
 
   @override
-  _TagPageState createState() => _TagPageState();
+  _AuthorPageState createState() => _AuthorPageState();
 }
 
-class _TagPageState extends State<_TagPage> {
+class _AuthorPageState extends State<_AuthorPage> {
   List<Widget> _buildButtons() {
     List<Widget> widgets = [];
     widgets.add(_CustomButton(
-      isCurrent: widget.info.index ==
-          Provider
-              .of<QueryProvider>(context)
-              .currentTagPage,
+      isCurrent: widget.info.position.round() == 0.0,
       tag: Constants.textAllTag,
       index: 0.0,
       position: widget.info.position,
     ));
     widget.tags.forEach((tag) =>
         widgets.add(_CustomButton(
-          isCurrent: widget.info.index ==
-              Provider
-                  .of<QueryProvider>(context)
-                  .currentTagPage,
+          isCurrent: widget.info.position.round() == 0.0,
           tag: tag,
           index: widget.tags.indexOf(tag) + 1.0,
           position: widget.info.position,
@@ -175,10 +165,12 @@ class _TagPageState extends State<_TagPage> {
                             ))),
                     Container(
                       margin: EdgeInsets.only(left: 1.0),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: _buildButtons()),
+                      child: RepaintBoundary(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: _buildButtons()),
+                      ),
                     )
                   ],
                 ),
@@ -221,8 +213,8 @@ class _CustomButton extends StatelessWidget {
           },
           child: isCurrent &&
               tag == Provider
-                  .of<QueryProvider>(context)
-                  .currentTag
+                  .of<QueryInfoProvider>(context)
+                  .tag
               ? FlatButton(
               color: Theme
                   .of(context)
@@ -252,8 +244,9 @@ class _CustomButton extends StatelessWidget {
               ),
               onPressed: () {
                 HapticFeedback.selectionClick();
-                Provider.of<QueryProvider>(context)
-                    .updateStream({'tag': queryTag});
+                Provider
+                    .of<QueryInfoProvider>(context)
+                    .tag = queryTag;
               })
               : OutlineButton(
               borderSide: BorderSide(color: Theme
@@ -283,8 +276,9 @@ class _CustomButton extends StatelessWidget {
               ),
               onPressed: () {
                 HapticFeedback.selectionClick();
-                Provider.of<QueryProvider>(context)
-                    .updateStream({'tag': queryTag});
+                Provider
+                    .of<QueryInfoProvider>(context)
+                    .tag = queryTag;
               })),
     );
   }

@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/drawer/drawer.dart';
 
 class CardView extends StatelessWidget {
   const CardView({Key key,
@@ -34,58 +33,56 @@ class CardView extends StatelessWidget {
       if (Navigator.of(context).canPop()) Navigator.pop(context, data);
     }
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<FavoritesProvider>(
-            builder: (_) => favoritesProvider.copy()),
-        ChangeNotifierProvider<ThemeProvider>(
-            builder: (_) => darkModeProvider.copy()),
-        ChangeNotifierProvider<BlurProvider>(
-            builder: (_) => blurProvider.copy()),
-        ChangeNotifierProvider<TextSizeProvider>(
-            builder: (_) => textSizeProvider.copy()),
-      ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, provider, _) {
-          ThemeData overrideTheme;
-          final dark = Constants.themeDataDark
-              .copyWith(primaryColor: provider.darkPrimaryColor);
-          final light = Constants.themeDataLight
-              .copyWith(primaryColor: provider.lightPrimaryColor);
+    return RepaintBoundary(
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider<FavoritesProvider>(
+              builder: (_) => favoritesProvider.copy()),
+          ChangeNotifierProvider<ThemeProvider>(
+              builder: (_) => darkModeProvider.copy()),
+          ChangeNotifierProvider<BlurProvider>(
+              builder: (_) => blurProvider.copy()),
+          ChangeNotifierProvider<TextSizeProvider>(
+              builder: (_) => textSizeProvider.copy()),
+        ],
+        child: Consumer<ThemeProvider>(
+          builder: (context, provider, _) {
+            ThemeData overrideTheme;
+            final dark = Constants.themeDataDark
+                .copyWith(primaryColor: provider.darkPrimaryColor);
+            final light = Constants.themeDataLight
+                .copyWith(primaryColor: provider.lightPrimaryColor);
 
-          if (provider.isDarkMode) {
-            overrideTheme = dark;
-          } else {
-            overrideTheme = light;
-          }
-          return WillPopScope(
-            onWillPop: () async {
-              return exit([
-                Provider
-                    .of<FavoritesProvider>(context)
-                    .favoritesList,
-                Provider
-                    .of<ThemeProvider>(context)
-                    .info,
-                Provider
-                    .of<BlurProvider>(context)
-                    .blurSettings,
-                Provider
-                    .of<TextSizeProvider>(context)
-                    .textSize
-              ]);
-            },
-            child: MaterialApp(
-                debugShowCheckedModeBanner: false,
-                darkTheme: Constants.themeDataDark,
-                theme: overrideTheme,
-                home: Scaffold(
-                  body: CardContent(
-                      textContent: textContent, exitContext: context),
-                  drawer: TextAppDrawer(),
-                )),
-          );
-        },
+            if (provider.isDarkMode) {
+              overrideTheme = dark;
+            } else {
+              overrideTheme = light;
+            }
+            return WillPopScope(
+              onWillPop: () async {
+                return exit([
+                  Provider
+                      .of<FavoritesProvider>(context)
+                      .favoritesList,
+                  Provider
+                      .of<ThemeProvider>(context)
+                      .info,
+                  Provider
+                      .of<BlurProvider>(context)
+                      .blurSettings,
+                  Provider
+                      .of<TextSizeProvider>(context)
+                      .textSize
+                ]);
+              },
+              child: Scaffold(
+                body: CardContent(
+                    textContent: textContent, exitContext: context),
+                drawer: TextAppDrawer(),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -158,27 +155,31 @@ class CardContent extends StatelessWidget {
                           child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 5.0),
                               child:
-                              PlaybackButton(
-                                url: textContent.music, isBlurred: Provider
-                                  .of<BlurProvider>(context)
-                                  .buttonsBlur,)))
+                              RepaintBoundary(
+                                child: PlaybackButton(
+                                  url: textContent.music, isBlurred: Provider
+                                    .of<BlurProvider>(context)
+                                    .buttonsBlur,),
+                              )))
                           : Spacer(),
                       Container(
                         margin: EdgeInsets.only(right: 5.0),
-                        child: BiStateFAB(
-                          onPressed: () =>
-                              Provider.of<FavoritesProvider>(context).toggle(
-                                  textContent.title + ';' +
-                                      textContent.textPath),
-                          isBlurred: Provider
-                              .of<BlurProvider>(context)
-                              .buttonsBlur,
-                          isEnabled: Provider.of<FavoritesProvider>(context)
-                              .isFavorite(
-                              textContent.title + ';' + textContent.textPath),
-                          disabledColor: Theme
-                              .of(context)
-                              .accentColor,),
+                        child: RepaintBoundary(
+                          child: BiStateFAB(
+                            onPressed: () =>
+                                Provider.of<FavoritesProvider>(context).toggle(
+                                    textContent.title + ';' +
+                                        textContent.textPath),
+                            isBlurred: Provider
+                                .of<BlurProvider>(context)
+                                .buttonsBlur,
+                            isEnabled: Provider.of<FavoritesProvider>(context)
+                                .isFavorite(
+                                textContent.title + ';' + textContent.textPath),
+                            disabledColor: Theme
+                                .of(context)
+                                .accentColor,),
+                        ),
                       ),
                     ],
                   ),

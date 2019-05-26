@@ -4,19 +4,19 @@ import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/src/providers.dart';
 
-class FavoritesDrawer extends StatelessWidget {
+class FavoritesView extends StatelessWidget {
   Widget buildFavoritesItem(BuildContext context, String favorite) {
     final favoriteTitle = favorite.split(';')[0];
 
     Widget txt;
-    if (favoriteTitle.length > 20) {
+    if (favoriteTitle.length > 30) {
       txt = Container(
           child: Marquee(
               text: favoriteTitle,
               style: Theme
                   .of(context)
                   .accentTextTheme
-                  .display2,
+                  .display1,
               blankSpace: 25,
               pauseAfterRound: Duration(seconds: 1),
               velocity: 60.0),
@@ -27,7 +27,7 @@ class FavoritesDrawer extends StatelessWidget {
         style: Theme
             .of(context)
             .accentTextTheme
-            .display2,
+            .display1,
         textAlign: TextAlign.center,
       );
     }
@@ -56,15 +56,7 @@ class FavoritesDrawer extends StatelessWidget {
             Provider.of<FavoritesProvider>(context).remove(favorite),
         child: LayoutBuilder(
           builder: (context, constraints) =>
-          Provider
-              .of<BlurProvider>(context)
-              .drawerBlur
-              ? ListTile(
-              title: txt,
-              onTap: () {
-                Provider.of<FavoritesProvider>(context).open(favorite, context);
-              })
-              : ElevatedContainer(
+              ElevatedContainer(
             elevation: 4.0,
             width: constraints.maxWidth,
             margin: EdgeInsets.fromLTRB(3, 6, 3, 3),
@@ -89,27 +81,18 @@ class FavoritesDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: new ListView.separated(
+    return Scaffold(
+      body: ListView.builder(
         itemCount:
         Provider
             .of<FavoritesProvider>(context)
             .favoritesList
-            .length + 1,
+            .length,
         itemBuilder: (BuildContext context, int index) =>
-        index == 0
-            ? Provider
-            .of<BlurProvider>(context)
-            .drawerBlur ? Divider() : SizedBox(height: 12.5)
-            : buildFavoritesItem(context,
-            Provider
-                .of<FavoritesProvider>(context)
-                .favoritesList[index - 1]),
-          separatorBuilder: (BuildContext context, int index) {
-            return (index == 0 || !Provider
-                .of<BlurProvider>(context)
-                .drawerBlur) ? SizedBox() : Divider();
-          }
+            buildFavoritesItem(context,
+                Provider
+                    .of<FavoritesProvider>(context)
+                    .favoritesList[index]),
       ),
     );
   }

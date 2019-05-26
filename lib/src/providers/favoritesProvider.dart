@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/cardView/cardView.dart';
+import 'package:textos/ui/cardView.dart';
 
 class FavoritesProvider with ChangeNotifier {
   Set<String> _favoritesSet;

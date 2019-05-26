@@ -8,8 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/drawer/drawer.dart';
-import 'package:textos/ui/slideshowView/firestoreSlideshowView.dart';
+import 'package:textos/ui/mainView.dart';
 
 // TODO Document the app
 // TODO Implement tutorial
@@ -138,6 +137,8 @@ class StateBuilderState extends State<StateBuilder> {
             builder: (_) => BlurProvider(widget.blurSettings)),
         ChangeNotifierProvider<TextSizeProvider>(
             builder: (_) => TextSizeProvider(widget.textSize)),
+        ChangeNotifierProvider<QueryInfoProvider>(
+          builder: (_) => QueryInfoProvider(),)
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, provider, _) {
@@ -173,10 +174,7 @@ class StateBuilderState extends State<StateBuilder> {
             debugShowCheckedModeBanner: false,
             darkTheme: dark,
             theme: overrideTheme,
-            home: Scaffold(
-              body: TextSlideshow(),
-              drawer: TextAppDrawer(),
-            ),
+            home: MainView(),
           );
         },
       ),

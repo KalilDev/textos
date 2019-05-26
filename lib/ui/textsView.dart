@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
@@ -7,88 +8,118 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
-import 'package:textos/ui/cardView/cardView.dart';
-import 'package:textos/ui/slideshowView/favoritesCount.dart';
-import 'package:textos/ui/slideshowView/tagPage.dart';
+import 'package:textos/ui/cardView.dart';
+import 'package:textos/ui/favoritesCount.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
-class StoryPages extends StatefulWidget {
-  final List slideList;
-
-  StoryPages({@required this.slideList});
-
+class TextsView extends StatefulWidget {
   @override
-  _StoryPagesState createState() => _StoryPagesState();
+  _TextsViewState createState() => _TextsViewState();
 }
 
-class _StoryPagesState extends State<StoryPages> with TickerProviderStateMixin {
+class _TextsViewState extends State<TextsView> {
   IndexController _indexController;
-  AnimationController _animationController;
-  Animation<double> _opacity;
+  Stream _favoritesStream;
+  Query _query;
+  static Map<dynamic, dynamic> favoritesData;
+  Firestore _db = Firestore.instance;
+  List _slideList;
+
+  Stream get slidesStream =>
+      _query.snapshots().map((list) =>
+          list.documents.map((doc) {
+            final Map data = doc.data;
+            data['path'] = doc.reference.path;
+            data['favoriteCount'] = 0;
+            return data;
+          }));
+
+  void updateQuery() {
+    final queryInfo = Provider.of<QueryInfoProvider>(context);
+    if (queryInfo.tag != Constants.textAllTag) {
+      _query =
+          _db.collection(queryInfo.collection).where(
+              'tags', arrayContains: queryInfo.tag).orderBy(
+              'date', descending: true);
+    } else {
+      _query = _db.collection(queryInfo.collection).orderBy(
+          'date', descending: true);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _animationController = new AnimationController(
-        vsync: this, duration: Constants.durationAnimationShort);
-    _opacity = new CurvedAnimation(
-        parent: _animationController, curve: Curves.easeInOut);
-    _animationController.addListener(() {
-      if (_animationController.status == AnimationStatus.dismissed)
-        _animationController.forward();
-    });
-    _animationController.value = 1.0;
+    _favoritesStream = _db
+        .collection('favorites')
+        .document('_stats_')
+        .snapshots()
+        .map((documentSnapshot) => documentSnapshot.data);
     _indexController = new IndexController();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (Provider
-        .of<QueryProvider>(context)
-        .shouldAnimate) {
-      Provider
-          .of<QueryProvider>(context)
-          .shouldAnimate = false;
-      _animationController.reverse();
-    }
-    return new TransformerPageView(
-      pageSnapping: false,
-      controller: _indexController,
-      viewportFraction: 0.80,
-      curve: Curves.decelerate,
-      physics: BouncingScrollPhysics(),
-      transformer: new PageTransformerBuilder(
-          builder: (Widget child, TransformInfo info) {
-            if (info.index == 0) {
-              return TagPages();
-            } else {
-              final data = widget.slideList[info.index - 1];
-              return ScaleTransition(
-                scale: Tween(begin: 1.1, end: 1.0).animate(_opacity),
-                child: FadeTransition(
-                  opacity: Tween(begin: 0.7, end: 1.0).animate(_opacity),
-                  child: _StoryPage(
-                      info: info,
-                      textContent: Content.fromData(data),
-                      indexController: _indexController),
-                ),
-              );
-            }
-          }),
-      onPageChanged: (page) {
-        HapticFeedback.lightImpact();
-      },
-      itemCount: widget.slideList.length + 1,
-    );
+    updateQuery();
+    return StreamBuilder(
+        stream: slidesStream,
+        initialData: [],
+        builder: (context, AsyncSnapshot snap) {
+          final data = snap.data.toList();
+          _slideList = data.length == 0
+              ? [
+            Constants.textNoTextAvailable,
+          ]
+              : data;
+          return StreamBuilder(
+            stream: _favoritesStream,
+            builder: (context, AsyncSnapshot favoritesSnap) {
+              if (favoritesSnap.hasData) {
+                favoritesData = favoritesSnap.data;
+                favoritesData.forEach((textPath, favoriteInt) {
+                  int targetIndex = _slideList.indexWhere((element) =>
+                  element['path'] ==
+                      textPath.toString().replaceAll('_', '/'));
+                  if (targetIndex >= 0)
+                    _slideList.elementAt(
+                        targetIndex)['favoriteCount'] =
+                        favoriteInt;
+                });
+              }
+
+              return ChangeNotifierProvider<TextPageProvider>(
+                  builder: (_) => TextPageProvider(),
+                  child: TransformerPageView(
+                    pageSnapping: false,
+                    controller: _indexController,
+                    viewportFraction: 0.80,
+                    curve: Curves.decelerate,
+                    physics: BouncingScrollPhysics(),
+                    transformer: new PageTransformerBuilder(
+                        builder: (Widget child, TransformInfo info) {
+                          final data = _slideList[info.index];
+                          return _TextPage(
+                              info: info,
+                              textContent: Content.fromData(data),
+                              indexController: _indexController);
+                        }),
+                    onPageChanged: (page) {
+                      HapticFeedback.lightImpact();
+                    },
+                    itemCount: _slideList.length,
+                  ));
+            },
+          );
+        });
   }
 }
 
-class _StoryPage extends StatelessWidget {
+class _TextPage extends StatelessWidget {
   final Content textContent;
   final TransformInfo info;
   final IndexController indexController;
 
-  _StoryPage(
+  _TextPage(
       {@required this.info, @required this.textContent, this.indexController});
 
   @override

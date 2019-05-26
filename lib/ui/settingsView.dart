@@ -6,12 +6,12 @@ import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/aboutCreatorView.dart';
 
-class SettingsDrawer extends StatefulWidget {
+class SettingsView extends StatefulWidget {
   @override
-  _SettingsDrawerState createState() => _SettingsDrawerState();
+  _SettingsViewState createState() => _SettingsViewState();
 }
 
-class _SettingsDrawerState extends State<SettingsDrawer> {
+class _SettingsViewState extends State<SettingsView> {
   void cleanAll(BuildContext context) {
     HapticFeedback.heavyImpact();
     Provider.of<FavoritesProvider>(context).clear();
@@ -81,16 +81,20 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             width: 96,
             child: Row(
               children: <Widget>[
-                DecreaseButton(value: Provider
-                    .of<TextSizeProvider>(context)
-                    .textSize,
+                DecreaseButton(
+                  value: Provider
+                      .of<TextSizeProvider>(context)
+                      .textSize,
                   onDecrease: () =>
-                      Provider.of<TextSizeProvider>(context).decrease(),),
-                IncreaseButton(value: Provider
-                    .of<TextSizeProvider>(context)
-                    .textSize,
+                      Provider.of<TextSizeProvider>(context).decrease(),
+                ),
+                IncreaseButton(
+                  value: Provider
+                      .of<TextSizeProvider>(context)
+                      .textSize,
                   onIncrease: () =>
-                      Provider.of<TextSizeProvider>(context).increase(),),
+                      Provider.of<TextSizeProvider>(context).increase(),
+                ),
               ],
             ),
           )),
@@ -212,35 +216,19 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
 
   Widget buildCategory(List<Widget> children,
       {bool isBlurred, bool isFirst = false}) {
-    List<Widget> spacedChildren = [];
-    spacedChildren.add(Divider());
-    spacedChildren.addAll(children);
-    return AnimatedSwitcher(
-        duration: Constants.durationAnimationMedium,
-        switchOutCurve: Curves.easeInOut,
-        switchInCurve: Curves.easeInOut,
-        transitionBuilder: (child, animation) =>
-            ScaleTransition(
-              scale: Tween(begin: 0.9, end: 1.0).animate(animation),
-              child: FadeTransition(
-                opacity: Tween(begin: 0.0, end: 1.0).animate(animation),
-                child: child,
-              ),
-            ),
-        child: isBlurred
-            ? Column(children: spacedChildren)
-            : ElevatedContainer(
-            elevation: 4.0,
-            margin: isFirst ? EdgeInsets.fromLTRB(3, 12.5, 3, 3) : EdgeInsets
-                .fromLTRB(3, 5, 3, 3),
-            padding: EdgeInsets.symmetric(vertical: 4.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: Material(
-                color: Colors.transparent,
-                child: Column(children: children),
-              ),
-            )));
+    return ElevatedContainer(
+        elevation: 4.0,
+        margin: isFirst
+            ? EdgeInsets.fromLTRB(3, 12.5, 3, 3)
+            : EdgeInsets.fromLTRB(3, 5, 3, 3),
+        padding: EdgeInsets.symmetric(vertical: 4.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: Material(
+            color: Colors.transparent,
+            child: Column(children: children),
+          ),
+        ));
   }
 
   @override
@@ -248,15 +236,23 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     final isBlurred = Provider
         .of<BlurProvider>(context)
         .drawerBlur;
-    return SafeArea(
+    return Container(
+      decoration: BoxDecoration(
+          color: Color.alphaBlend(Theme
+              .of(context)
+              .primaryColor
+              .withAlpha(80),
+              Theme
+                  .of(context)
+                  .backgroundColor)),
       child: ListView(
         children: <Widget>[
+          SizedBox(height: 40.0),
           buildCategory(themeWidgets(), isBlurred: isBlurred, isFirst: true),
           buildCategory(textWidgets(), isBlurred: isBlurred),
           buildCategory(favoriteWidgets(), isBlurred: isBlurred),
           buildCategory(blurWidgets(), isBlurred: isBlurred),
-          buildCategory(miscWidgets(), isBlurred: isBlurred),
-          SizedBox(height: 50)
+          buildCategory(miscWidgets(), isBlurred: isBlurred)
         ],
       ),
     );
