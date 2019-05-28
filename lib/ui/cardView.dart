@@ -26,16 +26,52 @@ class CardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    exit(List data) async {
+    Future<bool> exit(List<dynamic> data) async {
       HapticFeedback.selectionClick();
       // Nasty
-      await Future.delayed(Duration(milliseconds: 1));
-      if (Navigator.of(context).canPop()) Navigator.pop(context, data);
+      await Future
+      <
+      void
+      >
+          .
+      delayed
+      (
+      const
+      Duration
+      (
+      milliseconds
+          :
+      1
+      )
+      );
+      if
+      (
+      Navigator
+          .
+      of
+      (
+      context
+      )
+          .
+      canPop
+      (
+      )
+      )
+      Navigator
+          .
+      pop
+      (
+      context
+      ,
+      data
+      );
+      return
+      true;
     }
 
     return RepaintBoundary(
       child: MultiProvider(
-        providers: [
+        providers: <ChangeNotifierProvider<dynamic>>[
           ChangeNotifierProvider<FavoritesProvider>(
               builder: (_) => favoritesProvider.copy()),
           ChangeNotifierProvider<ThemeProvider>(
@@ -45,43 +81,26 @@ class CardView extends StatelessWidget {
           ChangeNotifierProvider<TextSizeProvider>(
               builder: (_) => textSizeProvider.copy()),
         ],
-        child: Consumer<ThemeProvider>(
-          builder: (context, provider, _) {
-            ThemeData overrideTheme;
-            final dark = Constants.themeDataDark
-                .copyWith(primaryColor: provider.darkPrimaryColor);
-            final light = Constants.themeDataLight
-                .copyWith(primaryColor: provider.lightPrimaryColor);
-
-            if (provider.isDarkMode) {
-              overrideTheme = dark;
-            } else {
-              overrideTheme = light;
-            }
-            return WillPopScope(
-              onWillPop: () async {
-                return exit([
-                  Provider
-                      .of<FavoritesProvider>(context)
-                      .favoritesList,
-                  Provider
-                      .of<ThemeProvider>(context)
-                      .info,
-                  Provider
-                      .of<BlurProvider>(context)
-                      .blurSettings,
-                  Provider
-                      .of<TextSizeProvider>(context)
-                      .textSize
-                ]);
-              },
-              child: Scaffold(
-                body: CardContent(
-                    textContent: textContent, exitContext: context),
-                drawer: TextAppDrawer(),
-              ),
-            );
+        child: WillPopScope(
+          onWillPop: () async {
+            return exit(<dynamic>[
+              Provider
+                  .of<FavoritesProvider>(context)
+                  .favoritesList,
+              Provider
+                  .of<ThemeProvider>(context)
+                  .info,
+              Provider
+                  .of<BlurProvider>(context)
+                  .blurSettings,
+              Provider
+                  .of<TextSizeProvider>(context)
+                  .textSize
+            ]);
           },
+          child: Scaffold(
+            body: CardContent(textContent: textContent, exitContext: context),
+          ),
         ),
       ),
     );
@@ -89,19 +108,54 @@ class CardView extends StatelessWidget {
 }
 
 class CardContent extends StatelessWidget {
+  const CardContent({@required this.textContent, @required this.exitContext});
+
   final Content textContent;
   final BuildContext exitContext;
 
-  CardContent({@required this.textContent, @required this.exitContext});
-
   @override
   Widget build(BuildContext context) {
-    exit(List data) async {
+    Future<void> exit(List<dynamic> data) async {
       HapticFeedback.selectionClick();
       // Nasty
-      await Future.delayed(Duration(milliseconds: 1));
-      if (Navigator.of(exitContext).canPop()) Navigator.pop(exitContext, data);
+      await Future
+      <
+      void
+      >
+          .
+      delayed
+      (
+      const
+      Duration
+      (
+      milliseconds
+          :
+      1
+      )
+      );
+      if
+      (
+      Navigator
+          .
+      of
+      (
+      exitContext
+      )
+          .
+      canPop
+      (
+      )
+      )
+      Navigator
+          .
+      pop
+      (
+      exitContext
+      ,
+      data
+      );
     }
+
     return Stack(
       children: <Widget>[
         Hero(
@@ -117,10 +171,10 @@ class CardContent extends StatelessWidget {
         Align(
           alignment: Alignment.bottomCenter,
           child: LayoutBuilder(
-              builder: (context, contraints) =>
+              builder: (BuildContext context, BoxConstraints constraints) =>
                   AbsorbPointer(
                     child: Container(
-                      width: contraints.maxWidth,
+                      width: constraints.maxWidth,
                       height: 50.0,
                     ),
                   )),
@@ -130,12 +184,13 @@ class CardContent extends StatelessWidget {
             child: Stack(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0),
+                  margin: const EdgeInsets.only(
+                      left: 5.0, right: 5.0, bottom: 10.0),
                   child: Row(
                     children: <Widget>[
                       textContent.hasText
                           ? Container(
-                          margin: EdgeInsets.only(left: 5.0),
+                          margin: const EdgeInsets.only(left: 5.0),
                           child: IncDecButton(
                               isBlurred: Provider
                                   .of<BlurProvider>(context)
@@ -149,36 +204,43 @@ class CardContent extends StatelessWidget {
                               value: Provider
                                   .of<TextSizeProvider>(context)
                                   .textSize))
-                          : SizedBox(),
+                          : const SizedBox(),
                       textContent.hasMusic
                           ? Expanded(
                           child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 5.0),
-                              child:
-                              RepaintBoundary(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 5.0),
+                              child: RepaintBoundary(
                                 child: PlaybackButton(
-                                  url: textContent.music, isBlurred: Provider
-                                    .of<BlurProvider>(context)
-                                    .buttonsBlur,),
+                                  url: textContent.music,
+                                  isBlurred:
+                                  Provider
+                                      .of<BlurProvider>(context)
+                                      .buttonsBlur,
+                                ),
                               )))
                           : Spacer(),
                       Container(
-                        margin: EdgeInsets.only(right: 5.0),
+                        margin: const EdgeInsets.only(right: 5.0),
                         child: RepaintBoundary(
                           child: BiStateFAB(
                             onPressed: () =>
                                 Provider.of<FavoritesProvider>(context).toggle(
-                                    textContent.title + ';' +
+                                    textContent.title +
+                                        ';' +
                                         textContent.textPath),
-                            isBlurred: Provider
+                            isBlurred:
+                            Provider
                                 .of<BlurProvider>(context)
                                 .buttonsBlur,
                             isEnabled: Provider.of<FavoritesProvider>(context)
-                                .isFavorite(
-                                textContent.title + ';' + textContent.textPath),
+                                .isFavorite(textContent.title +
+                                ';' +
+                                textContent.textPath),
                             disabledColor: Theme
                                 .of(context)
-                                .accentColor,),
+                                .accentColor,
+                          ),
                         ),
                       ),
                     ],
@@ -187,7 +249,7 @@ class CardContent extends StatelessWidget {
               ],
             )),
         Positioned(
-          child: MenuButton(data: [
+          child: MenuButton(data: <dynamic>[
             Provider
                 .of<FavoritesProvider>(context)
                 .favoritesList,
@@ -213,12 +275,10 @@ class CardContent extends StatelessWidget {
 }
 
 class _TextWidget extends StatefulWidget {
+  const _TextWidget({@required this.exit, @required this.textContent});
+
   final Function exit;
   final Content textContent;
-
-  _TextWidget({
-    @required this.exit,
-    @required this.textContent});
 
   @override
   __TextWidgetState createState() => __TextWidgetState();
@@ -231,7 +291,7 @@ class __TextWidgetState extends State<_TextWidget>
   Animation<double> _textSizeAnim;
 
   void pop(BuildContext context) {
-    widget.exit([
+    widget.exit(<dynamic>[
       Provider
           .of<FavoritesProvider>(context)
           .favoritesList,
@@ -249,10 +309,10 @@ class __TextWidgetState extends State<_TextWidget>
 
   @override
   void initState() {
-    _textSizeController = new AnimationController(
-        vsync: this, duration: Constants.durationAnimationShort);
-    _textSizeAnim = new CurvedAnimation(
-        parent: _textSizeController, curve: Curves.easeInOut);
+    _textSizeController =
+        AnimationController(vsync: this, duration: durationAnimationShort);
+    _textSizeAnim =
+        CurvedAnimation(parent: _textSizeController, curve: Curves.easeInOut);
     _textSize = 4.5;
     _textSizeController.addListener(() {
       if (_textSizeController.status == AnimationStatus.completed) {
@@ -274,7 +334,7 @@ class __TextWidgetState extends State<_TextWidget>
         .textSize != _textSize) {
       _textSizeController.forward();
     }
-    final textTheme = Theme
+    final TextTheme textTheme = Theme
         .of(context)
         .textTheme;
 
@@ -286,7 +346,7 @@ class __TextWidgetState extends State<_TextWidget>
           child: Material(
               color: Colors.transparent,
               child: Container(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 decoration:
                 BoxDecoration(borderRadius: BorderRadius.circular(20)),
                 child: BlurOverlay.roundedRect(
@@ -307,16 +367,16 @@ class __TextWidgetState extends State<_TextWidget>
                                       .of(context)
                                       .accentTextTheme
                                       .display1),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               widget.textContent.hasText
                                   ? RichText(
-                                  text: (TextSpan(
+                                  text: TextSpan(
                                       children: widget.textContent
                                           .formattedText(
                                           textTheme.body1.copyWith(
-                                              fontSize: Tween(
+                                              fontSize: Tween<double>(
                                                   begin: _textSize,
                                                   end: Provider
                                                       .of<
@@ -326,16 +386,16 @@ class __TextWidgetState extends State<_TextWidget>
                                                   .animate(
                                                   _textSizeAnim)
                                                   .value *
-                                                  4.5)))))
-                                  : SizedBox(),
+                                                  4.5))))
+                                  : const SizedBox(),
                               SizedBox(
                                   height: 55,
                                   child: Center(
                                       child: Text(widget.textContent.date,
                                           style: textTheme.title))),
                               widget.textContent.hasMusic
-                                  ? SizedBox(height: 55)
-                                  : SizedBox(),
+                                  ? const SizedBox(height: 55)
+                                  : const SizedBox(),
                             ]),
                           ),
                         ),

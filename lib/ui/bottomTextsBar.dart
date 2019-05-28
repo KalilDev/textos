@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
 class BottomTextsBar extends StatelessWidget {
+  const BottomTextsBar({@required this.currentIdx, @required this.onTap});
+
   final int currentIdx;
   final ValueChanged<int> onTap;
-
-  BottomTextsBar({@required this.currentIdx, @required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
+          borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20.0))),
       child: BottomNavigationBar(
         showUnselectedLabels: false,
         currentIndex: currentIdx,
@@ -20,7 +21,7 @@ class BottomTextsBar extends StatelessWidget {
             Theme.of(context).accentColor.withAlpha(150),
             Theme.of(context).backgroundColor),
         unselectedItemColor: Theme.of(context).backgroundColor,
-        items: [
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Icon(Icons.favorite), title: Text('Favoritos')),
           BottomNavigationBarItem(

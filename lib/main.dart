@@ -10,35 +10,37 @@ import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/mainView.dart';
 
-// TODO Document the app
-// TODO Implement tutorial
-// TODO Implement Firebase analytics
-// TODO Let authors upload texts from the app
-// TODO Make tapping the notification open the respective text
-void main() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+// TODO(KalilDev): Document the app
+// TODO(KalilDev): Implement tutorial
+// TODO(KalilDev): Implement Firebase analytics
+// TODO(KalilDev): Let authors upload texts from the app
+// TODO(KalilDev): Make tapping the notification open the respective text
+Future<void> main() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   final bool _enableDarkMode = prefs?.getBool('isDark') ?? false;
-  final List _favoritesList = prefs?.getStringList('favorites') ?? <String>[];
+  final List<String> _favoritesList = prefs?.getStringList('favorites') ??
+      <String>[];
   final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
   final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
   String _uid;
 
   // Clear favorites if the data doesn't contain the documentID needed for
   // setting the statistics on the database
-  if (!_favoritesList.any((string) => string.contains(';'))) {
+  if (!_favoritesList.any((String s) => s.contains(';'))) {
     _favoritesList.clear();
     prefs.setStringList('favorites', _favoritesList);
   }
 
   // Get the stored UDID, in order to preserve the favorites if the user either
   // upgraded the system or reinstalled the app
-  _uid = prefs?.getString('uid') ?? null;
+  _uid = prefs?.getString('uid');
 
   // Check if we already stored an uuid
   if (_uid == null) {
     /// Firebase Login.
-    FirebaseAuth _fireBaseAuth = FirebaseAuth.fromApp(Firestore.instance.app);
+    final FirebaseAuth _fireBaseAuth = FirebaseAuth.fromApp(
+        Firestore.instance.app);
     FirebaseUser user;
     try {
       user = await _fireBaseAuth.signInAnonymously();
@@ -60,19 +62,20 @@ void main() async {
 }
 
 class StateBuilder extends StatefulWidget {
-  final bool enableDarkMode;
-  final List favoritesList;
-  final double textSize;
-  final int blurSettings;
-  final String uid;
-
-  StateBuilder({@required this.enableDarkMode,
+  const StateBuilder({@required this.enableDarkMode,
     @required this.favoritesList,
     @required this.textSize,
     @required this.blurSettings,
     @required this.uid});
 
-  createState() => StateBuilderState();
+  final bool enableDarkMode;
+  final List<String> favoritesList;
+  final double textSize;
+  final int blurSettings;
+  final String uid;
+
+  @override
+  State<StateBuilder> createState() => StateBuilderState();
 }
 
 class StateBuilderState extends State<StateBuilder> {
@@ -116,7 +119,7 @@ class StateBuilderState extends State<StateBuilder> {
     });
     if (isInDebugMode) {
       _firebaseMessaging.subscribeToTopic('debug');
-      _firebaseMessaging.getToken().then((token) => print(token));
+      _firebaseMessaging.getToken().then((String token) => print(token));
       print('udid: ' + widget.uid.toString());
       print('favorites: ' + widget.favoritesList.toString());
     }
@@ -126,7 +129,7 @@ class StateBuilderState extends State<StateBuilder> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
+      providers: <ChangeNotifierProvider<dynamic>>[
         ChangeNotifierProvider<FavoritesProvider>(
             builder: (_) =>
                 FavoritesProvider(
@@ -141,11 +144,11 @@ class StateBuilderState extends State<StateBuilder> {
           builder: (_) => QueryInfoProvider(),)
       ],
       child: Consumer<ThemeProvider>(
-        builder: (context, provider, _) {
+        builder: (BuildContext context, ThemeProvider provider, _) {
           ThemeData overrideTheme;
-          final dark = Constants.themeDataDark
+          final ThemeData dark = themeDataDark
               .copyWith(primaryColor: provider.darkPrimaryColor);
-          final light = Constants.themeDataLight
+          final ThemeData light = themeDataLight
               .copyWith(primaryColor: provider.lightPrimaryColor);
 
           if (provider.isDarkMode) {
@@ -153,7 +156,8 @@ class StateBuilderState extends State<StateBuilder> {
           } else {
             overrideTheme = light;
           }
-          final actualTheme = MediaQuery.platformBrightnessOf(context) ==
+          final ThemeData actualTheme = MediaQuery.platformBrightnessOf(
+              context) ==
               Brightness.dark
               ? dark
               : overrideTheme;
@@ -169,7 +173,8 @@ class StateBuilderState extends State<StateBuilder> {
                   .black.withAlpha(100) : Colors.white.withAlpha(100),
               statusBarIconBrightness: inverseOf(actualTheme.brightness)));
 
-          SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+          SystemChrome.setEnabledSystemUIOverlays(
+              <SystemUiOverlay>[SystemUiOverlay.bottom]);
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             darkTheme: dark,

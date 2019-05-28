@@ -6,7 +6,7 @@ import 'package:textos/src/providers.dart';
 
 class FavoritesView extends StatelessWidget {
   Widget buildFavoritesItem(BuildContext context, String favorite) {
-    final favoriteTitle = favorite.split(';')[0];
+    final String favoriteTitle = favorite.split(';')[0];
 
     Widget txt;
     if (favoriteTitle.length > 30) {
@@ -18,7 +18,7 @@ class FavoritesView extends StatelessWidget {
                   .accentTextTheme
                   .display1,
               blankSpace: 25,
-              pauseAfterRound: Duration(seconds: 1),
+              pauseAfterRound: const Duration(seconds: 1),
               velocity: 60.0),
           height: 60.0);
     } else {
@@ -36,7 +36,7 @@ class FavoritesView extends StatelessWidget {
         background: Container(
           child: Row(
             children: <Widget>[
-              Container(child: Icon(Icons.delete), width: 90),
+              Container(child: const Icon(Icons.delete), width: 90),
               Spacer()
             ],
           ),
@@ -46,20 +46,20 @@ class FavoritesView extends StatelessWidget {
             children: <Widget>[
               Spacer(),
               Container(
-                child: Icon(Icons.delete),
+                child: const Icon(Icons.delete),
                 width: 90,
               ),
             ],
           ),
         ),
-        onDismissed: (direction) =>
+        onDismissed: (DismissDirection direction) =>
             Provider.of<FavoritesProvider>(context).remove(favorite),
         child: LayoutBuilder(
-          builder: (context, constraints) =>
+          builder: (BuildContext context, BoxConstraints constraints) =>
               ElevatedContainer(
             elevation: 4.0,
             width: constraints.maxWidth,
-            margin: EdgeInsets.fromLTRB(3, 6, 3, 3),
+                margin: const EdgeInsets.fromLTRB(3, 6, 3, 3),
             borderRadius: BorderRadius.circular(10.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
@@ -67,7 +67,7 @@ class FavoritesView extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                     child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 7.0),
+                        margin: const EdgeInsets.symmetric(vertical: 7.0),
                         child: txt),
                     onTap: () {
                       Provider.of<FavoritesProvider>(context).open(

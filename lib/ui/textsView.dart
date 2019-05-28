@@ -19,24 +19,25 @@ class TextsView extends StatefulWidget {
 
 class _TextsViewState extends State<TextsView> {
   IndexController _indexController;
-  Stream _favoritesStream;
+  Stream<Map<String, dynamic>> _favoritesStream;
   Query _query;
-  static Map<dynamic, dynamic> favoritesData;
-  Firestore _db = Firestore.instance;
-  List _slideList;
+  static Map<String, dynamic> favoritesData;
+  final Firestore _db = Firestore.instance;
+  List<Map<String, dynamic>> _slideList;
 
-  Stream get slidesStream =>
-      _query.snapshots().map((list) =>
-          list.documents.map((doc) {
-            final Map data = doc.data;
+  Stream<Iterable<Map<String, dynamic>>> get slidesStream =>
+      _query.snapshots().map<Iterable<Map<String, dynamic>>>((
+          QuerySnapshot list) =>
+          list.documents.map<Map<String, dynamic>>((DocumentSnapshot doc) {
+            final Map<String, dynamic> data = doc.data;
             data['path'] = doc.reference.path;
             data['favoriteCount'] = 0;
             return data;
           }));
 
   void updateQuery() {
-    final queryInfo = Provider.of<QueryInfoProvider>(context);
-    if (queryInfo.tag != Constants.textAllTag) {
+    final QueryInfoProvider queryInfo = Provider.of<QueryInfoProvider>(context);
+    if (queryInfo.tag != textAllTag) {
       _query =
           _db.collection(queryInfo.collection).where(
               'tags', arrayContains: queryInfo.tag).orderBy(
@@ -54,30 +55,30 @@ class _TextsViewState extends State<TextsView> {
         .collection('favorites')
         .document('_stats_')
         .snapshots()
-        .map((documentSnapshot) => documentSnapshot.data);
-    _indexController = new IndexController();
+        .map((DocumentSnapshot documentSnapshot) => documentSnapshot.data);
+    _indexController = IndexController();
   }
 
   @override
   Widget build(BuildContext context) {
     updateQuery();
-    return StreamBuilder(
+    return StreamBuilder<Iterable<Map<String, dynamic>>>(
         stream: slidesStream,
-        initialData: [],
-        builder: (context, AsyncSnapshot snap) {
-          final data = snap.data.toList();
-          _slideList = data.length == 0
-              ? [
-            Constants.textNoTextAvailable,
-          ]
-              : data;
-          return StreamBuilder(
+        builder: (BuildContext context,
+            AsyncSnapshot<Iterable<Map<String, dynamic>>> snap) {
+          _slideList =
+          snap.hasData ? snap.data.toList() : <Map<String, dynamic>>[
+            textNoTextAvailable,
+          ];
+          return StreamBuilder<Map<String, dynamic>>(
             stream: _favoritesStream,
-            builder: (context, AsyncSnapshot favoritesSnap) {
+            builder: (BuildContext context,
+                AsyncSnapshot<Map<String, dynamic>> favoritesSnap) {
               if (favoritesSnap.hasData) {
                 favoritesData = favoritesSnap.data;
-                favoritesData.forEach((textPath, favoriteInt) {
-                  int targetIndex = _slideList.indexWhere((element) =>
+                favoritesData.forEach((String textPath, dynamic favoriteInt) {
+                  final int targetIndex = _slideList.indexWhere((
+                      Map<String, dynamic>element) =>
                   element['path'] ==
                       textPath.toString().replaceAll('_', '/'));
                   if (targetIndex >= 0)
@@ -94,16 +95,17 @@ class _TextsViewState extends State<TextsView> {
                     controller: _indexController,
                     viewportFraction: 0.80,
                     curve: Curves.decelerate,
-                    physics: BouncingScrollPhysics(),
-                    transformer: new PageTransformerBuilder(
+                    physics: const BouncingScrollPhysics(),
+                    transformer: PageTransformerBuilder(
                         builder: (Widget child, TransformInfo info) {
-                          final data = _slideList[info.index];
+                          final Map<String, dynamic> data = _slideList[info
+                              .index];
                           return _TextPage(
                               info: info,
                               textContent: Content.fromData(data),
                               indexController: _indexController);
                         }),
-                    onPageChanged: (page) {
+                    onPageChanged: (int page) {
                       HapticFeedback.lightImpact();
                     },
                     itemCount: _slideList.length,
@@ -115,12 +117,12 @@ class _TextsViewState extends State<TextsView> {
 }
 
 class _TextPage extends StatelessWidget {
+  const _TextPage(
+      {@required this.info, @required this.textContent, this.indexController});
+
   final Content textContent;
   final TransformInfo info;
   final IndexController indexController;
-
-  _TextPage(
-      {@required this.info, @required this.textContent, this.indexController});
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +135,7 @@ class _TextPage extends StatelessWidget {
         .padding
         .top + 60;
 
-    final textTheme = Theme
+    final TextTheme textTheme = Theme
         .of(context)
         .accentTextTheme;
 
@@ -141,14 +143,14 @@ class _TextPage extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             AnimatedContainer(
-              duration: Constants.durationAnimationMedium,
+              duration: durationAnimationMedium,
               curve: Curves.decelerate,
               margin: EdgeInsets.only(
                   top: active ? top : 180, bottom: 20, right: 30),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Theme.of(context).backgroundColor,
-                  boxShadow: [
+                  boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: Colors.black.withAlpha(80),
                         blurRadius: blur,
@@ -163,7 +165,7 @@ class _TextPage extends StatelessWidget {
                       key: Key('image' + textContent.textPath))),
             ),
             AnimatedContainer(
-              duration: Constants.durationAnimationMedium,
+              duration: durationAnimationMedium,
               curve: Curves.easeInOut,
               margin: EdgeInsets.only(
                   top: active ? top : 180, bottom: 20, right: 30),
@@ -177,7 +179,7 @@ class _TextPage extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20)),
-                          margin: EdgeInsets.all(12.5),
+                          margin: const EdgeInsets.all(12.5),
                           child: BlurOverlay.roundedRect(
                               radius: 15,
                               enabled:
@@ -188,7 +190,7 @@ class _TextPage extends StatelessWidget {
                                 translationFactor: 300,
                                 position: info.position,
                                 child: Container(
-                                  margin: EdgeInsets.only(
+                                  margin: const EdgeInsets.only(
                                       left: 5.0, right: 5.0),
                                   child: Text(textContent.title,
                                       textAlign: TextAlign.center,
@@ -202,14 +204,16 @@ class _TextPage extends StatelessWidget {
               ),
             ),
             AnimatedSwitcher(
-                duration: Constants.durationAnimationShort,
+                duration: durationAnimationShort,
                 switchInCurve: Curves.decelerate,
                 switchOutCurve: Curves.decelerate,
-                transitionBuilder: (child, animation) => ScaleTransition(
-                  scale: animation,
-                  child: child,
-                  alignment: FractionalOffset.bottomCenter,
-                ),
+                transitionBuilder: (Widget child,
+                    Animation<double> animation) =>
+                    ScaleTransition(
+                      scale: animation,
+                      child: child,
+                      alignment: FractionalOffset.bottomCenter,
+                    ),
                 child: info.position.round() == 0.0
                     ? Align(
                     alignment: FractionalOffset.bottomCenter,
@@ -221,16 +225,17 @@ class _TextPage extends StatelessWidget {
                         Provider
                             .of<BlurProvider>(context)
                             .buttonsBlur))
-                    : SizedBox())
+                    : const SizedBox())
           ],
         ),
         onTap: () async {
           HapticFeedback.selectionClick();
-          if (indexController != null) indexController.move(info.index);
-          final result = await Navigator.push(
+          if (indexController != null)
+            indexController.move(info.index);
+          final List<dynamic> result = await Navigator.push(
               context,
-              FadeRoute(
-                  builder: (context) =>
+              FadeRoute<List<dynamic>>(
+                  builder: (BuildContext context) =>
                       CardView(
                         blurProvider: Provider.of<BlurProvider>(context),
                         darkModeProvider: Provider.of<ThemeProvider>(context),
@@ -240,7 +245,7 @@ class _TextPage extends StatelessWidget {
                         Provider.of<FavoritesProvider>(context),
                         textContent: textContent,
                       )));
-          List resultList = result;
+          final List<dynamic> resultList = result;
           Provider.of<FavoritesProvider>(context).sync(resultList[0]);
           Provider.of<ThemeProvider>(context).sync(resultList[1]);
           Provider.of<BlurProvider>(context).sync(resultList[2]);

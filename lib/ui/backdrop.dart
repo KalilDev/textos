@@ -31,7 +31,7 @@ class _FrontLayer extends StatelessWidget {
     return Material(
       elevation: 16.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(46.0)),
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(46.0)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -54,10 +54,6 @@ class _FrontLayer extends StatelessWidget {
 }
 
 class _BackdropTitle extends AnimatedWidget {
-  final Function onPress;
-  final Widget frontTitle;
-  final Widget backTitle;
-
   const _BackdropTitle({
     Key key,
     Listenable listenable,
@@ -68,9 +64,13 @@ class _BackdropTitle extends AnimatedWidget {
         assert(backTitle != null),
         super(key: key, listenable: listenable);
 
+  final Function onPress;
+  final Widget frontTitle;
+  final Widget backTitle;
+
   @override
   Widget build(BuildContext context) {
-    final Animation<double> animation = this.listenable;
+    final Animation<double> animation = listenable;
 
     return DefaultTextStyle(
       style: Theme.of(context)
@@ -84,21 +84,21 @@ class _BackdropTitle extends AnimatedWidget {
         SizedBox(
           width: 72.0,
           child: IconButton(
-            padding: EdgeInsets.only(right: 8.0),
-            onPressed: this.onPress,
+            padding: const EdgeInsets.only(right: 8.0),
+            onPressed: onPress,
             icon: Stack(children: <Widget>[
               Opacity(
                 opacity: animation.value,
-                child: Icon(Icons.settings),
+                child: const Icon(Icons.settings),
               ),
               Opacity(
                 opacity: 1 - animation.value,
                 child: FractionalTranslation(
                   translation: Tween<Offset>(
                     begin: Offset.zero,
-                    end: Offset(1.0, 0.0),
+                    end: const Offset(1.0, 0.0),
                   ).evaluate(animation),
-                  child: Icon(Icons.arrow_back),
+                  child: const Icon(Icons.arrow_back),
                 ),
               )
             ]),
@@ -116,7 +116,7 @@ class _BackdropTitle extends AnimatedWidget {
               child: FractionalTranslation(
                 translation: Tween<Offset>(
                   begin: Offset.zero,
-                  end: Offset(0.5, 0.0),
+                  end: const Offset(0.5, 0.0),
                 ).evaluate(animation),
                 child: Semantics(
                     label: 'hide categories menu',
@@ -130,7 +130,7 @@ class _BackdropTitle extends AnimatedWidget {
               ).value,
               child: FractionalTranslation(
                 translation: Tween<Offset>(
-                  begin: Offset(-0.25, 0.0),
+                  begin: const Offset(-0.25, 0.0),
                   end: Offset.zero,
                 ).evaluate(animation),
                 child: Semantics(
@@ -152,11 +152,6 @@ class _BackdropTitle extends AnimatedWidget {
 /// can make a selection. The user can also configure the titles for when the
 /// front or back layer is showing.
 class Backdrop extends StatefulWidget {
-  final Widget frontLayer;
-  final Widget backLayer;
-  final Widget frontTitle;
-  final Widget backTitle;
-
   const Backdrop({
     @required this.frontLayer,
     @required this.backLayer,
@@ -166,6 +161,11 @@ class Backdrop extends StatefulWidget {
         assert(backLayer != null),
         assert(frontTitle != null),
         assert(backTitle != null);
+
+  final Widget frontLayer;
+  final Widget backLayer;
+  final Widget frontTitle;
+  final Widget backTitle;
 
   @override
   _BackdropState createState() => _BackdropState();
@@ -213,10 +213,10 @@ class _BackdropState extends State<Backdrop>
     final Size layerSize = constraints.biggest;
     final double layerTop = layerSize.height - layerTitleHeight;
 
-    Animation<RelativeRect> layerAnimation = RelativeRectTween(
+    final Animation<RelativeRect> layerAnimation = RelativeRectTween(
       begin: RelativeRect.fromLTRB(
           0.0, layerTop, 0.0, layerTop - layerSize.height),
-      end: RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0),
+      end: const RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0),
     ).animate(_controller.view);
 
     return Stack(

@@ -29,10 +29,10 @@ class _SettingsViewState extends State<SettingsView> {
     settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
 
     return <Widget>[
-      Text(Constants.textTema, style: description),
+      Text(textTema, style: description),
       SwitchListTile(
-          title: Text(Constants.textTextTheme, style: settingsStyle),
-          secondary: Icon(Icons.invert_colors),
+          title: Text(textTextTheme, style: settingsStyle),
+          secondary: const Icon(Icons.invert_colors),
           value: Provider
               .of<ThemeProvider>(context)
               .isDarkMode
@@ -53,14 +53,15 @@ class _SettingsViewState extends State<SettingsView> {
           MediaQuery
               .of(context)
               .platformBrightness == Brightness.dark
-                  ? AssetImage('res/baseline_lock_white_96dp.png')
+              ? const AssetImage('res/baseline_lock_white_96dp.png')
                   : null,
           onChanged: MediaQuery
               .of(context)
               .platformBrightness ==
                   Brightness.dark
               ? null
-              : (map) => Provider.of<ThemeProvider>(context).toggleDarkMode()),
+              : (bool map) =>
+              Provider.of<ThemeProvider>(context).toggleDarkMode()),
     ];
   }
 
@@ -73,11 +74,11 @@ class _SettingsViewState extends State<SettingsView> {
     settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
 
     return <Widget>[
-      Text(Constants.textText, style: description),
+      Text(textText, style: description),
       ListTile(
-          leading: Icon(Icons.text_fields),
-          title: Text(Constants.textTextSize, style: settingsStyle),
-          trailing: new Container(
+          leading: const Icon(Icons.text_fields),
+          title: Text(textTextSize, style: settingsStyle),
+          trailing: Container(
             width: 96,
             child: Row(
               children: <Widget>[
@@ -110,10 +111,10 @@ class _SettingsViewState extends State<SettingsView> {
     settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
 
     return <Widget>[
-      Text(Constants.textFavs, style: description),
+      Text(textFavs, style: description),
       ListTile(
-        leading: Icon(Icons.delete),
-        title: Text(Constants.textCleanFavs, style: settingsStyle),
+        leading: const Icon(Icons.delete),
+        title: Text(textCleanFavs, style: settingsStyle),
         onTap: () => Provider.of<FavoritesProvider>(context).clear(),
       ),
     ];
@@ -128,10 +129,10 @@ class _SettingsViewState extends State<SettingsView> {
     settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
 
     return <Widget>[
-      Text(Constants.textBlur, style: description),
+      Text(textBlur, style: description),
       SwitchListTile(
-          title: Text(Constants.textTextBlurDrawer, style: settingsStyle),
-          secondary: Icon(Icons.blur_linear),
+          title: Text(textTextBlurDrawer, style: settingsStyle),
+          secondary: const Icon(Icons.blur_linear),
           value: Provider
               .of<BlurProvider>(context)
               .drawerBlur,
@@ -142,11 +143,11 @@ class _SettingsViewState extends State<SettingsView> {
               .of(context)
               .primaryColor
               .withAlpha(170),
-          onChanged: (map) =>
+          onChanged: (bool map) =>
               Provider.of<BlurProvider>(context).toggleDrawerBlur()),
       SwitchListTile(
-          title: Text(Constants.textTextBlurButtons, style: settingsStyle),
-          secondary: Icon(Icons.blur_circular),
+          title: Text(textTextBlurButtons, style: settingsStyle),
+          secondary: const Icon(Icons.blur_circular),
           value: Provider
               .of<BlurProvider>(context)
               .buttonsBlur,
@@ -157,11 +158,11 @@ class _SettingsViewState extends State<SettingsView> {
               .of(context)
               .primaryColor
               .withAlpha(170),
-          onChanged: (map) =>
+          onChanged: (bool map) =>
               Provider.of<BlurProvider>(context).toggleButtonsBlur()),
       SwitchListTile(
-          title: Text(Constants.textTextBlurText, style: settingsStyle),
-          secondary: Icon(Icons.blur_on),
+          title: Text(textTextBlurText, style: settingsStyle),
+          secondary: const Icon(Icons.blur_on),
           value: Provider
               .of<BlurProvider>(context)
               .textsBlur,
@@ -172,7 +173,7 @@ class _SettingsViewState extends State<SettingsView> {
               .of(context)
               .primaryColor
               .withAlpha(170),
-          onChanged: (map) =>
+          onChanged: (bool map) =>
               Provider.of<BlurProvider>(context).toggleTextsBlur()),
     ];
   }
@@ -186,9 +187,9 @@ class _SettingsViewState extends State<SettingsView> {
     settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
 
     return <Widget>[
-      Text(Constants.textsMisc, style: description),
+      Text(textsMisc, style: description),
       ListTile(
-        leading: Icon(Icons.info),
+        leading: const Icon(Icons.info),
         title: Text(
           'Sobre o criador',
           style: settingsStyle,
@@ -198,8 +199,8 @@ class _SettingsViewState extends State<SettingsView> {
           HapticFeedback.selectionClick();
           Navigator.push(
             context,
-            SlideRoute(
-                builder: (context) =>
+            SlideRoute<void>(
+                builder: (BuildContext context) =>
                     CreatorView(
                       darkModeProvider: Provider.of<ThemeProvider>(context),
                     )),
@@ -207,8 +208,8 @@ class _SettingsViewState extends State<SettingsView> {
         },
       ),
       ListTile(
-        leading: Icon(Icons.delete_forever),
-        title: Text(Constants.textTextTrash, style: settingsStyle),
+        leading: const Icon(Icons.delete_forever),
+        title: Text(textTextTrash, style: settingsStyle),
         onTap: () => cleanAll(context),
       ),
     ];
@@ -219,9 +220,9 @@ class _SettingsViewState extends State<SettingsView> {
     return ElevatedContainer(
         elevation: 4.0,
         margin: isFirst
-            ? EdgeInsets.fromLTRB(3, 12.5, 3, 3)
-            : EdgeInsets.fromLTRB(3, 5, 3, 3),
-        padding: EdgeInsets.symmetric(vertical: 4.0),
+            ? const EdgeInsets.fromLTRB(3, 12.5, 3, 3)
+            : const EdgeInsets.fromLTRB(3, 5, 3, 3),
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20.0),
           child: Material(
@@ -233,7 +234,7 @@ class _SettingsViewState extends State<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
-    final isBlurred = Provider
+    final bool isBlurred = Provider
         .of<BlurProvider>(context)
         .drawerBlur;
     return Container(
@@ -247,7 +248,7 @@ class _SettingsViewState extends State<SettingsView> {
                   .backgroundColor)),
       child: ListView(
         children: <Widget>[
-          SizedBox(height: 40.0),
+          const SizedBox(height: 40.0),
           buildCategory(themeWidgets(), isBlurred: isBlurred, isFirst: true),
           buildCategory(textWidgets(), isBlurred: isBlurred),
           buildCategory(favoriteWidgets(), isBlurred: isBlurred),

@@ -18,10 +18,24 @@ class CreatorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> exit(List data) async {
+    Future<bool> exit(List<dynamic> data) async {
       HapticFeedback.selectionClick();
       // Nasty
-      await Future.delayed(Duration(milliseconds: 1));
+      await Future
+      <
+      void
+      >
+          .
+      delayed
+      (
+      const
+      Duration
+      (
+      milliseconds
+          :
+      1
+      )
+      );
       if (Navigator.of(context).canPop()) {
         Navigator.pop(context, data);
         return false;
@@ -33,11 +47,11 @@ class CreatorView extends StatelessWidget {
     return Provider<ThemeProvider>(
       builder: (_) => darkModeProvider.copy(),
       child: Consumer<ThemeProvider>(
-        builder: (context, provider, _) {
+        builder: (BuildContext context, ThemeProvider provider, _) {
           ThemeData overrideTheme;
-          final dark = Constants.themeDataDark
+          final ThemeData dark = themeDataDark
               .copyWith(primaryColor: provider.darkPrimaryColor);
-          final light = Constants.themeDataLight
+          final ThemeData light = themeDataLight
               .copyWith(primaryColor: provider.lightPrimaryColor);
 
           if (provider.isDarkMode) {
@@ -47,7 +61,7 @@ class CreatorView extends StatelessWidget {
           }
           return WillPopScope(
             onWillPop: () async {
-              return exit([
+              return exit(<dynamic>[
                 Provider.of<FavoritesProvider>(context).favoritesList,
                 Provider.of<ThemeProvider>(context).info,
                 Provider.of<BlurProvider>(context).blurSettings,
@@ -56,7 +70,7 @@ class CreatorView extends StatelessWidget {
             },
             child: MaterialApp(
                 debugShowCheckedModeBanner: false,
-                darkTheme: Constants.themeDataDark,
+                darkTheme: themeDataDark,
                 theme: overrideTheme,
                 home: Scaffold(
                   body: AboutCreator(exitContext: context),
@@ -69,14 +83,16 @@ class CreatorView extends StatelessWidget {
 }
 
 class AboutCreator extends StatelessWidget {
-  final BuildContext exitContext;
+  const AboutCreator({@required this.exitContext});
 
-  AboutCreator({@required this.exitContext});
+  final BuildContext exitContext;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final accentTextTheme = Theme
+    final TextTheme textTheme = Theme
+        .of(context)
+        .textTheme;
+    final TextTheme accentTextTheme = Theme
         .of(context)
         .accentTextTheme;
     return Stack(
@@ -94,12 +110,12 @@ class AboutCreator extends StatelessWidget {
                   elevatedColor: Theme
                       .of(context)
                       .primaryColor,
-                  margin: EdgeInsets.all(5.0),
-                  padding: EdgeInsets.all(5.0),
+                  margin: const EdgeInsets.all(5.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
-                      SizedBox(height: 100),
+                      const SizedBox(height: 100),
                       Material(
                         color: Colors.transparent,
                         elevation: 16.0,
@@ -111,7 +127,7 @@ class AboutCreator extends StatelessWidget {
                               width: 100,
                               child: CachedNetworkImage(
                                   imageUrl:
-                                      'https://pbs.twimg.com/profile_images/1080927080458739714/2CVPlhXy_400x400.jpg'),
+                                  'https://pbs.twimg.com/profile_images/1080927080458739714/2CVPlhXy_400x400.jpg'),
                             ),
                           ),
                         ),
@@ -137,63 +153,63 @@ class AboutCreator extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.0),
                     child: SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
                       child: Column(
                         children: <Widget>[
                           ElevatedContainer(
                               elevation: 12.0,
-                              margin: EdgeInsets.all(5.0),
-                              padding: EdgeInsets.all(5.0),
+                              margin: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(5.0),
                               child: Column(
                                 children: <Widget>[
                                   Text('Sobre Mim:',
                                       style: textTheme.subtitle,
                                       textAlign: TextAlign.start),
                                   Text(
-                                    Constants.aboutMe,
+                                    aboutMe,
                                     style: textTheme.subtitle,
                                   )
                                 ],
                               )),
-                          SizedBox(height: 10.0),
+                          const SizedBox(height: 10.0),
                           ElevatedContainer(
                               elevation: 12.0,
-                              margin: EdgeInsets.all(5.0),
-                              padding: EdgeInsets.all(5.0),
+                              margin: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(5.0),
                               child: Column(
                                 children: <Widget>[
                                   Text('Sobre o App:',
                                       style: textTheme.subtitle,
                                       textAlign: TextAlign.start),
                                   Text(
-                                    Constants.aboutApp,
+                                    aboutApp,
                                     style: textTheme.subtitle,
                                   )
                                 ],
                               )),
-                          SizedBox(height: 10.0),
+                          const SizedBox(height: 10.0),
                           ElevatedContainer(
                               elevation: 12.0,
-                              margin: EdgeInsets.all(5.0),
-                              padding: EdgeInsets.all(5.0),
+                              margin: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(5.0),
                               child: Column(
                                 children: <Widget>[
                                   Text('Sobre o Flutter:',
                                       style: textTheme.subtitle,
                                       textAlign: TextAlign.start),
                                   Text(
-                                    Constants.aboutFlutter,
+                                    aboutFlutter,
                                     style: textTheme.subtitle,
                                   )
                                 ],
                               )),
-                          SizedBox(height: 10.0),
+                          const SizedBox(height: 10.0),
                           Container(
-                              margin: EdgeInsets.all(5.0),
-                              padding: EdgeInsets.all(5.0),
+                              margin: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(5.0),
                               child: Column(
                                 children: <Widget>[
-                                  Text(Constants.aboutGreeting,
+                                  Text(aboutGreeting,
                                       style: textTheme.title,
                                       textAlign: TextAlign.start),
                                 ],
@@ -206,7 +222,7 @@ class AboutCreator extends StatelessWidget {
               ],
             )),
         Positioned(
-          child: MenuButton(data: [
+          child: MenuButton(data: <dynamic>[
             Provider.of<FavoritesProvider>(context).favoritesList,
             Provider.of<ThemeProvider>(context).info,
             Provider.of<BlurProvider>(context).blurSettings,

@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BlurProvider with ChangeNotifier {
-  int _settings;
-
   BlurProvider(int settings) {
     _settings = settings;
   }
 
-  static const List<int> settingsTable = [2, 3, 5];
+  int _settings;
+
+  static const List<int> settingsTable = <int>[2, 3, 5];
 
   bool get drawerBlur => _settings % settingsTable[0] == 0;
 
-  toggleDrawerBlur() {
+  void toggleDrawerBlur() {
     HapticFeedback.selectionClick();
     _settings = drawerBlur
         ? (_settings / settingsTable[0]).round()
@@ -24,7 +24,7 @@ class BlurProvider with ChangeNotifier {
 
   bool get buttonsBlur => _settings % settingsTable[1] == 0;
 
-  toggleButtonsBlur() {
+  void toggleButtonsBlur() {
     HapticFeedback.selectionClick();
     _settings = buttonsBlur
         ? (_settings / settingsTable[1]).round()
@@ -35,7 +35,7 @@ class BlurProvider with ChangeNotifier {
 
   bool get textsBlur => _settings % settingsTable[2] == 0;
 
-  toggleTextsBlur() {
+  void toggleTextsBlur() {
     HapticFeedback.selectionClick();
     _settings = textsBlur
         ? (_settings / settingsTable[2]).round()
@@ -44,21 +44,23 @@ class BlurProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  clearSettings() {
+  void clearSettings() {
     _settings = 1;
     settingsSync();
     notifyListeners();
   }
 
   int get blurSettings => _settings;
+
   BlurProvider copy() => BlurProvider(_settings);
-  sync(int blurSettings) {
+
+  void sync(int blurSettings) {
     _settings = blurSettings;
     notifyListeners();
   }
 
-  settingsSync() async {
-    final prefs = await SharedPreferences.getInstance();
+  Future<void> settingsSync() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('blurSettings', _settings);
   }
 }

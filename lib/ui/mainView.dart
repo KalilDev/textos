@@ -14,22 +14,22 @@ class TabNavigatorRoutes {
 }
 
 class MainNavigator extends StatelessWidget {
+  const MainNavigator(
+      {@required this.navigatorKey, @required this.child, @required this.name});
+
   final GlobalKey navigatorKey;
   final Widget child;
   final String name;
-
-  MainNavigator(
-      {@required this.navigatorKey, @required this.child, @required this.name});
 
   @override
   Widget build(BuildContext context) {
     return Navigator(
         key: navigatorKey,
         initialRoute: name,
-        observers: [HeroController()],
-        onGenerateRoute: (routeSettings) {
-          return MaterialPageRoute(
-            builder: (context) => child,
+        observers: <NavigatorObserver>[HeroController()],
+        onGenerateRoute: (RouteSettings routeSettings) {
+          return MaterialPageRoute<void>(
+            builder: (BuildContext context) => child,
           );
         });
   }
@@ -49,7 +49,8 @@ class _MainViewState extends State<MainView> {
     super.initState();
   }
 
-  Map<String, GlobalKey<NavigatorState>> navigatorKeys = {
+  Map<String, GlobalKey<NavigatorState>> navigatorKeys =
+  <String, GlobalKey<NavigatorState>>{
     TabNavigatorRoutes.favs: GlobalKey<NavigatorState>(),
     TabNavigatorRoutes.authors: GlobalKey<NavigatorState>(),
     TabNavigatorRoutes.texts: GlobalKey<NavigatorState>(),
@@ -67,8 +68,9 @@ class _MainViewState extends State<MainView> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: LayoutBuilder(
-          builder: (context, constraints) => Backdrop(
-              frontTitle: Text('Textos'),
+          builder: (BuildContext context, BoxConstraints constraints) =>
+              Backdrop(
+                  frontTitle: const Text('Textos'),
               frontLayer: ListView(
                 children: <Widget>[
                   Container(
@@ -89,12 +91,12 @@ class _MainViewState extends State<MainView> {
                   )
                 ],
               ),
-              backTitle: Text('Configurações'),
+                  backTitle: const Text('Configurações'),
               backLayer: SettingsView()),
         ),
         bottomNavigationBar: BottomTextsBar(
           currentIdx: _currentIdx,
-          onTap: (index) => setState(() => _currentIdx = index),
+          onTap: (int index) => setState(() => _currentIdx = index),
         ));
   }
 }

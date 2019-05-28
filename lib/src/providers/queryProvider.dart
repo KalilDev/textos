@@ -8,7 +8,7 @@ class QueryInfoProvider with ChangeNotifier {
 
   String get collection => _collection != null ? _collection : 'stories';
 
-  String get tag => _tag != null ? _tag : Constants.textAllTag;
+  String get tag => _tag != null ? _tag : textAllTag;
 
   set collection(String newCollection) {
     _collection = newCollection;

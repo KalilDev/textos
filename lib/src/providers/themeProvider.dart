@@ -4,10 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
-  bool _enabled;
-  Color _lightPrimaryColor;
-  Color _darkPrimaryColor;
-
   ThemeProvider(bool enabled) {
     _enabled = enabled;
     _lightPrimaryColor = Colors.indigo.shade500;
@@ -20,9 +16,13 @@ class ThemeProvider with ChangeNotifier {
     _lightPrimaryColor = info.lightPrimaryColor;
   }
 
+  bool _enabled;
+  Color _lightPrimaryColor;
+  Color _darkPrimaryColor;
+
   bool get isDarkMode => _enabled;
 
-  toggleDarkMode() {
+  void toggleDarkMode() {
     HapticFeedback.selectionClick();
     _enabled = !_enabled;
     settingsSync();
@@ -40,7 +40,7 @@ class ThemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  reset() {
+  void reset() {
     _enabled = false;
     _lightPrimaryColor = Colors.indigo.shade500;
     _darkPrimaryColor = Colors.indigo.shade200;
@@ -50,7 +50,7 @@ class ThemeProvider with ChangeNotifier {
 
   ThemeProvider copy() => ThemeProvider.fromInfo(info);
 
-  sync(_Info info) {
+  void sync(_Info info) {
     _darkPrimaryColor = info.darkPrimaryColor;
     _lightPrimaryColor = info.lightPrimaryColor;
     _enabled = info.isDarkMode;
@@ -62,17 +62,17 @@ class ThemeProvider with ChangeNotifier {
           lightPrimaryColor: _lightPrimaryColor,
           isDarkMode: _enabled);
 
-  settingsSync() async {
-    final prefs = await SharedPreferences.getInstance();
+  Future<void> settingsSync() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isDark', _enabled);
   }
 }
 
 class _Info {
-  Color darkPrimaryColor;
-  Color lightPrimaryColor;
-  bool isDarkMode;
-
-  _Info(
+  const _Info(
       {@required this.darkPrimaryColor, @required this.lightPrimaryColor, @required this.isDarkMode});
+
+  final Color darkPrimaryColor;
+  final Color lightPrimaryColor;
+  final bool isDarkMode;
 }

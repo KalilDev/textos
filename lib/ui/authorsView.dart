@@ -16,7 +16,7 @@ class AuthorsView extends StatefulWidget {
 
 class _AuthorsViewState extends State<AuthorsView>
     with AutomaticKeepAliveClientMixin {
-  Stream _tagStream;
+  Stream<Iterable<Map<String, dynamic>>> _tagStream;
   IndexController _tagIndexController;
 
   @override
@@ -28,50 +28,89 @@ class _AuthorsViewState extends State<AuthorsView>
         .collection('metadata')
         .orderBy('order')
         .snapshots()
-        .map((list) => list.documents.map((doc) => doc.data));
-    _tagIndexController = new IndexController();
+        .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) =>
+        list.documents.map<Map<String, dynamic>>((DocumentSnapshot snap) => snap
+            .data));
+    _tagIndexController = IndexController();
     super.initState();
   }
 
-  List<Map<String, dynamic>> _metadatas;
+  List<Map<String, dynamic>> _metadataList;
 
-  jump(int page) async {
+  Future<void> jump(int page) async {
     // Dirty
-    Future.delayed(Duration(milliseconds: 1))
-        .then((_) => _tagIndexController.move(page, animation: false));
+    Future
+    <
+    void
+    >
+        .
+    delayed
+    (
+    const
+    Duration
+    (
+    milliseconds
+        :
+    1
+    )
+    )
+        .
+    then
+    <
+    void
+    >
+    (
+    (
+    _
+    )
+    =>
+    _tagIndexController
+        .
+    move
+    (
+    page
+    ,
+    animation
+    :
+    false
+    )
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      body: StreamBuilder(
+      body: StreamBuilder<Iterable<Map<String, dynamic>>>(
         stream: _tagStream,
-        initialData: [Constants.placeholderTagMetadata],
-        builder: (context, snapshot) {
-          _metadatas = snapshot.data.toList();
-          if (_metadatas.length == 0)
-            _metadatas = [Constants.placeholderTagMetadata];
+        builder: (BuildContext context,
+            AsyncSnapshot<Iterable<Map<String, dynamic>>> snapshot) {
+          _metadataList = snapshot.hasData
+              ? _metadataList = snapshot.data.toList()
+              : _metadataList = <Map<String, dynamic>>[placeholderTagMetadata];
           return TransformerPageView(
             controller: _tagIndexController,
-            itemCount: _metadatas.length,
+            itemCount: _metadataList.length,
             scrollDirection: Axis.vertical,
             viewportFraction: 0.90,
             curve: Curves.decelerate,
-            physics: BouncingScrollPhysics(),
-            onPageChanged: (page) {
-              final provider = Provider.of<QueryInfoProvider>(context);
-              provider.collection = _metadatas[page]['collection'];
+            physics: const BouncingScrollPhysics(),
+            onPageChanged: (int page) {
+              final QueryInfoProvider provider =
+              Provider.of<QueryInfoProvider>(context);
+              provider.collection = _metadataList[page]['collection'];
               HapticFeedback.lightImpact();
             },
-            transformer: new PageTransformerBuilder(builder: (widget, info) {
-              final data = _metadatas[info.index];
-              return _AuthorPage(
-                info: info,
-                tags: data['tags'],
-                title: data['title'],
-                authorName: data['authorName'],
-              );
-            }),
+            transformer: PageTransformerBuilder(
+                builder: (Widget widget, TransformInfo info) {
+                  final Map<String, dynamic> data = _metadataList[info.index];
+                  return _AuthorPage(
+                    info: info,
+                    tags: data['tags'],
+                    title: data['title'],
+                    authorName: data['authorName'],
+                  );
+                }),
           );
         },
       ),
@@ -80,15 +119,15 @@ class _AuthorsViewState extends State<AuthorsView>
 }
 
 class _AuthorPage extends StatefulWidget {
-  final TransformInfo info;
-  final List tags;
-  final String title;
-  final String authorName;
-
-  _AuthorPage({@required this.info,
-    this.tags = const [],
+  const _AuthorPage({@required this.info,
+    this.tags = const <String>[],
     this.title = 'Textos do ',
     this.authorName = 'Kalil'});
+
+  final TransformInfo info;
+  final List<dynamic> tags;
+  final String title;
+  final String authorName;
 
   @override
   _AuthorPageState createState() => _AuthorPageState();
@@ -96,40 +135,44 @@ class _AuthorPage extends StatefulWidget {
 
 class _AuthorPageState extends State<_AuthorPage> {
   List<Widget> _buildButtons() {
-    List<Widget> widgets = [];
+    final List<Widget> widgets = <Widget>[];
     widgets.add(_CustomButton(
       isCurrent: widget.info.position.round() == 0.0,
-      tag: Constants.textAllTag,
+      tag: textAllTag,
       index: 0.0,
       position: widget.info.position,
     ));
-    widget.tags.forEach((tag) =>
-        widgets.add(_CustomButton(
-          isCurrent: widget.info.position.round() == 0.0,
-          tag: tag,
-          index: widget.tags.indexOf(tag) + 1.0,
-          position: widget.info.position,
-        )));
+
+    for (dynamic tag in widget.tags) {
+      widgets.add(_CustomButton(
+        isCurrent: widget.info.position.round() == 0.0,
+        tag: tag,
+        index: widget.tags.indexOf(tag) + 1.0,
+        position: widget.info.position,
+      ));
+    }
+
     return widgets;
   }
 
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) =>
+      builder: (BuildContext context, BoxConstraints constraints) =>
           ElevatedContainer(
             height: constraints.maxHeight,
             width: constraints.maxWidth,
             elevation: 16 * widget.info.position.abs(),
-            margin: EdgeInsets.only(right: 20, top: 10, bottom: 10, left: 10.0),
+            margin: const EdgeInsets.only(
+                right: 20, top: 10, bottom: 10, left: 10.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20.0),
               child: Container(
-                margin: EdgeInsets.all(5.0),
+                margin: const EdgeInsets.all(5.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     ParallaxContainer(
                       axis: Axis.vertical,
                       position: -widget.info.position,
@@ -146,7 +189,7 @@ class _AuthorPageState extends State<_AuthorPage> {
                         axis: Axis.vertical,
                         position: -widget.info.position,
                         translationFactor: 150,
-                        child: Text(Constants.textFilter,
+                        child: Text(textFilter,
                             style: Theme
                                 .of(context)
                                 .accentTextTheme
@@ -164,7 +207,7 @@ class _AuthorPageState extends State<_AuthorPage> {
                                       .backgroundColor),
                             ))),
                     Container(
-                      margin: EdgeInsets.only(left: 1.0),
+                      margin: const EdgeInsets.only(left: 1.0),
                       child: RepaintBoundary(
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -196,25 +239,24 @@ class _CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final queryTag = tag == Constants.textAllTag ? null : tag;
+    final String queryTag = tag == textAllTag ? null : tag;
     return ParallaxContainer(
       axis: Axis.vertical,
       position: -position,
       translationFactor: 150 + 50 * (index + 1),
       opacityFactor: -position.abs() * 1.2 + 1,
       child: AnimatedSwitcher(
-          duration: Constants.durationAnimationMedium,
+          duration: durationAnimationMedium,
           switchOutCurve: Curves.easeInOut,
           switchInCurve: Curves.easeInOut,
-          transitionBuilder: (widget, animation) {
+          transitionBuilder: (Widget widget, Animation<double> animation) {
             return FadeTransition(
-                opacity: Tween(begin: 0.0, end: 1.0).animate(animation),
+                opacity: Tween<double>(begin: 0.0, end: 1.0).animate(animation),
                 child: widget);
           },
-          child: isCurrent &&
-              tag == Provider
-                  .of<QueryInfoProvider>(context)
-                  .tag
+          child: isCurrent && tag == Provider
+              .of<QueryInfoProvider>(context)
+              .tag
               ? FlatButton(
               color: Theme
                   .of(context)

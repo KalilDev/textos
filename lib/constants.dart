@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
 
-class Constants {
   // Text
-  static const textTextos = 'Textos ';
-  static const textFilter = 'FILTRO';
-  static const textAllTag = 'Todos';
-  static const textTema = 'Tema';
-  static const textConfigs = 'Configurações';
-  static const textFavs = 'Favoritos';
-  static const textTextSize = 'Tamanho do texto';
-  static const textTextTheme = 'Tema Escuro';
-  static const textTextTrash = 'Restaurar o Padrão';
-  static const textTextBlurDrawer = 'Borrar a gaveta';
-  static const textTextBlurButtons = 'Borrar os botões';
-  static const textTextBlurText = 'Borrar fundo dos textos';
-  static const textTooltipTextSizeLess = 'Diminuir tamanho do texto';
-  static const textTooltipTextSizePlus = 'Aumentar tamanho do texto';
-  static const textTooltipFav = 'Adicionar aos favoritos';
-  static const textText = 'Texto';
-  static const textCleanFavs = 'Limpar Favoritos';
-  static const textBlur = 'Borrado';
-  static const textPickAccent = 'Alterar cor do tema';
-  static const textsMisc = 'Miscelânea';
-  static final Map<String, dynamic> textNoTextAvailable = {
+const String textTextos = 'Textos ';
+const String textFilter = 'FILTRO';
+const String textAllTag = 'Todos';
+const String textTema = 'Tema';
+const String textConfigs = 'Configurações';
+const String textFavs = 'Favoritos';
+const String textTextSize = 'Tamanho do texto';
+const String textTextTheme = 'Tema Escuro';
+const String textTextTrash = 'Restaurar o Padrão';
+const String textTextBlurDrawer = 'Borrar a gaveta';
+const String textTextBlurButtons = 'Borrar os botões';
+const String textTextBlurText = 'Borrar fundo dos textos';
+const String textTooltipTextSizeLess = 'Diminuir tamanho do texto';
+const String textTooltipTextSizePlus = 'Aumentar tamanho do texto';
+const String textTooltipFav = 'Adicionar aos favoritos';
+const String textText = 'Texto';
+const String textCleanFavs = 'Limpar Favoritos';
+const String textBlur = 'Borrado';
+const String textPickAccent = 'Alterar cor do tema';
+const String textsMisc = 'Miscelânea';
+final Map<String, dynamic> textNoTextAvailable = <String, dynamic>{
     'title': 'Não há nenhum texto nessa categoria',
     'img': 'https://i.imgur.com/yugoBNL.jpg',
     'text':
@@ -32,11 +31,11 @@ class Constants {
   };
 
   // Theme Light
-  static final themePrimaryLight = Colors.indigo.shade500;
-  static final themeAccentLight = Color(0xff3f8cb5);
-  static const themeBackgroundLight = Colors.white;
-  static const themeForegroundLight = Colors.black;
-  static final themeDataLight = ThemeData(
+final Color themePrimaryLight = Colors.indigo.shade500;
+const Color themeAccentLight = Color(0xff3f8cb5);
+const Color themeBackgroundLight = Colors.white;
+const Color themeForegroundLight = Colors.black;
+final ThemeData themeDataLight = ThemeData(
       brightness: Brightness.light,
       scaffoldBackgroundColor: themeBackgroundLight,
       accentColorBrightness: Brightness.dark,
@@ -56,11 +55,11 @@ class Constants {
               themeForegroundLight.withAlpha(221), themeBackgroundLight)));
 
   // Theme Dark
-  static final themePrimaryDark = Colors.indigo.shade200;
-  static final themeAccentDark = Color(0xff9fc5da);
-  static const themeBackgroundDark = Colors.black;
-  static const themeForegroundDark = Colors.white;
-  static final themeDataDark = ThemeData(
+final Color themePrimaryDark = Colors.indigo.shade200;
+const Color themeAccentDark = Color(0xff9fc5da);
+const Color themeBackgroundDark = Colors.black;
+const Color themeForegroundDark = Colors.white;
+final ThemeData themeDataDark = ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: themeBackgroundDark,
       accentColor: themeAccentDark,
@@ -81,12 +80,12 @@ class Constants {
               themeForegroundDark.withAlpha(221), themeBackgroundDark)));
 
   // BaseTextStyles
-  static final _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
-  static final _baseTextStyleMerriweather =
+final TextStyle _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
+final TextStyle _baseTextStyleMerriweather =
   TextStyle(fontFamily: 'Merriweather');
 
   // TextTheme
-  static final textThemeMuli = TextTheme(
+final TextTheme textThemeMuli = TextTheme(
     display4: _baseTextStyleMuli.copyWith(
         fontSize: 112.0, fontWeight: FontWeight.w100),
     display3: _baseTextStyleMuli.copyWith(
@@ -114,7 +113,7 @@ class Constants {
     overline: _baseTextStyleMuli.copyWith(
         fontSize: 10.0, fontWeight: FontWeight.w400),
   );
-  static final textThemeMerriweather = TextTheme(
+final TextTheme textThemeMerriweather = TextTheme(
     display4: _baseTextStyleMerriweather.copyWith(
         fontSize: 112.0, fontWeight: FontWeight.w100),
     display3: _baseTextStyleMerriweather.copyWith(
@@ -145,27 +144,26 @@ class Constants {
 
 
   // Placeholders
-  static const placeholderTitle = 'Titulo';
-  static const placeholderText = 'Texto';
-  static const placeholderDate = '01/01/1970';
-  static const placeholderImg = 'https://i.imgur.com/95fvCBU.jpg';
-  static const placeholderTagMetadata = {
+const String placeholderTitle = 'Titulo';
+const String placeholderText = 'Texto';
+const String placeholderDate = '01/01/1970';
+const String placeholderImg = 'https://i.imgur.com/95fvCBU.jpg';
+const Map<String, dynamic> placeholderTagMetadata = <String, dynamic>{
     'title': 'Textos do ',
     'authorName': 'Kalil',
     'collection': 'stories',
     'type': 'texts',
-    'tags': [],
+    'tags': <String>[],
   };
 
   // Animation durations
-  static const durationAnimationShort = Duration(milliseconds: 200);
-  static const durationAnimationMedium = Duration(milliseconds: 400);
-  static const durationAnimationLong = Duration(milliseconds: 600);
-  static const durationAnimationRoute = Duration(milliseconds: 600);
+const Duration durationAnimationShort = Duration(milliseconds: 200);
+const Duration durationAnimationMedium = Duration(milliseconds: 400);
+const Duration durationAnimationLong = Duration(milliseconds: 600);
+const Duration durationAnimationRoute = Duration(milliseconds: 600);
 
   // About
-  static const aboutMe = 'Sou um jovem escritor nascido em 2003, aluno do Colégio Santo Antônio desde 2016, que começou a escrever no final de 2018. Nunca gostei muito da arte da escrita, tampouco dominei-a, mas algo mudou ano passado. Com o projeto dos professores de redação, de criar um jornal para cada metade da turma, comecei a tomar gosto e a praticar a escrita, e posteriormente, com muito incentivo de um amigo, decidi publicar textos. Comecei a faze-lo por uma pagina no Instagram chamada @TextosDoKalil que eu criei no dia 28. Desde lá eu pensava sobre o quão retardado e ineficiente é isso, uma pagina para postar TEXTOS numa rede social projetada para FOTOS. Rapidamente as limitações se mostraram, e eram muitas: Um mecanismo ineficiente para compartilhar um texto rapidamente, não haver como colocar um título, formatar o texto, alterar a fonte, e não haver um modo escuro para cansar menos a vista, mas continuei usando. Continuei usando pois todos os meu amigos criadores de conteúdo autoral o utilizam: Músicos que postam suas composições junto com fotos, desenhistas que publicam maravilhosos desenhos, e escritores que expõem poemas ao lado de imagens de festas.';
-  static const aboutApp = 'Decidi então criar meu aplicativo, não só para aperfeiçoar a experiencia de consumidores de conteúdo original e de seus criadores, mas também porque já queria aprender a fazer aplicativos, e então iniciou a minha jornada em fevereiro: Baixei os programas necessários, tentei criar um aplicativo usando as ferramentas padrão e após algumas semanas, aprendi como usa-las efetivamente, mas não gostei da experiencia de uso. Para fazer qualquer alteração, era necessário muito esforço, e para visualiza-las, demorava mais um minuto até que elas apareçam no telefone. Percebi então que ou eu encontrava outra maneira, ou eu demoraria no mínimo um ano para fazer meu app dos sonhos.';
-  static const aboutFlutter = 'Me deparei então com o Flutter: Um novo kit de ferramentas para desenvolvimento de apps criado pela a Google. As mudanças são instantâneas, as funcionalidades são bem documentadas, a comunidade é bem ativa, há suporte para todas as funcionalidades essenciais, e no geral, é tudo mais conciso e eficiente. Há também outra grande vantagem: Os aplicativos criados com ele rodam em iPhones, aparelhos com Android, computadores e na web. Criei alguns aplicativos por mais umas semanas para aprender a utilizar o Flutter, e em março, em uma tarde eu tinha meu primeiro protótipo do app, que então acrescentei recursos, e embelezei a interface, até chegar no produto final que você está usando.';
-  static const aboutGreeting = 'Espero que você goste desse app criado com muito ❤, de um criador para outros.';
-}
+const String aboutMe = 'Sou um jovem escritor nascido em 2003, aluno do Colégio Santo Antônio desde 2016, que começou a escrever no final de 2018. Nunca gostei muito da arte da escrita, tampouco dominei-a, mas algo mudou ano passado. Com o projeto dos professores de redação, de criar um jornal para cada metade da turma, comecei a tomar gosto e a praticar a escrita, e posteriormente, com muito incentivo de um amigo, decidi publicar textos. Comecei a faze-lo por uma pagina no Instagram chamada @TextosDoKalil que eu criei no dia 28. Desde lá eu pensava sobre o quão retardado e ineficiente é isso, uma pagina para postar TEXTOS numa rede social projetada para FOTOS. Rapidamente as limitações se mostraram, e eram muitas: Um mecanismo ineficiente para compartilhar um texto rapidamente, não haver como colocar um título, formatar o texto, alterar a fonte, e não haver um modo escuro para cansar menos a vista, mas continuei usando. Continuei usando pois todos os meu amigos criadores de conteúdo autoral o utilizam: Músicos que postam suas composições junto com fotos, desenhistas que publicam maravilhosos desenhos, e escritores que expõem poemas ao lado de imagens de festas.';
+const String aboutApp = 'Decidi então criar meu aplicativo, não só para aperfeiçoar a experiencia de consumidores de conteúdo original e de seus criadores, mas também porque já queria aprender a fazer aplicativos, e então iniciou a minha jornada em fevereiro: Baixei os programas necessários, tentei criar um aplicativo usando as ferramentas padrão e após algumas semanas, aprendi como usa-las efetivamente, mas não gostei da experiencia de uso. Para fazer qualquer alteração, era necessário muito esforço, e para visualiza-las, demorava mais um minuto até que elas apareçam no telefone. Percebi então que ou eu encontrava outra maneira, ou eu demoraria no mínimo um ano para fazer meu app dos sonhos.';
+const String aboutFlutter = 'Me deparei então com o Flutter: Um novo kit de ferramentas para desenvolvimento de apps criado pela a Google. As mudanças são instantâneas, as funcionalidades são bem documentadas, a comunidade é bem ativa, há suporte para todas as funcionalidades essenciais, e no geral, é tudo mais conciso e eficiente. Há também outra grande vantagem: Os aplicativos criados com ele rodam em iPhones, aparelhos com Android, computadores e na web. Criei alguns aplicativos por mais umas semanas para aprender a utilizar o Flutter, e em março, em uma tarde eu tinha meu primeiro protótipo do app, que então acrescentei recursos, e embelezei a interface, até chegar no produto final que você está usando.';
+const String aboutGreeting = 'Espero que você goste desse app criado com muito ❤, de um criador para outros.';

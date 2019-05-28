@@ -4,24 +4,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class FavoritesHelper {
-  final String userId;
-
   FavoritesHelper({@required this.userId});
+
+  final String userId;
 
   final Firestore db = Firestore.instance;
   final CollectionReference favoritesCollection =
-      Firestore.instance.collection('favorites');
+  Firestore.instance.collection('favorites');
   final DocumentReference statsDocument =
-      Firestore.instance.collection('favorites').document('_stats_');
+  Firestore.instance.collection('favorites').document('_stats_');
 
   Future<DocumentSnapshot> get userDocumentSnapshot async {
-    final queryResult = await favoritesCollection
+    final QuerySnapshot queryResult = await favoritesCollection
         .where('userId', isEqualTo: userId)
         .getDocuments();
-    List snapshots = queryResult.documents;
-    if (snapshots.length == 0) {
+    final List<DocumentSnapshot> snapshots = queryResult.documents;
+    if (snapshots.isEmpty) {
       DocumentReference document;
-      document = await favoritesCollection.add({
+      document = await favoritesCollection.add(<String, dynamic>{
         'userId': userId,
         'textReferences': <DocumentReference>[],
         'textTitles': <String>[]
@@ -33,29 +33,31 @@ class FavoritesHelper {
   }
 
   Future<DocumentReference> get userDocument async {
-    DocumentSnapshot snap = await userDocumentSnapshot;
+    final DocumentSnapshot snap = await userDocumentSnapshot;
     return snap.reference;
   }
 
-  Map<String, int> _getDelta(
-      List<DocumentReference> localReferences, List remoteReferences) {
+  Map<String, int> _getDelta(List<DocumentReference> localReferences,
+      List<DocumentReference> remoteReferences) {
     // Wont detect duplicated documents
-    localReferences.sort((ref1, ref2) => ref1.path.compareTo(ref2.path));
-    remoteReferences.sort((ref1, ref2) => ref1.path.compareTo(ref2.path));
+    localReferences.sort((DocumentReference ref1, DocumentReference ref2) =>
+        ref1.path.compareTo(ref2.path));
+    remoteReferences.sort((DocumentReference ref1, DocumentReference ref2) =>
+        ref1.path.compareTo(ref2.path));
 
-    Map<String, int> delta = {};
-    localReferences.forEach((ref) {
+    final Map<String, int> delta = <String, int>{};
+    for (DocumentReference ref in localReferences) {
       if (!remoteReferences.contains(ref)) {
-        String path = ref.path;
+        final String path = ref.path;
         delta[path.replaceAll('/', '_')] = 1;
       }
-    });
-    remoteReferences.forEach((ref) {
+    }
+    for (DocumentReference ref in remoteReferences) {
       if (!localReferences.contains(ref)) {
-        String path = ref.path;
+        final String path = ref.path;
         delta[path.replaceAll('/', '_')] = -1;
       }
-    });
+    }
     return delta;
   }
 
@@ -66,89 +68,138 @@ class FavoritesHelper {
     return inDebugMode;
   }
 
-  void syncDatabase(List<String> favorites) async {
+  Future<void> syncDatabase(List<String> favorites) async {
     if (userId != null && isInDebugMode == false) {
-      DocumentSnapshot snapshot = await userDocumentSnapshot;
-      DocumentReference document = await userDocument;
+      final DocumentSnapshot snapshot = await userDocumentSnapshot;
+      final DocumentReference document = await userDocument;
 
-      List remoteReferences = snapshot.data['textReferences'];
+      final List<dynamic> remoteReferences = snapshot.data['textReferences'];
 
-      List<DocumentReference> localReferences = [];
-      List<String> localTitles = [];
-      favorites.forEach((favorite) {
-        final title = favorite.split(';')[0];
-        final reference = db.document(favorite.split(';')[1]);
+      final List<DocumentReference> localReferences = <DocumentReference>[];
+      final List<String> localTitles = <String>[];
+      for (String favorite in favorites) {
+        final String title = favorite.split(';')[0];
+        final DocumentReference reference = db.document(favorite.split(';')[1]);
         localReferences.add(reference);
         localTitles.add(title);
-      });
+      }
 
-      final delta = _getDelta(localReferences, remoteReferences);
+      final Map<String, int>delta = _getDelta(
+          localReferences, remoteReferences);
 
       // If there are changes OR if there are duplicate entries on remote
       // references AKA if the user tried to fuck the favorites counter by
       // pressing it many times in a short timespan.
       // NEVER TRUST USERS. NEVER.
-      if (delta.length > 0 ||
+      if (delta.isNotEmpty ||
           remoteReferences.length != remoteReferences
               .toSet()
               .length) {
-        final batch = db.batch();
+        final WriteBatch batch = db.batch();
         batch.updateData(document,
-            {'textReferences': localReferences, 'textTitles': localTitles});
-        delta.forEach((docPath, delta) =>
+            <String, dynamic>{
+              'textReferences': localReferences,
+              'textTitles': localTitles
+            });
+        delta.forEach((String docPath, int delta) =>
             batch
                 .updateData(
-                statsDocument, {docPath: FieldValue.increment(delta)}));
+                statsDocument,
+                <String, dynamic>{docPath: FieldValue.increment(delta)}));
         await batch.commit();
       }
     }
   }
 
-  void addFavorite(String favorite) async {
+  Future<void> addFavorite(String favorite) async {
     if (userId != null || isInDebugMode == true) {
-      final title = favorite.split(';')[0];
-      final reference = db.document(favorite.split(';')[1]);
-      final path = reference.path.replaceAll('/', '_');
-      final snapshot = await userDocumentSnapshot;
-      final document = await userDocument;
+      final String title = favorite.split(';')[0];
+      final DocumentReference reference = db.document(favorite.split(';')[1]);
+      final String path = reference.path.replaceAll('/', '_');
+      final DocumentSnapshot snapshot = await userDocumentSnapshot;
+      final DocumentReference document = await userDocument;
 
-      final List remoteReferences = snapshot.data['textReferences'];
-      final List remoteTitles = snapshot.data['textTitles'];
+      final List<dynamic> remoteReferences = snapshot.data['textReferences'];
+      final List<dynamic> remoteTitles = snapshot.data['textTitles'];
 
-      List localReferences = List.from(remoteReferences, growable: true);
-      List localTitles = List.from(remoteTitles, growable: true);
+      final List<DocumentReference> localReferences = List < DocumentReference
+    >
+        .
+    from
+    (
+    remoteReferences
+    ,
+    growable
+        :
+    true
+    );
+    final List<String> localTitles = List<String
+    >.from(remoteTitles, growable: true)
+    ;
 
-      localTitles.add(title);
-      localReferences.add(reference);
-      final batch = db.batch();
-      batch.updateData(document,
-          {'textReferences': localReferences, 'textTitles': localTitles});
-      batch.updateData(statsDocument, {path: FieldValue.increment(1)});
-      batch.commit();
+    localTitles.add(title);
+    localReferences.add(reference);
+    final WriteBatch batch = db
+        .batch();
+    batch.updateData(document,
+    <String, dynamic>
+    {
+    'textReferences': localReferences, 'textTitles': localTitles
     }
-  }
+    );
+    batch.updateData(statsDocument, <String
+    , dynamic>
+    {
+    path: FieldValue.increment(1)
+    }
+    );
+    batch.commit();
+    }
+    }
 
-  void removeFavorite(String favorite) async {
+  Future<void> removeFavorite(String favorite) async {
     if (userId != null || isInDebugMode == true) {
-      final title = favorite.split(';')[0];
-      final reference = db.document(favorite.split(';')[1]);
-      final path = reference.path.replaceAll('/', '_');
-      final snapshot = await userDocumentSnapshot;
-      final document = await userDocument;
+      final String title = favorite.split(';')[0];
+      final DocumentReference reference = db.document(favorite.split(';')[1]);
+      final String path = reference.path.replaceAll('/', '_');
+      final DocumentSnapshot snapshot = await userDocumentSnapshot;
+      final DocumentReference document = await userDocument;
 
-      final List remoteReferences = snapshot.data['textReferences'];
-      final List remoteTitles = snapshot.data['textTitles'];
+      final List<dynamic> remoteReferences = snapshot.data['textReferences'];
+      final List<dynamic> remoteTitles = snapshot.data['textTitles'];
 
-      List localReferences = List.from(remoteReferences, growable: true);
-      List localTitles = List.from(remoteTitles, growable: true);
+      final List<DocumentReference> localReferences = List < DocumentReference
+    >
+        .
+    from
+    (
+    remoteReferences
+    ,
+    growable
+        :
+    true
+    );
+    final List<String> localTitles = List<String
+    >.from(remoteTitles, growable: true)
+    ;
 
-      localTitles.remove(title);
-      localReferences.remove(reference);
-      final batch = db.batch();
-      batch.updateData(document,
-          {'textReferences': localReferences, 'textTitles': localTitles});
-      batch.updateData(statsDocument, {path: FieldValue.increment(-1)});
-      batch.commit();
+    localTitles.remove(title);
+    localReferences.remove(reference);
+    final WriteBatch batch = db
+        .batch();
+    batch.updateData(document,
+    <String, dynamic>
+    {
+    'textReferences': localReferences, 'textTitles': localTitles
     }
-  }
+    );
+    batch.updateData(statsDocument, <String
+    , dynamic>
+    {
+    path: FieldValue.increment(-1)
+    }
+    );
+    batch.commit();
+    }
+    }
 }
