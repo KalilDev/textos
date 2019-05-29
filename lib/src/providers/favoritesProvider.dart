@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/favoritesHelper.dart';
+import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView.dart';
 
-class FavoritesProvider with ChangeNotifier {
+class FavoritesProvider with ChangeNotifier, Haptic {
   FavoritesProvider(List<String> favorites, FavoritesHelper helper) {
     _helper = helper;
     _favoritesSet = favorites.toSet();
@@ -25,7 +25,7 @@ class FavoritesProvider with ChangeNotifier {
       _favoritesSet.any((String string) => string.contains(favorite));
 
   void add(String favorite) {
-    HapticFeedback.selectionClick();
+    selectItem();
     _favoritesSet.add(favorite);
     settingsSync();
     _helper.addFavorite(favorite);
@@ -33,7 +33,7 @@ class FavoritesProvider with ChangeNotifier {
   }
 
   void remove(String favorite) {
-    HapticFeedback.selectionClick();
+    selectItem();
     _favoritesSet.remove(favorite);
     settingsSync();
     _helper.removeFavorite(favorite);
@@ -41,7 +41,7 @@ class FavoritesProvider with ChangeNotifier {
   }
 
   void clear() {
-    HapticFeedback.selectionClick();
+    selectItem();
     _favoritesSet.clear();
     settingsSync();
     _helper.syncDatabase(_favoritesSet.toList());
@@ -59,8 +59,8 @@ class FavoritesProvider with ChangeNotifier {
     await Firestore.instance.document(_getPath(favorite)).get();
     final Map<String, dynamic> data = documentSnapshot.data;
     data['path'] = _getPath(favorite);
+    selectItem();
     Navigator.pop(context);
-    HapticFeedback.selectionClick();
     final List<dynamic> result = await Navigator.push(
       context,
       FadeRoute<List<dynamic>>(

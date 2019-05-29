@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
+import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 
-class CreatorView extends StatelessWidget {
+class CreatorView extends StatelessWidget with Haptic {
   const CreatorView(
       {Key key,
         @required this.darkModeProvider})
@@ -19,7 +19,7 @@ class CreatorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<bool> exit(List<dynamic> data) async {
-      HapticFeedback.selectionClick();
+      selectItem();
       // Nasty
       await Future
       <

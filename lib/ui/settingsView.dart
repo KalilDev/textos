@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
+import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/aboutCreatorView.dart';
 
@@ -11,9 +11,10 @@ class SettingsView extends StatefulWidget {
   _SettingsViewState createState() => _SettingsViewState();
 }
 
-class _SettingsViewState extends State<SettingsView> {
+class _SettingsViewState extends State<SettingsView>
+    with Haptic, TextThemeMixin {
   void cleanAll(BuildContext context) {
-    HapticFeedback.heavyImpact();
+    openView();
     Provider.of<FavoritesProvider>(context).clear();
     Provider.of<BlurProvider>(context).clearSettings();
     Provider.of<ThemeProvider>(context).reset();
@@ -21,12 +22,12 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   List<Widget> themeWidgets() {
-    final TextStyle settingsStyle = Theme
+    final TextStyle settingsStyle = settingsTitleStyle(Theme
         .of(context)
-        .textTheme
-        .subhead;
-    final TextStyle description =
-    settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
+        .textTheme);
+    final TextStyle description = settingsDescriptionStyle(Theme
+        .of(context)
+        .textTheme);
 
     return <Widget>[
       Text(textTema, style: description),
@@ -66,12 +67,12 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   List<Widget> textWidgets() {
-    final TextStyle settingsStyle = Theme
+    final TextStyle settingsStyle = settingsTitleStyle(Theme
         .of(context)
-        .textTheme
-        .subhead;
-    final TextStyle description =
-    settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
+        .textTheme);
+    final TextStyle description = settingsDescriptionStyle(Theme
+        .of(context)
+        .textTheme);
 
     return <Widget>[
       Text(textText, style: description),
@@ -103,12 +104,12 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   List<Widget> favoriteWidgets() {
-    final TextStyle settingsStyle = Theme
+    final TextStyle settingsStyle = settingsTitleStyle(Theme
         .of(context)
-        .textTheme
-        .subhead;
-    final TextStyle description =
-    settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
+        .textTheme);
+    final TextStyle description = settingsDescriptionStyle(Theme
+        .of(context)
+        .textTheme);
 
     return <Widget>[
       Text(textFavs, style: description),
@@ -121,12 +122,12 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   List<Widget> blurWidgets() {
-    final TextStyle settingsStyle = Theme
+    final TextStyle settingsStyle = settingsTitleStyle(Theme
         .of(context)
-        .textTheme
-        .subhead;
-    final TextStyle description =
-    settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
+        .textTheme);
+    final TextStyle description = settingsDescriptionStyle(Theme
+        .of(context)
+        .textTheme);
 
     return <Widget>[
       Text(textBlur, style: description),
@@ -179,12 +180,12 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   List<Widget> miscWidgets() {
-    final TextStyle settingsStyle = Theme
+    final TextStyle settingsStyle = settingsTitleStyle(Theme
         .of(context)
-        .textTheme
-        .subhead;
-    final TextStyle description =
-    settingsStyle.copyWith(color: settingsStyle.color.withAlpha(190));
+        .textTheme);
+    final TextStyle description = settingsDescriptionStyle(Theme
+        .of(context)
+        .textTheme);
 
     return <Widget>[
       Text(textsMisc, style: description),
@@ -196,7 +197,7 @@ class _SettingsViewState extends State<SettingsView> {
         ),
         onTap: () async {
           Navigator.pop(context);
-          HapticFeedback.selectionClick();
+          openView();
           Navigator.push(
             context,
             SlideRoute<void>(

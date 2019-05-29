@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
+import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
@@ -15,7 +15,7 @@ class AuthorsView extends StatefulWidget {
 }
 
 class _AuthorsViewState extends State<AuthorsView>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, Haptic {
   Stream<Iterable<Map<String, dynamic>>> _tagStream;
   IndexController _tagIndexController;
 
@@ -99,7 +99,7 @@ class _AuthorsViewState extends State<AuthorsView>
               final QueryInfoProvider provider =
               Provider.of<QueryInfoProvider>(context);
               provider.collection = _metadataList[page]['collection'];
-              HapticFeedback.lightImpact();
+              scrollFeedback();
             },
             transformer: PageTransformerBuilder(
                 builder: (Widget widget, TransformInfo info) {
@@ -224,7 +224,7 @@ class _AuthorPageState extends State<_AuthorPage> {
   }
 }
 
-class _CustomButton extends StatelessWidget {
+class _CustomButton extends StatelessWidget with Haptic {
   const _CustomButton({Key key,
     @required this.tag,
     @required this.isCurrent,
@@ -285,7 +285,7 @@ class _CustomButton extends StatelessWidget {
                         .color),
               ),
               onPressed: () {
-                HapticFeedback.selectionClick();
+                selectItem();
                 Provider
                     .of<QueryInfoProvider>(context)
                     .tag = queryTag;
@@ -317,7 +317,7 @@ class _CustomButton extends StatelessWidget {
                         .withAlpha(175)),
               ),
               onPressed: () {
-                HapticFeedback.selectionClick();
+                selectItem();
                 Provider
                     .of<QueryInfoProvider>(context)
                     .tag = queryTag;

@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:textos/src/mixins.dart';
 
-class BlurProvider with ChangeNotifier {
+class BlurProvider with ChangeNotifier, Haptic {
   BlurProvider(int settings) {
     _settings = settings;
   }
@@ -14,7 +14,7 @@ class BlurProvider with ChangeNotifier {
   bool get drawerBlur => _settings % settingsTable[0] == 0;
 
   void toggleDrawerBlur() {
-    HapticFeedback.selectionClick();
+    selectItem();
     _settings = drawerBlur
         ? (_settings / settingsTable[0]).round()
         : (_settings * settingsTable[0]).round();
@@ -25,7 +25,7 @@ class BlurProvider with ChangeNotifier {
   bool get buttonsBlur => _settings % settingsTable[1] == 0;
 
   void toggleButtonsBlur() {
-    HapticFeedback.selectionClick();
+    selectItem();
     _settings = buttonsBlur
         ? (_settings / settingsTable[1]).round()
         : (_settings * settingsTable[1]).round();
@@ -36,7 +36,7 @@ class BlurProvider with ChangeNotifier {
   bool get textsBlur => _settings % settingsTable[2] == 0;
 
   void toggleTextsBlur() {
-    HapticFeedback.selectionClick();
+    selectItem();
     _settings = textsBlur
         ? (_settings / settingsTable[2]).round()
         : (_settings * settingsTable[2]).round();

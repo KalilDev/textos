@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
+import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 
-class CardView extends StatelessWidget {
+class CardView extends StatelessWidget with Haptic {
   const CardView({Key key,
     @required this.textContent,
     @required this.darkModeProvider,
@@ -27,7 +27,7 @@ class CardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<bool> exit(List<dynamic> data) async {
-      HapticFeedback.selectionClick();
+      selectItem();
       // Nasty
       await Future
       <
@@ -107,7 +107,7 @@ class CardView extends StatelessWidget {
   }
 }
 
-class CardContent extends StatelessWidget {
+class CardContent extends StatelessWidget with Haptic {
   const CardContent({@required this.textContent, @required this.exitContext});
 
   final Content textContent;
@@ -116,7 +116,7 @@ class CardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<void> exit(List<dynamic> data) async {
-      HapticFeedback.selectionClick();
+      selectItem();
       // Nasty
       await Future
       <

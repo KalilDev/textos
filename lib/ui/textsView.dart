@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
+import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView.dart';
 import 'package:textos/ui/favoritesCount.dart';
@@ -17,7 +17,7 @@ class TextsView extends StatefulWidget {
   _TextsViewState createState() => _TextsViewState();
 }
 
-class _TextsViewState extends State<TextsView> {
+class _TextsViewState extends State<TextsView> with Haptic {
   IndexController _indexController;
   Stream<Map<String, dynamic>> _favoritesStream;
   Query _query;
@@ -106,7 +106,7 @@ class _TextsViewState extends State<TextsView> {
                               indexController: _indexController);
                         }),
                     onPageChanged: (int page) {
-                      HapticFeedback.lightImpact();
+                      scrollFeedback();
                     },
                     itemCount: _slideList.length,
                   ));
@@ -116,7 +116,7 @@ class _TextsViewState extends State<TextsView> {
   }
 }
 
-class _TextPage extends StatelessWidget {
+class _TextPage extends StatelessWidget with Haptic, TextThemeMixin {
   const _TextPage(
       {@required this.info, @required this.textContent, this.indexController});
 
@@ -194,7 +194,7 @@ class _TextPage extends StatelessWidget {
                                       left: 5.0, right: 5.0),
                                   child: Text(textContent.title,
                                       textAlign: TextAlign.center,
-                                      style: textTheme.display1),
+                                      style: textTitleStyle(textTheme)),
                                 ),
                               )),
                         ),
@@ -229,7 +229,7 @@ class _TextPage extends StatelessWidget {
           ],
         ),
         onTap: () async {
-          HapticFeedback.selectionClick();
+          openView();
           if (indexController != null)
             indexController.move(info.index);
           final List<dynamic> result = await Navigator.push(

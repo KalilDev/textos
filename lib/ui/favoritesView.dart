@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
+import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 
-class FavoritesView extends StatelessWidget {
+class FavoritesView extends StatelessWidget with TextThemeMixin {
   Widget buildFavoritesItem(BuildContext context, String favorite) {
     final String favoriteTitle = favorite.split(';')[0];
 
@@ -13,10 +14,9 @@ class FavoritesView extends StatelessWidget {
       txt = Container(
           child: Marquee(
               text: favoriteTitle,
-              style: Theme
+              style: textTitleStyle(Theme
                   .of(context)
-                  .accentTextTheme
-                  .display1,
+                  .accentTextTheme),
               blankSpace: 25,
               pauseAfterRound: const Duration(seconds: 1),
               velocity: 60.0),
@@ -24,10 +24,9 @@ class FavoritesView extends StatelessWidget {
     } else {
       txt = Text(
         favoriteTitle,
-        style: Theme
+        style: textTitleStyle(Theme
             .of(context)
-            .accentTextTheme
-            .display1,
+            .accentTextTheme),
         textAlign: TextAlign.center,
       );
     }
