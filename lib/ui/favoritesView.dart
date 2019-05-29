@@ -56,25 +56,25 @@ class FavoritesView extends StatelessWidget with TextThemeMixin {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) =>
               ElevatedContainer(
-            elevation: 4.0,
-            width: constraints.maxWidth,
+                elevation: 4.0,
+                width: constraints.maxWidth,
                 margin: const EdgeInsets.fromLTRB(3, 6, 3, 3),
-            borderRadius: BorderRadius.circular(10.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                    child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 7.0),
-                        child: txt),
-                    onTap: () {
-                      Provider.of<FavoritesProvider>(context).open(
-                          favorite, context);
-                    }),
+                borderRadius: BorderRadius.circular(10.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                        child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 7.0),
+                            child: txt),
+                        onTap: () {
+                          Provider.of<FavoritesProvider>(context)
+                              .open(favorite, context);
+                        }),
+                  ),
+                ),
               ),
-            ),
-          ),
         ));
   }
 
@@ -82,13 +82,13 @@ class FavoritesView extends StatelessWidget with TextThemeMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView.builder(
-        itemCount:
-        Provider
+        itemCount: Provider
             .of<FavoritesProvider>(context)
             .favoritesList
             .length,
         itemBuilder: (BuildContext context, int index) =>
-            buildFavoritesItem(context,
+            buildFavoritesItem(
+                context,
                 Provider
                     .of<FavoritesProvider>(context)
                     .favoritesList[index]),

@@ -9,9 +9,7 @@ import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 
 class CreatorView extends StatelessWidget with Haptic {
-  const CreatorView(
-      {Key key,
-        @required this.darkModeProvider})
+  const CreatorView({Key key, @required this.darkModeProvider})
       : super(key: key);
 
   final ThemeProvider darkModeProvider;
@@ -49,10 +47,10 @@ class CreatorView extends StatelessWidget with Haptic {
       child: Consumer<ThemeProvider>(
         builder: (BuildContext context, ThemeProvider provider, _) {
           ThemeData overrideTheme;
-          final ThemeData dark = themeDataDark
-              .copyWith(primaryColor: provider.darkPrimaryColor);
-          final ThemeData light = themeDataLight
-              .copyWith(primaryColor: provider.lightPrimaryColor);
+          final ThemeData dark =
+          themeDataDark.copyWith(primaryColor: provider.darkPrimaryColor);
+          final ThemeData light =
+          themeDataLight.copyWith(primaryColor: provider.lightPrimaryColor);
 
           if (provider.isDarkMode) {
             overrideTheme = dark;
@@ -136,13 +134,17 @@ class AboutCreator extends StatelessWidget {
                         child: Column(
                           children: <Widget>[
                             Center(
-                                child: Text('Pedro Kalil',
+                                child: Text(
+                                  'Pedro Kalil',
                                   style: accentTextTheme.display1,
-                                  textAlign: TextAlign.center,)),
+                                  textAlign: TextAlign.center,
+                                )),
                             Center(
-                                child: Text('Desenvolvedor do App',
+                                child: Text(
+                                  'Desenvolvedor do App',
                                   style: accentTextTheme.subtitle,
-                                  textAlign: TextAlign.center,))
+                                  textAlign: TextAlign.center,
+                                ))
                           ],
                         ),
                       )

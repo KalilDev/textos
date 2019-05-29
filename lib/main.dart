@@ -19,8 +19,8 @@ Future<void> main() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   final bool _enableDarkMode = prefs?.getBool('isDark') ?? false;
-  final List<String> _favoritesList = prefs?.getStringList('favorites') ??
-      <String>[];
+  final List<String> _favoritesList =
+      prefs?.getStringList('favorites') ?? <String>[];
   final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
   final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
   String _uid;
@@ -39,8 +39,8 @@ Future<void> main() async {
   // Check if we already stored an uuid
   if (_uid == null) {
     /// Firebase Login.
-    final FirebaseAuth _fireBaseAuth = FirebaseAuth.fromApp(
-        Firestore.instance.app);
+    final FirebaseAuth _fireBaseAuth =
+    FirebaseAuth.fromApp(Firestore.instance.app);
     FirebaseUser user;
     try {
       user = await _fireBaseAuth.signInAnonymously();
@@ -141,24 +141,24 @@ class StateBuilderState extends State<StateBuilder> {
         ChangeNotifierProvider<TextSizeProvider>(
             builder: (_) => TextSizeProvider(widget.textSize)),
         ChangeNotifierProvider<QueryInfoProvider>(
-          builder: (_) => QueryInfoProvider(),)
+          builder: (_) => QueryInfoProvider(),
+        )
       ],
       child: Consumer<ThemeProvider>(
         builder: (BuildContext context, ThemeProvider provider, _) {
           ThemeData overrideTheme;
-          final ThemeData dark = themeDataDark
-              .copyWith(primaryColor: provider.darkPrimaryColor);
-          final ThemeData light = themeDataLight
-              .copyWith(primaryColor: provider.lightPrimaryColor);
+          final ThemeData dark =
+          themeDataDark.copyWith(primaryColor: provider.darkPrimaryColor);
+          final ThemeData light =
+          themeDataLight.copyWith(primaryColor: provider.lightPrimaryColor);
 
           if (provider.isDarkMode) {
             overrideTheme = dark;
           } else {
             overrideTheme = light;
           }
-          final ThemeData actualTheme = MediaQuery.platformBrightnessOf(
-              context) ==
-              Brightness.dark
+          final ThemeData actualTheme =
+          MediaQuery.platformBrightnessOf(context) == Brightness.dark
               ? dark
               : overrideTheme;
 
@@ -167,10 +167,11 @@ class StateBuilderState extends State<StateBuilder> {
 
           SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
               systemNavigationBarColor: actualTheme.primaryColor,
-              systemNavigationBarIconBrightness: inverseOf(
-                  actualTheme.primaryColorBrightness),
-              statusBarColor: actualTheme.brightness == Brightness.dark ? Colors
-                  .black.withAlpha(100) : Colors.white.withAlpha(100),
+              systemNavigationBarIconBrightness:
+              inverseOf(actualTheme.primaryColorBrightness),
+              statusBarColor: actualTheme.brightness == Brightness.dark
+                  ? Colors.black.withAlpha(100)
+                  : Colors.white.withAlpha(100),
               statusBarIconBrightness: inverseOf(actualTheme.brightness)));
 
           SystemChrome.setEnabledSystemUIOverlays(

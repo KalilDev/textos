@@ -38,11 +38,11 @@ class FavoritesHelper {
   }
 
   Map<String, int> _getDelta(List<DocumentReference> localReferences,
-      List<DocumentReference> remoteReferences) {
+      List<dynamic> remoteReferences) {
     // Wont detect duplicated documents
     localReferences.sort((DocumentReference ref1, DocumentReference ref2) =>
         ref1.path.compareTo(ref2.path));
-    remoteReferences.sort((DocumentReference ref1, DocumentReference ref2) =>
+    remoteReferences.sort((dynamic ref1, dynamic ref2) =>
         ref1.path.compareTo(ref2.path));
 
     final Map<String, int> delta = <String, int>{};
@@ -84,8 +84,8 @@ class FavoritesHelper {
         localTitles.add(title);
       }
 
-      final Map<String, int>delta = _getDelta(
-          localReferences, remoteReferences);
+      final Map<String, int> delta =
+      _getDelta(localReferences, remoteReferences);
 
       // If there are changes OR if there are duplicate entries on remote
       // references AKA if the user tried to fuck the favorites counter by
@@ -96,14 +96,12 @@ class FavoritesHelper {
               .toSet()
               .length) {
         final WriteBatch batch = db.batch();
-        batch.updateData(document,
-            <String, dynamic>{
-              'textReferences': localReferences,
-              'textTitles': localTitles
-            });
+        batch.updateData(document, <String, dynamic>{
+          'textReferences': localReferences,
+          'textTitles': localTitles
+        });
         delta.forEach((String docPath, int delta) =>
-            batch
-                .updateData(
+            batch.updateData(
                 statsDocument,
                 <String, dynamic>{docPath: FieldValue.increment(delta)}));
         await batch.commit();
@@ -122,7 +120,8 @@ class FavoritesHelper {
       final List<dynamic> remoteReferences = snapshot.data['textReferences'];
       final List<dynamic> remoteTitles = snapshot.data['textTitles'];
 
-      final List<DocumentReference> localReferences = List < DocumentReference
+      final List<DocumentReference> localReferences =
+          List < DocumentReference
     >
         .
     from
@@ -133,27 +132,35 @@ class FavoritesHelper {
         :
     true
     );
-    final List<String> localTitles = List<String
+    final List<String> localTitles =
+    List<String
     >.from(remoteTitles, growable: true)
     ;
 
     localTitles.add(title);
-    localReferences.add(reference);
+    localReferences.
+    add(reference);
     final WriteBatch batch = db
         .batch();
-    batch.updateData(document,
-    <String, dynamic>
+    batch.updateData(document
+    , <String, dynamic>
     {
-    'textReferences': localReferences, 'textTitles': localTitles
+    'textReferences': localReferences,
+    'textTitles': localTitles
     }
     );
-    batch.updateData(statsDocument, <String
+    batch.updateData(
+    statsDocument, <String
     , dynamic>
     {
     path: FieldValue.increment(1)
     }
     );
-    batch.commit();
+    batch
+        .
+    commit
+    (
+    );
     }
     }
 
@@ -168,7 +175,8 @@ class FavoritesHelper {
       final List<dynamic> remoteReferences = snapshot.data['textReferences'];
       final List<dynamic> remoteTitles = snapshot.data['textTitles'];
 
-      final List<DocumentReference> localReferences = List < DocumentReference
+      final List<DocumentReference> localReferences =
+          List < DocumentReference
     >
         .
     from
@@ -179,27 +187,35 @@ class FavoritesHelper {
         :
     true
     );
-    final List<String> localTitles = List<String
+    final List<String> localTitles =
+    List<String
     >.from(remoteTitles, growable: true)
     ;
 
     localTitles.remove(title);
-    localReferences.remove(reference);
+    localReferences.
+    remove(reference);
     final WriteBatch batch = db
         .batch();
-    batch.updateData(document,
-    <String, dynamic>
+    batch.updateData(document
+    , <String, dynamic>
     {
-    'textReferences': localReferences, 'textTitles': localTitles
+    'textReferences': localReferences,
+    'textTitles': localTitles
     }
     );
-    batch.updateData(statsDocument, <String
+    batch.updateData(
+    statsDocument, <String
     , dynamic>
     {
     path: FieldValue.increment(-1)
     }
     );
-    batch.commit();
+    batch
+        .
+    commit
+    (
+    );
     }
     }
 }

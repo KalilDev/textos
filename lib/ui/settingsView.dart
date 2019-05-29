@@ -22,10 +22,12 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   List<Widget> themeWidgets() {
-    final TextStyle settingsStyle = settingsTitleStyle(Theme
+    final TextStyle settingsStyle =
+    settingsTitleStyle(Theme
         .of(context)
         .textTheme);
-    final TextStyle description = settingsDescriptionStyle(Theme
+    final TextStyle description =
+    settingsDescriptionStyle(Theme
         .of(context)
         .textTheme);
 
@@ -56,10 +58,10 @@ class _SettingsViewState extends State<SettingsView>
               .platformBrightness == Brightness.dark
               ? const AssetImage('res/baseline_lock_white_96dp.png')
                   : null,
-          onChanged: MediaQuery
+          onChanged:
+          MediaQuery
               .of(context)
-              .platformBrightness ==
-                  Brightness.dark
+              .platformBrightness == Brightness.dark
               ? null
               : (bool map) =>
               Provider.of<ThemeProvider>(context).toggleDarkMode()),
@@ -67,10 +69,12 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   List<Widget> textWidgets() {
-    final TextStyle settingsStyle = settingsTitleStyle(Theme
+    final TextStyle settingsStyle =
+    settingsTitleStyle(Theme
         .of(context)
         .textTheme);
-    final TextStyle description = settingsDescriptionStyle(Theme
+    final TextStyle description =
+    settingsDescriptionStyle(Theme
         .of(context)
         .textTheme);
 
@@ -104,10 +108,12 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   List<Widget> favoriteWidgets() {
-    final TextStyle settingsStyle = settingsTitleStyle(Theme
+    final TextStyle settingsStyle =
+    settingsTitleStyle(Theme
         .of(context)
         .textTheme);
-    final TextStyle description = settingsDescriptionStyle(Theme
+    final TextStyle description =
+    settingsDescriptionStyle(Theme
         .of(context)
         .textTheme);
 
@@ -122,10 +128,12 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   List<Widget> blurWidgets() {
-    final TextStyle settingsStyle = settingsTitleStyle(Theme
+    final TextStyle settingsStyle =
+    settingsTitleStyle(Theme
         .of(context)
         .textTheme);
-    final TextStyle description = settingsDescriptionStyle(Theme
+    final TextStyle description =
+    settingsDescriptionStyle(Theme
         .of(context)
         .textTheme);
 
@@ -180,10 +188,12 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   List<Widget> miscWidgets() {
-    final TextStyle settingsStyle = settingsTitleStyle(Theme
+    final TextStyle settingsStyle =
+    settingsTitleStyle(Theme
         .of(context)
         .textTheme);
-    final TextStyle description = settingsDescriptionStyle(Theme
+    final TextStyle description =
+    settingsDescriptionStyle(Theme
         .of(context)
         .textTheme);
 

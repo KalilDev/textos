@@ -26,8 +26,9 @@ class _TextsViewState extends State<TextsView> with Haptic {
   List<Map<String, dynamic>> _slideList;
 
   Stream<Iterable<Map<String, dynamic>>> get slidesStream =>
-      _query.snapshots().map<Iterable<Map<String, dynamic>>>((
-          QuerySnapshot list) =>
+      _query
+          .snapshots()
+          .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) =>
           list.documents.map<Map<String, dynamic>>((DocumentSnapshot doc) {
             final Map<String, dynamic> data = doc.data;
             data['path'] = doc.reference.path;
@@ -38,13 +39,14 @@ class _TextsViewState extends State<TextsView> with Haptic {
   void updateQuery() {
     final QueryInfoProvider queryInfo = Provider.of<QueryInfoProvider>(context);
     if (queryInfo.tag != textAllTag) {
-      _query =
-          _db.collection(queryInfo.collection).where(
-              'tags', arrayContains: queryInfo.tag).orderBy(
-              'date', descending: true);
+      _query = _db
+          .collection(queryInfo.collection)
+          .where('tags', arrayContains: queryInfo.tag)
+          .orderBy('date', descending: true);
     } else {
-      _query = _db.collection(queryInfo.collection).orderBy(
-          'date', descending: true);
+      _query = _db
+          .collection(queryInfo.collection)
+          .orderBy('date', descending: true);
     }
   }
 
@@ -66,8 +68,9 @@ class _TextsViewState extends State<TextsView> with Haptic {
         stream: slidesStream,
         builder: (BuildContext context,
             AsyncSnapshot<Iterable<Map<String, dynamic>>> snap) {
-          _slideList =
-          snap.hasData ? snap.data.toList() : <Map<String, dynamic>>[
+          _slideList = snap.hasData
+              ? snap.data.toList()
+              : <Map<String, dynamic>>[
             textNoTextAvailable,
           ];
           return StreamBuilder<Map<String, dynamic>>(
@@ -77,13 +80,12 @@ class _TextsViewState extends State<TextsView> with Haptic {
               if (favoritesSnap.hasData) {
                 favoritesData = favoritesSnap.data;
                 favoritesData.forEach((String textPath, dynamic favoriteInt) {
-                  final int targetIndex = _slideList.indexWhere((
-                      Map<String, dynamic>element) =>
-                  element['path'] ==
-                      textPath.toString().replaceAll('_', '/'));
+                  final int targetIndex = _slideList.indexWhere(
+                          (Map<String, dynamic> element) =>
+                      element['path'] ==
+                          textPath.toString().replaceAll('_', '/'));
                   if (targetIndex >= 0)
-                    _slideList.elementAt(
-                        targetIndex)['favoriteCount'] =
+                    _slideList.elementAt(targetIndex)['favoriteCount'] =
                         favoriteInt;
                 });
               }
@@ -207,8 +209,8 @@ class _TextPage extends StatelessWidget with Haptic, TextThemeMixin {
                 duration: durationAnimationShort,
                 switchInCurve: Curves.decelerate,
                 switchOutCurve: Curves.decelerate,
-                transitionBuilder: (Widget child,
-                    Animation<double> animation) =>
+                transitionBuilder:
+                    (Widget child, Animation<double> animation) =>
                     ScaleTransition(
                       scale: animation,
                       child: child,
@@ -230,8 +232,7 @@ class _TextPage extends StatelessWidget with Haptic, TextThemeMixin {
         ),
         onTap: () async {
           openView();
-          if (indexController != null)
-            indexController.move(info.index);
+          if (indexController != null) indexController.move(info.index);
           final List<dynamic> result = await Navigator.push(
               context,
               FadeRoute<List<dynamic>>(

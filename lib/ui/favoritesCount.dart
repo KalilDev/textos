@@ -17,11 +17,14 @@ class FavoritesCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = Theme
+    final Color color =
+    Theme
         .of(context)
-        .accentColorBrightness != Brightness.dark ? Theme
+        .accentColorBrightness != Brightness.dark
+        ? Theme
         .of(context)
-        .backgroundColor : Theme
+        .backgroundColor
+        : Theme
         .of(context)
         .textTheme
         .display1
@@ -39,17 +42,19 @@ class FavoritesCount extends StatelessWidget {
             child: Consumer<FavoritesProvider>(
               builder: (BuildContext context, FavoritesProvider provider, _) =>
                   AnimatedGradientContainer(
-                    colors: blurEnabled ? <Color>[
+                    colors: blurEnabled
+                        ? <Color>[
                       Colors.red.shade900.withAlpha(180),
                       Theme
                           .of(context)
                           .accentColor
                           .withAlpha(150)
                     ]
-                        : <Color>[Colors.red.shade900,
-                    Theme
-                        .of(context)
-                        .accentColor
+                        : <Color>[
+                      Colors.red.shade900,
+                      Theme
+                          .of(context)
+                          .accentColor
                     ],
                     isEnabled: provider.isFavorite(text),
                     height: 50,
@@ -60,12 +65,13 @@ class FavoritesCount extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             const SizedBox(width: 16.0),
-                            Icon(provider.isFavorite(text)
-                                ? Icons.favorite
-                                : Icons.favorite_border, color: color),
+                            Icon(
+                                provider.isFavorite(text)
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: color),
                             const SizedBox(width: 8.0),
-                            Text(
-                                favorites.toString() + ' ' + textFavs,
+                            Text(favorites.toString() + ' ' + textFavs,
                                 style: Theme
                                     .of(context)
                                     .textTheme
@@ -76,8 +82,8 @@ class FavoritesCount extends StatelessWidget {
                         ),
                         color: Colors.transparent,
                         onPressed: () =>
-                            Provider.of<FavoritesProvider>(context).toggle(
-                                text)),
+                            Provider.of<FavoritesProvider>(context)
+                                .toggle(text)),
                   ),
             ),
           ),

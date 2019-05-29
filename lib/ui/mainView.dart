@@ -71,28 +71,29 @@ class _MainViewState extends State<MainView> {
           builder: (BuildContext context, BoxConstraints constraints) =>
               Backdrop(
                   frontTitle: const Text('Textos'),
-              frontLayer: ListView(
-                children: <Widget>[
-                  Container(
-                    height: constraints.maxHeight - 40,
-                    child: RepaintBoundary(
-                        child: Stack(
-                      children: <Widget>[
-                        _buildOffstageNavigator(0,
-                            child: FavoritesView(),
-                            name: TabNavigatorRoutes.favs),
-                        _buildOffstageNavigator(1,
-                            child: AuthorsView(),
-                            name: TabNavigatorRoutes.authors),
-                        _buildOffstageNavigator(2,
-                            child: TextsView(), name: TabNavigatorRoutes.texts)
-                      ],
-                    )),
-                  )
-                ],
-              ),
+                  frontLayer: ListView(
+                    children: <Widget>[
+                      Container(
+                        height: constraints.maxHeight - 40,
+                        child: RepaintBoundary(
+                            child: Stack(
+                              children: <Widget>[
+                                _buildOffstageNavigator(0,
+                                    child: FavoritesView(),
+                                    name: TabNavigatorRoutes.favs),
+                                _buildOffstageNavigator(1,
+                                    child: AuthorsView(),
+                                    name: TabNavigatorRoutes.authors),
+                                _buildOffstageNavigator(2,
+                                    child: TextsView(),
+                                    name: TabNavigatorRoutes.texts)
+                              ],
+                            )),
+                      )
+                    ],
+                  ),
                   backTitle: const Text('Configurações'),
-              backLayer: SettingsView()),
+                  backLayer: SettingsView()),
         ),
         bottomNavigationBar: BottomTextsBar(
           currentIdx: _currentIdx,

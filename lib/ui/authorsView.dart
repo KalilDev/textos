@@ -29,8 +29,9 @@ class _AuthorsViewState extends State<AuthorsView>
         .orderBy('order')
         .snapshots()
         .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) =>
-        list.documents.map<Map<String, dynamic>>((DocumentSnapshot snap) => snap
-            .data));
+        list
+            .documents
+            .map<Map<String, dynamic>>((DocumentSnapshot snap) => snap.data));
     _tagIndexController = IndexController();
     super.initState();
   }

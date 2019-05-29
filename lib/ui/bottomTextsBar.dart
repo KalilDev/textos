@@ -10,8 +10,8 @@ class BottomTextsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20.0))),
+          borderRadius:
+          const BorderRadius.vertical(top: Radius.circular(20.0))),
       child: BottomNavigationBar(
         showUnselectedLabels: false,
         currentIndex: currentIdx,

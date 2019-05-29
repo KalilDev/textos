@@ -12,13 +12,16 @@ class Content with Haptic {
     if (data['date'] == null) {
       date = stringDate(DateTime.now());
     } else if (data['date'] is String) {
-      date = data['date'].toString().contains('/') ? data['date'] : stringDate(
-          DateTime.parse(data['date'].toString()));
+      date = data['date'].toString().contains('/')
+          ? data['date']
+          : stringDate(DateTime.parse(data['date'].toString()));
     }
     favoriteCount = data['favoriteCount'] ?? 0;
     music = data['music'];
-    _text = data['text'].toString().replaceAll('\^TAB', '         ').replaceAll(
-        '\^NL', '\n');
+    _text = data['text']
+        .toString()
+        .replaceAll('\^TAB', '         ')
+        .replaceAll('\^NL', '\n');
   }
 
   String title;
@@ -34,7 +37,10 @@ class Content with Haptic {
   bool get hasMusic => music != null;
 
   String stringDate(DateTime time) =>
-      time.day.toString() + '/' + time.month.toString() + '/' +
+      time.day.toString() +
+          '/' +
+          time.month.toString() +
+          '/' +
           time.year.toString();
 
   Map<int, int> _iterate(List<Match> list) {
@@ -53,22 +59,18 @@ class Content with Haptic {
     final RegExp strikeRegex = RegExp(r'\~');
     final RegExp monoRegex = RegExp(r'\`');
 
-    final Map<int, int> italic = _iterate(
-        italicRegex.allMatches(_text).toList());
+    final Map<int, int> italic =
+    _iterate(italicRegex.allMatches(_text).toList());
     final Map<int, int> bold = _iterate(boldRegex.allMatches(_text).toList());
-    final Map<int, int> strike = _iterate(
-        strikeRegex.allMatches(_text).toList());
+    final Map<int, int> strike =
+    _iterate(strikeRegex.allMatches(_text).toList());
     final Map<int, int> mono = _iterate(monoRegex.allMatches(_text).toList());
 
     final Map<int, int> allMap = <int, int>{};
-    if (italic != null)
-      allMap.addAll(italic);
-    if (bold != null)
-      allMap.addAll(bold);
-    if (strike != null)
-      allMap.addAll(strike);
-    if (mono != null)
-      allMap.addAll(mono);
+    if (italic != null) allMap.addAll(italic);
+    if (bold != null) allMap.addAll(bold);
+    if (strike != null) allMap.addAll(strike);
+    if (mono != null) allMap.addAll(mono);
 
     final List<int> all = allMap.keys.toList();
     all.sort();

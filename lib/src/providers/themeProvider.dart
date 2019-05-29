@@ -58,7 +58,8 @@ class ThemeProvider with ChangeNotifier, Haptic {
   }
 
   _Info get info =>
-      _Info(darkPrimaryColor: _darkPrimaryColor,
+      _Info(
+          darkPrimaryColor: _darkPrimaryColor,
           lightPrimaryColor: _lightPrimaryColor,
           isDarkMode: _enabled);
 
@@ -69,8 +70,9 @@ class ThemeProvider with ChangeNotifier, Haptic {
 }
 
 class _Info {
-  const _Info(
-      {@required this.darkPrimaryColor, @required this.lightPrimaryColor, @required this.isDarkMode});
+  const _Info({@required this.darkPrimaryColor,
+    @required this.lightPrimaryColor,
+    @required this.isDarkMode});
 
   final Color darkPrimaryColor;
   final Color lightPrimaryColor;
