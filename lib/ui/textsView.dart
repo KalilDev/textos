@@ -97,7 +97,6 @@ class _TextsViewState extends State<TextsView> with Haptic {
                     controller: _indexController,
                     viewportFraction: 0.80,
                     curve: Curves.decelerate,
-                    physics: const BouncingScrollPhysics(),
                     transformer: PageTransformerBuilder(
                         builder: (Widget child, TransformInfo info) {
                           final Map<String, dynamic> data = _slideList[info

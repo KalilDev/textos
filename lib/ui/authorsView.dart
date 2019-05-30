@@ -95,7 +95,6 @@ class _AuthorsViewState extends State<AuthorsView>
             scrollDirection: Axis.vertical,
             viewportFraction: 0.90,
             curve: Curves.decelerate,
-            physics: const BouncingScrollPhysics(),
             onPageChanged: (int page) {
               final QueryInfoProvider provider =
               Provider.of<QueryInfoProvider>(context);

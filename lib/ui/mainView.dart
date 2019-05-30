@@ -5,99 +5,90 @@ import 'package:textos/ui/favoritesView.dart';
 import 'package:textos/ui/settingsView.dart';
 import 'package:textos/ui/textsView.dart';
 
-import 'bottomTextsBar.dart';
-
-class TabNavigatorRoutes {
-  static const String authors = '/authors';
-  static const String texts = '/texts';
-  static const String favs = '/favorites';
-}
-
-class MainNavigator extends StatelessWidget {
-  const MainNavigator(
-      {@required this.navigatorKey, @required this.child, @required this.name});
-
-  final GlobalKey navigatorKey;
-  final Widget child;
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    return Navigator(
-        key: navigatorKey,
-        initialRoute: name,
-        observers: <NavigatorObserver>[HeroController()],
-        onGenerateRoute: (RouteSettings routeSettings) {
-          return MaterialPageRoute<void>(
-            builder: (BuildContext context) => child,
-          );
-        });
-  }
-}
-
 class MainView extends StatefulWidget {
   @override
   _MainViewState createState() => _MainViewState();
 }
 
-class _MainViewState extends State<MainView> {
-  int _currentIdx;
+class _MainViewState extends State<MainView> with TickerProviderStateMixin {
+  TabController _tabController;
 
   @override
   void initState() {
-    _currentIdx = 1;
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
     super.initState();
-  }
-
-  Map<String, GlobalKey<NavigatorState>> navigatorKeys =
-  <String, GlobalKey<NavigatorState>>{
-    TabNavigatorRoutes.favs: GlobalKey<NavigatorState>(),
-    TabNavigatorRoutes.authors: GlobalKey<NavigatorState>(),
-    TabNavigatorRoutes.texts: GlobalKey<NavigatorState>(),
-  };
-
-  Widget _buildOffstageNavigator(int index, {Widget child, String name}) {
-    return Offstage(
-      offstage: _currentIdx != index,
-      child: MainNavigator(
-          navigatorKey: navigatorKeys[name], name: name, child: child),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) =>
-              Backdrop(
-                  frontTitle: const Text('Textos'),
-                  frontLayer: ListView(
-                    children: <Widget>[
-                      Container(
-                        height: constraints.maxHeight - 40,
-                        child: RepaintBoundary(
-                            child: Stack(
-                              children: <Widget>[
-                                _buildOffstageNavigator(0,
-                                    child: FavoritesView(),
-                                    name: TabNavigatorRoutes.favs),
-                                _buildOffstageNavigator(1,
-                                    child: AuthorsView(),
-                                    name: TabNavigatorRoutes.authors),
-                                _buildOffstageNavigator(2,
-                                    child: TextsView(),
-                                    name: TabNavigatorRoutes.texts)
-                              ],
-                            )),
-                      )
-                    ],
-                  ),
-                  backTitle: const Text('Configurações'),
-                  backLayer: SettingsView()),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) =>
+            Backdrop(
+                frontTitle: const Text('Textos'),
+                frontLayer: RepaintBoundary(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: <Widget>[
+                        FavoritesView(), AuthorsView(), TextsView()],
+                    )),
+                backTitle: const Text('Configurações'),
+                backLayer: SettingsView()),
+      ),
+      bottomNavigationBar: RepaintBoundary(
+        child: AnimatedBuilder(
+          animation: _tabController.animation,
+          builder: (BuildContext context, _) =>
+              Stack(
+                children: <Widget>[
+                  BottomNavigationBar(
+                      onTap: (int idx) => _tabController.animateTo(idx),
+                      type: BottomNavigationBarType.fixed,
+                      showSelectedLabels: true,
+                      showUnselectedLabels: false,
+                      currentIndex: _tabController.animation.value.round(),
+                      selectedItemColor: Color.alphaBlend(
+                          Theme
+                              .of(context)
+                              .accentColor
+                              .withAlpha(120),
+                          Theme
+                              .of(context)
+                              .backgroundColor),
+                      unselectedItemColor: Theme
+                          .of(context)
+                          .backgroundColor,
+                      backgroundColor: Theme
+                          .of(context)
+                          .primaryColor,
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                            icon: Icon(Icons.favorite),
+                            title: Text('Favoritos')),
+                        BottomNavigationBarItem(
+                            icon: Icon(Icons.group), title: Text('Autores')),
+                        BottomNavigationBarItem(
+                            icon: Icon(Icons.style), title: Text('Textos')),
+                      ]),
+                  SlideTransition(
+                      position: Tween<Offset>(
+                          begin: const Offset(0, 0),
+                          end: const Offset(1.0, 0.0))
+                          .animate(_tabController.animation),
+                      child: FractionallySizedBox(
+                        widthFactor: 1 / 3,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 54.0),
+                          color: Theme
+                              .of(context)
+                              .accentColor,
+                          height: 2.0,
+                        ),
+                      ))
+                ],
+              ),
         ),
-        bottomNavigationBar: BottomTextsBar(
-          currentIdx: _currentIdx,
-          onTap: (int index) => setState(() => _currentIdx = index),
-        ));
+      ),
+    );
   }
 }

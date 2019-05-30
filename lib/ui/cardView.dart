@@ -372,6 +372,7 @@ class __TextWidgetState extends State<_TextWidget>
                               ),
                               widget.textContent.hasText
                                   ? RichText(
+                                  textAlign: TextAlign.justify,
                                   text: TextSpan(
                                       children: widget.textContent
                                           .formattedText(
