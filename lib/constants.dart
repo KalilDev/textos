@@ -31,53 +31,84 @@ final Map<String, dynamic> textNoTextAvailable = <String, dynamic>{
 };
 
 // Theme Light
-final Color themePrimaryLight = Colors.indigo.shade500;
-const Color themeAccentLight = Color(0xff3f8cb5);
 const Color themeBackgroundLight = Colors.white;
 const Color themeForegroundLight = Colors.black;
+const ColorScheme colorSchemeLight = ColorScheme(
+    primary: Color(0xFF3F51B5),
+    primaryVariant: Color(0xFF002984),
+    secondary: Color(0xff3f8cb5),
+    secondaryVariant: Color(0xFF005f85),
+    surface: themeBackgroundLight,
+    background: themeBackgroundLight,
+    error: Color(0xFFB00020),
+    onPrimary: themeBackgroundLight,
+    onSecondary: themeForegroundLight,
+    onSurface: themeForegroundLight,
+    onBackground: themeForegroundLight,
+    onError: themeBackgroundLight,
+    brightness: Brightness.light);
+
 final ThemeData themeDataLight = ThemeData(
+    colorScheme: colorSchemeLight,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: themeBackgroundLight,
+    scaffoldBackgroundColor: colorSchemeLight.background,
     accentColorBrightness: Brightness.dark,
-    accentColor: themeAccentLight,
-    canvasColor: themeBackgroundLight,
-    dividerColor: themeForegroundLight.withAlpha(70),
+    accentColor: colorSchemeLight.secondary,
+    canvasColor: colorSchemeLight.background,
+    dividerColor: colorSchemeLight.onBackground.withAlpha(70),
     primaryColorBrightness: Brightness.dark,
-    primaryColor: themePrimaryLight,
+    primaryColor: colorSchemeLight.primary,
     backgroundColor: themeBackgroundLight,
     textTheme: textThemeMuli.apply(
-        bodyColor: themeForegroundLight,
-        displayColor: Color.alphaBlend(
-            themeForegroundLight.withAlpha(221), themeBackgroundLight)),
+        bodyColor: getTextColor(0.87, bg: colorSchemeLight.background,
+            main: colorSchemeLight.onBackground),
+        displayColor: getTextColor(0.87, bg: colorSchemeLight.background,
+            main: colorSchemeLight.onBackground)),
     accentTextTheme: textThemeMerriweather.apply(
-        bodyColor: themeForegroundLight,
-        displayColor: Color.alphaBlend(
-            themeForegroundLight.withAlpha(221), themeBackgroundLight)));
+        bodyColor: getTextColor(0.87, bg: colorSchemeLight.background,
+            main: colorSchemeLight.onBackground),
+        displayColor: getTextColor(0.87, bg: colorSchemeLight.background,
+            main: colorSchemeLight.onBackground)));
 
 // Theme Dark
-final Color themePrimaryDark = Colors.indigo.shade200;
-const Color themeAccentDark = Color(0xff9fc5da);
 const Color themeBackgroundDark = Colors.black;
 const Color themeForegroundDark = Colors.white;
+const ColorScheme colorSchemeDark = ColorScheme(
+    primary: Color(0xFF9fa8da),
+    primaryVariant: Color(0xFF6f79a8),
+    secondary: Color(0xff9fc5da),
+    secondaryVariant: Color(0xFF6f94a8),
+    surface: themeBackgroundDark,
+    background: themeBackgroundDark,
+    error: Color(0xFFCF6679),
+    onPrimary: themeBackgroundDark,
+    onSecondary: themeBackgroundDark,
+    onSurface: themeForegroundDark,
+    onBackground: themeForegroundDark,
+    onError: themeBackgroundDark,
+    brightness: Brightness.dark);
+
 final ThemeData themeDataDark = ThemeData(
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: themeBackgroundDark,
-    accentColor: themeAccentDark,
+    colorScheme: colorSchemeDark,
+    brightness: colorSchemeDark.brightness,
+    scaffoldBackgroundColor: colorSchemeDark.background,
+    accentColor: colorSchemeDark.secondary,
     accentColorBrightness: Brightness.light,
-    canvasColor: themeBackgroundDark,
-    dividerColor: themeForegroundDark.withAlpha(70),
+    canvasColor: colorSchemeDark.background,
+    dividerColor: colorSchemeDark.onBackground.withAlpha(70),
+    primaryColor: colorSchemeLight.primary,
     primaryColorBrightness: Brightness.light,
-    backgroundColor: themeBackgroundDark,
+    backgroundColor: colorSchemeDark.background,
     textTheme: textThemeMuli.apply(
-        bodyColor: Color.alphaBlend(
-            themeForegroundDark.withAlpha(221), themeBackgroundDark),
-        displayColor: Color.alphaBlend(
-            themeForegroundDark.withAlpha(221), themeBackgroundDark)),
+        bodyColor: getTextColor(0.87, bg: colorSchemeDark.background,
+            main: colorSchemeDark.onBackground),
+        displayColor: getTextColor(0.87, bg: colorSchemeDark.background,
+            main: colorSchemeDark.onBackground)),
     accentTextTheme: textThemeMerriweather.apply(
-        bodyColor: Color.alphaBlend(
-            themeForegroundDark.withAlpha(221), themeBackgroundDark),
-        displayColor: Color.alphaBlend(
-            themeForegroundDark.withAlpha(221), themeBackgroundDark)));
+        bodyColor: getTextColor(0.87, bg: colorSchemeDark.background,
+            main: colorSchemeDark.onBackground),
+        displayColor: getTextColor(0.87, bg: colorSchemeDark.background,
+            main: colorSchemeDark.onBackground)));
 
 // BaseTextStyles
 final TextStyle _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
@@ -170,3 +201,7 @@ const String aboutFlutter =
     'Me deparei então com o Flutter: Um novo kit de ferramentas para desenvolvimento de apps criado pela a Google. As mudanças são instantâneas, as funcionalidades são bem documentadas, a comunidade é bem ativa, há suporte para todas as funcionalidades essenciais, e no geral, é tudo mais conciso e eficiente. Há também outra grande vantagem: Os aplicativos criados com ele rodam em iPhones, aparelhos com Android, computadores e na web. Criei alguns aplicativos por mais umas semanas para aprender a utilizar o Flutter, e em março, em uma tarde eu tinha meu primeiro protótipo do app, que então acrescentei recursos, e embelezei a interface, até chegar no produto final que você está usando.';
 const String aboutGreeting =
     'Espero que você goste desse app criado com muito ❤, de um criador para outros.';
+
+// MD Compliance
+Color getTextColor(double percent, {Color bg, Color main}) =>
+    Color.alphaBlend(main.withAlpha((255 * percent).round()), bg);

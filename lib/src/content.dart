@@ -67,10 +67,14 @@ class Content with Haptic {
     final Map<int, int> mono = _iterate(monoRegex.allMatches(_text).toList());
 
     final Map<int, int> allMap = <int, int>{};
-    if (italic != null) allMap.addAll(italic);
-    if (bold != null) allMap.addAll(bold);
-    if (strike != null) allMap.addAll(strike);
-    if (mono != null) allMap.addAll(mono);
+    if (italic != null)
+      allMap.addAll(italic);
+    if (bold != null)
+      allMap.addAll(bold);
+    if (strike != null)
+      allMap.addAll(strike);
+    if (mono != null)
+      allMap.addAll(mono);
 
     final List<int> all = allMap.keys.toList();
     all.sort();

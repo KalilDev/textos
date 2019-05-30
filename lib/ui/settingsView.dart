@@ -12,7 +12,10 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView>
-    with Haptic, TextThemeMixin {
+    with Haptic {
+  TextStyle styleDescription;
+  TextStyle styleSettings;
+
   void cleanAll(BuildContext context) {
     openView();
     Provider.of<FavoritesProvider>(context).clear();
@@ -22,19 +25,10 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   List<Widget> themeWidgets() {
-    final TextStyle settingsStyle =
-    settingsTitleStyle(Theme
-        .of(context)
-        .textTheme);
-    final TextStyle description =
-    settingsDescriptionStyle(Theme
-        .of(context)
-        .textTheme);
-
     return <Widget>[
-      Text(textTema, style: description),
+      Text(textTema, style: styleDescription),
       SwitchListTile(
-          title: Text(textTextTheme, style: settingsStyle),
+          title: Text(textTextTheme, style: styleSettings),
           secondary: const Icon(Icons.invert_colors),
           value: Provider
               .of<ThemeProvider>(context)
@@ -69,20 +63,11 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   List<Widget> textWidgets() {
-    final TextStyle settingsStyle =
-    settingsTitleStyle(Theme
-        .of(context)
-        .textTheme);
-    final TextStyle description =
-    settingsDescriptionStyle(Theme
-        .of(context)
-        .textTheme);
-
     return <Widget>[
-      Text(textText, style: description),
+      Text(textText, style: styleDescription),
       ListTile(
           leading: const Icon(Icons.text_fields),
-          title: Text(textTextSize, style: settingsStyle),
+          title: Text(textTextSize, style: styleSettings),
           trailing: Container(
             width: 96,
             child: Row(
@@ -108,54 +93,21 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   List<Widget> favoriteWidgets() {
-    final TextStyle settingsStyle =
-    settingsTitleStyle(Theme
-        .of(context)
-        .textTheme);
-    final TextStyle description =
-    settingsDescriptionStyle(Theme
-        .of(context)
-        .textTheme);
-
     return <Widget>[
-      Text(textFavs, style: description),
+      Text(textFavs, style: styleDescription),
       ListTile(
         leading: const Icon(Icons.delete),
-        title: Text(textCleanFavs, style: settingsStyle),
+        title: Text(textCleanFavs, style: styleSettings),
         onTap: () => Provider.of<FavoritesProvider>(context).clear(),
       ),
     ];
   }
 
   List<Widget> blurWidgets() {
-    final TextStyle settingsStyle =
-    settingsTitleStyle(Theme
-        .of(context)
-        .textTheme);
-    final TextStyle description =
-    settingsDescriptionStyle(Theme
-        .of(context)
-        .textTheme);
-
     return <Widget>[
-      Text(textBlur, style: description),
+      Text(textBlur, style: styleDescription),
       SwitchListTile(
-          title: Text(textTextBlurDrawer, style: settingsStyle),
-          secondary: const Icon(Icons.blur_linear),
-          value: Provider
-              .of<BlurProvider>(context)
-              .drawerBlur,
-          activeColor: Theme
-              .of(context)
-              .primaryColor,
-          activeTrackColor: Theme
-              .of(context)
-              .primaryColor
-              .withAlpha(170),
-          onChanged: (bool map) =>
-              Provider.of<BlurProvider>(context).toggleDrawerBlur()),
-      SwitchListTile(
-          title: Text(textTextBlurButtons, style: settingsStyle),
+          title: Text(textTextBlurButtons, style: styleSettings),
           secondary: const Icon(Icons.blur_circular),
           value: Provider
               .of<BlurProvider>(context)
@@ -170,7 +122,7 @@ class _SettingsViewState extends State<SettingsView>
           onChanged: (bool map) =>
               Provider.of<BlurProvider>(context).toggleButtonsBlur()),
       SwitchListTile(
-          title: Text(textTextBlurText, style: settingsStyle),
+          title: Text(textTextBlurText, style: styleSettings),
           secondary: const Icon(Icons.blur_on),
           value: Provider
               .of<BlurProvider>(context)
@@ -188,22 +140,13 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   List<Widget> miscWidgets() {
-    final TextStyle settingsStyle =
-    settingsTitleStyle(Theme
-        .of(context)
-        .textTheme);
-    final TextStyle description =
-    settingsDescriptionStyle(Theme
-        .of(context)
-        .textTheme);
-
     return <Widget>[
-      Text(textsMisc, style: description),
+      Text(textsMisc, style: styleDescription),
       ListTile(
         leading: const Icon(Icons.info),
         title: Text(
           'Sobre o criador',
-          style: settingsStyle,
+          style: styleSettings,
         ),
         onTap: () async {
           Navigator.pop(context);
@@ -211,16 +154,13 @@ class _SettingsViewState extends State<SettingsView>
           Navigator.push(
             context,
             SlideRoute<void>(
-                builder: (BuildContext context) =>
-                    CreatorView(
-                      darkModeProvider: Provider.of<ThemeProvider>(context),
-                    )),
+                builder: (BuildContext context) => const CreatorView()),
           );
         },
       ),
       ListTile(
         leading: const Icon(Icons.delete_forever),
-        title: Text(textTextTrash, style: settingsStyle),
+        title: Text(textTextTrash, style: styleSettings),
         onTap: () => cleanAll(context),
       ),
     ];
@@ -248,6 +188,20 @@ class _SettingsViewState extends State<SettingsView>
     final bool isBlurred = Provider
         .of<BlurProvider>(context)
         .drawerBlur;
+    styleSettings = Theme
+        .of(context)
+        .textTheme
+        .subhead;
+    styleDescription = styleSettings.copyWith(
+        color: getTextColor(0.87,
+            main: Theme
+                .of(context)
+                .colorScheme
+                .onBackground,
+            bg: Theme
+                .of(context)
+                .colorScheme
+                .background));
     return Container(
       decoration: BoxDecoration(
           color: Color.alphaBlend(Theme

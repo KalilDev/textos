@@ -4,12 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/mixins.dart';
-import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView.dart';
 
 class FavoritesProvider with ChangeNotifier, Haptic {
@@ -49,35 +47,19 @@ class FavoritesProvider with ChangeNotifier, Haptic {
   }
 
   Future<void> open(String favorite, BuildContext context) async {
-    final List<dynamic> providerList = <dynamic>[
-      Provider.of<FavoritesProvider>(context),
-      Provider.of<ThemeProvider>(context),
-      Provider.of<BlurProvider>(context),
-      Provider.of<TextSizeProvider>(context),
-    ];
     final DocumentSnapshot documentSnapshot =
     await Firestore.instance.document(_getPath(favorite)).get();
     final Map<String, dynamic> data = documentSnapshot.data;
     data['path'] = _getPath(favorite);
-    selectItem();
-    Navigator.pop(context);
-    final List<dynamic> result = await Navigator.push(
+    openView();
+    Navigator.push(
       context,
       FadeRoute<List<dynamic>>(
           builder: (BuildContext context) =>
               CardView(
                 textContent: Content.fromData(data),
-                favoritesProvider: providerList[0].copy(),
-                darkModeProvider: providerList[1].copy(),
-                blurProvider: providerList[2].copy(),
-                textSizeProvider: providerList[3].copy(),
               )),
     );
-    final List<dynamic> resultList = result;
-    providerList[0].sync(resultList[0]);
-    providerList[1].sync(resultList[1]);
-    providerList[2].sync(resultList[2]);
-    providerList[3].sync(resultList[3]);
   }
 
   void toggle(String favorite) {

@@ -117,7 +117,7 @@ class _TextsViewState extends State<TextsView> with Haptic {
   }
 }
 
-class _TextPage extends StatelessWidget with Haptic, TextThemeMixin {
+class _TextPage extends StatelessWidget with Haptic {
   const _TextPage(
       {@required this.info, @required this.textContent, this.indexController});
 
@@ -135,10 +135,6 @@ class _TextPage extends StatelessWidget with Haptic, TextThemeMixin {
         .of(context)
         .padding
         .top + 60;
-
-    final TextTheme textTheme = Theme
-        .of(context)
-        .accentTextTheme;
 
     return GestureDetector(
         child: Stack(
@@ -195,7 +191,10 @@ class _TextPage extends StatelessWidget with Haptic, TextThemeMixin {
                                       left: 5.0, right: 5.0),
                                   child: Text(textContent.title,
                                       textAlign: TextAlign.center,
-                                      style: textTitleStyle(textTheme)),
+                                      style: Theme
+                                          .of(context)
+                                          .accentTextTheme
+                                          .display1),
                                 ),
                               )),
                         ),
@@ -231,25 +230,13 @@ class _TextPage extends StatelessWidget with Haptic, TextThemeMixin {
         ),
         onTap: () async {
           openView();
-          if (indexController != null) indexController.move(info.index);
-          final List<dynamic> result = await Navigator.push(
+          if (indexController != null)
+            indexController.move(info.index);
+          Navigator.push(
               context,
               FadeRoute<List<dynamic>>(
                   builder: (BuildContext context) =>
-                      CardView(
-                        blurProvider: Provider.of<BlurProvider>(context),
-                        darkModeProvider: Provider.of<ThemeProvider>(context),
-                        textSizeProvider:
-                        Provider.of<TextSizeProvider>(context),
-                        favoritesProvider:
-                        Provider.of<FavoritesProvider>(context),
-                        textContent: textContent,
-                      )));
-          final List<dynamic> resultList = result;
-          Provider.of<FavoritesProvider>(context).sync(resultList[0]);
-          Provider.of<ThemeProvider>(context).sync(resultList[1]);
-          Provider.of<BlurProvider>(context).sync(resultList[2]);
-          Provider.of<TextSizeProvider>(context).sync(resultList[3]);
+                      CardView(textContent: textContent,)));
         });
   }
 }

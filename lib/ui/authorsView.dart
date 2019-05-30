@@ -195,16 +195,13 @@ class _AuthorPageState extends State<_AuthorPage> {
                                 .accentTextTheme
                                 .body1
                                 .copyWith(
-                              color: Color.alphaBlend(
-                                  Theme
-                                      .of(context)
-                                      .accentTextTheme
-                                      .body1
-                                      .color
-                                      .withAlpha(175),
-                                  Theme
-                                      .of(context)
-                                      .backgroundColor),
+                              color: getTextColor(0.60, bg: Theme
+                                  .of(context)
+                                  .colorScheme
+                                  .background, main: Theme
+                                  .of(context)
+                                  .colorScheme
+                                  .onBackground),
                             ))),
                     Container(
                       margin: const EdgeInsets.only(left: 1.0),

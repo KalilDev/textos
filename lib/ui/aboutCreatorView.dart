@@ -1,90 +1,23 @@
-import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/mixins.dart';
-import 'package:textos/src/providers.dart';
 
 class CreatorView extends StatelessWidget with Haptic {
-  const CreatorView({Key key, @required this.darkModeProvider})
+  const CreatorView({Key key})
       : super(key: key);
 
-  final ThemeProvider darkModeProvider;
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> exit(List<dynamic> data) async {
-      selectItem();
-      // Nasty
-      await Future
-      <
-      void
-      >
-          .
-      delayed
-      (
-      const
-      Duration
-      (
-      milliseconds
-          :
-      1
-      )
-      );
-      if (Navigator.of(context).canPop()) {
-        Navigator.pop(context, data);
-        return false;
-      } else {
-        return false;
-      }
-    }
-
-    return Provider<ThemeProvider>(
-      builder: (_) => darkModeProvider.copy(),
-      child: Consumer<ThemeProvider>(
-        builder: (BuildContext context, ThemeProvider provider, _) {
-          ThemeData overrideTheme;
-          final ThemeData dark =
-          themeDataDark.copyWith(primaryColor: provider.darkPrimaryColor);
-          final ThemeData light =
-          themeDataLight.copyWith(primaryColor: provider.lightPrimaryColor);
-
-          if (provider.isDarkMode) {
-            overrideTheme = dark;
-          } else {
-            overrideTheme = light;
-          }
-          return WillPopScope(
-            onWillPop: () async {
-              return exit(<dynamic>[
-                Provider.of<FavoritesProvider>(context).favoritesList,
-                Provider.of<ThemeProvider>(context).info,
-                Provider.of<BlurProvider>(context).blurSettings,
-                Provider.of<TextSizeProvider>(context).textSize
-              ]);
-            },
-            child: MaterialApp(
-                debugShowCheckedModeBanner: false,
-                darkTheme: themeDataDark,
-                theme: overrideTheme,
-                home: Scaffold(
-                  body: AboutCreator(exitContext: context),
-                )),
-          );
-        },
-      ),
+    return Scaffold(
+      body: AboutCreator(),
     );
   }
 }
 
 class AboutCreator extends StatelessWidget {
-  const AboutCreator({@required this.exitContext});
-
-  final BuildContext exitContext;
-
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme
@@ -224,12 +157,7 @@ class AboutCreator extends StatelessWidget {
               ],
             )),
         Positioned(
-          child: MenuButton(data: <dynamic>[
-            Provider.of<FavoritesProvider>(context).favoritesList,
-            Provider.of<ThemeProvider>(context).info,
-            Provider.of<BlurProvider>(context).blurSettings,
-            Provider.of<TextSizeProvider>(context).textSize
-          ], exitContext: exitContext),
+          child: MenuButton(),
           top: MediaQuery.of(context).padding.top - 2.5,
           left: -2.5,
         ),

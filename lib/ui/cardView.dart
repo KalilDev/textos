@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
@@ -11,150 +9,28 @@ import 'package:textos/src/providers.dart';
 
 class CardView extends StatelessWidget with Haptic {
   const CardView({Key key,
-    @required this.textContent,
-    @required this.darkModeProvider,
-    @required this.textSizeProvider,
-    @required this.blurProvider,
-    @required this.favoritesProvider})
+    @required this.textContent,})
       : super(key: key);
 
   final Content textContent;
-  final ThemeProvider darkModeProvider;
-  final BlurProvider blurProvider;
-  final TextSizeProvider textSizeProvider;
-  final FavoritesProvider favoritesProvider;
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> exit(List<dynamic> data) async {
-      selectItem();
-      // Nasty
-      await Future
-      <
-      void
-      >
-          .
-      delayed
-      (
-      const
-      Duration
-      (
-      milliseconds
-          :
-      1
-      )
-      );
-      if
-      (
-      Navigator
-          .
-      of
-      (
-      context
-      )
-          .
-      canPop
-      (
-      )
-      )
-      Navigator
-          .
-      pop
-      (
-      context
-      ,
-      data
-      );
-      return
-      true;
-    }
-
     return RepaintBoundary(
-      child: MultiProvider(
-        providers: <ChangeNotifierProvider<dynamic>>[
-          ChangeNotifierProvider<FavoritesProvider>(
-              builder: (_) => favoritesProvider.copy()),
-          ChangeNotifierProvider<ThemeProvider>(
-              builder: (_) => darkModeProvider.copy()),
-          ChangeNotifierProvider<BlurProvider>(
-              builder: (_) => blurProvider.copy()),
-          ChangeNotifierProvider<TextSizeProvider>(
-              builder: (_) => textSizeProvider.copy()),
-        ],
-        child: WillPopScope(
-          onWillPop: () async {
-            return exit(<dynamic>[
-              Provider
-                  .of<FavoritesProvider>(context)
-                  .favoritesList,
-              Provider
-                  .of<ThemeProvider>(context)
-                  .info,
-              Provider
-                  .of<BlurProvider>(context)
-                  .blurSettings,
-              Provider
-                  .of<TextSizeProvider>(context)
-                  .textSize
-            ]);
-          },
-          child: Scaffold(
-            body: CardContent(textContent: textContent, exitContext: context),
-          ),
-        ),
+      child: Scaffold(
+        body: CardContent(textContent: textContent),
       ),
     );
   }
 }
 
 class CardContent extends StatelessWidget with Haptic {
-  const CardContent({@required this.textContent, @required this.exitContext});
+  const CardContent({@required this.textContent});
 
   final Content textContent;
-  final BuildContext exitContext;
 
   @override
   Widget build(BuildContext context) {
-    Future<void> exit(List<dynamic> data) async {
-      selectItem();
-      // Nasty
-      await Future
-      <
-      void
-      >
-          .
-      delayed
-      (
-      const
-      Duration
-      (
-      milliseconds
-          :
-      1
-      )
-      );
-      if
-      (
-      Navigator
-          .
-      of
-      (
-      exitContext
-      )
-          .
-      canPop
-      (
-      )
-      )
-      Navigator
-          .
-      pop
-      (
-      exitContext
-      ,
-      data
-      );
-    }
 
     return Stack(
       children: <Widget>[
@@ -165,7 +41,6 @@ class CardContent extends StatelessWidget with Haptic {
                 enabled: false,
                 key: Key('image' + textContent.textPath))),
         _TextWidget(
-          exit: exit,
           textContent: textContent,
         ),
         Align(
@@ -185,12 +60,12 @@ class CardContent extends StatelessWidget with Haptic {
               children: <Widget>[
                 Container(
                   margin: const EdgeInsets.only(
-                      left: 5.0, right: 5.0, bottom: 10.0),
+                      left: 4.0, right: 4.0, bottom: 8.0),
                   child: Row(
                     children: <Widget>[
                       textContent.hasText
                           ? Container(
-                          margin: const EdgeInsets.only(left: 5.0),
+                          margin: const EdgeInsets.only(left: 4.0),
                           child: IncDecButton(
                               isBlurred: Provider
                                   .of<BlurProvider>(context)
@@ -209,7 +84,7 @@ class CardContent extends StatelessWidget with Haptic {
                           ? Expanded(
                           child: Container(
                               margin: const EdgeInsets.symmetric(
-                                  horizontal: 5.0),
+                                  horizontal: 4.0),
                               child: RepaintBoundary(
                                 child: PlaybackButton(
                                   url: textContent.music,
@@ -221,7 +96,7 @@ class CardContent extends StatelessWidget with Haptic {
                               )))
                           : Spacer(),
                       Container(
-                        margin: const EdgeInsets.only(right: 5.0),
+                        margin: const EdgeInsets.only(right: 4.0),
                         child: RepaintBoundary(
                           child: BiStateFAB(
                             onPressed: () =>
@@ -249,20 +124,7 @@ class CardContent extends StatelessWidget with Haptic {
               ],
             )),
         Positioned(
-          child: MenuButton(data: <dynamic>[
-            Provider
-                .of<FavoritesProvider>(context)
-                .favoritesList,
-            Provider
-                .of<ThemeProvider>(context)
-                .info,
-            Provider
-                .of<BlurProvider>(context)
-                .blurSettings,
-            Provider
-                .of<TextSizeProvider>(context)
-                .textSize
-          ], exitContext: exitContext),
+          child: MenuButton(),
           top: MediaQuery
               .of(context)
               .padding
@@ -275,9 +137,8 @@ class CardContent extends StatelessWidget with Haptic {
 }
 
 class _TextWidget extends StatefulWidget {
-  const _TextWidget({@required this.exit, @required this.textContent});
+  const _TextWidget({@required this.textContent});
 
-  final Function exit;
   final Content textContent;
 
   @override
@@ -289,23 +150,6 @@ class __TextWidgetState extends State<_TextWidget>
   double _textSize;
   AnimationController _textSizeController;
   Animation<double> _textSizeAnim;
-
-  void pop(BuildContext context) {
-    widget.exit(<dynamic>[
-      Provider
-          .of<FavoritesProvider>(context)
-          .favoritesList,
-      Provider
-          .of<ThemeProvider>(context)
-          .info,
-      Provider
-          .of<BlurProvider>(context)
-          .blurSettings,
-      Provider
-          .of<TextSizeProvider>(context)
-          .textSize
-    ]);
-  }
 
   @override
   void initState() {
@@ -339,14 +183,14 @@ class __TextWidgetState extends State<_TextWidget>
         .textTheme;
 
     return GestureDetector(
-      onTap: () => pop(context),
+      onTap: () => Navigator.of(context).pop(),
       child: SafeArea(
         child: Hero(
           tag: 'body' + widget.textContent.textPath,
           child: Material(
               color: Colors.transparent,
               child: Container(
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(4),
                 decoration:
                 BoxDecoration(borderRadius: BorderRadius.circular(20)),
                 child: BlurOverlay.roundedRect(
@@ -368,7 +212,7 @@ class __TextWidgetState extends State<_TextWidget>
                                       .accentTextTheme
                                       .display1),
                               const SizedBox(
-                                height: 10,
+                                height: 8,
                               ),
                               widget.textContent.hasText
                                   ? RichText(
@@ -390,12 +234,12 @@ class __TextWidgetState extends State<_TextWidget>
                                                   4.5))))
                                   : const SizedBox(),
                               SizedBox(
-                                  height: 55,
+                                  height: 56,
                                   child: Center(
                                       child: Text(widget.textContent.date,
                                           style: textTheme.title))),
                               widget.textContent.hasMusic
-                                  ? const SizedBox(height: 55)
+                                  ? const SizedBox(height: 56)
                                   : const SizedBox(),
                             ]),
                           ),

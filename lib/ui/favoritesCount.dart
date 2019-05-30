@@ -17,18 +17,6 @@ class FavoritesCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color =
-    Theme
-        .of(context)
-        .accentColorBrightness != Brightness.dark
-        ? Theme
-        .of(context)
-        .backgroundColor
-        : Theme
-        .of(context)
-        .textTheme
-        .display1
-        .color;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -69,14 +57,24 @@ class FavoritesCount extends StatelessWidget {
                                 provider.isFavorite(text)
                                     ? Icons.favorite
                                     : Icons.favorite_border,
-                                color: color),
+                                color: Theme
+                                    .of(context)
+                                    .colorScheme
+                                    .onPrimary),
                             const SizedBox(width: 8.0),
                             Text(favorites.toString() + ' ' + textFavs,
                                 style: Theme
                                     .of(context)
                                     .textTheme
                                     .title
-                                    .copyWith(color: color)),
+                                    .copyWith(
+                                    color: getTextColor(0.87, bg: Theme
+                                        .of(context)
+                                        .colorScheme
+                                        .background, main: Theme
+                                        .of(context)
+                                        .colorScheme
+                                        .onPrimary))),
                             const SizedBox(width: 16.0),
                           ],
                         ),

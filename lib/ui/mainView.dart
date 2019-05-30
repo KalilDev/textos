@@ -30,7 +30,30 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                     child: TabBarView(
                       controller: _tabController,
                       children: <Widget>[
-                        FavoritesView(), AuthorsView(), TextsView()],
+                        FavoritesView(),
+                        ListView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: <Widget>[
+                              Container(
+                                  height: constraints.maxHeight - 48 -
+                                      MediaQuery
+                                          .of(context)
+                                          .padding
+                                          .top,
+                                  child: AuthorsView())
+                            ]),
+                        ListView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: <Widget>[
+                              Container(
+                                  height: constraints.maxHeight - 48 -
+                                      MediaQuery
+                                          .of(context)
+                                          .padding
+                                          .top,
+                                  child: TextsView())
+                            ])
+                      ],
                     )),
                 backTitle: const Text('Configurações'),
                 backLayer: SettingsView()),
@@ -76,12 +99,17 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                           end: const Offset(1.0, 0.0))
                           .animate(_tabController.animation),
                       child: FractionallySizedBox(
-                        widthFactor: 1 / 3,
+                        widthFactor: 1 / _tabController.length,
                         child: Container(
                           margin: const EdgeInsets.only(top: 54.0),
-                          color: Theme
-                              .of(context)
-                              .accentColor,
+                          color: Color.alphaBlend(
+                              Theme
+                                  .of(context)
+                                  .accentColor
+                                  .withAlpha(120),
+                              Theme
+                                  .of(context)
+                                  .backgroundColor),
                           height: 2.0,
                         ),
                       ))

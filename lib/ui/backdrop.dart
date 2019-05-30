@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:textos/constants.dart';
 
 const double _kFlingVelocity = 2.0;
 
@@ -40,7 +41,13 @@ class _FrontLayer extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             onTap: onTap,
             child: Container(
-              height: 40.0,
+              height: 48.0,
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(46.0)),
+                  color: Theme
+                      .of(context)
+                      .primaryColor),
               alignment: AlignmentDirectional.centerStart,
             ),
           ),
@@ -73,10 +80,34 @@ class _BackdropTitle extends AnimatedWidget {
     final Animation<double> animation = listenable;
 
     return DefaultTextStyle(
-      style: Theme.of(context)
+      style: animation.value.round() == 1 ? Theme
+          .of(context)
           .primaryTextTheme
           .title
-          .copyWith(color: Colors.white),
+          .copyWith(
+          color: getTextColor(0.87,
+              main: Theme
+                  .of(context)
+                  .colorScheme
+                  .onPrimary,
+              bg: Theme
+                  .of(context)
+                  .colorScheme
+                  .background))
+          : Theme
+          .of(context)
+          .primaryTextTheme
+          .title
+          .copyWith(
+          color: getTextColor(0.87,
+              main: Theme
+                  .of(context)
+                  .colorScheme
+                  .onBackground,
+              bg: Theme
+                  .of(context)
+                  .colorScheme
+                  .background)),
       softWrap: false,
       overflow: TextOverflow.ellipsis,
       child: Row(children: <Widget>[
@@ -89,7 +120,15 @@ class _BackdropTitle extends AnimatedWidget {
             icon: Stack(children: <Widget>[
               Opacity(
                 opacity: animation.value,
-                child: const Icon(Icons.settings),
+                child: Icon(Icons.settings, color: getTextColor(0.87,
+                    main: Theme
+                        .of(context)
+                        .colorScheme
+                        .onPrimary,
+                    bg: Theme
+                        .of(context)
+                        .colorScheme
+                        .background)),
               ),
               Opacity(
                 opacity: 1 - animation.value,
@@ -98,7 +137,15 @@ class _BackdropTitle extends AnimatedWidget {
                     begin: Offset.zero,
                     end: const Offset(1.0, 0.0),
                   ).evaluate(animation),
-                  child: const Icon(Icons.arrow_back),
+                  child: Icon(Icons.arrow_back, color: getTextColor(0.87,
+                      main: Theme
+                          .of(context)
+                          .colorScheme
+                          .onBackground,
+                      bg: Theme
+                          .of(context)
+                          .colorScheme
+                          .background)),
                 ),
               )
             ]),
@@ -234,7 +281,7 @@ class _BackdropState extends State<Backdrop>
           ),
         ),
         Positioned(
-          top: 4.0,
+          top: 0.0,
           left: 4.0,
           child: _BackdropTitle(
             listenable: _controller.view,
@@ -249,8 +296,10 @@ class _BackdropState extends State<Backdrop>
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: _buildStack,
+    return SafeArea(
+      child: LayoutBuilder(
+        builder: _buildStack,
+      ),
     );
   }
 }
