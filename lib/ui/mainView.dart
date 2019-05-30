@@ -102,14 +102,17 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                         widthFactor: 1 / _tabController.length,
                         child: Container(
                           margin: const EdgeInsets.only(top: 54.0),
-                          color: Color.alphaBlend(
-                              Theme
-                                  .of(context)
-                                  .accentColor
-                                  .withAlpha(120),
-                              Theme
-                                  .of(context)
-                                  .backgroundColor),
+                          decoration: BoxDecoration(
+                              color: Color.alphaBlend(
+                                  Theme
+                                      .of(context)
+                                      .accentColor
+                                      .withAlpha(120),
+                                  Theme
+                                      .of(context)
+                                      .backgroundColor),
+                              borderRadius: BorderRadius.circular(1.0)
+                          ),
                           height: 2.0,
                         ),
                       ))
