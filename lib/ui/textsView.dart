@@ -131,10 +131,8 @@ class _TextPage extends StatelessWidget with Haptic {
     // Animated Properties
     final double blur = lerpDouble(30, 0, info.position.abs());
     final double offset = lerpDouble(20, 0, info.position.abs());
-    final double top = MediaQuery
-        .of(context)
-        .padding
-        .top + 60;
+    const double vertical = 10;
+    const double k = 80;
 
     return GestureDetector(
         child: Stack(
@@ -143,7 +141,9 @@ class _TextPage extends StatelessWidget with Haptic {
               duration: durationAnimationMedium,
               curve: Curves.decelerate,
               margin: EdgeInsets.only(
-                  top: active ? top : 180, bottom: 20, right: 30),
+                  top: active ? vertical : vertical + k,
+                  bottom: vertical,
+                  right: 30),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Theme.of(context).backgroundColor,
@@ -165,7 +165,9 @@ class _TextPage extends StatelessWidget with Haptic {
               duration: durationAnimationMedium,
               curve: Curves.easeInOut,
               margin: EdgeInsets.only(
-                  top: active ? top : 180, bottom: 20, right: 30),
+                  top: active ? vertical : vertical + k,
+                  bottom: vertical,
+                  right: 30),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: Align(
