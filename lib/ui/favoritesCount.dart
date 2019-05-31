@@ -32,14 +32,21 @@ class FavoritesCount extends StatelessWidget {
                   AnimatedGradientContainer(
                     colors: blurEnabled
                         ? <Color>[
-                      Colors.red.shade900.withAlpha(180),
+                      Theme
+                          .of(context)
+                          .colorScheme
+                          .error
+                          .withAlpha(180),
                       Theme
                           .of(context)
                           .accentColor
                           .withAlpha(150)
                     ]
                         : <Color>[
-                      Colors.red.shade900,
+                      Theme
+                          .of(context)
+                          .colorScheme
+                          .error,
                       Theme
                           .of(context)
                           .accentColor
@@ -60,7 +67,7 @@ class FavoritesCount extends StatelessWidget {
                                 color: Theme
                                     .of(context)
                                     .colorScheme
-                                    .onPrimary),
+                                    .onSecondary),
                             const SizedBox(width: 8.0),
                             Text(favorites.toString() + ' ' + textFavs,
                                 style: Theme
@@ -74,7 +81,7 @@ class FavoritesCount extends StatelessWidget {
                                         .background, main: Theme
                                         .of(context)
                                         .colorScheme
-                                        .onPrimary))),
+                                        .onSecondary))),
                             const SizedBox(width: 16.0),
                           ],
                         ),

@@ -78,6 +78,10 @@ class _SettingsViewState extends State<SettingsView>
                       .textSize,
                   onDecrease: () =>
                       Provider.of<TextSizeProvider>(context).decrease(),
+                  color: Theme
+                      .of(context)
+                      .colorScheme
+                      .onBackground,
                 ),
                 IncreaseButton(
                   value: Provider
@@ -85,6 +89,10 @@ class _SettingsViewState extends State<SettingsView>
                       .textSize,
                   onIncrease: () =>
                       Provider.of<TextSizeProvider>(context).increase(),
+                  color: Theme
+                      .of(context)
+                      .colorScheme
+                      .onBackground,
                 ),
               ],
             ),
