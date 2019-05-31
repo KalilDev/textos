@@ -3,12 +3,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/mixins.dart';
-import 'package:textos/ui/cardView.dart';
 
 class FavoritesProvider with ChangeNotifier, Haptic {
   FavoritesProvider(List<String> favorites, FavoritesHelper helper) {
@@ -46,20 +44,13 @@ class FavoritesProvider with ChangeNotifier, Haptic {
     notifyListeners();
   }
 
-  Future<void> open(String favorite, BuildContext context) async {
+  Future<Content> getContent(String favorite) async {
     final DocumentSnapshot documentSnapshot =
     await Firestore.instance.document(_getPath(favorite)).get();
     final Map<String, dynamic> data = documentSnapshot.data;
     data['path'] = _getPath(favorite);
     openView();
-    Navigator.push(
-      context,
-      FadeRoute<List<dynamic>>(
-          builder: (BuildContext context) =>
-              CardView(
-                textContent: Content.fromData(data),
-              )),
-    );
+    return Content.fromData(data);
   }
 
   void toggle(String favorite) {

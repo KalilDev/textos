@@ -234,7 +234,7 @@ class _TextPage extends StatelessWidget with Haptic {
             indexController.move(info.index);
           Navigator.push(
               context,
-              FadeRoute<List<dynamic>>(
+              FadeRoute<void>(
                   builder: (BuildContext context) =>
                       CardView(textContent: textContent,)));
         });

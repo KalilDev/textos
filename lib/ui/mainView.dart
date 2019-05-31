@@ -30,8 +30,8 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                     child: TabBarView(
                       controller: _tabController,
                       children: <Widget>[
-                        FavoritesView(),
-                        ListView(
+                        RepaintBoundary(child: FavoritesView()),
+                        RepaintBoundary(child: ListView(
                             physics: const NeverScrollableScrollPhysics(),
                             children: <Widget>[
                               Container(
@@ -41,8 +41,8 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                                           .padding
                                           .top,
                                   child: AuthorsView())
-                            ]),
-                        ListView(
+                            ])),
+                        RepaintBoundary(child: ListView(
                             physics: const NeverScrollableScrollPhysics(),
                             children: <Widget>[
                               Container(
@@ -52,7 +52,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                                           .padding
                                           .top,
                                   child: TextsView())
-                            ])
+                            ]))
                       ],
                     )),
                 backTitle: const Text('Configurações'),

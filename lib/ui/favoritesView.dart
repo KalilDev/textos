@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
+import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
+
+import 'cardView.dart';
+import 'durationMaterialPageRoute.dart';
 
 class FavoritesView extends StatelessWidget {
   Widget buildFavoritesItem(BuildContext context, String favorite) {
@@ -54,28 +58,47 @@ class FavoritesView extends StatelessWidget {
         ),
         onDismissed: (DismissDirection direction) =>
             Provider.of<FavoritesProvider>(context).remove(favorite),
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) =>
-              ElevatedContainer(
-                elevation: 4.0,
-                width: constraints.maxWidth,
-                margin: const EdgeInsets.fromLTRB(3, 6, 3, 3),
-                borderRadius: BorderRadius.circular(10.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                        child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 7.0),
-                            child: txt),
-                        onTap: () {
-                          Provider.of<FavoritesProvider>(context)
-                              .open(favorite, context);
-                        }),
-                  ),
+        child: RepaintBoundary(
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) =>
+                FutureBuilder<Content>(
+                  future: Provider.of<FavoritesProvider>(context)
+                      .getContent(favorite),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<Content> snap) =>
+                      ElevatedContainer(
+                        elevation: 4.0,
+                        width: constraints.maxWidth,
+                        margin: const EdgeInsets.fromLTRB(3, 6, 3, 3),
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                                child: Hero(
+                                  tag: 'body' + (snap.hasData
+                                      ? snap.data.textPath
+                                      : 'null'),
+                                  child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 7.0),
+                                      child: txt),
+                                ),
+                                onTap: () async {
+                                  Navigator.push(
+                                      context,
+                                      DurationMaterialPageRoute<void>(
+                                          builder: (BuildContext context) =>
+                                              CardView(
+                                                textContent: snap.data,
+                                              )));
+                                }),
+                          ),
+                        ),
+                      ),
                 ),
-              ),
+          ),
         ));
   }
 
