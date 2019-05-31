@@ -71,7 +71,10 @@ final ThemeData themeDataLight = ThemeData(
             main: colorSchemeLight.onBackground)));
 
 // Theme Dark
-const Color themeBackgroundDark = Colors.black;
+//const Color themeBackgroundDark = Color(0xFF121212);
+//const Color themeBackgroundDark = Color(4280098081);
+const Color themeBackgroundDark = Color(4278979857);
+//const Color themeBackgroundDark = Colors.black;
 const Color themeForegroundDark = Colors.white;
 const ColorScheme colorSchemeDark = ColorScheme(
     primary: Color(0xFF9fa8da),
