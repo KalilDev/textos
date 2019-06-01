@@ -9,37 +9,26 @@ class BlurProvider with ChangeNotifier, Haptic {
 
   int _settings;
 
-  static const List<int> settingsTable = <int>[2, 3, 5];
+  static const List<int> settingsTable = <int>[3, 5];
 
-  bool get drawerBlur => _settings % settingsTable[0] == 0;
+  bool get buttonsBlur => _settings % settingsTable[0] == 0;
 
-  void toggleDrawerBlur() {
+  void toggleButtonsBlur() {
     selectItem();
-    _settings = drawerBlur
+    _settings = buttonsBlur
         ? (_settings / settingsTable[0]).round()
         : (_settings * settingsTable[0]).round();
     settingsSync();
     notifyListeners();
   }
 
-  bool get buttonsBlur => _settings % settingsTable[1] == 0;
-
-  void toggleButtonsBlur() {
-    selectItem();
-    _settings = buttonsBlur
-        ? (_settings / settingsTable[1]).round()
-        : (_settings * settingsTable[1]).round();
-    settingsSync();
-    notifyListeners();
-  }
-
-  bool get textsBlur => _settings % settingsTable[2] == 0;
+  bool get textsBlur => _settings % settingsTable[1] == 0;
 
   void toggleTextsBlur() {
     selectItem();
     _settings = textsBlur
-        ? (_settings / settingsTable[2]).round()
-        : (_settings * settingsTable[2]).round();
+        ? (_settings / settingsTable[1]).round()
+        : (_settings * settingsTable[1]).round();
     settingsSync();
     notifyListeners();
   }

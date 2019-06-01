@@ -18,9 +18,6 @@ class SettingsView extends StatelessWidget with Haptic {
 
   @override
   Widget build(BuildContext context) {
-    final bool isBlurred = Provider
-        .of<BlurProvider>(context)
-        .drawerBlur;
     final TextStyle styleSettings = Theme
         .of(context)
         .textTheme
@@ -195,7 +192,7 @@ class SettingsView extends StatelessWidget with Haptic {
     }
 
     Widget buildCategory(List<Widget> children,
-        {bool isBlurred, bool isFirst = false}) {
+        {bool isFirst = false}) {
       return ElevatedContainer(
           elevation: 4.0,
           margin: isFirst
@@ -223,11 +220,11 @@ class SettingsView extends StatelessWidget with Haptic {
       child: ListView(
         children: <Widget>[
           const SizedBox(height: 40.0),
-          buildCategory(themeWidgets(), isBlurred: isBlurred, isFirst: true),
-          buildCategory(textWidgets(), isBlurred: isBlurred),
-          buildCategory(favoriteWidgets(), isBlurred: isBlurred),
-          buildCategory(blurWidgets(), isBlurred: isBlurred),
-          buildCategory(miscWidgets(), isBlurred: isBlurred),
+          buildCategory(themeWidgets(), isFirst: true),
+          buildCategory(textWidgets()),
+          buildCategory(favoriteWidgets()),
+          buildCategory(blurWidgets()),
+          buildCategory(miscWidgets()),
           const SizedBox(height: 48.0),
         ],
       ),
