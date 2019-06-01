@@ -24,7 +24,7 @@ class FavoritesProvider with ChangeNotifier, Haptic {
     selectItem();
     _favoritesSet.add(favorite);
     settingsSync();
-    _helper.addFavorite(favorite);
+    _helper.atomicOperation(favorite, operation: AtomicOperation.add);
     notifyListeners();
   }
 
@@ -32,7 +32,7 @@ class FavoritesProvider with ChangeNotifier, Haptic {
     selectItem();
     _favoritesSet.remove(favorite);
     settingsSync();
-    _helper.removeFavorite(favorite);
+    _helper.atomicOperation(favorite, operation: AtomicOperation.remove);
     notifyListeners();
   }
 

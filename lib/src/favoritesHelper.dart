@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+enum AtomicOperation { add, remove }
+
 class FavoritesHelper {
   FavoritesHelper({@required this.userId});
 
@@ -10,9 +12,9 @@ class FavoritesHelper {
 
   final Firestore db = Firestore.instance;
   final CollectionReference favoritesCollection =
-  Firestore.instance.collection('favorites');
+      Firestore.instance.collection('favorites');
   final DocumentReference statsDocument =
-  Firestore.instance.collection('favorites').document('_stats_');
+      Firestore.instance.collection('favorites').document('_stats_');
 
   Future<DocumentSnapshot> get userDocumentSnapshot async {
     final QuerySnapshot queryResult = await favoritesCollection
@@ -37,8 +39,8 @@ class FavoritesHelper {
     return snap.reference;
   }
 
-  Map<String, int> _getDelta(List<DocumentReference> localReferences,
-      List<dynamic> remoteReferences) {
+  Map<String, int> _getDelta(
+      List<DocumentReference> localReferences, List<dynamic> remoteReferences) {
     // Wont detect duplicated documents
     localReferences.sort((DocumentReference ref1, DocumentReference ref2) =>
         ref1.path.compareTo(ref2.path));
@@ -85,32 +87,30 @@ class FavoritesHelper {
       }
 
       final Map<String, int> delta =
-      _getDelta(localReferences, remoteReferences);
+          _getDelta(localReferences, remoteReferences);
 
       // If there are changes OR if there are duplicate entries on remote
       // references AKA if the user tried to fuck the favorites counter by
       // pressing it many times in a short timespan.
       // NEVER TRUST USERS. NEVER.
       if (delta.isNotEmpty ||
-          remoteReferences.length != remoteReferences
-              .toSet()
-              .length) {
+          remoteReferences.length != remoteReferences.toSet().length) {
         final WriteBatch batch = db.batch();
         batch.updateData(document, <String, dynamic>{
           'textReferences': localReferences,
           'textTitles': localTitles
         });
-        delta.forEach((String docPath, int delta) =>
-            batch.updateData(
-                statsDocument,
-                <String, dynamic>{docPath: FieldValue.increment(delta)}));
+        delta.forEach((String docPath, int delta) => batch.updateData(
+            statsDocument,
+            <String, dynamic>{docPath: FieldValue.increment(delta)}));
         await batch.commit();
       }
     }
   }
 
-  Future<void> addFavorite(String favorite) async {
-    if (userId != null || isInDebugMode == true) {
+  Future<void> atomicOperation(String favorite,
+      {AtomicOperation operation}) async {
+    if (userId != null && isInDebugMode == false) {
       final String title = favorite.split(';')[0];
       final DocumentReference reference = db.document(favorite.split(';')[1]);
       final String path = reference.path.replaceAll('/', '_');
@@ -121,92 +121,28 @@ class FavoritesHelper {
       final List<dynamic> remoteTitles = snapshot.data['textTitles'];
 
       final Set<DocumentReference> localReferences =
-          Set < DocumentReference
-    >
-        .from(remoteReferences);
-    final Set<String
-    > localTitles =
-    Set<String>.from(
-    remoteTitles);
+          Set<DocumentReference>.from(remoteReferences);
+      final Set<String> localTitles = Set<String>.from(remoteTitles);
 
-    localTitles.add(title);
-    localReferences.add(reference);
-    final WriteBatch batch
-    = db.batch();
-    batch.updateData
-    (document, <String, dynamic>
-    {
-    'textReferences': localReferences.toList(),
-    'textTitles': localTitles.toList()
-    }
-    );
-    batch.updateData(
-    statsDocument, <String
-    , dynamic>
-    {
-    path: FieldValue.increment(1)
-    }
-    );
-    batch
-        .
-    commit
-    (
-    );
-    }
-    }
+      int incValue;
+      if (operation == AtomicOperation.add) {
+        localTitles.add(title);
+        localReferences.add(reference);
+        incValue = 1;
+      } else if (operation == AtomicOperation.remove) {
+        localTitles.remove(title);
+        localReferences.remove(reference);
+        incValue = -1;
+      }
 
-  Future<void> removeFavorite(String favorite) async {
-    if (userId != null || isInDebugMode == true) {
-      final String title = favorite.split(';')[0];
-      final DocumentReference reference = db.document(favorite.split(';')[1]);
-      final String path = reference.path.replaceAll('/', '_');
-      final DocumentSnapshot snapshot = await userDocumentSnapshot;
-      final DocumentReference document = await userDocument;
-
-      final List<dynamic> remoteReferences = snapshot.data['textReferences'];
-      final List<dynamic> remoteTitles = snapshot.data['textTitles'];
-
-      final List<DocumentReference> localReferences =
-          List < DocumentReference
-    >
-        .
-    from
-    (
-    remoteReferences
-    ,
-    growable
-        :
-    true
-    );
-    final List<String> localTitles =
-    List<String
-    >.from(remoteTitles, growable: true)
-    ;
-
-    localTitles.remove(title);
-    localReferences.
-    remove(reference);
-    final WriteBatch batch = db
-        .batch();
-    batch.updateData(document
-    , <String, dynamic>
-    {
-    'textReferences': localReferences,
-    'textTitles': localTitles
+      final WriteBatch batch = db.batch();
+      batch.updateData(document, <String, dynamic>{
+        'textReferences': localReferences.toList(),
+        'textTitles': localTitles.toList()
+      });
+      batch.updateData(statsDocument,
+          <String, dynamic>{path: FieldValue.increment(incValue)});
+      batch.commit();
     }
-    );
-    batch.updateData(
-    statsDocument, <String
-    , dynamic>
-    {
-    path: FieldValue.increment(-1)
-    }
-    );
-    batch
-        .
-    commit
-    (
-    );
-    }
-    }
+  }
 }
