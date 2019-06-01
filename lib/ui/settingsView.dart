@@ -6,8 +6,6 @@ import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/aboutCreatorView.dart';
 
-import 'durationMaterialPageRoute.dart';
-
 class SettingsView extends StatelessWidget
     with Haptic {
 

@@ -9,7 +9,6 @@ import 'package:textos/src/content.dart';
 import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView.dart';
-import 'package:textos/ui/favoritesCount.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
 class TextsView extends StatefulWidget {
@@ -240,7 +239,8 @@ class _TextPage extends StatelessWidget with Haptic {
         ),
         onTap: () async {
           openView();
-          if (indexController != null) indexController.move(info.index);
+          if (indexController != null)
+            indexController.move(info.index);
           Navigator.push(
               context,
               FadeRoute<void>(

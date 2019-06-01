@@ -6,7 +6,6 @@ import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
 
 import 'cardView.dart';
-import 'durationMaterialPageRoute.dart';
 
 class FavoritesView extends StatelessWidget {
   Widget buildFavoritesItem(BuildContext context, String favorite) {
