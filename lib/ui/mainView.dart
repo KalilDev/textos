@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:textos/text_icons_icons.dart';
 import 'package:textos/ui/authorsView.dart';
 import 'package:textos/ui/backdrop.dart';
 import 'package:textos/ui/favoritesView.dart';
@@ -86,12 +87,17 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                           .primaryColor,
                       items: const <BottomNavigationBarItem>[
                         BottomNavigationBarItem(
-                            icon: Icon(Icons.favorite),
+                            activeIcon: Icon(TextIcons.heart_multiple),
+                            icon: Icon(TextIcons.heart_multiple_outline),
                             title: Text('Favoritos')),
                         BottomNavigationBarItem(
-                            icon: Icon(Icons.group), title: Text('Autores')),
+                            activeIcon: Icon(TextIcons.account_group),
+                            icon: Icon(TextIcons.account_group_outline),
+                            title: Text('Autores')),
                         BottomNavigationBarItem(
-                            icon: Icon(Icons.style), title: Text('Textos')),
+                            activeIcon: Icon(TextIcons.book_open_page_variant),
+                            icon: Icon(TextIcons.book_open_variant),
+                            title: Text('Textos')),
                       ]),
                   SlideTransition(
                       position: Tween<Offset>(

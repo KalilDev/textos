@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
+import 'package:textos/text_icons_icons.dart';
 import 'package:textos/ui/aboutCreatorView.dart';
 
 class SettingsView extends StatelessWidget
@@ -51,7 +52,7 @@ class SettingsView extends StatelessWidget
         Text(textTema, style: styleDescription),
         SwitchListTile(
             title: Text(textTextTheme, style: styleSettings),
-            secondary: const Icon(Icons.invert_colors),
+            secondary: const Icon(TextIcons.theme_light_dark),
             value: Provider
                 .of<ThemeProvider>(context)
                 .isDarkMode
@@ -88,7 +89,7 @@ class SettingsView extends StatelessWidget
       return <Widget>[
         Text(textText, style: styleDescription),
         ListTile(
-            leading: const Icon(Icons.text_fields),
+            leading: const Icon(TextIcons.format_size),
             title: Text(textTextSize, style: styleSettings),
             trailing: Container(
               width: 96,
@@ -126,7 +127,7 @@ class SettingsView extends StatelessWidget
       return <Widget>[
         Text(textFavs, style: styleDescription),
         ListTile(
-          leading: const Icon(Icons.delete),
+          leading: const Icon(TextIcons.notification_clear_all),
           title: Text(textCleanFavs, style: styleSettings),
           onTap: () => Provider.of<FavoritesProvider>(context).clear(),
         ),
@@ -178,7 +179,7 @@ class SettingsView extends StatelessWidget
             color: Colors.transparent,
             elevation: 0.0,
             child: ListTile(
-              leading: const Icon(Icons.info),
+              leading: const Icon(TextIcons.information_variant),
               title: Text(
                 'Sobre o criador',
                 style: styleSettings,
@@ -188,7 +189,7 @@ class SettingsView extends StatelessWidget
           ),
         ),
         ListTile(
-          leading: const Icon(Icons.delete_forever),
+          leading: const Icon(TextIcons.vanish),
           title: Text(textTextTrash, style: styleSettings),
           onTap: () => cleanAll(context),
         ),
