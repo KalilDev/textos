@@ -28,8 +28,7 @@ class _AuthorsViewState extends State<AuthorsView>
         .collection('metadata')
         .orderBy('order')
         .snapshots()
-        .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) =>
-        list
+        .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) => list
             .documents
             .map<Map<String, dynamic>>((DocumentSnapshot snap) => snap.data));
     _tagIndexController = IndexController();
@@ -40,42 +39,8 @@ class _AuthorsViewState extends State<AuthorsView>
 
   Future<void> jump(int page) async {
     // Dirty
-    Future
-    <
-    void
-    >
-        .
-    delayed
-    (
-    const
-    Duration
-    (
-    milliseconds
-        :
-    1
-    )
-    )
-        .
-    then
-    <
-    void
-    >
-    (
-    (
-    _
-    )
-    =>
-    _tagIndexController
-        .
-    move
-    (
-    page
-    ,
-    animation
-    :
-    false
-    )
-    );
+    Future<void>.delayed(const Duration(milliseconds: 1))
+        .then<void>((_) => _tagIndexController.move(page, animation: false));
   }
 
   @override
@@ -97,20 +62,20 @@ class _AuthorsViewState extends State<AuthorsView>
             curve: Curves.decelerate,
             onPageChanged: (int page) {
               final QueryInfoProvider provider =
-              Provider.of<QueryInfoProvider>(context);
+                  Provider.of<QueryInfoProvider>(context);
               provider.collection = _metadataList[page]['collection'];
               scrollFeedback();
             },
             transformer: PageTransformerBuilder(
                 builder: (Widget widget, TransformInfo info) {
-                  final Map<String, dynamic> data = _metadataList[info.index];
-                  return _AuthorPage(
-                    info: info,
-                    tags: data['tags'],
-                    title: data['title'],
-                    authorName: data['authorName'],
-                  );
-                }),
+              final Map<String, dynamic> data = _metadataList[info.index];
+              return _AuthorPage(
+                info: info,
+                tags: data['tags'],
+                title: data['title'],
+                authorName: data['authorName'],
+              );
+            }),
           );
         },
       ),
@@ -119,10 +84,11 @@ class _AuthorsViewState extends State<AuthorsView>
 }
 
 class _AuthorPage extends StatefulWidget {
-  const _AuthorPage({@required this.info,
-    this.tags = const <String>[],
-    this.title = 'Textos do ',
-    this.authorName = 'Kalil'});
+  const _AuthorPage(
+      {@required this.info,
+      this.tags = const <String>[],
+      this.title = 'Textos do ',
+      this.authorName = 'Kalil'});
 
   final TransformInfo info;
   final List<dynamic> tags;
@@ -179,10 +145,7 @@ class _AuthorPageState extends State<_AuthorPage> {
                       translationFactor: 100,
                       child: Text(
                         widget.title + widget.authorName,
-                        style: Theme
-                            .of(context)
-                            .accentTextTheme
-                            .display1,
+                        style: Theme.of(context).accentTextTheme.display1,
                       ),
                     ),
                     ParallaxContainer(
@@ -190,19 +153,18 @@ class _AuthorPageState extends State<_AuthorPage> {
                         position: -widget.info.position,
                         translationFactor: 150,
                         child: Text(textFilter,
-                            style: Theme
-                                .of(context)
+                            style: Theme.of(context)
                                 .accentTextTheme
                                 .body1
                                 .copyWith(
-                              color: getTextColor(0.60, bg: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .background, main: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .onBackground),
-                            ))),
+                                  color: getTextColor(0.60,
+                                      bg: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      main: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground),
+                                ))),
                     Container(
                       margin: const EdgeInsets.only(left: 1.0),
                       child: RepaintBoundary(
@@ -222,11 +184,12 @@ class _AuthorPageState extends State<_AuthorPage> {
 }
 
 class _CustomButton extends StatelessWidget with Haptic {
-  const _CustomButton({Key key,
-    @required this.tag,
-    @required this.isCurrent,
-    @required this.position,
-    @required this.index})
+  const _CustomButton(
+      {Key key,
+      @required this.tag,
+      @required this.isCurrent,
+      @required this.position,
+      @required this.index})
       : super(key: key);
 
   final String tag;
@@ -251,74 +214,37 @@ class _CustomButton extends StatelessWidget with Haptic {
                 opacity: Tween<double>(begin: 0.0, end: 1.0).animate(animation),
                 child: widget);
           },
-          child: isCurrent && tag == Provider
-              .of<QueryInfoProvider>(context)
-              .tag
+          child: isCurrent && tag == Provider.of<QueryInfoProvider>(context).tag
               ? FlatButton(
-              color: Theme
-                  .of(context)
-                  .primaryColor,
-              highlightColor: Theme
-                  .of(context)
-                  .accentColor,
-              child: Text(
-                '#' + tag,
-                style: Theme
-                    .of(context)
-                    .accentTextTheme
-                    .button
-                    .copyWith(
-                    color: Theme
-                        .of(context)
-                        .primaryColorBrightness !=
-                        Brightness.dark
-                        ? Theme
-                        .of(context)
-                        .backgroundColor
-                        : Theme
-                        .of(context)
-                        .accentTextTheme
-                        .display1
-                        .color),
-              ),
-              onPressed: () {
-                selectItem();
-                Provider
-                    .of<QueryInfoProvider>(context)
-                    .tag = queryTag;
-              })
+                  color: Theme.of(context).primaryColor,
+                  highlightColor: Theme.of(context).accentColor,
+                  child: Text(
+                    '#' + tag,
+                    style: Theme.of(context).accentTextTheme.button.copyWith(
+                        color: Theme.of(context).primaryColorBrightness !=
+                                Brightness.dark
+                            ? Theme.of(context).backgroundColor
+                            : Theme.of(context).accentTextTheme.display1.color),
+                  ),
+                  onPressed: () {
+                    selectItem();
+                    Provider.of<QueryInfoProvider>(context).tag = queryTag;
+                  })
               : OutlineButton(
-              borderSide: BorderSide(color: Theme
-                  .of(context)
-                  .primaryColor),
-              highlightColor: Theme
-                  .of(context)
-                  .accentColor,
-              child: Text(
-                '#' + tag,
-                style: Theme
-                    .of(context)
-                    .accentTextTheme
-                    .button
-                    .copyWith(
-                    color: Color.alphaBlend(
-                        Theme
-                            .of(context)
-                            .primaryColor
-                            .withAlpha(120),
-                        Theme
-                            .of(context)
-                            .accentTextTheme
-                            .button
-                            .color)
-                        .withAlpha(175)),
-              ),
-              onPressed: () {
-                selectItem();
-                Provider
-                    .of<QueryInfoProvider>(context)
-                    .tag = queryTag;
-              })),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                  highlightColor: Theme.of(context).accentColor,
+                  child: Text(
+                    '#' + tag,
+                    style: Theme.of(context).accentTextTheme.button.copyWith(
+                        color: Color.alphaBlend(
+                                Theme.of(context).primaryColor.withAlpha(120),
+                                Theme.of(context).accentTextTheme.button.color)
+                            .withAlpha(175)),
+                  ),
+                  onPressed: () {
+                    selectItem();
+                    Provider.of<QueryInfoProvider>(context).tag = queryTag;
+                  })),
     );
   }
 }

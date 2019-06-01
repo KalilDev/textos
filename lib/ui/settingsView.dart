@@ -18,20 +18,11 @@ class SettingsView extends StatelessWidget with Haptic {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle styleSettings = Theme
-        .of(context)
-        .textTheme
-        .subhead;
+    final TextStyle styleSettings = Theme.of(context).textTheme.subhead;
     final TextStyle styleDescription = styleSettings.copyWith(
         color: getTextColor(0.87,
-            main: Theme
-                .of(context)
-                .colorScheme
-                .onBackground,
-            bg: Theme
-                .of(context)
-                .colorScheme
-                .background));
+            main: Theme.of(context).colorScheme.onBackground,
+            bg: Theme.of(context).colorScheme.background));
 
     Future<void> _openAbout() async {
       openView();
@@ -48,35 +39,22 @@ class SettingsView extends StatelessWidget with Haptic {
         SwitchListTile(
             title: Text(textTextTheme, style: styleSettings),
             secondary: const Icon(TextIcons.theme_light_dark),
-            value: Provider
-                .of<ThemeProvider>(context)
-                .isDarkMode
+            value: Provider.of<ThemeProvider>(context).isDarkMode
                 ? true
-                : MediaQuery
-                .of(context)
-                .platformBrightness == Brightness.dark
-                ? true
-                : false,
-            activeColor: Theme
-                .of(context)
-                .primaryColor,
-            activeTrackColor: Theme
-                .of(context)
-                .primaryColor
-                .withAlpha(170),
+                : MediaQuery.of(context).platformBrightness == Brightness.dark
+                    ? true
+                    : false,
+            activeColor: Theme.of(context).primaryColor,
+            activeTrackColor: Theme.of(context).primaryColor.withAlpha(170),
             inactiveThumbImage:
-            MediaQuery
-                .of(context)
-                .platformBrightness == Brightness.dark
-                ? const AssetImage('res/baseline_lock_white_96dp.png')
-                : null,
+                MediaQuery.of(context).platformBrightness == Brightness.dark
+                    ? const AssetImage('res/baseline_lock_white_96dp.png')
+                    : null,
             onChanged:
-            MediaQuery
-                .of(context)
-                .platformBrightness == Brightness.dark
-                ? null
-                : (bool map) =>
-                Provider.of<ThemeProvider>(context).toggleDarkMode()),
+                MediaQuery.of(context).platformBrightness == Brightness.dark
+                    ? null
+                    : (bool map) =>
+                        Provider.of<ThemeProvider>(context).toggleDarkMode()),
       ];
     }
 
@@ -91,26 +69,16 @@ class SettingsView extends StatelessWidget with Haptic {
               child: Row(
                 children: <Widget>[
                   DecreaseButton(
-                    value: Provider
-                        .of<TextSizeProvider>(context)
-                        .textSize,
+                    value: Provider.of<TextSizeProvider>(context).textSize,
                     onDecrease: () =>
                         Provider.of<TextSizeProvider>(context).decrease(),
-                    color: Theme
-                        .of(context)
-                        .colorScheme
-                        .onBackground,
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
                   IncreaseButton(
-                    value: Provider
-                        .of<TextSizeProvider>(context)
-                        .textSize,
+                    value: Provider.of<TextSizeProvider>(context).textSize,
                     onIncrease: () =>
                         Provider.of<TextSizeProvider>(context).increase(),
-                    color: Theme
-                        .of(context)
-                        .colorScheme
-                        .onBackground,
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ],
               ),
@@ -135,31 +103,17 @@ class SettingsView extends StatelessWidget with Haptic {
         SwitchListTile(
             title: Text(textTextBlurButtons, style: styleSettings),
             secondary: const Icon(Icons.blur_circular),
-            value: Provider
-                .of<BlurProvider>(context)
-                .buttonsBlur,
-            activeColor: Theme
-                .of(context)
-                .primaryColor,
-            activeTrackColor: Theme
-                .of(context)
-                .primaryColor
-                .withAlpha(170),
+            value: Provider.of<BlurProvider>(context).buttonsBlur,
+            activeColor: Theme.of(context).primaryColor,
+            activeTrackColor: Theme.of(context).primaryColor.withAlpha(170),
             onChanged: (bool map) =>
                 Provider.of<BlurProvider>(context).toggleButtonsBlur()),
         SwitchListTile(
             title: Text(textTextBlurText, style: styleSettings),
             secondary: const Icon(Icons.blur_on),
-            value: Provider
-                .of<BlurProvider>(context)
-                .textsBlur,
-            activeColor: Theme
-                .of(context)
-                .primaryColor,
-            activeTrackColor: Theme
-                .of(context)
-                .primaryColor
-                .withAlpha(170),
+            value: Provider.of<BlurProvider>(context).textsBlur,
+            activeColor: Theme.of(context).primaryColor,
+            activeTrackColor: Theme.of(context).primaryColor.withAlpha(170),
             onChanged: (bool map) =>
                 Provider.of<BlurProvider>(context).toggleTextsBlur()),
       ];
@@ -191,8 +145,7 @@ class SettingsView extends StatelessWidget with Haptic {
       ];
     }
 
-    Widget buildCategory(List<Widget> children,
-        {bool isFirst = false}) {
+    Widget buildCategory(List<Widget> children, {bool isFirst = false}) {
       return ElevatedContainer(
           elevation: 4.0,
           margin: isFirst
@@ -210,13 +163,8 @@ class SettingsView extends StatelessWidget with Haptic {
 
     return Container(
       decoration: BoxDecoration(
-          color: Color.alphaBlend(Theme
-              .of(context)
-              .primaryColor
-              .withAlpha(80),
-              Theme
-                  .of(context)
-                  .backgroundColor)),
+          color: Color.alphaBlend(Theme.of(context).primaryColor.withAlpha(80),
+              Theme.of(context).backgroundColor)),
       child: ListView(
         children: <Widget>[
           const SizedBox(height: 40.0),

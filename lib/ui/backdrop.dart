@@ -43,11 +43,9 @@ class _FrontLayer extends StatelessWidget {
             child: Container(
               height: 48.0,
               decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(46.0)),
-                  color: Theme
-                      .of(context)
-                      .primaryColor),
+                  borderRadius:
+                      const BorderRadius.only(topLeft: Radius.circular(46.0)),
+                  color: Theme.of(context).primaryColor),
               alignment: AlignmentDirectional.centerStart,
             ),
           ),
@@ -80,34 +78,15 @@ class _BackdropTitle extends AnimatedWidget {
     final Animation<double> animation = listenable;
 
     return DefaultTextStyle(
-      style: animation.value.round() == 1 ? Theme
-          .of(context)
-          .primaryTextTheme
-          .title
-          .copyWith(
-          color: getTextColor(0.87,
-              main: Theme
-                  .of(context)
-                  .colorScheme
-                  .onPrimary,
-              bg: Theme
-                  .of(context)
-                  .colorScheme
-                  .background))
-          : Theme
-          .of(context)
-          .primaryTextTheme
-          .title
-          .copyWith(
-          color: getTextColor(0.87,
-              main: Theme
-                  .of(context)
-                  .colorScheme
-                  .onBackground,
-              bg: Theme
-                  .of(context)
-                  .colorScheme
-                  .background)),
+      style: animation.value.round() == 1
+          ? Theme.of(context).primaryTextTheme.title.copyWith(
+              color: getTextColor(0.87,
+                  main: Theme.of(context).colorScheme.onPrimary,
+                  bg: Theme.of(context).colorScheme.background))
+          : Theme.of(context).primaryTextTheme.title.copyWith(
+              color: getTextColor(0.87,
+                  main: Theme.of(context).colorScheme.onBackground,
+                  bg: Theme.of(context).colorScheme.background)),
       softWrap: false,
       overflow: TextOverflow.ellipsis,
       child: Row(children: <Widget>[
@@ -120,15 +99,10 @@ class _BackdropTitle extends AnimatedWidget {
             icon: Stack(children: <Widget>[
               Opacity(
                 opacity: animation.value,
-                child: Icon(Icons.settings, color: getTextColor(0.87,
-                    main: Theme
-                        .of(context)
-                        .colorScheme
-                        .onPrimary,
-                    bg: Theme
-                        .of(context)
-                        .colorScheme
-                        .background)),
+                child: Icon(Icons.settings,
+                    color: getTextColor(0.87,
+                        main: Theme.of(context).colorScheme.onPrimary,
+                        bg: Theme.of(context).colorScheme.background)),
               ),
               Opacity(
                 opacity: 1 - animation.value,
@@ -137,15 +111,10 @@ class _BackdropTitle extends AnimatedWidget {
                     begin: Offset.zero,
                     end: const Offset(1.0, 0.0),
                   ).evaluate(animation),
-                  child: Icon(Icons.arrow_back, color: getTextColor(0.87,
-                      main: Theme
-                          .of(context)
-                          .colorScheme
-                          .onBackground,
-                      bg: Theme
-                          .of(context)
-                          .colorScheme
-                          .background)),
+                  child: Icon(Icons.arrow_back,
+                      color: getTextColor(0.87,
+                          main: Theme.of(context).colorScheme.onBackground,
+                          bg: Theme.of(context).colorScheme.background)),
                 ),
               )
             ]),

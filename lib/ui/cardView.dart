@@ -8,9 +8,10 @@ import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 
 class CardView extends StatelessWidget with Haptic {
-  const CardView({Key key,
-    @required this.textContent,})
-      : super(key: key);
+  const CardView({
+    Key key,
+    @required this.textContent,
+  }) : super(key: key);
 
   final Content textContent;
 
@@ -31,7 +32,6 @@ class CardContent extends StatelessWidget with Haptic {
 
   @override
   Widget build(BuildContext context) {
-
     return Stack(
       children: <Widget>[
         Hero(
@@ -59,41 +59,38 @@ class CardContent extends StatelessWidget with Haptic {
             child: Stack(
               children: <Widget>[
                 Container(
-                  margin: const EdgeInsets.only(
-                      left: 4.0, right: 4.0, bottom: 8.0),
+                  margin:
+                      const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 8.0),
                   child: Row(
                     children: <Widget>[
                       textContent.hasText
                           ? Container(
-                          margin: const EdgeInsets.only(left: 4.0),
-                          child: IncDecButton(
-                              isBlurred: Provider
-                                  .of<BlurProvider>(context)
-                                  .buttonsBlur,
-                              onDecrease: () =>
-                                  Provider.of<TextSizeProvider>(context)
-                                      .decrease(),
-                              onIncrease: () =>
-                                  Provider.of<TextSizeProvider>(context)
-                                      .increase(),
-                              value: Provider
-                                  .of<TextSizeProvider>(context)
-                                  .textSize))
+                              margin: const EdgeInsets.only(left: 4.0),
+                              child: IncDecButton(
+                                  isBlurred: Provider.of<BlurProvider>(context)
+                                      .buttonsBlur,
+                                  onDecrease: () =>
+                                      Provider.of<TextSizeProvider>(context)
+                                          .decrease(),
+                                  onIncrease: () =>
+                                      Provider.of<TextSizeProvider>(context)
+                                          .increase(),
+                                  value: Provider.of<TextSizeProvider>(context)
+                                      .textSize))
                           : const SizedBox(),
                       textContent.hasMusic
                           ? Expanded(
-                          child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 4.0),
-                              child: RepaintBoundary(
-                                child: PlaybackButton(
-                                  url: textContent.music,
-                                  isBlurred:
-                                  Provider
-                                      .of<BlurProvider>(context)
-                                      .buttonsBlur,
-                                ),
-                              )))
+                              child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: RepaintBoundary(
+                                    child: PlaybackButton(
+                                      url: textContent.music,
+                                      isBlurred:
+                                          Provider.of<BlurProvider>(context)
+                                              .buttonsBlur,
+                                    ),
+                                  )))
                           : Spacer(),
                       Container(
                         margin: const EdgeInsets.only(right: 4.0),
@@ -105,16 +102,12 @@ class CardContent extends StatelessWidget with Haptic {
                                         ';' +
                                         textContent.textPath),
                             isBlurred:
-                            Provider
-                                .of<BlurProvider>(context)
-                                .buttonsBlur,
+                                Provider.of<BlurProvider>(context).buttonsBlur,
                             isEnabled: Provider.of<FavoritesProvider>(context)
                                 .isFavorite(textContent.title +
-                                ';' +
-                                textContent.textPath),
-                            disabledColor: Theme
-                                .of(context)
-                                .accentColor,
+                                    ';' +
+                                    textContent.textPath),
+                            disabledColor: Theme.of(context).accentColor,
                           ),
                         ),
                       ),
@@ -125,10 +118,7 @@ class CardContent extends StatelessWidget with Haptic {
             )),
         Positioned(
           child: MenuButton(),
-          top: MediaQuery
-              .of(context)
-              .padding
-              .top - 2.5,
+          top: MediaQuery.of(context).padding.top - 2.5,
           left: -2.5,
         ),
       ],
@@ -160,9 +150,7 @@ class __TextWidgetState extends State<_TextWidget>
     _textSize = 4.5;
     _textSizeController.addListener(() {
       if (_textSizeController.status == AnimationStatus.completed) {
-        _textSize = Provider
-            .of<TextSizeProvider>(context)
-            .textSize;
+        _textSize = Provider.of<TextSizeProvider>(context).textSize;
         _textSizeController.value = 0.0;
       }
       setState(() => null);
@@ -173,14 +161,10 @@ class __TextWidgetState extends State<_TextWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (Provider
-        .of<TextSizeProvider>(context)
-        .textSize != _textSize) {
+    if (Provider.of<TextSizeProvider>(context).textSize != _textSize) {
       _textSizeController.forward();
     }
-    final TextTheme textTheme = Theme
-        .of(context)
-        .textTheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
@@ -192,11 +176,9 @@ class __TextWidgetState extends State<_TextWidget>
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration:
-                BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
                 child: BlurOverlay.roundedRect(
-                  enabled: Provider
-                      .of<BlurProvider>(context)
-                      .textsBlur,
+                  enabled: Provider.of<BlurProvider>(context).textsBlur,
                   radius: 20,
                   child: Column(
                     children: <Widget>[
@@ -207,8 +189,7 @@ class __TextWidgetState extends State<_TextWidget>
                             child: Column(children: <Widget>[
                               Text(widget.textContent.title,
                                   textAlign: TextAlign.center,
-                                  style: Theme
-                                      .of(context)
+                                  style: Theme.of(context)
                                       .accentTextTheme
                                       .display1),
                               const SizedBox(
@@ -216,22 +197,20 @@ class __TextWidgetState extends State<_TextWidget>
                               ),
                               widget.textContent.hasText
                                   ? RichText(
-                                  textAlign: TextAlign.justify,
-                                  text: TextSpan(
-                                      children: widget.textContent
-                                          .formattedText(
-                                          textTheme.body1.copyWith(
-                                              fontSize: Tween<double>(
-                                                  begin: _textSize,
-                                                  end: Provider
-                                                      .of<
-                                                      TextSizeProvider>(
-                                                      context)
-                                                      .textSize)
-                                                  .animate(
-                                                  _textSizeAnim)
-                                                  .value *
-                                                  4.5))))
+                                      textAlign: TextAlign.justify,
+                                      text: TextSpan(
+                                          children: widget.textContent.formattedText(
+                                              textTheme.body1.copyWith(
+                                                  fontSize: Tween<double>(
+                                                              begin: _textSize,
+                                                              end: Provider.of<
+                                                                          TextSizeProvider>(
+                                                                      context)
+                                                                  .textSize)
+                                                          .animate(
+                                                              _textSizeAnim)
+                                                          .value *
+                                                      4.5))))
                                   : const SizedBox(),
                               SizedBox(
                                   height: 56,

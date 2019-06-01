@@ -41,54 +41,45 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) =>
-            Backdrop(
-                frontTitle: RepaintBoundary(
-                    child: AnimatedBuilder(
-                        animation: _tabController.animation,
-                        builder: (BuildContext context, _) =>
-                            Text(currentTitle))),
-                frontLayer: RepaintBoundary(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: <Widget>[
-                        RepaintBoundary(child: FavoritesView()),
-                        RepaintBoundary(
-                            child: ListView(
-                                physics: const NeverScrollableScrollPhysics(),
-                                children: <Widget>[
-                                  Container(
-                                      height: constraints.maxHeight -
-                                          48 -
-                                          MediaQuery
-                                              .of(context)
-                                              .padding
-                                              .top,
-                                      child: AuthorsView())
-                                ])),
-                        RepaintBoundary(
-                            child: ListView(
-                                physics: const NeverScrollableScrollPhysics(),
-                                children: <Widget>[
-                                  Container(
-                                      height: constraints.maxHeight -
-                                          48 -
-                                          MediaQuery
-                                              .of(context)
-                                              .padding
-                                              .top,
-                                      child: TextsView())
-                                ]))
-                      ],
-                    )),
-                backTitle: const Text(textConfigs),
-                backLayer: SettingsView()),
+        builder: (BuildContext context, BoxConstraints constraints) => Backdrop(
+            frontTitle: RepaintBoundary(
+                child: AnimatedBuilder(
+                    animation: _tabController.animation,
+                    builder: (BuildContext context, _) => Text(currentTitle))),
+            frontLayer: RepaintBoundary(
+                child: TabBarView(
+              controller: _tabController,
+              children: <Widget>[
+                RepaintBoundary(child: FavoritesView()),
+                RepaintBoundary(
+                    child: ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: <Widget>[
+                      Container(
+                          height: constraints.maxHeight -
+                              48 -
+                              MediaQuery.of(context).padding.top,
+                          child: AuthorsView())
+                    ])),
+                RepaintBoundary(
+                    child: ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: <Widget>[
+                      Container(
+                          height: constraints.maxHeight -
+                              48 -
+                              MediaQuery.of(context).padding.top,
+                          child: TextsView())
+                    ]))
+              ],
+            )),
+            backTitle: const Text(textConfigs),
+            backLayer: SettingsView()),
       ),
       bottomNavigationBar: RepaintBoundary(
         child: AnimatedBuilder(
           animation: _tabController.animation,
-          builder: (BuildContext context, _) =>
-              Stack(
+          builder: (BuildContext context, _) => Stack(
                 children: <Widget>[
                   BottomNavigationBar(
                       onTap: (int idx) => _tabController.animateTo(idx),
@@ -97,19 +88,10 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                       showUnselectedLabels: false,
                       currentIndex: _tabController.animation.value.round(),
                       selectedItemColor: Color.alphaBlend(
-                          Theme
-                              .of(context)
-                              .accentColor
-                              .withAlpha(120),
-                          Theme
-                              .of(context)
-                              .backgroundColor),
-                      unselectedItemColor: Theme
-                          .of(context)
-                          .backgroundColor,
-                      backgroundColor: Theme
-                          .of(context)
-                          .primaryColor,
+                          Theme.of(context).accentColor.withAlpha(120),
+                          Theme.of(context).backgroundColor),
+                      unselectedItemColor: Theme.of(context).backgroundColor,
+                      backgroundColor: Theme.of(context).primaryColor,
                       items: const <BottomNavigationBarItem>[
                         BottomNavigationBarItem(
                             activeIcon: Icon(TextIcons.heart_multiple),
@@ -126,8 +108,8 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                       ]),
                   SlideTransition(
                       position: Tween<Offset>(
-                          begin: const Offset(0, 0),
-                          end: const Offset(1.0, 0.0))
+                              begin: const Offset(0, 0),
+                              end: const Offset(1.0, 0.0))
                           .animate(_tabController.animation),
                       child: FractionallySizedBox(
                         widthFactor: 1 / _tabController.length,
@@ -135,13 +117,8 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                           margin: const EdgeInsets.only(top: 54.0),
                           decoration: BoxDecoration(
                               color: Color.alphaBlend(
-                                  Theme
-                                      .of(context)
-                                      .accentColor
-                                      .withAlpha(120),
-                                  Theme
-                                      .of(context)
-                                      .backgroundColor),
+                                  Theme.of(context).accentColor.withAlpha(120),
+                                  Theme.of(context).backgroundColor),
                               borderRadius: BorderRadius.circular(1.0)),
                           height: 2.0,
                         ),

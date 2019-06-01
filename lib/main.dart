@@ -40,7 +40,7 @@ Future<void> main() async {
   if (_uid == null) {
     /// Firebase Login.
     final FirebaseAuth _fireBaseAuth =
-    FirebaseAuth.fromApp(Firestore.instance.app);
+        FirebaseAuth.fromApp(Firestore.instance.app);
     FirebaseUser user;
     try {
       user = await _fireBaseAuth.signInAnonymously();
@@ -62,11 +62,12 @@ Future<void> main() async {
 }
 
 class StateBuilder extends StatefulWidget {
-  const StateBuilder({@required this.enableDarkMode,
-    @required this.favoritesList,
-    @required this.textSize,
-    @required this.blurSettings,
-    @required this.uid});
+  const StateBuilder(
+      {@required this.enableDarkMode,
+      @required this.favoritesList,
+      @required this.textSize,
+      @required this.blurSettings,
+      @required this.uid});
 
   final bool enableDarkMode;
   final List<String> favoritesList;
@@ -131,9 +132,8 @@ class StateBuilderState extends State<StateBuilder> {
     return MultiProvider(
       providers: <ChangeNotifierProvider<dynamic>>[
         ChangeNotifierProvider<FavoritesProvider>(
-            builder: (_) =>
-                FavoritesProvider(
-                    widget.favoritesList, FavoritesHelper(userId: widget.uid))),
+            builder: (_) => FavoritesProvider(
+                widget.favoritesList, FavoritesHelper(userId: widget.uid))),
         ChangeNotifierProvider<ThemeProvider>(
             builder: (_) => ThemeProvider(widget.enableDarkMode)),
         ChangeNotifierProvider<BlurProvider>(
@@ -148,9 +148,9 @@ class StateBuilderState extends State<StateBuilder> {
         builder: (BuildContext context, ThemeProvider provider, _) {
           ThemeData overrideTheme;
           final ThemeData dark =
-          themeDataDark.copyWith(primaryColor: provider.darkPrimaryColor);
+              themeDataDark.copyWith(primaryColor: provider.darkPrimaryColor);
           final ThemeData light =
-          themeDataLight.copyWith(primaryColor: provider.lightPrimaryColor);
+              themeDataLight.copyWith(primaryColor: provider.lightPrimaryColor);
 
           if (provider.isDarkMode) {
             overrideTheme = dark;
@@ -158,9 +158,9 @@ class StateBuilderState extends State<StateBuilder> {
             overrideTheme = light;
           }
           final ThemeData actualTheme =
-          MediaQuery.platformBrightnessOf(context) == Brightness.dark
-              ? dark
-              : overrideTheme;
+              MediaQuery.platformBrightnessOf(context) == Brightness.dark
+                  ? dark
+                  : overrideTheme;
 
           Brightness inverseOf(Brightness b) =>
               b == Brightness.dark ? Brightness.light : Brightness.dark;
@@ -168,7 +168,7 @@ class StateBuilderState extends State<StateBuilder> {
           SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
               systemNavigationBarColor: actualTheme.primaryColor,
               systemNavigationBarIconBrightness:
-              inverseOf(actualTheme.primaryColorBrightness),
+                  inverseOf(actualTheme.primaryColorBrightness),
               statusBarColor: actualTheme.brightness == Brightness.dark
                   ? Colors.black.withAlpha(100)
                   : Colors.white.withAlpha(100),

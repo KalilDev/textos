@@ -46,7 +46,7 @@ class FavoritesProvider with ChangeNotifier, Haptic {
 
   Future<Content> getContent(String favorite) async {
     final DocumentSnapshot documentSnapshot =
-    await Firestore.instance.document(_getPath(favorite)).get();
+        await Firestore.instance.document(_getPath(favorite)).get();
     final Map<String, dynamic> data = documentSnapshot.data;
     data['path'] = _getPath(favorite);
     openView();

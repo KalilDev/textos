@@ -57,11 +57,10 @@ class ThemeProvider with ChangeNotifier, Haptic {
     notifyListeners();
   }
 
-  _Info get info =>
-      _Info(
-          darkPrimaryColor: _darkPrimaryColor,
-          lightPrimaryColor: _lightPrimaryColor,
-          isDarkMode: _enabled);
+  _Info get info => _Info(
+      darkPrimaryColor: _darkPrimaryColor,
+      lightPrimaryColor: _lightPrimaryColor,
+      isDarkMode: _enabled);
 
   Future<void> settingsSync() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -70,9 +69,10 @@ class ThemeProvider with ChangeNotifier, Haptic {
 }
 
 class _Info {
-  const _Info({@required this.darkPrimaryColor,
-    @required this.lightPrimaryColor,
-    @required this.isDarkMode});
+  const _Info(
+      {@required this.darkPrimaryColor,
+      @required this.lightPrimaryColor,
+      @required this.isDarkMode});
 
   final Color darkPrimaryColor;
   final Color lightPrimaryColor;

@@ -24,10 +24,9 @@ class _TextsViewState extends State<TextsView> with Haptic {
   final Firestore _db = Firestore.instance;
   List<Map<String, dynamic>> _slideList;
 
-  Stream<Iterable<Map<String, dynamic>>> get slidesStream =>
-      _query
-          .snapshots()
-          .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) =>
+  Stream<Iterable<Map<String, dynamic>>> get slidesStream => _query
+      .snapshots()
+      .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) =>
           list.documents.map<Map<String, dynamic>>((DocumentSnapshot doc) {
             final Map<String, dynamic> data = doc.data;
             data['path'] = doc.reference.path;
@@ -77,8 +76,8 @@ class _TextsViewState extends State<TextsView> with Haptic {
                   favoritesData = favoritesSnap.data;
                   favoritesData.forEach((String textPath, dynamic favoriteInt) {
                     final int targetIndex = _slideList.indexWhere(
-                            (Map<String, dynamic> element) =>
-                        element['path'] ==
+                        (Map<String, dynamic> element) =>
+                            element['path'] ==
                             textPath.toString().replaceAll('_', '/'));
                     if (targetIndex >= 0)
                       _slideList.elementAt(targetIndex)['favoriteCount'] =
@@ -96,27 +95,27 @@ class _TextsViewState extends State<TextsView> with Haptic {
                     curve: Curves.decelerate,
                     transformer: PageTransformerBuilder(
                         builder: (Widget child, TransformInfo info) {
-                          if (snap.hasData) {
-                            final Map<String, dynamic> data =
+                      if (snap.hasData) {
+                        final Map<String, dynamic> data =
                             _slideList[info.index];
-                            return _TextPage(
-                                info: info,
-                                textContent: Content.fromData(data),
-                                indexController: _indexController);
-                          } else {
-                            return Container(
-                                child: Center(
-                                    child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: const <Widget>[
-                                          Icon(Icons.error_outline, size: 72),
-                                          Text(
-                                            textNoTexts,
-                                            textAlign: TextAlign.center,
-                                          )
-                                        ])));
-                          }
-                        }),
+                        return _TextPage(
+                            info: info,
+                            textContent: Content.fromData(data),
+                            indexController: _indexController);
+                      } else {
+                        return Container(
+                            child: Center(
+                                child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: const <Widget>[
+                              Icon(Icons.error_outline, size: 72),
+                              Text(
+                                textNoTexts,
+                                textAlign: TextAlign.center,
+                              )
+                            ])));
+                      }
+                    }),
                     onPageChanged: (int page) {
                       scrollFeedback();
                     },
@@ -193,9 +192,7 @@ class _TextPage extends StatelessWidget with Haptic {
                           child: BlurOverlay.roundedRect(
                               radius: 15,
                               enabled:
-                              Provider
-                                  .of<BlurProvider>(context)
-                                  .textsBlur,
+                                  Provider.of<BlurProvider>(context).textsBlur,
                               child: ParallaxContainer(
                                 translationFactor: 300,
                                 position: info.position,
@@ -204,8 +201,7 @@ class _TextPage extends StatelessWidget with Haptic {
                                       left: 5.0, right: 5.0),
                                   child: Text(textContent.title,
                                       textAlign: TextAlign.center,
-                                      style: Theme
-                                          .of(context)
+                                      style: Theme.of(context)
                                           .accentTextTheme
                                           .display1),
                                 ),
@@ -223,28 +219,27 @@ class _TextPage extends StatelessWidget with Haptic {
                   switchOutCurve: Curves.decelerate,
                   transitionBuilder:
                       (Widget child, Animation<double> animation) =>
-                      ScaleTransition(
-                        scale: animation,
-                        child: child,
-                        alignment: FractionalOffset.bottomCenter,
-                      ),
+                          ScaleTransition(
+                            scale: animation,
+                            child: child,
+                            alignment: FractionalOffset.bottomCenter,
+                          ),
                   child: info.position.round() == 0.0
                       ? Align(
-                      alignment: FractionalOffset.bottomCenter,
-                      child: ExpandedFABCounter(
-                          isEnabled: Provider.of<FavoritesProvider>(context)
-                              .isFavorite(textContent.title +
-                              ';' +
-                              textContent.textPath),
-                          onPressed: () =>
-                              Provider.of<FavoritesProvider>(context)
-                                  .toggle(textContent.title +
-                                  ';' +
-                                  textContent.textPath),
-                          counter: textContent.favoriteCount,
-                          isBlurred: Provider
-                              .of<BlurProvider>(context)
-                              .buttonsBlur))
+                          alignment: FractionalOffset.bottomCenter,
+                          child: ExpandedFABCounter(
+                              isEnabled: Provider.of<FavoritesProvider>(context)
+                                  .isFavorite(textContent.title +
+                                      ';' +
+                                      textContent.textPath),
+                              onPressed: () =>
+                                  Provider.of<FavoritesProvider>(context)
+                                      .toggle(textContent.title +
+                                          ';' +
+                                          textContent.textPath),
+                              counter: textContent.favoriteCount,
+                              isBlurred: Provider.of<BlurProvider>(context)
+                                  .buttonsBlur))
                       : const SizedBox()),
             )
           ],
@@ -256,8 +251,7 @@ class _TextPage extends StatelessWidget with Haptic {
           Navigator.push(
               context,
               FadeRoute<void>(
-                  builder: (BuildContext context) =>
-                      CardView(
+                  builder: (BuildContext context) => CardView(
                         textContent: textContent,
                       )));
         });

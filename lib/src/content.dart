@@ -38,10 +38,10 @@ class Content with Haptic {
 
   String stringDate(DateTime time) =>
       time.day.toString() +
-          '/' +
-          time.month.toString() +
-          '/' +
-          time.year.toString();
+      '/' +
+      time.month.toString() +
+      '/' +
+      time.year.toString();
 
   Map<int, int> _iterate(List<Match> list) {
     final Map<int, int> periods = <int, int>{};
@@ -60,10 +60,10 @@ class Content with Haptic {
     final RegExp monoRegex = RegExp(r'\`');
 
     final Map<int, int> italic =
-    _iterate(italicRegex.allMatches(_text).toList());
+        _iterate(italicRegex.allMatches(_text).toList());
     final Map<int, int> bold = _iterate(boldRegex.allMatches(_text).toList());
     final Map<int, int> strike =
-    _iterate(strikeRegex.allMatches(_text).toList());
+        _iterate(strikeRegex.allMatches(_text).toList());
     final Map<int, int> mono = _iterate(monoRegex.allMatches(_text).toList());
 
     final Map<int, int> allMap = <int, int>{};

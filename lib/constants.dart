@@ -112,36 +112,36 @@ final ThemeData themeDataDark = ThemeData(
 // BaseTextStyles
 final TextStyle _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
 final TextStyle _baseTextStyleMerriweather =
-TextStyle(fontFamily: 'Merriweather');
+    TextStyle(fontFamily: 'Merriweather');
 
 // TextTheme
 final TextTheme textThemeMuli = TextTheme(
   display4:
-  _baseTextStyleMuli.copyWith(fontSize: 112.0, fontWeight: FontWeight.w100),
+      _baseTextStyleMuli.copyWith(fontSize: 112.0, fontWeight: FontWeight.w100),
   display3:
-  _baseTextStyleMuli.copyWith(fontSize: 56.0, fontWeight: FontWeight.w400),
+      _baseTextStyleMuli.copyWith(fontSize: 56.0, fontWeight: FontWeight.w400),
   display2:
-  _baseTextStyleMuli.copyWith(fontSize: 45.0, fontWeight: FontWeight.w400),
+      _baseTextStyleMuli.copyWith(fontSize: 45.0, fontWeight: FontWeight.w400),
   display1:
-  _baseTextStyleMuli.copyWith(fontSize: 34.0, fontWeight: FontWeight.w400),
+      _baseTextStyleMuli.copyWith(fontSize: 34.0, fontWeight: FontWeight.w400),
   headline:
-  _baseTextStyleMuli.copyWith(fontSize: 24.0, fontWeight: FontWeight.w400),
+      _baseTextStyleMuli.copyWith(fontSize: 24.0, fontWeight: FontWeight.w400),
   title:
-  _baseTextStyleMuli.copyWith(fontSize: 20.0, fontWeight: FontWeight.w500),
+      _baseTextStyleMuli.copyWith(fontSize: 20.0, fontWeight: FontWeight.w500),
   subhead:
-  _baseTextStyleMuli.copyWith(fontSize: 16.0, fontWeight: FontWeight.w400),
+      _baseTextStyleMuli.copyWith(fontSize: 16.0, fontWeight: FontWeight.w400),
   body2:
-  _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+      _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
   body1:
-  _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w400),
+      _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w400),
   caption:
-  _baseTextStyleMuli.copyWith(fontSize: 12.0, fontWeight: FontWeight.w400),
+      _baseTextStyleMuli.copyWith(fontSize: 12.0, fontWeight: FontWeight.w400),
   button:
-  _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+      _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
   subtitle:
-  _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+      _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
   overline:
-  _baseTextStyleMuli.copyWith(fontSize: 10.0, fontWeight: FontWeight.w400),
+      _baseTextStyleMuli.copyWith(fontSize: 10.0, fontWeight: FontWeight.w400),
 );
 final TextTheme textThemeMerriweather = TextTheme(
   display4: _baseTextStyleMerriweather.copyWith(

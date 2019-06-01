@@ -18,10 +18,7 @@ class FavoritesView extends StatelessWidget {
       txt = Container(
           child: Marquee(
               text: favoriteTitle,
-              style: Theme
-                  .of(context)
-                  .accentTextTheme
-                  .display1,
+              style: Theme.of(context).accentTextTheme.display1,
               blankSpace: 25,
               pauseAfterRound: const Duration(seconds: 1),
               velocity: 60.0),
@@ -29,10 +26,7 @@ class FavoritesView extends StatelessWidget {
     } else {
       txt = Text(
         favoriteTitle,
-        style: Theme
-            .of(context)
-            .accentTextTheme
-            .display1,
+        style: Theme.of(context).accentTextTheme.display1,
         textAlign: TextAlign.center,
       );
     }
@@ -67,38 +61,38 @@ class FavoritesView extends StatelessWidget {
                       .getContent(favorite),
                   builder:
                       (BuildContext context, AsyncSnapshot<Content> snap) =>
-                      ElevatedContainer(
-                        elevation: 4.0,
-                        width: constraints.maxWidth,
-                        margin: const EdgeInsets.fromLTRB(3, 6, 3, 3),
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                                child: Hero(
-                                  tag: 'body' +
-                                      (snap.hasData
-                                          ? snap.data.textPath
-                                          : 'null'),
-                                  child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 7.0),
-                                      child: txt),
-                                ),
-                                onTap: () async {
-                                  Navigator.push(
-                                      context,
-                                      DurationMaterialPageRoute<void>(
-                                          builder: (BuildContext context) =>
-                                              CardView(
-                                                textContent: snap.data,
-                                              )));
-                                }),
+                          ElevatedContainer(
+                            elevation: 4.0,
+                            width: constraints.maxWidth,
+                            margin: const EdgeInsets.fromLTRB(3, 6, 3, 3),
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                    child: Hero(
+                                      tag: 'body' +
+                                          (snap.hasData
+                                              ? snap.data.textPath
+                                              : 'null'),
+                                      child: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 7.0),
+                                          child: txt),
+                                    ),
+                                    onTap: () async {
+                                      Navigator.push(
+                                          context,
+                                          DurationMaterialPageRoute<void>(
+                                              builder: (BuildContext context) =>
+                                                  CardView(
+                                                    textContent: snap.data,
+                                                  )));
+                                    }),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
                 ),
           ),
         ));
@@ -107,28 +101,23 @@ class FavoritesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Provider
-            .of<FavoritesProvider>(context)
-            .favoritesList
-            .isNotEmpty
+        body: Provider.of<FavoritesProvider>(context).favoritesList.isNotEmpty
             ? ListView.builder(
-          itemCount: Provider
-              .of<FavoritesProvider>(context)
-              .favoritesList
-              .length,
-          itemBuilder: (BuildContext context, int index) =>
-              buildFavoritesItem(
-                  context,
-                  Provider
-                      .of<FavoritesProvider>(context)
-                      .favoritesList[index]),
-        )
+                itemCount: Provider.of<FavoritesProvider>(context)
+                    .favoritesList
+                    .length,
+                itemBuilder: (BuildContext context, int index) =>
+                    buildFavoritesItem(
+                        context,
+                        Provider.of<FavoritesProvider>(context)
+                            .favoritesList[index]),
+              )
             : LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) =>
-                RepaintBoundary(
-                    child: ListView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: <Widget>[
+                builder: (BuildContext context, BoxConstraints constraints) =>
+                    RepaintBoundary(
+                        child: ListView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: <Widget>[
                           Container(
                               height: constraints.maxHeight,
                               child: Container(
@@ -136,13 +125,13 @@ class FavoritesView extends StatelessWidget {
                                       child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: const <Widget>[
-                                            Icon(TextIcons.heart_broken_outline,
-                                                size: 72),
-                                            Text(
-                                              textNoFavs + '\n:(',
-                                              textAlign: TextAlign.center,
-                                            )
-                                          ]))))
+                                    Icon(TextIcons.heart_broken_outline,
+                                        size: 72),
+                                    Text(
+                                      textNoFavs + '\n:(',
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ]))))
                         ]))));
   }
 }

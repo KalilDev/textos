@@ -19,22 +19,15 @@ class CreatorView extends StatelessWidget with Haptic {
 class AboutCreator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme
-        .of(context)
-        .textTheme;
-    final TextTheme accentTextTheme = Theme
-        .of(context)
-        .accentTextTheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final TextTheme accentTextTheme = Theme.of(context).accentTextTheme;
     const double kElevation = 6.0;
     return Material(
       elevation: 0.0,
       child: Stack(
         children: <Widget>[
           Container(
-              margin: EdgeInsets.only(top: MediaQuery
-                  .of(context)
-                  .padding
-                  .top),
+              margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               child: Hero(
                 tag: 'about',
                 child: Column(
@@ -42,9 +35,7 @@ class AboutCreator extends StatelessWidget {
                   children: <Widget>[
                     ElevatedContainer(
                       elevation: kElevation,
-                      elevatedColor: Theme
-                          .of(context)
-                          .primaryColor,
+                      elevatedColor: Theme.of(context).primaryColor,
                       margin: const EdgeInsets.all(5.0),
                       padding: const EdgeInsets.all(5.0),
                       child: Row(
@@ -63,18 +54,20 @@ class AboutCreator extends StatelessWidget {
                                   child: Stack(
                                     children: <Widget>[
                                       Container(
-                                        color: Theme
-                                            .of(context)
+                                        color: Theme.of(context)
                                             .colorScheme
                                             .onBackground,
-                                        child: Center(child: Icon(
-                                          TextIcons.account, size: 72,
-                                          color: Theme
-                                              .of(context)
-                                              .backgroundColor,)),),
+                                        child: Center(
+                                            child: Icon(
+                                          TextIcons.account,
+                                          size: 72,
+                                          color:
+                                              Theme.of(context).backgroundColor,
+                                        )),
+                                      ),
                                       CachedNetworkImage(
                                           imageUrl:
-                                          'https://pbs.twimg.com/profile_images/1080927080458739714/2CVPlhXy_400x400.jpg'),
+                                              'https://pbs.twimg.com/profile_images/1080927080458739714/2CVPlhXy_400x400.jpg'),
                                     ],
                                   ),
                                 ),
@@ -86,16 +79,16 @@ class AboutCreator extends StatelessWidget {
                               children: <Widget>[
                                 Center(
                                     child: Text(
-                                      'Pedro Kalil',
-                                      style: accentTextTheme.display1,
-                                      textAlign: TextAlign.center,
-                                    )),
+                                  'Pedro Kalil',
+                                  style: accentTextTheme.display1,
+                                  textAlign: TextAlign.center,
+                                )),
                                 Center(
                                     child: Text(
-                                      'Desenvolvedor do App',
-                                      style: accentTextTheme.subtitle,
-                                      textAlign: TextAlign.center,
-                                    ))
+                                  'Desenvolvedor do App',
+                                  style: accentTextTheme.subtitle,
+                                  textAlign: TextAlign.center,
+                                ))
                               ],
                             ),
                           )
@@ -178,10 +171,7 @@ class AboutCreator extends StatelessWidget {
               )),
           Positioned(
             child: MenuButton(),
-            top: MediaQuery
-                .of(context)
-                .padding
-                .top - 2.5,
+            top: MediaQuery.of(context).padding.top - 2.5,
             left: -2.5,
           ),
         ],
