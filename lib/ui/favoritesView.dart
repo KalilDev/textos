@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
+import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
+import 'package:textos/text_icons_icons.dart';
 
 import 'cardView.dart';
 
@@ -63,8 +65,8 @@ class FavoritesView extends StatelessWidget {
                 FutureBuilder<Content>(
                   future: Provider.of<FavoritesProvider>(context)
                       .getContent(favorite),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<Content> snap) =>
+                  builder:
+                      (BuildContext context, AsyncSnapshot<Content> snap) =>
                       ElevatedContainer(
                         elevation: 4.0,
                         width: constraints.maxWidth,
@@ -76,9 +78,10 @@ class FavoritesView extends StatelessWidget {
                             color: Colors.transparent,
                             child: InkWell(
                                 child: Hero(
-                                  tag: 'body' + (snap.hasData
-                                      ? snap.data.textPath
-                                      : 'null'),
+                                  tag: 'body' +
+                                      (snap.hasData
+                                          ? snap.data.textPath
+                                          : 'null'),
                                   child: Container(
                                       margin: const EdgeInsets.symmetric(
                                           vertical: 7.0),
@@ -104,18 +107,42 @@ class FavoritesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: Provider
+        body: Provider
             .of<FavoritesProvider>(context)
             .favoritesList
-            .length,
-        itemBuilder: (BuildContext context, int index) =>
-            buildFavoritesItem(
-                context,
-                Provider
-                    .of<FavoritesProvider>(context)
-                    .favoritesList[index]),
-      ),
-    );
+            .isNotEmpty
+            ? ListView.builder(
+          itemCount: Provider
+              .of<FavoritesProvider>(context)
+              .favoritesList
+              .length,
+          itemBuilder: (BuildContext context, int index) =>
+              buildFavoritesItem(
+                  context,
+                  Provider
+                      .of<FavoritesProvider>(context)
+                      .favoritesList[index]),
+        )
+            : LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) =>
+                RepaintBoundary(
+                    child: ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: <Widget>[
+                          Container(
+                              height: constraints.maxHeight,
+                              child: Container(
+                                  child: Center(
+                                      child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: const <Widget>[
+                                            Icon(TextIcons.heart_broken_outline,
+                                                size: 72),
+                                            Text(
+                                              textNoFavs + '\n:(',
+                                              textAlign: TextAlign.center,
+                                            )
+                                          ]))))
+                        ]))));
   }
 }

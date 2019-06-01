@@ -46,6 +46,9 @@ class TextIcons {
       IconData(0xef8b, fontFamily: _kFontFam);
   static const IconData format_size = IconData(0xefc3, fontFamily: _kFontFam);
   static const IconData heart = IconData(0xf092, fontFamily: _kFontFam);
+  static const IconData heart_broken = IconData(0xf095, fontFamily: _kFontFam);
+  static const IconData heart_broken_outline =
+  IconData(0xf096, fontFamily: _kFontFam);
   static const IconData heart_multiple =
       IconData(0xf09c, fontFamily: _kFontFam);
   static const IconData heart_multiple_outline =

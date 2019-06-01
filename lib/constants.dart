@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 // Text
-const String textTextos = 'Textos ';
 const String textFilter = 'FILTRO';
 const String textAllTag = 'Todos';
 const String textTema = 'Tema';
@@ -10,25 +9,16 @@ const String textFavs = 'Favoritos';
 const String textTextSize = 'Tamanho do texto';
 const String textTextTheme = 'Tema Escuro';
 const String textTextTrash = 'Restaurar o Padrão';
-const String textTextBlurDrawer = 'Borrar a gaveta';
 const String textTextBlurButtons = 'Borrar os botões';
 const String textTextBlurText = 'Borrar fundo dos textos';
-const String textTooltipTextSizeLess = 'Diminuir tamanho do texto';
-const String textTooltipTextSizePlus = 'Aumentar tamanho do texto';
-const String textTooltipFav = 'Adicionar aos favoritos';
 const String textText = 'Texto';
 const String textCleanFavs = 'Limpar Favoritos';
 const String textBlur = 'Borrado';
-const String textPickAccent = 'Alterar cor do tema';
-const String textsMisc = 'Miscelânea';
-final Map<String, dynamic> textNoTextAvailable = <String, dynamic>{
-  'title': 'Não há nenhum texto nessa categoria',
-  'img': 'https://i.imgur.com/yugoBNL.jpg',
-  'text':
-  'Nenhum texto foi encontrado nessa categoria, tente o seguinte: Desconecte e reconecte seu telefone à internet',
-  'favoriteCount': 0,
-  'path': 'NULL/TEXTNOTFOUNDID'
-};
+const String textMisc = 'Miscelânea';
+const String textAuthors = 'Autores';
+const String textTexts = 'Textos';
+const String textNoFavs = 'Não há nenhum texto nos favoritos';
+const String textNoTexts = 'Não há nenhum texto nesta categoria';
 
 // Theme Light
 const Color themeBackgroundLight = Colors.white;
@@ -60,14 +50,18 @@ final ThemeData themeDataLight = ThemeData(
     primaryColor: colorSchemeLight.primary,
     backgroundColor: themeBackgroundLight,
     textTheme: textThemeMuli.apply(
-        bodyColor: getTextColor(0.87, bg: colorSchemeLight.background,
+        bodyColor: getTextColor(0.87,
+            bg: colorSchemeLight.background,
             main: colorSchemeLight.onBackground),
-        displayColor: getTextColor(0.87, bg: colorSchemeLight.background,
+        displayColor: getTextColor(0.87,
+            bg: colorSchemeLight.background,
             main: colorSchemeLight.onBackground)),
     accentTextTheme: textThemeMerriweather.apply(
-        bodyColor: getTextColor(0.87, bg: colorSchemeLight.background,
+        bodyColor: getTextColor(0.87,
+            bg: colorSchemeLight.background,
             main: colorSchemeLight.onBackground),
-        displayColor: getTextColor(0.87, bg: colorSchemeLight.background,
+        displayColor: getTextColor(0.87,
+            bg: colorSchemeLight.background,
             main: colorSchemeLight.onBackground)));
 
 // Theme Dark
@@ -103,14 +97,16 @@ final ThemeData themeDataDark = ThemeData(
     primaryColorBrightness: Brightness.light,
     backgroundColor: colorSchemeDark.background,
     textTheme: textThemeMuli.apply(
-        bodyColor: getTextColor(0.87, bg: colorSchemeDark.background,
-            main: colorSchemeDark.onBackground),
-        displayColor: getTextColor(0.87, bg: colorSchemeDark.background,
+        bodyColor: getTextColor(0.87,
+            bg: colorSchemeDark.background, main: colorSchemeDark.onBackground),
+        displayColor: getTextColor(0.87,
+            bg: colorSchemeDark.background,
             main: colorSchemeDark.onBackground)),
     accentTextTheme: textThemeMerriweather.apply(
-        bodyColor: getTextColor(0.87, bg: colorSchemeDark.background,
-            main: colorSchemeDark.onBackground),
-        displayColor: getTextColor(0.87, bg: colorSchemeDark.background,
+        bodyColor: getTextColor(0.87,
+            bg: colorSchemeDark.background, main: colorSchemeDark.onBackground),
+        displayColor: getTextColor(0.87,
+            bg: colorSchemeDark.background,
             main: colorSchemeDark.onBackground)));
 
 // BaseTextStyles

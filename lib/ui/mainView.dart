@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:textos/constants.dart';
 import 'package:textos/text_icons_icons.dart';
 import 'package:textos/ui/authorsView.dart';
 import 'package:textos/ui/backdrop.dart';
@@ -20,43 +21,67 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
     super.initState();
   }
 
+  String get currentTitle {
+    switch (_tabController.animation.value.round()) {
+      case 0:
+        return textFavs;
+        break;
+      case 1:
+        return textAuthors;
+        break;
+      case 2:
+        return textTexts;
+        break;
+      default:
+        return 'App';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) =>
             Backdrop(
-                frontTitle: const Text('Textos'),
+                frontTitle: RepaintBoundary(
+                    child: AnimatedBuilder(
+                        animation: _tabController.animation,
+                        builder: (BuildContext context, _) =>
+                            Text(currentTitle))),
                 frontLayer: RepaintBoundary(
                     child: TabBarView(
                       controller: _tabController,
                       children: <Widget>[
                         RepaintBoundary(child: FavoritesView()),
-                        RepaintBoundary(child: ListView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            children: <Widget>[
-                              Container(
-                                  height: constraints.maxHeight - 48 -
-                                      MediaQuery
-                                          .of(context)
-                                          .padding
-                                          .top,
-                                  child: AuthorsView())
-                            ])),
-                        RepaintBoundary(child: ListView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            children: <Widget>[
-                              Container(
-                                  height: constraints.maxHeight - 48 -
-                                      MediaQuery
-                                          .of(context)
-                                          .padding
-                                          .top,
-                                  child: TextsView())
-                            ]))
+                        RepaintBoundary(
+                            child: ListView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                children: <Widget>[
+                                  Container(
+                                      height: constraints.maxHeight -
+                                          48 -
+                                          MediaQuery
+                                              .of(context)
+                                              .padding
+                                              .top,
+                                      child: AuthorsView())
+                                ])),
+                        RepaintBoundary(
+                            child: ListView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                children: <Widget>[
+                                  Container(
+                                      height: constraints.maxHeight -
+                                          48 -
+                                          MediaQuery
+                                              .of(context)
+                                              .padding
+                                              .top,
+                                      child: TextsView())
+                                ]))
                       ],
                     )),
-                backTitle: const Text('Configurações'),
+                backTitle: const Text(textConfigs),
                 backLayer: SettingsView()),
       ),
       bottomNavigationBar: RepaintBoundary(
@@ -89,15 +114,15 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                         BottomNavigationBarItem(
                             activeIcon: Icon(TextIcons.heart_multiple),
                             icon: Icon(TextIcons.heart_multiple_outline),
-                            title: Text('Favoritos')),
+                            title: Text(textFavs)),
                         BottomNavigationBarItem(
                             activeIcon: Icon(TextIcons.account_group),
                             icon: Icon(TextIcons.account_group_outline),
-                            title: Text('Autores')),
+                            title: Text(textAuthors)),
                         BottomNavigationBarItem(
                             activeIcon: Icon(TextIcons.book_open_page_variant),
                             icon: Icon(TextIcons.book_open_variant),
-                            title: Text('Textos')),
+                            title: Text(textTexts)),
                       ]),
                   SlideTransition(
                       position: Tween<Offset>(
@@ -117,8 +142,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                                   Theme
                                       .of(context)
                                       .backgroundColor),
-                              borderRadius: BorderRadius.circular(1.0)
-                          ),
+                              borderRadius: BorderRadius.circular(1.0)),
                           height: 2.0,
                         ),
                       ))

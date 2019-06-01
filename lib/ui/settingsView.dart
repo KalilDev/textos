@@ -7,9 +7,7 @@ import 'package:textos/src/providers.dart';
 import 'package:textos/text_icons_icons.dart';
 import 'package:textos/ui/aboutCreatorView.dart';
 
-class SettingsView extends StatelessWidget
-    with Haptic {
-
+class SettingsView extends StatelessWidget with Haptic {
   void cleanAll(BuildContext context) {
     openView();
     Provider.of<FavoritesProvider>(context).clear();
@@ -172,7 +170,7 @@ class SettingsView extends StatelessWidget
 
     List<Widget> miscWidgets() {
       return <Widget>[
-        Text(textsMisc, style: styleDescription),
+        Text(textMisc, style: styleDescription),
         Hero(
           tag: 'about',
           child: Material(
