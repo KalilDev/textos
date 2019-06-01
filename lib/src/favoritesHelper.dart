@@ -42,8 +42,8 @@ class FavoritesHelper {
     // Wont detect duplicated documents
     localReferences.sort((DocumentReference ref1, DocumentReference ref2) =>
         ref1.path.compareTo(ref2.path));
-    remoteReferences.sort((dynamic ref1, dynamic ref2) =>
-        ref1.path.compareTo(ref2.path));
+    remoteReferences
+        .sort((dynamic ref1, dynamic ref2) => ref1.path.compareTo(ref2.path));
 
     final Map<String, int> delta = <String, int>{};
     for (DocumentReference ref in localReferences) {
@@ -120,33 +120,24 @@ class FavoritesHelper {
       final List<dynamic> remoteReferences = snapshot.data['textReferences'];
       final List<dynamic> remoteTitles = snapshot.data['textTitles'];
 
-      final List<DocumentReference> localReferences =
-          List < DocumentReference
+      final Set<DocumentReference> localReferences =
+          Set < DocumentReference
     >
-        .
-    from
-    (
-    remoteReferences
-    ,
-    growable
-        :
-    true
-    );
-    final List<String> localTitles =
-    List<String
-    >.from(remoteTitles, growable: true)
-    ;
+        .from(remoteReferences);
+    final Set<String
+    > localTitles =
+    Set<String>.from(
+    remoteTitles);
 
     localTitles.add(title);
-    localReferences.
-    add(reference);
-    final WriteBatch batch = db
-        .batch();
-    batch.updateData(document
-    , <String, dynamic>
+    localReferences.add(reference);
+    final WriteBatch batch
+    = db.batch();
+    batch.updateData
+    (document, <String, dynamic>
     {
-    'textReferences': localReferences,
-    'textTitles': localTitles
+    'textReferences': localReferences.toList(),
+    'textTitles': localTitles.toList()
     }
     );
     batch.updateData(
