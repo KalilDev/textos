@@ -230,7 +230,8 @@ class SettingsView extends StatelessWidget
           buildCategory(textWidgets(), isBlurred: isBlurred),
           buildCategory(favoriteWidgets(), isBlurred: isBlurred),
           buildCategory(blurWidgets(), isBlurred: isBlurred),
-          buildCategory(miscWidgets(), isBlurred: isBlurred)
+          buildCategory(miscWidgets(), isBlurred: isBlurred),
+          const SizedBox(height: 48.0),
         ],
       ),
     );

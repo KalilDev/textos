@@ -205,40 +205,49 @@ class _TextPage extends StatelessWidget with Haptic {
                     )),
               ),
             ),
-            AnimatedSwitcher(
-                duration: durationAnimationShort,
-                switchInCurve: Curves.decelerate,
-                switchOutCurve: Curves.decelerate,
-                transitionBuilder:
-                    (Widget child, Animation<double> animation) =>
-                    ScaleTransition(
-                      scale: animation,
-                      child: child,
+            RepaintBoundary(
+              child: AnimatedSwitcher(
+                  duration: durationAnimationShort,
+                  switchInCurve: Curves.decelerate,
+                  switchOutCurve: Curves.decelerate,
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) =>
+                      ScaleTransition(
+                        scale: animation,
+                        child: child,
+                        alignment: FractionalOffset.bottomCenter,
+                      ),
+                  child: info.position.round() == 0.0
+                      ? Align(
                       alignment: FractionalOffset.bottomCenter,
-                    ),
-                child: info.position.round() == 0.0
-                    ? Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: FavoritesCount(
-                        favorites: textContent.favoriteCount,
-                        text:
-                        textContent.title + ';' + textContent.textPath,
-                        blurEnabled:
-                        Provider
-                            .of<BlurProvider>(context)
-                            .buttonsBlur))
-                    : const SizedBox())
+                      child: ExpandedFABCounter(
+                          isEnabled: Provider.of<FavoritesProvider>(context)
+                              .isFavorite(textContent.title +
+                              ';' +
+                              textContent.textPath),
+                          onPressed: () =>
+                              Provider.of<FavoritesProvider>(context)
+                                  .toggle(textContent.title +
+                                  ';' +
+                                  textContent.textPath),
+                          counter: textContent.favoriteCount,
+                          isBlurred: Provider
+                              .of<BlurProvider>(context)
+                              .buttonsBlur))
+                      : const SizedBox()),
+            )
           ],
         ),
         onTap: () async {
           openView();
-          if (indexController != null)
-            indexController.move(info.index);
+          if (indexController != null) indexController.move(info.index);
           Navigator.push(
               context,
               FadeRoute<void>(
                   builder: (BuildContext context) =>
-                      CardView(textContent: textContent,)));
+                      CardView(
+                        textContent: textContent,
+                      )));
         });
   }
 }
