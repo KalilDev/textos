@@ -137,10 +137,9 @@ class _TextPage extends StatelessWidget with Haptic {
 
   @override
   Widget build(BuildContext context) {
-    final bool active = info.position.round() == 0.0 && info.position >= -0.35;
+    final bool active = info.position.round() == 0.0 && info.position >= -0.30;
     // Animated Properties
-    final double blur = lerpDouble(30, 0, info.position.abs());
-    final double offset = lerpDouble(20, 0, info.position.abs());
+    final double elevation = active ? 16 : 0;
     const double vertical = 10;
     const double k = 80;
 
@@ -154,100 +153,92 @@ class _TextPage extends StatelessWidget with Haptic {
                   top: active ? vertical : vertical + k,
                   bottom: vertical,
                   right: 30),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Theme.of(context).backgroundColor,
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: Colors.black.withAlpha(80),
-                        blurRadius: blur,
-                        offset: Offset(offset, offset))
-                  ]),
-              child: Hero(
-                  tag: 'image' + textContent.textPath,
-                  child: ImageBackground(
-                      img: textContent.imgUrl,
-                      enabled: false,
-                      position: info.position,
-                      key: Key('image' + textContent.textPath))),
-            ),
-            AnimatedContainer(
-              duration: durationAnimationMedium,
-              curve: Curves.easeInOut,
-              margin: EdgeInsets.only(
-                  top: active ? vertical : vertical + k,
-                  bottom: vertical,
-                  right: 30),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Align(
-                    alignment: Alignment.center,
-                    child: Hero(
-                      tag: 'body' + textContent.textPath,
-                      child: Material(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20)),
-                          margin: const EdgeInsets.all(12.5),
-                          child: BlurOverlay.roundedRect(
-                              radius: 15,
-                              enabled:
-                                  Provider.of<BlurProvider>(context).textsBlur,
-                              child: ParallaxContainer(
-                                translationFactor: 300,
-                                position: info.position,
+              child: ElevatedContainer(
+                elevation: elevation,
+                borderRadius: BorderRadius.circular(20),
+                child: Stack(
+                  children: <Widget>[
+                    Hero(
+                        tag: 'image' + textContent.textPath,
+                        child: ImageBackground(
+                            img: textContent.imgUrl,
+                            enabled: false,
+                            position: info.position,
+                            key: Key('image' + textContent.textPath))),
+                    RepaintBoundary(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20.0),
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: Hero(
+                              tag: 'body' + textContent.textPath,
+                              child: Material(
                                 child: Container(
-                                  margin: const EdgeInsets.only(
-                                      left: 5.0, right: 5.0),
-                                  child: Text(textContent.title,
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .accentTextTheme
-                                          .display1),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  margin: const EdgeInsets.all(8.0),
+                                  child: BlurOverlay.roundedRect(
+                                      radius: 15,
+                                      enabled:
+                                          Provider.of<BlurProvider>(context)
+                                              .textsBlur,
+                                      child: ParallaxContainer(
+                                        translationFactor: 300,
+                                        position: info.position,
+                                        child: Text(textContent.title,
+                                            textAlign: TextAlign.center,
+                                            style: Theme.of(context)
+                                                .accentTextTheme
+                                                .display1),
+                                      )),
                                 ),
-                              )),
-                        ),
-                        color: Colors.transparent,
+                                color: Colors.transparent,
+                              ),
+                            )),
                       ),
-                    )),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: AnimatedSwitcher(
+                          duration: durationAnimationShort,
+                          switchInCurve: Curves.decelerate,
+                          switchOutCurve: Curves.decelerate,
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) =>
+                                  ScaleTransition(
+                                    scale: animation,
+                                    child: child,
+                                    alignment: FractionalOffset.bottomCenter,
+                                  ),
+                          child: active
+                              ? Align(
+                                  alignment: FractionalOffset.bottomCenter,
+                                  child: ExpandedFABCounter(
+                                      isEnabled:
+                                          Provider.of<FavoritesProvider>(context)
+                                              .isFavorite(textContent.title +
+                                                  ';' +
+                                                  textContent.textPath),
+                                      onPressed: () =>
+                                          Provider.of<FavoritesProvider>(context)
+                                              .toggle(textContent.title +
+                                                  ';' +
+                                                  textContent.textPath),
+                                      counter: textContent.favoriteCount,
+                                      isBlurred:
+                                          Provider.of<BlurProvider>(context)
+                                              .buttonsBlur))
+                              : const SizedBox()),
+                    ),
+                  ],
+                ),
               ),
             ),
-            RepaintBoundary(
-              child: AnimatedSwitcher(
-                  duration: durationAnimationShort,
-                  switchInCurve: Curves.decelerate,
-                  switchOutCurve: Curves.decelerate,
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) =>
-                          ScaleTransition(
-                            scale: animation,
-                            child: child,
-                            alignment: FractionalOffset.bottomCenter,
-                          ),
-                  child: info.position.round() == 0.0
-                      ? Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: ExpandedFABCounter(
-                              isEnabled: Provider.of<FavoritesProvider>(context)
-                                  .isFavorite(textContent.title +
-                                      ';' +
-                                      textContent.textPath),
-                              onPressed: () =>
-                                  Provider.of<FavoritesProvider>(context)
-                                      .toggle(textContent.title +
-                                          ';' +
-                                          textContent.textPath),
-                              counter: textContent.favoriteCount,
-                              isBlurred: Provider.of<BlurProvider>(context)
-                                  .buttonsBlur))
-                      : const SizedBox()),
-            )
           ],
         ),
         onTap: () async {
           openView();
-          if (indexController != null)
-            indexController.move(info.index);
+          if (indexController != null) indexController.move(info.index);
           Navigator.push(
               context,
               FadeRoute<void>(
