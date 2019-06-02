@@ -265,9 +265,15 @@ class _BackdropState extends State<Backdrop>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: LayoutBuilder(
-        builder: _buildStack,
+    return WillPopScope(
+      onWillPop: () async {
+        !_frontLayerVisible ? _toggleBackdropLayerVisibility() : Navigator.of(context).pop();
+        return !_frontLayerVisible;
+      },
+      child: SafeArea(
+        child: LayoutBuilder(
+          builder: _buildStack,
+        ),
       ),
     );
   }

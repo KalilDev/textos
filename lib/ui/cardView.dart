@@ -50,7 +50,7 @@ class CardContent extends StatelessWidget with Haptic {
                   AbsorbPointer(
                     child: Container(
                       width: constraints.maxWidth,
-                      height: 50.0,
+                      height: 100.0,
                     ),
                   )),
         ),

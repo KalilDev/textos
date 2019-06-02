@@ -53,6 +53,7 @@ Future<void> main() async {
       prefs.setString('uid', _uid);
     }
   }
+  debugProfileBuildsEnabled = true;
   runApp(StateBuilder(
       enableDarkMode: _enableDarkMode,
       favoritesList: _favoritesList,
