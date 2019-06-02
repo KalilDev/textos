@@ -88,38 +88,41 @@ class _TextsViewState extends State<TextsView> with Haptic {
 
               return ChangeNotifierProvider<TextPageProvider>(
                   builder: (_) => TextPageProvider(),
-                  child: TransformerPageView(
-                    pageSnapping: false,
-                    controller: _indexController,
-                    viewportFraction: 0.80,
-                    curve: Curves.decelerate,
-                    transformer: PageTransformerBuilder(
-                        builder: (Widget child, TransformInfo info) {
-                      if (snap.hasData) {
-                        final Map<String, dynamic> data =
-                            _slideList[info.index];
-                        return _TextPage(
-                            info: info,
-                            textContent: Content.fromData(data),
-                            indexController: _indexController);
-                      } else {
-                        return Container(
-                            child: Center(
-                                child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: const <Widget>[
-                              Icon(Icons.error_outline, size: 72),
-                              Text(
-                                textNoTexts,
-                                textAlign: TextAlign.center,
-                              )
-                            ])));
-                      }
-                    }),
-                    onPageChanged: (int page) {
-                      scrollFeedback();
-                    },
-                    itemCount: _slideList?.length ?? 1,
+                  child: Consumer<TextPageProvider>(
+                    builder: (BuildContext context, TextPageProvider provider, _) => TransformerPageView(
+                      pageSnapping: false,
+                      controller: _indexController,
+                      viewportFraction: 0.80,
+                      curve: Curves.decelerate,
+                      transformer: PageTransformerBuilder(
+                          builder: (Widget child, TransformInfo info) {
+                        if (snap.hasData) {
+                          final Map<String, dynamic> data =
+                              _slideList[info.index];
+                          return _TextPage(
+                              info: info,
+                              textContent: Content.fromData(data),
+                              indexController: _indexController);
+                        } else {
+                          return Container(
+                              child: Center(
+                                  child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: const <Widget>[
+                                Icon(Icons.error_outline, size: 72),
+                                Text(
+                                  textNoTexts,
+                                  textAlign: TextAlign.center,
+                                )
+                              ])));
+                        }
+                      }),
+                      onPageChanged: (int page) {
+                        scrollFeedback();
+                        provider.currentPage = page;
+                      },
+                      itemCount: _slideList?.length ?? 1,
+                    ),
                   ));
             },
           );
@@ -137,6 +140,9 @@ class _TextPage extends StatelessWidget with Haptic {
 
   @override
   Widget build(BuildContext context) {
+    if ((Provider.of<TextPageProvider>(context).currentPage - info.index).abs() < 2 != true)
+      return const Placeholder();
+
     final bool active = info.position.round() == 0.0 && info.position >= -0.30;
     // Animated Properties
     final double elevation = active ? 16 : 0;

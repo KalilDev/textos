@@ -10,6 +10,9 @@ import 'package:textos/src/providers.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
 class AuthorsView extends StatefulWidget {
+  const AuthorsView({@required this.isVisible});
+  final bool isVisible;
+
   @override
   _AuthorsViewState createState() => _AuthorsViewState();
 }
@@ -17,7 +20,6 @@ class AuthorsView extends StatefulWidget {
 class _AuthorsViewState extends State<AuthorsView>
     with AutomaticKeepAliveClientMixin, Haptic {
   Stream<Iterable<Map<String, dynamic>>> _tagStream;
-  IndexController _tagIndexController;
 
   @override
   bool get wantKeepAlive => true;
@@ -31,17 +33,10 @@ class _AuthorsViewState extends State<AuthorsView>
         .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) => list
             .documents
             .map<Map<String, dynamic>>((DocumentSnapshot snap) => snap.data));
-    _tagIndexController = IndexController();
     super.initState();
   }
 
   List<Map<String, dynamic>> _metadataList;
-
-  Future<void> jump(int page) async {
-    // Dirty
-    Future<void>.delayed(const Duration(milliseconds: 1))
-        .then<void>((_) => _tagIndexController.move(page, animation: false));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,28 +49,36 @@ class _AuthorsViewState extends State<AuthorsView>
           _metadataList = snapshot.hasData
               ? _metadataList = snapshot.data.toList()
               : _metadataList = <Map<String, dynamic>>[placeholderTagMetadata];
-          return TransformerPageView(
-            controller: _tagIndexController,
-            itemCount: _metadataList.length,
-            scrollDirection: Axis.vertical,
-            viewportFraction: 0.90,
-            curve: Curves.decelerate,
-            onPageChanged: (int page) {
-              final QueryInfoProvider provider =
-                  Provider.of<QueryInfoProvider>(context);
-              provider.collection = _metadataList[page]['collection'];
-              scrollFeedback();
-            },
-            transformer: PageTransformerBuilder(
-                builder: (Widget widget, TransformInfo info) {
-              final Map<String, dynamic> data = _metadataList[info.index];
-              return _AuthorPage(
-                info: info,
-                tags: data['tags'],
-                title: data['title'],
-                authorName: data['authorName'],
-              );
-            }),
+          return Provider<TextPageProvider>(
+            builder: (_) => TextPageProvider(),
+            child: Consumer<TextPageProvider>(
+              builder: (BuildContext context, TextPageProvider provider, _) => TransformerPageView(
+                itemCount: _metadataList.length,
+                scrollDirection: Axis.vertical,
+                viewportFraction: 0.90,
+                curve: Curves.decelerate,
+                onPageChanged: (int page) {
+                  provider.currentPage = page;
+                  Provider.of<QueryInfoProvider>(context).collection = _metadataList[page]['collection'];
+                  scrollFeedback();
+                },
+                transformer:
+                    PageTransformerBuilder(builder: (_, TransformInfo info) {
+                  if (widget.isVisible || provider.currentPage == info.index) {
+                    final Map<String, dynamic> data = _metadataList[info.index];
+                    return _AuthorPage(
+                      info: info,
+                      tags: data['tags'],
+                      title: data['title'],
+                      authorName: data['authorName'],
+                    );
+                  } else {
+                    print('isnt visible');
+                    return const Placeholder();
+                  }
+                }),
+              ),
+            ),
           );
         },
       ),

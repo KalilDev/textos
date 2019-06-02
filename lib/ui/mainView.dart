@@ -52,25 +52,21 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
               children: <Widget>[
                 RepaintBoundary(child: FavoritesView()),
                 RepaintBoundary(
-                    child: ListView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: <Widget>[
-                      Container(
+                    child: SingleChildScrollView(
+                      physics: const NeverScrollableScrollPhysics(),
+                        child: Container(
                           height: constraints.maxHeight -
                               48 -
                               MediaQuery.of(context).padding.top,
-                          child: AuthorsView())
-                    ])),
+                          child: AuthorsView(isVisible: _tabController.animation.value.floor() == 1 || _tabController.animation.value.ceil() == 1,)))),
                 RepaintBoundary(
-                    child: ListView(
+                    child: SingleChildScrollView(
                         physics: const NeverScrollableScrollPhysics(),
-                        children: <Widget>[
-                      Container(
+                        child: Container(
                           height: constraints.maxHeight -
                               48 -
                               MediaQuery.of(context).padding.top,
-                          child: TextsView())
-                    ]))
+                          child: TextsView())))
               ],
             )),
             backTitle: const Text(textConfigs),
