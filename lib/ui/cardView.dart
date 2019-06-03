@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/providers.dart';
+import 'package:textos/src/textUtils.dart';
 
 class CardView extends StatelessWidget {
   const CardView({
@@ -199,8 +200,9 @@ class __TextWidgetState extends State<_TextWidget>
                                   ? RichText(
                                       textAlign: TextAlign.justify,
                                       text: TextSpan(
-                                          children: widget.textContent.formattedText(
-                                              textTheme.body1.copyWith(
+                                          children: formattedText(
+                                              widget.textContent.text,
+                                              style: textTheme.body1.copyWith(
                                                   fontSize: Tween<double>(
                                                               begin: _textSize,
                                                               end: Provider.of<
