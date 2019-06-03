@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:textos/constants.dart';
+import 'package:textos/src/textUtils.dart';
 import 'package:textos/text_icons_icons.dart';
 
 class CreatorView extends StatelessWidget {
@@ -110,9 +111,11 @@ class AboutCreator extends StatelessWidget {
                                         Text('Sobre Mim:',
                                             style: textTheme.subtitle,
                                             textAlign: TextAlign.start),
-                                        Text(
-                                          aboutMe,
-                                          style: textTheme.subtitle,
+                                        RichText(
+                                            textAlign: TextAlign.justify,
+                                            text: TextSpan(
+                                              children: formattedText(aboutMe,
+                                          style: textTheme.subtitle)),
                                         )
                                       ],
                                     )),
@@ -126,9 +129,11 @@ class AboutCreator extends StatelessWidget {
                                         Text('Sobre o App:',
                                             style: textTheme.subtitle,
                                             textAlign: TextAlign.start),
-                                        Text(
-                                          aboutApp,
-                                          style: textTheme.subtitle,
+                                        RichText(
+                                          textAlign: TextAlign.justify,
+                                          text: TextSpan(
+                                              children: formattedText(aboutApp,
+                                                  style: textTheme.subtitle)),
                                         )
                                       ],
                                     )),
@@ -142,9 +147,11 @@ class AboutCreator extends StatelessWidget {
                                         Text('Sobre o Flutter:',
                                             style: textTheme.subtitle,
                                             textAlign: TextAlign.start),
-                                        Text(
-                                          aboutFlutter,
-                                          style: textTheme.subtitle,
+                                        RichText(
+                                          textAlign: TextAlign.justify,
+                                          text: TextSpan(
+                                              children: formattedText(aboutFlutter,
+                                                  style: textTheme.subtitle)),
                                         )
                                       ],
                                     )),
@@ -154,9 +161,12 @@ class AboutCreator extends StatelessWidget {
                                     padding: const EdgeInsets.all(5.0),
                                     child: Column(
                                       children: <Widget>[
-                                        Text(aboutGreeting,
-                                            style: textTheme.title,
-                                            textAlign: TextAlign.start),
+                                        RichText(
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                              children: formattedText(aboutGreeting,
+                                                  style: textTheme.subtitle)),
+                                        )
                                       ],
                                     )),
                               ],

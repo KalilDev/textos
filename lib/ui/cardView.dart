@@ -41,9 +41,7 @@ class CardContent extends StatelessWidget {
                 img: textContent.imgUrl,
                 enabled: false,
                 key: Key('image' + textContent.textPath))),
-        _TextWidget(
-          textContent: textContent,
-        ),
+        _TextWidget(textContent: textContent, textSize: Provider.of<TextSizeProvider>(context).textSize),
         Align(
           alignment: Alignment.bottomCenter,
           child: LayoutBuilder(
@@ -58,8 +56,7 @@ class CardContent extends StatelessWidget {
         Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              margin:
-                  const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 8.0),
+              margin: const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 8.0),
               child: Row(
                 children: <Widget>[
                   textContent.hasText
@@ -80,14 +77,13 @@ class CardContent extends StatelessWidget {
                   textContent.hasMusic
                       ? Expanded(
                           child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 4.0),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
                               child: RepaintBoundary(
                                 child: PlaybackButton(
                                   url: textContent.music,
-                                  isBlurred:
-                                      Provider.of<BlurProvider>(context)
-                                          .buttonsBlur,
+                                  isBlurred: Provider.of<BlurProvider>(context)
+                                      .buttonsBlur,
                                 ),
                               )))
                       : Spacer(),
@@ -95,17 +91,14 @@ class CardContent extends StatelessWidget {
                     margin: const EdgeInsets.only(right: 4.0),
                     child: RepaintBoundary(
                       child: BiStateFAB(
-                        onPressed: () =>
-                            Provider.of<FavoritesProvider>(context).toggle(
-                                textContent.title +
-                                    ';' +
-                                    textContent.textPath),
+                        onPressed: () => Provider.of<FavoritesProvider>(context)
+                            .toggle(
+                                textContent.title + ';' + textContent.textPath),
                         isBlurred:
                             Provider.of<BlurProvider>(context).buttonsBlur,
                         isEnabled: Provider.of<FavoritesProvider>(context)
-                            .isFavorite(textContent.title +
-                                ';' +
-                                textContent.textPath),
+                            .isFavorite(
+                                textContent.title + ';' + textContent.textPath),
                         disabledColor: Theme.of(context).accentColor,
                       ),
                     ),
@@ -123,115 +116,93 @@ class CardContent extends StatelessWidget {
   }
 }
 
-class _TextWidget extends StatefulWidget {
-  const _TextWidget({@required this.textContent});
+class _TextWidget extends ImplicitlyAnimatedWidget {
+  const _TextWidget({@required this.textContent, @required this.textSize}) : super(duration: durationAnimationShort);
 
   final Content textContent;
+  final double textSize;
 
   @override
   __TextWidgetState createState() => __TextWidgetState();
 }
 
-class __TextWidgetState extends State<_TextWidget>
-    with TickerProviderStateMixin {
-  double _textSize;
-  AnimationController _textSizeController;
-  Animation<double> _textSizeAnim;
+class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
+  Tween<double> _textSize;
 
   @override
-  void initState() {
-    _textSizeController =
-        AnimationController(vsync: this, duration: durationAnimationShort);
-    _textSizeAnim =
-        CurvedAnimation(parent: _textSizeController, curve: Curves.easeInOut);
-    _textSize = 4.5;
-    _textSizeController.addListener(() {
-      if (_textSizeController.status == AnimationStatus.completed) {
-        _textSize = Provider.of<TextSizeProvider>(context).textSize;
-        _textSizeController.value = 0.0;
-      }
-      setState(() => null);
-    });
-    _textSizeController.value = 0.0;
-    super.initState();
+  void forEachTween(TweenVisitor<dynamic>visitor) {
+    _textSize = visitor(_textSize, widget.textSize, (dynamic value) => Tween<double>(begin: value));
   }
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<TextSizeProvider>(context).textSize != _textSize) {
-      _textSizeController.forward();
-    }
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return GestureDetector(
-      onTap: () {
-        SystemSound.play(SystemSoundType.click);
-        HapticFeedback.heavyImpact();
-        Navigator.of(context).pop();
+        onTap: () {
+          SystemSound.play(SystemSoundType.click);
+          HapticFeedback.heavyImpact();
+          Navigator.of(context).pop();
         },
-      child: SafeArea(
-        child: Hero(
+        child: SafeArea(
+            child: Hero(
           tag: 'body' + widget.textContent.textPath,
-          child: Material(
-              color: Colors.transparent,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                child: BlurOverlay.roundedRect(
-                  enabled: Provider.of<BlurProvider>(context).textsBlur,
-                  radius: 20,
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: SingleChildScrollView(
-                            child: Column(children: <Widget>[
-                              Text(widget.textContent.title,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .accentTextTheme
-                                      .display1),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              widget.textContent.hasText
-                                  ? RichText(
-                                      textAlign: TextAlign.justify,
-                                      text: TextSpan(
-                                          children: formattedText(
-                                              widget.textContent.text,
-                                              style: textTheme.body1.copyWith(
-                                                  fontSize: Tween<double>(
-                                                              begin: _textSize,
-                                                              end: Provider.of<
-                                                                          TextSizeProvider>(
-                                                                      context)
-                                                                  .textSize)
-                                                          .animate(
-                                                              _textSizeAnim)
-                                                          .value *
-                                                      4.5))))
-                                  : const SizedBox(),
-                              SizedBox(
-                                  height: 56,
-                                  child: Center(
-                                      child: Text(widget.textContent.date,
-                                          style: textTheme.title))),
-                              widget.textContent.hasMusic
-                                  ? const SizedBox(height: 56)
-                                  : const SizedBox(),
-                            ]),
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+            child: BlurOverlay.roundedRect(
+              enabled: Provider.of<BlurProvider>(context).textsBlur,
+              radius: 20,
+              child: Column(
+                children: widget.textContent.hasText
+                    ? <Widget>[
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: SingleChildScrollView(
+                              child: Column(children: <Widget>[
+                                Text(widget.textContent.title,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .accentTextTheme
+                                        .display1),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                RichText(
+                                    textAlign: TextAlign.justify,
+                                    text: TextSpan(
+                                        children: formattedText(
+                                            widget.textContent.text,
+                                            style: textTheme.body1.copyWith(
+                                                fontSize: _textSize.evaluate(animation) *
+                                                    4.5)))),
+                                SizedBox(
+                                    height: 56,
+                                    child: Center(
+                                        child: Text(widget.textContent.date,
+                                            style: textTheme.title))),
+                                widget.textContent.hasMusic
+                                    ? const SizedBox(height: 56)
+                                    : const SizedBox(),
+                              ]),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              )),
-        ),
-      ),
-    );
+                      ]
+                    : <Widget>[
+                        Text(widget.textContent.title,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).accentTextTheme.display1),
+                        Spacer(),
+                        Center(
+                            child: Text(widget.textContent.date,
+                                style: textTheme.title)),
+                        const SizedBox(height: 56),
+                      ],
+              ),
+            ),
+          ),
+        )));
   }
 }
