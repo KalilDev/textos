@@ -53,7 +53,7 @@ List<TextSpan> formattedText(String _text, {TextStyle style}) {
   do {
     if (all.length - 1 < i) {
       list.add(TextSpan(
-          text: text.substring(spanBoundary, text.length - 1),
+          text: text.substring(spanBoundary, text.length),
           style: style));
       return list;
     } else {

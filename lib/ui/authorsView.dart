@@ -74,7 +74,6 @@ class _AuthorsViewState extends State<AuthorsView>
                       authorName: data['authorName'],
                     );
                   } else {
-                    print('isnt visible');
                     return const Placeholder();
                   }
                 }),
