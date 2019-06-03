@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
@@ -82,12 +83,15 @@ class FavoritesView extends StatelessWidget {
                                           child: txt),
                                     ),
                                     onTap: () async {
+                                      final Content data = snap.hasData ? snap.data : await Provider.of<FavoritesProvider>(context)
+                                          .getContent(favorite);
+                                      HapticFeedback.heavyImpact();
                                       Navigator.push(
                                           context,
                                           DurationMaterialPageRoute<void>(
                                               builder: (BuildContext context) =>
                                                   CardView(
-                                                    textContent: snap.data,
+                                                    textContent: data,
                                                   )));
                                     }),
                               ),

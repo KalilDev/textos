@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
-import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/text_icons_icons.dart';
 import 'package:textos/ui/aboutCreatorView.dart';
 
-class SettingsView extends StatelessWidget with Haptic {
+class SettingsView extends StatelessWidget {
   void cleanAll(BuildContext context) {
-    openView();
+    HapticFeedback.heavyImpact();
     Provider.of<FavoritesProvider>(context).clear();
     Provider.of<BlurProvider>(context).clearSettings();
     Provider.of<ThemeProvider>(context).reset();
@@ -25,7 +25,7 @@ class SettingsView extends StatelessWidget with Haptic {
             bg: Theme.of(context).colorScheme.background));
 
     Future<void> _openAbout() async {
-      openView();
+      HapticFeedback.heavyImpact();
       Navigator.push(
         context,
         DurationMaterialPageRoute<void>(

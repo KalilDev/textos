@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:textos/src/mixins.dart';
 
-class ThemeProvider with ChangeNotifier, Haptic {
+class ThemeProvider with ChangeNotifier {
   ThemeProvider(bool enabled) {
     _enabled = enabled;
     _lightPrimaryColor = Colors.indigo.shade500;
@@ -23,7 +22,6 @@ class ThemeProvider with ChangeNotifier, Haptic {
   bool get isDarkMode => _enabled;
 
   void toggleDarkMode() {
-    selectItem();
     _enabled = !_enabled;
     settingsSync();
     notifyListeners();

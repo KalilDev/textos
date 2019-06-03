@@ -2,10 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:textos/constants.dart';
-import 'package:textos/src/mixins.dart';
 import 'package:textos/text_icons_icons.dart';
 
-class CreatorView extends StatelessWidget with Haptic {
+class CreatorView extends StatelessWidget {
   const CreatorView({Key key}) : super(key: key);
 
   @override

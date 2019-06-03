@@ -2,9 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:textos/constants.dart';
-import 'package:textos/src/mixins.dart';
 
-class Content with Haptic {
+class Content {
   Content.fromData(Map<String, dynamic> data) {
     title = data['title'] ?? placeholderTitle;
     textPath = data['path'];
@@ -119,8 +118,8 @@ class Content with Haptic {
               text: text,
               recognizer: LongPressGestureRecognizer()
                 ..onLongPress = () {
+                  HapticFeedback.heavyImpact();
                   Clipboard.setData(ClipboardData(text: text));
-                  selectItem();
                 }));
           spanBoundary = mono[startIdx] + 1;
         }

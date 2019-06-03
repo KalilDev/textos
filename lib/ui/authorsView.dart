@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
-import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
@@ -18,7 +18,7 @@ class AuthorsView extends StatefulWidget {
 }
 
 class _AuthorsViewState extends State<AuthorsView>
-    with AutomaticKeepAliveClientMixin, Haptic {
+    with AutomaticKeepAliveClientMixin {
   Stream<Iterable<Map<String, dynamic>>> _tagStream;
 
   @override
@@ -60,7 +60,8 @@ class _AuthorsViewState extends State<AuthorsView>
                 onPageChanged: (int page) {
                   provider.currentPage = page;
                   Provider.of<QueryInfoProvider>(context).collection = _metadataList[page]['collection'];
-                  scrollFeedback();
+                  SystemSound.play(SystemSoundType.click);
+                  HapticFeedback.lightImpact();
                 },
                 transformer:
                     PageTransformerBuilder(builder: (_, TransformInfo info) {
@@ -186,7 +187,7 @@ class _AuthorPageState extends State<_AuthorPage> {
   }
 }
 
-class _CustomButton extends StatelessWidget with Haptic {
+class _CustomButton extends StatelessWidget {
   const _CustomButton(
       {Key key,
       @required this.tag,
@@ -230,7 +231,7 @@ class _CustomButton extends StatelessWidget with Haptic {
                             : Theme.of(context).accentTextTheme.display1.color),
                   ),
                   onPressed: () {
-                    selectItem();
+                    HapticFeedback.selectionClick();
                     Provider.of<QueryInfoProvider>(context).tag = queryTag;
                   })
               : OutlineButton(
@@ -245,7 +246,7 @@ class _CustomButton extends StatelessWidget with Haptic {
                             .withAlpha(175)),
                   ),
                   onPressed: () {
-                    selectItem();
+                    HapticFeedback.selectionClick();
                     Provider.of<QueryInfoProvider>(context).tag = queryTag;
                   })),
     );

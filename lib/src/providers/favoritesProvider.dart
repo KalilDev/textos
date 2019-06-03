@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/src/content.dart';
 import 'package:textos/src/favoritesHelper.dart';
-import 'package:textos/src/mixins.dart';
 
-class FavoritesProvider with ChangeNotifier, Haptic {
+class FavoritesProvider with ChangeNotifier {
   FavoritesProvider(List<String> favorites, FavoritesHelper helper) {
     _helper = helper;
     _favoritesSet = favorites.toSet();
@@ -21,7 +20,6 @@ class FavoritesProvider with ChangeNotifier, Haptic {
       _favoritesSet.any((String string) => string.contains(favorite));
 
   void add(String favorite) {
-    selectItem();
     _favoritesSet.add(favorite);
     settingsSync();
     _helper.atomicOperation(favorite, operation: AtomicOperation.add);
@@ -29,7 +27,6 @@ class FavoritesProvider with ChangeNotifier, Haptic {
   }
 
   void remove(String favorite) {
-    selectItem();
     _favoritesSet.remove(favorite);
     settingsSync();
     _helper.atomicOperation(favorite, operation: AtomicOperation.remove);
@@ -37,7 +34,6 @@ class FavoritesProvider with ChangeNotifier, Haptic {
   }
 
   void clear() {
-    selectItem();
     _favoritesSet.clear();
     settingsSync();
     _helper.syncDatabase(_favoritesSet.toList());
@@ -49,7 +45,6 @@ class FavoritesProvider with ChangeNotifier, Haptic {
         await Firestore.instance.document(_getPath(favorite)).get();
     final Map<String, dynamic> data = documentSnapshot.data;
     data['path'] = _getPath(favorite);
-    openView();
     return Content.fromData(data);
   }
 

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
-import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 
-class CardView extends StatelessWidget with Haptic {
+class CardView extends StatelessWidget {
   const CardView({
     Key key,
     @required this.textContent,
@@ -25,7 +25,7 @@ class CardView extends StatelessWidget with Haptic {
   }
 }
 
-class CardContent extends StatelessWidget with Haptic {
+class CardContent extends StatelessWidget {
   const CardContent({@required this.textContent});
 
   final Content textContent;
@@ -56,65 +56,61 @@ class CardContent extends StatelessWidget with Haptic {
         ),
         Align(
             alignment: Alignment.bottomCenter,
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  margin:
-                      const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 8.0),
-                  child: Row(
-                    children: <Widget>[
-                      textContent.hasText
-                          ? Container(
-                              margin: const EdgeInsets.only(left: 4.0),
-                              child: IncDecButton(
-                                  isBlurred: Provider.of<BlurProvider>(context)
-                                      .buttonsBlur,
-                                  onDecrease: () =>
-                                      Provider.of<TextSizeProvider>(context)
-                                          .decrease(),
-                                  onIncrease: () =>
-                                      Provider.of<TextSizeProvider>(context)
-                                          .increase(),
-                                  value: Provider.of<TextSizeProvider>(context)
-                                      .textSize))
-                          : const SizedBox(),
-                      textContent.hasMusic
-                          ? Expanded(
-                              child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 4.0),
-                                  child: RepaintBoundary(
-                                    child: PlaybackButton(
-                                      url: textContent.music,
-                                      isBlurred:
-                                          Provider.of<BlurProvider>(context)
-                                              .buttonsBlur,
-                                    ),
-                                  )))
-                          : Spacer(),
-                      Container(
-                        margin: const EdgeInsets.only(right: 4.0),
-                        child: RepaintBoundary(
-                          child: BiStateFAB(
-                            onPressed: () =>
-                                Provider.of<FavoritesProvider>(context).toggle(
-                                    textContent.title +
-                                        ';' +
-                                        textContent.textPath),
-                            isBlurred:
-                                Provider.of<BlurProvider>(context).buttonsBlur,
-                            isEnabled: Provider.of<FavoritesProvider>(context)
-                                .isFavorite(textContent.title +
+            child: Container(
+              margin:
+                  const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  textContent.hasText
+                      ? Container(
+                          margin: const EdgeInsets.only(left: 4.0),
+                          child: IncDecButton(
+                              isBlurred: Provider.of<BlurProvider>(context)
+                                  .buttonsBlur,
+                              onDecrease: () =>
+                                  Provider.of<TextSizeProvider>(context)
+                                      .decrease(),
+                              onIncrease: () =>
+                                  Provider.of<TextSizeProvider>(context)
+                                      .increase(),
+                              value: Provider.of<TextSizeProvider>(context)
+                                  .textSize))
+                      : const SizedBox(),
+                  textContent.hasMusic
+                      ? Expanded(
+                          child: Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 4.0),
+                              child: RepaintBoundary(
+                                child: PlaybackButton(
+                                  url: textContent.music,
+                                  isBlurred:
+                                      Provider.of<BlurProvider>(context)
+                                          .buttonsBlur,
+                                ),
+                              )))
+                      : Spacer(),
+                  Container(
+                    margin: const EdgeInsets.only(right: 4.0),
+                    child: RepaintBoundary(
+                      child: BiStateFAB(
+                        onPressed: () =>
+                            Provider.of<FavoritesProvider>(context).toggle(
+                                textContent.title +
                                     ';' +
                                     textContent.textPath),
-                            disabledColor: Theme.of(context).accentColor,
-                          ),
-                        ),
+                        isBlurred:
+                            Provider.of<BlurProvider>(context).buttonsBlur,
+                        isEnabled: Provider.of<FavoritesProvider>(context)
+                            .isFavorite(textContent.title +
+                                ';' +
+                                textContent.textPath),
+                        disabledColor: Theme.of(context).accentColor,
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             )),
         Positioned(
           child: MenuButton(),
@@ -167,7 +163,11 @@ class __TextWidgetState extends State<_TextWidget>
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return GestureDetector(
-      onTap: () => Navigator.of(context).pop(),
+      onTap: () {
+        SystemSound.play(SystemSoundType.click);
+        HapticFeedback.heavyImpact();
+        Navigator.of(context).pop();
+        },
       child: SafeArea(
         child: Hero(
           tag: 'body' + widget.textContent.textPath,

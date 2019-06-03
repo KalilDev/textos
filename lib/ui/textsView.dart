@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/content.dart';
-import 'package:textos/src/mixins.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
@@ -16,7 +16,7 @@ class TextsView extends StatefulWidget {
   _TextsViewState createState() => _TextsViewState();
 }
 
-class _TextsViewState extends State<TextsView> with Haptic {
+class _TextsViewState extends State<TextsView> {
   IndexController _indexController;
   Stream<Map<String, dynamic>> _favoritesStream;
   Query _query;
@@ -118,7 +118,8 @@ class _TextsViewState extends State<TextsView> with Haptic {
                         }
                       }),
                       onPageChanged: (int page) {
-                        scrollFeedback();
+                        SystemSound.play(SystemSoundType.click);
+                        HapticFeedback.lightImpact();
                         provider.currentPage = page;
                       },
                       itemCount: _slideList?.length ?? 1,
@@ -130,7 +131,7 @@ class _TextsViewState extends State<TextsView> with Haptic {
   }
 }
 
-class _TextPage extends StatelessWidget with Haptic {
+class _TextPage extends StatelessWidget {
   const _TextPage(
       {@required this.info, @required this.textContent, this.indexController});
 
@@ -243,7 +244,7 @@ class _TextPage extends StatelessWidget with Haptic {
           ],
         ),
         onTap: () async {
-          openView();
+          HapticFeedback.heavyImpact();
           if (indexController != null) indexController.move(info.index);
           Navigator.push(
               context,
