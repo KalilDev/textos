@@ -96,7 +96,7 @@ class _TextsViewState extends State<TextsView> {
                       curve: Curves.decelerate,
                       transformer: PageTransformerBuilder(
                           builder: (Widget child, TransformInfo info) {
-                        if (snap.hasData) {
+                        if (snap.hasData || snap.data.isNotEmpty) {
                           final Map<String, dynamic> data =
                               _slideList[info.index];
                           return _TextPage(
@@ -190,7 +190,7 @@ class _TextPage extends StatelessWidget {
                                           Provider.of<BlurProvider>(context)
                                               .textsBlur,
                                       child: ParallaxContainer(
-                                        translationFactor: 300,
+                                        translationFactor: 75,
                                         position: info.position,
                                         child: Text(textContent.title,
                                             textAlign: TextAlign.center,
@@ -244,14 +244,19 @@ class _TextPage extends StatelessWidget {
           ],
         ),
         onTap: () async {
-          HapticFeedback.heavyImpact();
-          if (indexController != null) indexController.move(info.index);
-          Navigator.push(
-              context,
-              FadeRoute<void>(
-                  builder: (BuildContext context) => CardView(
-                        textContent: textContent,
-                      )));
+          if (indexController != null)
+            indexController.move(info.index);
+
+          if (active) {
+            HapticFeedback.heavyImpact();
+            Navigator.push(
+                context,
+                FadeRoute<void>(
+                    builder: (BuildContext context) =>
+                        CardView(
+                          textContent: textContent,
+                        )));
+          }
         });
   }
 }

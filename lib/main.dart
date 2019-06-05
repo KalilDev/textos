@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/constants.dart';
@@ -158,25 +157,6 @@ class StateBuilderState extends State<StateBuilder> {
           } else {
             overrideTheme = light;
           }
-          final ThemeData actualTheme =
-              MediaQuery.platformBrightnessOf(context) == Brightness.dark
-                  ? dark
-                  : overrideTheme;
-
-          Brightness inverseOf(Brightness b) =>
-              b == Brightness.dark ? Brightness.light : Brightness.dark;
-
-          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              systemNavigationBarColor: actualTheme.primaryColor,
-              systemNavigationBarIconBrightness:
-                  inverseOf(actualTheme.primaryColorBrightness),
-              statusBarColor: actualTheme.brightness == Brightness.dark
-                  ? Colors.black.withAlpha(100)
-                  : Colors.white.withAlpha(100),
-              statusBarIconBrightness: inverseOf(actualTheme.brightness)));
-
-          SystemChrome.setEnabledSystemUIOverlays(
-              <SystemUiOverlay>[SystemUiOverlay.bottom]);
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             darkTheme: dark,
