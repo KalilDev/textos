@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/text_icons_icons.dart';
 import 'package:textos/ui/authorsView.dart';
@@ -39,6 +40,34 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData actualTheme = Theme.of(context);
+    Brightness inverseOf(Brightness b) =>
+        b == Brightness.dark ? Brightness.light : Brightness.dark;
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: actualTheme.primaryColor,
+        systemNavigationBarIconBrightness:
+            inverseOf(actualTheme.primaryColorBrightness),
+        statusBarColor: actualTheme.brightness == Brightness.dark
+            ? Colors.black.withAlpha(100)
+            : Colors.white.withAlpha(100),
+        statusBarIconBrightness: inverseOf(actualTheme.brightness)));
+
+    //SystemChrome.setEnabledSystemUIOverlays(
+    //    <SystemUiOverlay>[SystemUiOverlay.bottom]);
+    Widget _renderChild(Widget child, {BoxConstraints constraints}) => RepaintBoundary(
+        child: OverflowBox(
+          minHeight: constraints.maxHeight -
+              42 -
+              MediaQuery.of(context).padding.top,
+          minWidth: constraints.maxWidth,
+          maxHeight: constraints.maxHeight -
+              42 -
+              MediaQuery.of(context).padding.top,
+          maxWidth: constraints.maxWidth,
+          child: child,
+        ));
+
     return Scaffold(
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) => Backdrop(
@@ -50,27 +79,18 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                 child: TabBarView(
               controller: _tabController,
               children: <Widget>[
-                RepaintBoundary(child: FavoritesView()),
-                RepaintBoundary(
-                    child: SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
-                        child: Container(
-                          height: constraints.maxHeight -
-                              48 -
-                              MediaQuery.of(context).padding.top,
-                          child: AuthorsView(isVisible: _tabController.animation.value.floor() == 1 || _tabController.animation.value.ceil() == 1,)))),
-                RepaintBoundary(
-                    child: SingleChildScrollView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        child: Container(
-                          height: constraints.maxHeight -
-                              48 -
-                              MediaQuery.of(context).padding.top,
-                          child: TextsView())))
+                _renderChild(FavoritesView(), constraints: constraints),
+                _renderChild(AuthorsView(
+                  isVisible:
+                  _tabController.animation.value.floor() == 1 ||
+                      _tabController.animation.value.ceil() == 1,
+                ), constraints: constraints),
+                _renderChild(TextsView(), constraints: constraints)
               ],
             )),
             backTitle: const Text(textConfigs),
-            backLayer: SettingsView()),
+            backLayer: SettingsView(),
+            frontHeading: Container(height: 50.0)),
       ),
       bottomNavigationBar: RepaintBoundary(
         child: AnimatedBuilder(
