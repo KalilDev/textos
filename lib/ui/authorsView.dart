@@ -60,6 +60,7 @@ class _AuthorsViewState extends State<AuthorsView>
                 onPageChanged: (int page) {
                   provider.currentPage = page;
                   Provider.of<QueryInfoProvider>(context).collection = _metadataList[page]['collection'];
+                  Provider.of<QueryInfoProvider>(context).tag = null;
                   SystemSound.play(SystemSoundType.click);
                   HapticFeedback.lightImpact();
                 },
