@@ -68,6 +68,8 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
           child: child,
         ));
 
+    const double spacerSize = 32;
+
     return Scaffold(
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) => Backdrop(
@@ -79,7 +81,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                 child: TabBarView(
               controller: _tabController,
               children: <Widget>[
-                _renderChild(FavoritesView(), constraints: constraints),
+                _renderChild(const FavoritesView(spacerSize: spacerSize), constraints: constraints),
                 _renderChild(AuthorsView(
                   isVisible:
                   _tabController.animation.value.floor() == 1 ||
@@ -90,7 +92,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
             )),
             backTitle: const Text(textConfigs),
             backLayer: SettingsView(),
-            frontHeading: Container(height: 50.0)),
+            frontHeading: Container(height: spacerSize)),
       ),
       bottomNavigationBar: RepaintBoundary(
         child: AnimatedBuilder(

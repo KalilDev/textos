@@ -315,7 +315,7 @@ class _BackdropState extends State<Backdrop>
               color: Theme.of(context).canvasColor,
               clipper: ShapeBorderClipper(
                   shape: RoundedRectangleBorder(
-                      borderRadius: const BorderRadius.only(topLeft: const Radius.circular(_kBackAppBarHeight)))),
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(_kBackAppBarHeight)))),
               clipBehavior: Clip.antiAlias,
               child: child,
             );
