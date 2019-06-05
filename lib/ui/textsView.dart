@@ -66,67 +66,69 @@ class _TextsViewState extends State<TextsView> {
         stream: slidesStream,
         builder: (BuildContext context,
             AsyncSnapshot<Iterable<Map<String, dynamic>>> snap) {
-          return StreamBuilder<Map<String, dynamic>>(
-            stream: _favoritesStream,
-            builder: (BuildContext context,
-                AsyncSnapshot<Map<String, dynamic>> favoritesSnap) {
-              if (snap.hasData) {
-                _slideList = snap.data.toList();
-                if (favoritesSnap.hasData) {
-                  favoritesData = favoritesSnap.data;
-                  favoritesData.forEach((String textPath, dynamic favoriteInt) {
-                    final int targetIndex = _slideList.indexWhere(
-                        (Map<String, dynamic> element) =>
-                            element['path'] ==
-                            textPath.toString().replaceAll('_', '/'));
-                    if (targetIndex >= 0)
-                      _slideList.elementAt(targetIndex)['favoriteCount'] =
-                          favoriteInt;
-                  });
-                }
-              }
+          if (snap.hasData) {
+            if (snap.data.isNotEmpty) {
+              _slideList = snap.data.toList();
+              return StreamBuilder<Map<String, dynamic>>(
+                stream: _favoritesStream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<Map<String, dynamic>> favoritesSnap) {
+                  if (favoritesSnap.hasData) {
+                    favoritesData = favoritesSnap.data;
+                    favoritesData
+                        .forEach((String textPath, dynamic favoriteInt) {
+                      final int targetIndex = _slideList.indexWhere(
+                          (Map<String, dynamic> element) =>
+                              element['path'] ==
+                              textPath.toString().replaceAll('_', '/'));
+                      if (targetIndex >= 0)
+                        _slideList.elementAt(targetIndex)['favoriteCount'] =
+                            favoriteInt;
+                    });
+                  }
 
-              return ChangeNotifierProvider<TextPageProvider>(
-                  builder: (_) => TextPageProvider(),
-                  child: Consumer<TextPageProvider>(
-                    builder: (BuildContext context, TextPageProvider provider, _) => TransformerPageView(
-                      pageSnapping: false,
-                      controller: _indexController,
-                      viewportFraction: 0.80,
-                      curve: Curves.decelerate,
-                      transformer: PageTransformerBuilder(
-                          builder: (Widget child, TransformInfo info) {
-                        if (snap.hasData || snap.data.isNotEmpty) {
-                          final Map<String, dynamic> data =
-                              _slideList[info.index];
-                          return _TextPage(
-                              info: info,
-                              textContent: Content.fromData(data),
-                              indexController: _indexController);
-                        } else {
-                          return Container(
-                              child: Center(
-                                  child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: const <Widget>[
-                                Icon(Icons.error_outline, size: 72),
-                                Text(
-                                  textNoTexts,
-                                  textAlign: TextAlign.center,
-                                )
-                              ])));
-                        }
-                      }),
-                      onPageChanged: (int page) {
-                        SystemSound.play(SystemSoundType.click);
-                        HapticFeedback.lightImpact();
-                        provider.currentPage = page;
-                      },
-                      itemCount: _slideList?.length ?? 1,
-                    ),
-                  ));
-            },
-          );
+                  return ChangeNotifierProvider<TextPageProvider>(
+                      builder: (_) => TextPageProvider(),
+                      child: Consumer<TextPageProvider>(
+                        builder: (BuildContext context,
+                                TextPageProvider provider, _) =>
+                            TransformerPageView(
+                              pageSnapping: false,
+                              controller: _indexController,
+                              viewportFraction: 0.80,
+                              curve: Curves.decelerate,
+                              transformer: PageTransformerBuilder(
+                                  builder: (Widget child, TransformInfo info) {
+                                final Map<String, dynamic> data =
+                                    _slideList[info.index];
+                                return _TextPage(
+                                    info: info,
+                                    textContent: Content.fromData(data),
+                                    indexController: _indexController);
+                              }),
+                              onPageChanged: (int page) {
+                                SystemSound.play(SystemSoundType.click);
+                                HapticFeedback.lightImpact();
+                                provider.currentPage = page;
+                              },
+                              itemCount: _slideList?.length ?? 1,
+                            ),
+                      ));
+                },
+              );
+            }
+          }
+          return Container(
+              child: Center(
+                  child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const <Widget>[
+                Icon(Icons.error_outline, size: 72),
+                Text(
+                  textNoTexts,
+                  textAlign: TextAlign.center,
+                )
+              ])));
         });
   }
 }
@@ -141,7 +143,10 @@ class _TextPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if ((Provider.of<TextPageProvider>(context).currentPage - info.index).abs() < 2 != true)
+    if ((Provider.of<TextPageProvider>(context).currentPage - info.index)
+                .abs() <
+            2 !=
+        true)
       return const Placeholder();
 
     final bool active = info.position.round() == 0.0 && info.position >= -0.30;
@@ -252,8 +257,7 @@ class _TextPage extends StatelessWidget {
             Navigator.push(
                 context,
                 FadeRoute<void>(
-                    builder: (BuildContext context) =>
-                        CardView(
+                    builder: (BuildContext context) => CardView(
                           textContent: textContent,
                         )));
           }
