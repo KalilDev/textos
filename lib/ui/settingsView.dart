@@ -165,15 +165,14 @@ class SettingsView extends StatelessWidget {
       decoration: BoxDecoration(
           color: Color.alphaBlend(Theme.of(context).primaryColor.withAlpha(80),
               Theme.of(context).backgroundColor)),
-      child: ListView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const SizedBox(height: 40.0),
           buildCategory(themeWidgets(), isFirst: true),
           buildCategory(textWidgets()),
           buildCategory(favoriteWidgets()),
           buildCategory(blurWidgets()),
           buildCategory(miscWidgets()),
-          const SizedBox(height: 48.0),
         ],
       ),
     );
