@@ -56,7 +56,7 @@ class FavoritesProvider with ChangeNotifier {
 
   Future<void> settingsSync() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> strings = <String>[];
+    final List<String> strings = <String>[];
     for (Favorite fav in _favoritesSet) {
       strings.add(fav.string);
     }

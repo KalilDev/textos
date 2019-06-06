@@ -5,7 +5,9 @@ import 'favorite.dart';
 
 class Content {
   Content.fromFav(Favorite fav) {
-    isSliver = true;
+    title = fav.textTitle;
+    textPath = fav.textPath;
+    imgUrl = fav.textImg;
   }
   Content.fromData(Map<String, dynamic> data) {
     title = data['title'] ?? placeholderTitle;
@@ -22,7 +24,6 @@ class Content {
     music = data['music'];
     text = data['text']
         .toString();
-    isSliver = false;
   }
 
   String title;
@@ -32,7 +33,6 @@ class Content {
   String date;
   String music;
   int favoriteCount;
-  bool isSliver;
 
   bool get hasText => text != 'null';
   bool get hasMusic => music != null;

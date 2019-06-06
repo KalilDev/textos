@@ -11,6 +11,8 @@ import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
+import 'textCard.dart';
+
 class TextsView extends StatefulWidget {
   @override
   _TextsViewState createState() => _TextsViewState();
@@ -170,45 +172,7 @@ class _TextPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Stack(
                   children: <Widget>[
-                    Hero(
-                        tag: 'image' + textContent.textPath,
-                        child: ImageBackground(
-                            img: textContent.imgUrl,
-                            enabled: false,
-                            position: info.position,
-                            key: Key('image' + textContent.textPath))),
-                    RepaintBoundary(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: Hero(
-                              tag: 'body' + textContent.textPath,
-                              child: Material(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  margin: const EdgeInsets.all(8.0),
-                                  child: BlurOverlay.roundedRect(
-                                      radius: 15,
-                                      enabled:
-                                          Provider.of<BlurProvider>(context)
-                                              .textsBlur,
-                                      child: ParallaxContainer(
-                                        translationFactor: 75,
-                                        position: info.position,
-                                        child: Text(textContent.title,
-                                            textAlign: TextAlign.center,
-                                            style: Theme.of(context)
-                                                .accentTextTheme
-                                                .display1),
-                                      )),
-                                ),
-                                color: Colors.transparent,
-                              ),
-                            )),
-                      ),
-                    ),
+                    ContentCard.withParallax(position: info.position,content: textContent),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),
                       child: AnimatedSwitcher(

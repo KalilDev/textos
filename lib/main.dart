@@ -55,10 +55,10 @@ Future<void> main() async {
     }
   }
   debugProfileBuildsEnabled = true;
-  Set<Favorite> favorites = <Favorite>{};
-  _favoritesList.forEach((String f) {
+  final Set<Favorite> favorites = <Favorite>{};
+  for (String f in _favoritesList) {
     favorites.add(Favorite(f));
-  });
+  }
   runApp(StateBuilder(
       enableDarkMode: _enableDarkMode,
       favoritesSet: favorites,
