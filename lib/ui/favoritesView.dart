@@ -4,7 +4,8 @@ import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
-import 'package:textos/src/content.dart';
+import 'package:textos/src/model/content.dart';
+import 'package:textos/src/model/favorite.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/text_icons_icons.dart';
 
@@ -14,14 +15,12 @@ class FavoritesView extends StatelessWidget {
   const FavoritesView({@required this.spacerSize});
   final double spacerSize;
 
-  Widget buildFavoritesItem(BuildContext context, String favorite) {
-    final String favoriteTitle = favorite.split(';')[0];
-
+  Widget buildFavoritesItem(BuildContext context, Favorite favorite) {
     Widget txt;
-    if (favoriteTitle.length > 30) {
+    if (favorite.textTitle.length > 30) {
       txt = Container(
           child: Marquee(
-              text: favoriteTitle,
+              text: favorite.textTitle,
               style: Theme.of(context).accentTextTheme.display1,
               blankSpace: 25,
               pauseAfterRound: const Duration(seconds: 1),
@@ -29,13 +28,13 @@ class FavoritesView extends StatelessWidget {
           height: 60.0);
     } else {
       txt = Text(
-        favoriteTitle,
+        favorite.textTitle,
         style: Theme.of(context).accentTextTheme.display1,
         textAlign: TextAlign.center,
       );
     }
     return Dismissible(
-        key: Key('Dismissible-' + favoriteTitle),
+        key: Key('Dismissible-' + favorite.textId),
         background: Container(
           child: Row(
             children: <Widget>[
@@ -97,7 +96,7 @@ class FavoritesView extends StatelessWidget {
                                       DurationMaterialPageRoute<void>(
                                           builder: (BuildContext context) =>
                                               CardView(
-                                                textContent: data,
+                                                content: data,
                                               )));
                                 }),
                           ),
@@ -111,10 +110,10 @@ class FavoritesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Provider.of<FavoritesProvider>(context).favoritesList.isNotEmpty
+        body: Provider.of<FavoritesProvider>(context).favoritesSet.isNotEmpty
             ? ListView.builder(
                 itemCount: Provider.of<FavoritesProvider>(context)
-                        .favoritesList
+                        .favoritesSet
                         .length +
                     1,
                 itemBuilder: (BuildContext context, int index) {
@@ -123,7 +122,7 @@ class FavoritesView extends StatelessWidget {
                     return buildFavoritesItem(
                         context,
                         Provider.of<FavoritesProvider>(context)
-                            .favoritesList[index - 1]);
+                            .favoritesSet.elementAt(index - 1));
                 })
             : LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) =>

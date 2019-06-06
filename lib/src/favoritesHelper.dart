@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'model/favorite.dart';
+
 enum AtomicOperation { add, remove }
 
 class FavoritesHelper {
@@ -70,7 +72,7 @@ class FavoritesHelper {
     return inDebugMode;
   }
 
-  Future<void> syncDatabase(List<String> favorites) async {
+  Future<void> syncDatabase(Set<Favorite> favorites) async {
     if (userId != null && isInDebugMode == false) {
       final DocumentSnapshot snapshot = await userDocumentSnapshot;
       final DocumentReference document = await userDocument;
@@ -79,11 +81,10 @@ class FavoritesHelper {
 
       final List<DocumentReference> localReferences = <DocumentReference>[];
       final List<String> localTitles = <String>[];
-      for (String favorite in favorites) {
-        final String title = favorite.split(';')[0];
-        final DocumentReference reference = db.document(favorite.split(';')[1]);
+      for (Favorite favorite in favorites) {
+        final DocumentReference reference = db.document(favorite.textPath);
         localReferences.add(reference);
-        localTitles.add(title);
+        localTitles.add(favorite.textTitle);
       }
 
       final Map<String, int> delta =
@@ -108,12 +109,10 @@ class FavoritesHelper {
     }
   }
 
-  Future<void> atomicOperation(String favorite,
-      {AtomicOperation operation}) async {
+  Future<void> atomicOperation(
+      {String title, String path, AtomicOperation operation}) async {
     if (userId != null && isInDebugMode == false) {
-      final String title = favorite.split(';')[0];
-      final DocumentReference reference = db.document(favorite.split(';')[1]);
-      final String path = reference.path.replaceAll('/', '_');
+      final DocumentReference reference = db.document(path);
       final DocumentSnapshot snapshot = await userDocumentSnapshot;
       final DocumentReference document = await userDocument;
 
@@ -141,7 +140,7 @@ class FavoritesHelper {
         'textTitles': localTitles.toList()
       });
       batch.updateData(statsDocument,
-          <String, dynamic>{path: FieldValue.increment(incValue)});
+          <String, dynamic>{path.replaceAll('/', '_'): FieldValue.increment(incValue)});
       batch.commit();
     }
   }

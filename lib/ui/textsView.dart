@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
-import 'package:textos/src/content.dart';
+import 'package:textos/src/model/content.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
@@ -228,14 +228,10 @@ class _TextPage extends StatelessWidget {
                                   child: ExpandedFABCounter(
                                       isEnabled:
                                           Provider.of<FavoritesProvider>(context)
-                                              .isFavorite(textContent.title +
-                                                  ';' +
-                                                  textContent.textPath),
+                                              .isFavorite(textContent.favorite),
                                       onPressed: () =>
                                           Provider.of<FavoritesProvider>(context)
-                                              .toggle(textContent.title +
-                                                  ';' +
-                                                  textContent.textPath),
+                                              .toggle(textContent.favorite),
                                       counter: textContent.favoriteCount,
                                       isBlurred:
                                           Provider.of<BlurProvider>(context)
@@ -258,7 +254,7 @@ class _TextPage extends StatelessWidget {
                 context,
                 FadeRoute<void>(
                     builder: (BuildContext context) => CardView(
-                          textContent: textContent,
+                          content: textContent,
                         )));
           }
         });

@@ -9,6 +9,8 @@ import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/mainView.dart';
 
+import 'src/model/favorite.dart';
+
 // TODO(KalilDev): Document the app
 // TODO(KalilDev): Implement tutorial
 // TODO(KalilDev): Implement Firebase analytics
@@ -53,9 +55,13 @@ Future<void> main() async {
     }
   }
   debugProfileBuildsEnabled = true;
+  Set<Favorite> favorites = <Favorite>{};
+  _favoritesList.forEach((String f) {
+    favorites.add(Favorite(f));
+  });
   runApp(StateBuilder(
       enableDarkMode: _enableDarkMode,
-      favoritesList: _favoritesList,
+      favoritesSet: favorites,
       textSize: _textSize,
       blurSettings: _blurSettings,
       uid: _uid));
@@ -64,13 +70,13 @@ Future<void> main() async {
 class StateBuilder extends StatefulWidget {
   const StateBuilder(
       {@required this.enableDarkMode,
-      @required this.favoritesList,
+      @required this.favoritesSet,
       @required this.textSize,
       @required this.blurSettings,
       @required this.uid});
 
   final bool enableDarkMode;
-  final List<String> favoritesList;
+  final Set<Favorite> favoritesSet;
   final double textSize;
   final int blurSettings;
   final String uid;
@@ -122,9 +128,9 @@ class StateBuilderState extends State<StateBuilder> {
       _firebaseMessaging.subscribeToTopic('debug');
       _firebaseMessaging.getToken().then((String token) => print(token));
       print('udid: ' + widget.uid.toString());
-      print('favorites: ' + widget.favoritesList.toString());
+      print('favorites: ' + widget.favoritesSet.toString());
     }
-    FavoritesHelper(userId: widget.uid).syncDatabase(widget.favoritesList);
+    FavoritesHelper(userId: widget.uid).syncDatabase(widget.favoritesSet);
   }
 
   @override
@@ -133,7 +139,7 @@ class StateBuilderState extends State<StateBuilder> {
       providers: <ChangeNotifierProvider<dynamic>>[
         ChangeNotifierProvider<FavoritesProvider>(
             builder: (_) => FavoritesProvider(
-                widget.favoritesList, FavoritesHelper(userId: widget.uid))),
+                widget.favoritesSet, FavoritesHelper(userId: widget.uid))),
         ChangeNotifierProvider<ThemeProvider>(
             builder: (_) => ThemeProvider(widget.enableDarkMode)),
         ChangeNotifierProvider<BlurProvider>(

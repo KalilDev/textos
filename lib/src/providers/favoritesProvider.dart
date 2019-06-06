@@ -4,70 +4,62 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:textos/src/content.dart';
 import 'package:textos/src/favoritesHelper.dart';
+import 'package:textos/src/model/content.dart';
+import 'package:textos/src/model/favorite.dart';
 
 class FavoritesProvider with ChangeNotifier {
-  FavoritesProvider(List<String> favorites, FavoritesHelper helper) {
+  FavoritesProvider(Set<Favorite> favorites, FavoritesHelper helper) {
     _helper = helper;
-    _favoritesSet = favorites.toSet();
+    _favoritesSet = favorites;
   }
 
-  Set<String> _favoritesSet;
+  Set<Favorite> _favoritesSet;
   FavoritesHelper _helper;
 
-  bool isFavorite(String favorite) =>
-      _favoritesSet.any((String string) => string.contains(favorite));
+  bool isFavorite(Favorite favorite) => _favoritesSet.any((Favorite fav) => fav.textId == favorite.textId);
 
-  void add(String favorite) {
+  Set<Favorite> get favoritesSet => _favoritesSet;
+
+  void add(Favorite favorite) {
     _favoritesSet.add(favorite);
     settingsSync();
-    _helper.atomicOperation(favorite, operation: AtomicOperation.add);
+    _helper.atomicOperation(title: favorite.textTitle, path: favorite.textPath, operation: AtomicOperation.add);
     notifyListeners();
   }
 
-  void remove(String favorite) {
-    _favoritesSet.remove(favorite);
+  void remove(Favorite favorite) {
+    _favoritesSet.removeWhere((Favorite fav) => fav.textId == favorite.textId);
     settingsSync();
-    _helper.atomicOperation(favorite, operation: AtomicOperation.remove);
+    _helper.atomicOperation(title: favorite.textTitle, path: favorite.textPath, operation: AtomicOperation.remove);
     notifyListeners();
   }
 
   void clear() {
     _favoritesSet.clear();
     settingsSync();
-    _helper.syncDatabase(_favoritesSet.toList());
+    _helper.syncDatabase(_favoritesSet);
     notifyListeners();
   }
 
-  Future<Content> getContent(String favorite) async {
+  Future<Content> getContent(Favorite favorite) async {
     final DocumentSnapshot documentSnapshot =
-        await Firestore.instance.document(_getPath(favorite)).get();
+        await Firestore.instance.document(favorite.textPath).get();
     final Map<String, dynamic> data = documentSnapshot.data;
-    data['path'] = _getPath(favorite);
+    data['path'] = favorite.textPath;
     return Content.fromData(data);
   }
 
-  void toggle(String favorite) {
+  void toggle(Favorite favorite) {
     isFavorite(favorite) ? remove(favorite) : add(favorite);
-  }
-
-  String _getPath(String text) {
-    return text.split(';')[1];
-  }
-
-  List<String> get favoritesList => _favoritesSet.toList();
-
-  FavoritesProvider copy() =>
-      FavoritesProvider(_favoritesSet.toList(), _helper);
-
-  void sync(List<String> favoritesList) {
-    _favoritesSet = favoritesList.toSet();
-    notifyListeners();
   }
 
   Future<void> settingsSync() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('favorites', _favoritesSet.toList());
+    List<String> strings = <String>[];
+    for (Favorite fav in _favoritesSet) {
+      strings.add(fav.string);
+    }
+    prefs.setStringList('favorites', strings);
   }
 }
