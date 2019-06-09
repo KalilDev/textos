@@ -49,7 +49,7 @@ class _AuthorsViewState extends State<AuthorsView>
           _metadataList = snapshot.hasData
               ? _metadataList = snapshot.data.toList()
               : _metadataList = <Map<String, dynamic>>[placeholderTagMetadata];
-          return Provider<TextPageProvider>(
+          return ListenableProvider<TextPageProvider>(
             builder: (_) => TextPageProvider(),
             child: Consumer<TextPageProvider>(
               builder: (BuildContext context, TextPageProvider provider, _) => TransformerPageView(

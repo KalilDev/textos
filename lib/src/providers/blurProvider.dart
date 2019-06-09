@@ -36,15 +36,6 @@ class BlurProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  int get blurSettings => _settings;
-
-  BlurProvider copy() => BlurProvider(_settings);
-
-  void sync(int blurSettings) {
-    _settings = blurSettings;
-    notifyListeners();
-  }
-
   Future<void> settingsSync() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('blurSettings', _settings);

@@ -28,13 +28,6 @@ class TextSizeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  TextSizeProvider copy() => TextSizeProvider(_textSize);
-
-  void sync(double textSize) {
-    _textSize = textSize;
-    notifyListeners();
-  }
-
   Future<void> settingsSync() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setDouble('textSize', _textSize);

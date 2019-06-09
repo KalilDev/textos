@@ -41,14 +41,12 @@ class MyApp extends StatelessWidget {
           return snapshot.hasData
               ? StateBuilder(snapshot.data)
               : MaterialApp(
-                  theme: themeDataLight,
-                  darkTheme: themeDataDark,
+                  theme: themeDataDark,
                   home: LoginView());
         } else {
           // show loading indicator
           return MaterialApp(
-              theme: themeDataLight,
-              darkTheme: themeDataDark,
+              theme: themeDataDark,
               home: Scaffold(body: LoadingCircle()));
         }
       },
@@ -74,7 +72,7 @@ class StateBuilder extends StatelessWidget {
 
   Future<List<dynamic>> getInfo() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool _enableDarkMode = prefs?.getBool('isDark') ?? false;
+    final bool _enableDarkMode = prefs?.getBool('isDark') ?? true;
     final List<String> _favoritesSettings =
         prefs?.getStringList('favorites') ?? <String>[];
     final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
@@ -102,16 +100,16 @@ class StateBuilder extends StatelessWidget {
                 FavoritesHelper(userId: firebaseUser.uid);
             _helper.syncDatabase(_favoritesSet);
             return MultiProvider(
-              providers: <ChangeNotifierProvider<dynamic>>[
-                ChangeNotifierProvider<FavoritesProvider>(
+              providers: <ListenableProvider<dynamic>>[
+                ListenableProvider<FavoritesProvider>(
                     builder: (_) => FavoritesProvider(_favoritesSet, _helper)),
-                ChangeNotifierProvider<ThemeProvider>(
+                ListenableProvider<ThemeProvider>(
                     builder: (_) => ThemeProvider(snap.data[0])),
-                ChangeNotifierProvider<BlurProvider>(
+                ListenableProvider<BlurProvider>(
                     builder: (_) => BlurProvider(snap.data[3])),
-                ChangeNotifierProvider<TextSizeProvider>(
+                ListenableProvider<TextSizeProvider>(
                     builder: (_) => TextSizeProvider(snap.data[2])),
-                ChangeNotifierProvider<QueryInfoProvider>(
+                ListenableProvider<QueryInfoProvider>(
                   builder: (_) => QueryInfoProvider(),
                 )
               ],
@@ -135,25 +133,9 @@ class StateBuilder extends StatelessWidget {
                 },
               ),
             );
-          }
-          return MultiProvider(
-            providers: <Provider<dynamic>>[
-              Provider<FavoritesProvider>(
-                  builder: (_) => FavoritesProvider(<Favorite>{}, null)),
-              Provider<ThemeProvider>(builder: (_) => ThemeProvider(false)),
-              Provider<BlurProvider>(builder: (_) => BlurProvider(1)),
-              Provider<TextSizeProvider>(builder: (_) => TextSizeProvider(4.5)),
-              Provider<QueryInfoProvider>(
-                builder: (_) => QueryInfoProvider(),
-              )
-            ],
-            child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              darkTheme: themeDataDark,
-              theme: themeDataLight,
-              home: MainView(),
-            ),
-          );
+          } else {
+          return MaterialApp(theme: themeDataDark,home: Scaffold(body: LoadingCircle()));
+        }
         });
   }
 }

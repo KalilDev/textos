@@ -25,7 +25,7 @@ dependencies:
   shared_preferences: ^0.5.3+1
   firebase_messaging: ^5.0.2
   firebase_auth: ^0.11.1+6
-  provider: ^2.0.0+1
+  provider: ^3.0.0
   transformer_page_view:
       path: ../transformer_page_view
   kalil_widgets:

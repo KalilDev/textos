@@ -89,7 +89,7 @@ class _TextsViewState extends State<TextsView> {
                     });
                   }
 
-                  return ChangeNotifierProvider<TextPageProvider>(
+                  return ListenableProvider<TextPageProvider>(
                       builder: (_) => TextPageProvider(),
                       child: Consumer<TextPageProvider>(
                         builder: (BuildContext context,
