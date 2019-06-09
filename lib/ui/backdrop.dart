@@ -156,7 +156,31 @@ class _BackAppBar extends StatelessWidget {
           height: _kBackAppBarHeight,
           child: Row(
             children: <Widget>[
-              Container(width: 56.0,child: leading),
+          Container(
+          alignment: Alignment.center,
+            height: _kBackAppBarHeight,
+            width: _kBackAppBarHeight,
+            margin: const EdgeInsets.only(left: 10.0),
+            child: Stack(
+              children: <Widget>[
+                Center(
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color:
+                          Theme.of(context).primaryColor.withAlpha(90),
+                          shape: BoxShape.circle),
+                      height: 2 * _kBackAppBarHeight / 3,
+                      width: 2 * _kBackAppBarHeight / 3),
+                ),
+                Material(
+                  borderRadius: BorderRadius.circular(80.0),
+                  color: Colors.transparent,
+                  clipBehavior: Clip.antiAlias,
+                  child: leading,
+                ),
+              ],
+            ),
+          ),
               Container(
                   height: _kBackAppBarHeight,
                   child: title),

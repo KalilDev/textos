@@ -11,8 +11,9 @@ import 'package:textos/text_icons_icons.dart';
 import 'cardView.dart';
 import 'textCard.dart';
 class FavoritesView extends StatelessWidget {
-  const FavoritesView({@required this.spacerSize});
+  const FavoritesView({@required this.spacerSize, @required this.isList});
   final double spacerSize;
+  final bool isList;
 
   Widget buildFavoritesItem(BuildContext context, Favorite favorite) {
     return Dismissible(

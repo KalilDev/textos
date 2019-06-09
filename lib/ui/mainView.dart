@@ -15,10 +15,12 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> with TickerProviderStateMixin {
   TabController _tabController;
+  bool _isList;
 
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    _isList = true;
     super.initState();
   }
 
@@ -68,11 +70,12 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
           child: child,
         ));
 
-    const double spacerSize = 32;
+    const double spacerSize = 48;
 
     return Scaffold(
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) => Backdrop(
+          frontAction: IconButton(icon: const Icon(Icons.list), onPressed: () => setState(() => _isList = !_isList)),
             frontTitle: RepaintBoundary(
                 child: AnimatedBuilder(
                     animation: _tabController.animation,
@@ -81,18 +84,18 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                 child: TabBarView(
               controller: _tabController,
               children: <Widget>[
-                _renderChild(const FavoritesView(spacerSize: spacerSize), constraints: constraints),
+                _renderChild(FavoritesView(spacerSize: spacerSize, isList: _isList), constraints: constraints),
                 _renderChild(AuthorsView(
                   isVisible:
                   _tabController.animation.value.floor() == 1 ||
                       _tabController.animation.value.ceil() == 1,
                 ), constraints: constraints),
-                _renderChild(TextsView(), constraints: constraints)
+                _renderChild(TextsView(spacerSize: spacerSize, isList: _isList), constraints: constraints)
               ],
             )),
             backTitle: const Text(textConfigs),
             backLayer: SettingsView(),
-            frontHeading: Container(height: spacerSize)),
+            frontHeading: Container(height: spacerSize, child: Center(child: const Icon(Icons.keyboard_arrow_down)))),
       ),
       bottomNavigationBar: RepaintBoundary(
         child: AnimatedBuilder(

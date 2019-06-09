@@ -32,7 +32,8 @@ class AuthService with ChangeNotifier {
     if (firstName.isEmpty ||
         lastName.isEmpty ||
         email.isEmpty ||
-        password.isEmpty) throw Exception('Preencha todos os campos');
+        password.isEmpty)
+      throw Exception('Preencha todos os campos');
 
     final FirebaseUser u = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);

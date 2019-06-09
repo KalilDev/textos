@@ -46,6 +46,7 @@ class ContentCard extends StatelessWidget {
         );
       }
     }
+
     return Stack(
       children: <Widget>[
         Hero(
@@ -63,49 +64,50 @@ class ContentCard extends StatelessWidget {
                     img: content.imgUrl,
                     enabled: false,
                     key: Key('image' + content.textPath))),
-        Hero(
-          tag: 'body' + content.textPath,
-          child: position != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: Align(
-                      alignment: Alignment.center,
-                      child: Material(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20)),
-                          margin: const EdgeInsets.all(8.0),
-                          child: BlurOverlay.roundedRect(
-                              radius: 15,
-                              enabled:
-                                  Provider.of<BlurProvider>(context).textsBlur,
-                              child: ParallaxContainer(
-                                  translationFactor: 75,
-                                  position: position,
-                                  child: getText())),
-                        ),
-                        color: Colors.transparent,
-                      )),
-                )
-              : isSliver
-                  ? BlurOverlay.roundedRect(
+        position != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Material(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20)),
+                        margin: const EdgeInsets.all(8.0),
+                        child: Hero(
+                            tag: 'body' + content.textPath,
+                            child: BlurOverlay.roundedRect(
+                                radius: 15,
+                                enabled: Provider.of<BlurProvider>(context)
+                                    .textsBlur,
+                                child: ParallaxContainer(
+                                    translationFactor: 75,
+                                    position: position,
+                                    child: getText()))),
+                      ),
+                      color: Colors.transparent,
+                    )),
+              )
+            : isSliver
+                ? Hero(
+                    tag: 'body' + content.textPath,
+                    child: BlurOverlay.roundedRect(
                       radius: 20.0,
+                      color: Theme.of(context).backgroundColor.withAlpha(120),
                       enabled: Provider.of<BlurProvider>(context).textsBlur,
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                clipBehavior: Clip.antiAlias,
-            color: Colors.transparent,
-                          child: InkWell(
-                            child: Container(child: Center(child: getText())),
-                            onTap: callBack,
-                          ),
+                        clipBehavior: Clip.antiAlias,
+                        color: Colors.transparent,
+                        child: InkWell(
+                          child: Container(child: Center(child: getText())),
+                          onTap: callBack,
                         ),
-                    )
-                  : _TextWidget(
-                      textContent: content,
-                      textSize:
-                          Provider.of<TextSizeProvider>(context).textSize),
-        ),
+                      ),
+                    ))
+                : _TextWidget(
+                    textContent: content,
+                    textSize: Provider.of<TextSizeProvider>(context).textSize),
       ],
     );
   }
@@ -143,61 +145,71 @@ class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
         },
         child: SafeArea(
             child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-              child: BlurOverlay.roundedRect(
-                enabled: Provider.of<BlurProvider>(context).textsBlur,
-                radius: 20,
-                child: Column(
-                  children: widget.textContent.hasText
-                      ? <Widget>[
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20.0),
-                              child: SingleChildScrollView(
-                                child: Column(children: <Widget>[
-                                  Text(widget.textContent.title,
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .accentTextTheme
-                                          .display1),
-                                  const SizedBox(
-                                    height: 8,
+                padding: const EdgeInsets.all(4),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                child: Hero(
+                  tag: 'body' + widget.textContent.textPath,
+                  child: BlurOverlay.roundedRect(
+                    enabled: Provider.of<BlurProvider>(context).textsBlur,
+                    radius: 20,
+                    child: Column(
+                      children: widget.textContent.hasText
+                          ? <Widget>[
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  child: SingleChildScrollView(
+                                    child: Column(children: <Widget>[
+                                      Text(widget.textContent.title,
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .accentTextTheme
+                                              .display1),
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      Container(
+                                        width: double.infinity,
+                                        child: RichText(
+                                            textAlign: TextAlign.justify,
+                                            text: TextSpan(
+                                                children: formattedText(
+                                                    widget.textContent.text,
+                                                    style: textTheme.body1.copyWith(
+                                                        fontSize:
+                                                            _textSize.evaluate(
+                                                                    animation) *
+                                                                4.5)))),
+                                      ),
+                                      SizedBox(
+                                          height: 56,
+                                          child: Center(
+                                              child: Text(
+                                                  widget.textContent.date,
+                                                  style: textTheme.title))),
+                                      widget.textContent.hasMusic
+                                          ? const SizedBox(height: 56)
+                                          : const SizedBox(),
+                                    ]),
                                   ),
-                                  RichText(
-                                      textAlign: TextAlign.justify,
-                                      text: TextSpan(
-                                          children: formattedText(
-                                              widget.textContent.text,
-                                              style: textTheme.body1.copyWith(
-                                                  fontSize: _textSize
-                                                          .evaluate(animation) *
-                                                      4.5)))),
-                                  SizedBox(
-                                      height: 56,
-                                      child: Center(
-                                          child: Text(widget.textContent.date,
-                                              style: textTheme.title))),
-                                  widget.textContent.hasMusic
-                                      ? const SizedBox(height: 56)
-                                      : const SizedBox(),
-                                ]),
+                                ),
                               ),
-                            ),
-                          ),
-                        ]
-                      : <Widget>[
-                          Text(widget.textContent.title,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).accentTextTheme.display1),
-                          Spacer(),
-                          Center(
-                              child: Text(widget.textContent.date,
-                                  style: textTheme.title)),
-                          const SizedBox(height: 56),
-                        ],
-                ),
-              ),
-            )));
+                            ]
+                          : <Widget>[
+                              Text(widget.textContent.title,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .accentTextTheme
+                                      .display1),
+                              Spacer(),
+                              Center(
+                                  child: Text(widget.textContent.date,
+                                      style: textTheme.title)),
+                              const SizedBox(height: 56),
+                            ],
+                    ),
+                  ),
+                ))));
   }
 }

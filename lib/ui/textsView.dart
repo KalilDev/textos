@@ -14,6 +14,9 @@ import 'package:transformer_page_view/transformer_page_view.dart';
 import 'textCard.dart';
 
 class TextsView extends StatefulWidget {
+  const TextsView({@required this.spacerSize, @required this.isList});
+  final double spacerSize;
+  final bool isList;
   @override
   _TextsViewState createState() => _TextsViewState();
 }
@@ -89,33 +92,57 @@ class _TextsViewState extends State<TextsView> {
                     });
                   }
 
-                  return ListenableProvider<TextPageProvider>(
-                      builder: (_) => TextPageProvider(),
-                      child: Consumer<TextPageProvider>(
-                        builder: (BuildContext context,
-                                TextPageProvider provider, _) =>
-                            TransformerPageView(
-                              pageSnapping: false,
-                              controller: _indexController,
-                              viewportFraction: 0.80,
-                              curve: Curves.decelerate,
-                              transformer: PageTransformerBuilder(
-                                  builder: (Widget child, TransformInfo info) {
-                                final Map<String, dynamic> data =
-                                    _slideList[info.index];
-                                return _TextPage(
-                                    info: info,
-                                    textContent: Content.fromData(data),
-                                    indexController: _indexController);
-                              }),
-                              onPageChanged: (int page) {
-                                SystemSound.play(SystemSoundType.click);
-                                HapticFeedback.lightImpact();
-                                provider.currentPage = page;
-                              },
-                              itemCount: _slideList?.length ?? 1,
-                            ),
-                      ));
+                  Widget pageView() {
+                    return ListenableProvider<TextPageProvider>(
+                        builder: (_) => TextPageProvider(),
+                        child: Consumer<TextPageProvider>(
+                          builder: (BuildContext context,
+                                  TextPageProvider provider, _) =>
+                              TransformerPageView(
+                                pageSnapping: false,
+                                controller: _indexController,
+                                viewportFraction: 0.80,
+                                curve: Curves.decelerate,
+                                transformer: PageTransformerBuilder(builder:
+                                    (Widget child, TransformInfo info) {
+                                  final Map<String, dynamic> data =
+                                      _slideList[info.index];
+                                  return _TextPage(
+                                      info: info,
+                                      textContent: Content.fromData(data),
+                                      indexController: _indexController);
+                                }),
+                                onPageChanged: (int page) {
+                                  SystemSound.play(SystemSoundType.click);
+                                  HapticFeedback.lightImpact();
+                                  provider.currentPage = page;
+                                },
+                                itemCount: _slideList.length,
+                              ),
+                        ));
+                  }
+
+                  Widget listView() {
+                    return ListView.separated(
+                      separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 10.0,),
+                        itemBuilder: (BuildContext context, int index) =>
+                        index == 0
+                            ? SizedBox(height: widget.spacerSize)
+                            : Container(height: 100.0,child: ContentCard.sliver(
+                                content: Content.fromData(_slideList[index]),
+                                callBack: () {
+                                  HapticFeedback.heavyImpact();
+                                  Navigator.push(
+                                      context,
+                                      FadeRoute<void>(
+                                          builder: (BuildContext context) => CardView(
+                                            content: Content.fromData(_slideList[index]),
+                                          )));
+                                })),
+                        itemCount: _slideList.length);
+                  }
+
+                  return AnimatedSwitcher(duration: Duration(milliseconds: 200), child: widget.isList ? listView() : pageView(),);
                 },
               );
             }
@@ -149,7 +176,7 @@ class _TextPage extends StatelessWidget {
                 .abs() <
             2 !=
         true)
-      return const Placeholder();
+      return Container();
 
     final bool active = info.position.round() == 0.0 && info.position >= -0.30;
     // Animated Properties
@@ -172,7 +199,8 @@ class _TextPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Stack(
                   children: <Widget>[
-                    ContentCard.withParallax(position: info.position,content: textContent),
+                    ContentCard.withParallax(
+                        position: info.position, content: textContent),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),
                       child: AnimatedSwitcher(
@@ -190,11 +218,12 @@ class _TextPage extends StatelessWidget {
                               ? Align(
                                   alignment: FractionalOffset.bottomCenter,
                                   child: ExpandedFABCounter(
-                                      isEnabled:
-                                          Provider.of<FavoritesProvider>(context)
-                                              .isFavorite(textContent.favorite),
+                                      isEnabled: Provider.of<FavoritesProvider>(
+                                              context)
+                                          .isFavorite(textContent.favorite),
                                       onPressed: () =>
-                                          Provider.of<FavoritesProvider>(context)
+                                          Provider.of<FavoritesProvider>(
+                                                  context)
                                               .toggle(textContent.favorite),
                                       counter: textContent.favoriteCount,
                                       isBlurred:
