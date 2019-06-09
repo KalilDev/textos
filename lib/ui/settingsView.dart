@@ -170,15 +170,18 @@ class SettingsView extends StatelessWidget {
       decoration: BoxDecoration(
           color: Color.alphaBlend(Theme.of(context).primaryColor.withAlpha(80),
               Theme.of(context).backgroundColor)),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          buildCategory(themeWidgets(), isFirst: true),
-          buildCategory(textWidgets()),
-          buildCategory(favoriteWidgets()),
-          buildCategory(blurWidgets()),
-          buildCategory(miscWidgets()),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            buildCategory(themeWidgets(), isFirst: true),
+            buildCategory(textWidgets()),
+            buildCategory(favoriteWidgets()),
+            buildCategory(blurWidgets()),
+            buildCategory(miscWidgets()),
+            const SizedBox(height: 56.0),
+          ],
+        ),
       ),
     );
   }

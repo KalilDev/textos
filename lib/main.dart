@@ -60,6 +60,8 @@ class LoadingCircle extends StatelessWidget {
     return Center(
       child: Container(
         child: const CircularProgressIndicator(),
+        height: 56,
+        width: 56,
         alignment: const Alignment(0.0, 0.0),
       ),
     );

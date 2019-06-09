@@ -129,17 +129,17 @@ class _TextsViewState extends State<TextsView> {
                         index == 0
                             ? SizedBox(height: widget.spacerSize)
                             : Container(height: 100.0,child: ContentCard.sliver(
-                                content: Content.fromData(_slideList[index]),
+                                content: Content.fromData(_slideList[index - 1]),
                                 callBack: () {
                                   HapticFeedback.heavyImpact();
                                   Navigator.push(
                                       context,
                                       FadeRoute<void>(
                                           builder: (BuildContext context) => CardView(
-                                            content: Content.fromData(_slideList[index]),
+                                            content: Content.fromData(_slideList[index - 1]),
                                           )));
                                 })),
-                        itemCount: _slideList.length);
+                        itemCount: _slideList.length + 1);
                   }
 
                   return AnimatedSwitcher(duration: Duration(milliseconds: 200), child: widget.isList ? listView() : pageView(),);
