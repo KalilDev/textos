@@ -57,15 +57,15 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
 
     //SystemChrome.setEnabledSystemUIOverlays(
     //    <SystemUiOverlay>[SystemUiOverlay.bottom]);
-    Widget _renderChild(Widget child, {BoxConstraints constraints}) => RepaintBoundary(
-        child: OverflowBox(
-          minHeight: constraints.maxHeight -
-              42 -
-              MediaQuery.of(context).padding.top,
+    Widget _renderChild(Widget child, {BoxConstraints constraints}) =>
+        RepaintBoundary(
+            child: OverflowBox(
+          alignment: Alignment.topCenter,
+          minHeight:
+              constraints.maxHeight - 42 - MediaQuery.of(context).padding.top,
           minWidth: constraints.maxWidth,
-          maxHeight: constraints.maxHeight -
-              42 -
-              MediaQuery.of(context).padding.top,
+          maxHeight:
+              constraints.maxHeight - 42 - MediaQuery.of(context).padding.top,
           maxWidth: constraints.maxWidth,
           child: child,
         ));
@@ -75,7 +75,32 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
     return Scaffold(
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) => Backdrop(
-          frontAction: IconButton(icon: const Icon(Icons.list), onPressed: () => setState(() => _isList = !_isList)),
+            frontAction: AnimatedBuilder(animation: _tabController.animation, builder: (BuildContext context, _) {
+              return _tabController.animation.value.round() == 2
+                  ? Stack(
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color:
+                            Theme.of(context).primaryColor.withAlpha(90),
+                            shape: BoxShape.circle),
+                        height: 2 * 42 / 3,
+                        width: 2 * 42 / 3),
+                  ),
+                  Material(
+                    borderRadius: BorderRadius.circular(80.0),
+                    color: Colors.transparent,
+                    clipBehavior: Clip.antiAlias,
+                    child: IconButton(
+                        icon: const Icon(Icons.list),
+                        tooltip: 'Alterar entre lista e paginas',
+                        onPressed: () => setState(() => _isList = !_isList)),
+                  ),
+                ],
+              )
+                  : SizedBox();
+            }),
             frontTitle: RepaintBoundary(
                 child: AnimatedBuilder(
                     animation: _tabController.animation,
@@ -84,18 +109,24 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                 child: TabBarView(
               controller: _tabController,
               children: <Widget>[
-                _renderChild(FavoritesView(spacerSize: spacerSize, isList: _isList), constraints: constraints),
-                _renderChild(AuthorsView(
-                  isVisible:
-                  _tabController.animation.value.floor() == 1 ||
-                      _tabController.animation.value.ceil() == 1,
-                ), constraints: constraints),
-                _renderChild(TextsView(spacerSize: spacerSize, isList: _isList), constraints: constraints)
+                _renderChild(
+                    FavoritesView(spacerSize: spacerSize, isList: _isList),
+                    constraints: constraints),
+                _renderChild(
+                    AuthorsView(
+                      isVisible: _tabController.animation.value.floor() == 1 ||
+                          _tabController.animation.value.ceil() == 1,
+                    ),
+                    constraints: constraints),
+                _renderChild(TextsView(spacerSize: spacerSize, isList: _isList),
+                    constraints: constraints)
               ],
             )),
             backTitle: const Text(textConfigs),
             backLayer: SettingsView(),
-            frontHeading: Container(height: spacerSize, child: Center(child: const Icon(Icons.keyboard_arrow_down)))),
+            frontHeading: Container(
+                height: spacerSize,
+                child: Center(child: const Icon(Icons.keyboard_arrow_down)))),
       ),
       bottomNavigationBar: RepaintBoundary(
         child: AnimatedBuilder(

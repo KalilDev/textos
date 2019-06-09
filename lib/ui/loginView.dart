@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
@@ -41,11 +42,18 @@ class _LoginViewState extends State<LoginView> {
         Theme.of(context).primaryColor.withAlpha(80),
         Theme.of(context).backgroundColor);
 
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: Theme.of(context).primaryColor,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.white.withAlpha(100),
+        statusBarIconBrightness: Brightness.dark));
+
     return Scaffold(
         appBar: AppBar(
           title: Text(
             'Textos do Kalil',
-            style: Theme.of(context).textTheme.title.copyWith(
+            style: Theme.of(context).accentTextTheme.title.copyWith(
+              fontWeight: FontWeight.bold,
                 color: getTextColor(0.87,
                     bg: Theme.of(context).backgroundColor,
                     main: Theme.of(context).colorScheme.onSurface)),

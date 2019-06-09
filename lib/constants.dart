@@ -123,9 +123,9 @@ final ThemeData themeDataDark = ThemeData(
             main: colorSchemeDark.onBackground)));
 
 // BaseTextStyles
-final TextStyle _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
 final TextStyle _baseTextStyleMerriweather =
-    TextStyle(fontFamily: 'Merriweather');
+TextStyle(fontFamily: 'Merriweather');
+final TextStyle _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
 
 // TextTheme
 final TextTheme textThemeMuli = TextTheme(

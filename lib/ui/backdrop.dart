@@ -151,7 +151,7 @@ class _BackAppBar extends StatelessWidget {
     return IconTheme.merge(
       data: theme.primaryIconTheme.copyWith(color: color),
       child: DefaultTextStyle(
-        style: theme.primaryTextTheme.title.copyWith(color: color),
+        style: theme.accentTextTheme.title.copyWith(color: color, fontWeight: FontWeight.bold),
         child: SizedBox(
           height: _kBackAppBarHeight,
           child: Row(
@@ -161,25 +161,7 @@ class _BackAppBar extends StatelessWidget {
             height: _kBackAppBarHeight,
             width: _kBackAppBarHeight,
             margin: const EdgeInsets.only(left: 10.0),
-            child: Stack(
-              children: <Widget>[
-                Center(
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color:
-                          Theme.of(context).primaryColor.withAlpha(90),
-                          shape: BoxShape.circle),
-                      height: 2 * _kBackAppBarHeight / 3,
-                      width: 2 * _kBackAppBarHeight / 3),
-                ),
-                Material(
-                  borderRadius: BorderRadius.circular(80.0),
-                  color: Colors.transparent,
-                  clipBehavior: Clip.antiAlias,
-                  child: leading,
-                ),
-              ],
-            ),
+            child: leading
           ),
               Container(
                   height: _kBackAppBarHeight,
