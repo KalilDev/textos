@@ -56,6 +56,13 @@ final ThemeData themeDataLight = ThemeData(
         displayColor: getTextColor(0.87,
             bg: colorSchemeLight.background,
             main: colorSchemeLight.onBackground)),
+    primaryTextTheme: textThemeMuli.apply(
+        bodyColor: getTextColor(0.87,
+            bg: colorSchemeLight.background,
+            main: colorSchemeLight.onBackground),
+        displayColor: getTextColor(0.87,
+            bg: colorSchemeLight.background,
+            main: colorSchemeLight.onBackground)),
     accentTextTheme: textThemeMerriweather.apply(
         bodyColor: getTextColor(0.87,
             bg: colorSchemeLight.background,
@@ -93,10 +100,16 @@ final ThemeData themeDataDark = ThemeData(
     accentColorBrightness: Brightness.light,
     canvasColor: colorSchemeDark.background,
     dividerColor: colorSchemeDark.onBackground.withAlpha(70),
-    primaryColor: colorSchemeLight.primary,
+    primaryColor: colorSchemeDark.primary,
     primaryColorBrightness: Brightness.light,
     backgroundColor: colorSchemeDark.background,
     textTheme: textThemeMuli.apply(
+        bodyColor: getTextColor(0.87,
+            bg: colorSchemeDark.background, main: colorSchemeDark.onBackground),
+        displayColor: getTextColor(0.87,
+            bg: colorSchemeDark.background,
+            main: colorSchemeDark.onBackground)),
+    primaryTextTheme: textThemeMuli.apply(
         bodyColor: getTextColor(0.87,
             bg: colorSchemeDark.background, main: colorSchemeDark.onBackground),
         displayColor: getTextColor(0.87,

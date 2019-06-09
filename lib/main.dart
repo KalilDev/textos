@@ -1,12 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/providers.dart';
+import 'package:textos/ui/loginView.dart';
 import 'package:textos/ui/mainView.dart';
 
 import 'src/model/favorite.dart';
@@ -16,161 +15,145 @@ import 'src/model/favorite.dart';
 // TODO(KalilDev): Implement Firebase analytics
 // TODO(KalilDev): Let authors upload texts from the app
 // TODO(KalilDev): Make tapping the notification open the respective text
-Future<void> main() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  final bool _enableDarkMode = prefs?.getBool('isDark') ?? false;
-  final List<String> _favoritesList =
-      prefs?.getStringList('favorites') ?? <String>[];
-  final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
-  final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
-  String _uid;
+void main() => runApp(
+      ChangeNotifierProvider<AuthService>(
+        child: MyApp(),
+        builder: (BuildContext context) {
+          return AuthService();
+        },
+      ),
+    );
 
-  // Clear favorites if the data doesn't contain the documentID needed for
-  // setting the statistics on the database
-  if (!_favoritesList.any((String s) => s.contains(';'))) {
-    _favoritesList.clear();
-    prefs.setStringList('favorites', _favoritesList);
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<FirebaseUser>(
+      future: Provider.of<AuthService>(context).getUser(),
+      builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          // log error to console
+          if (snapshot.error != null) {
+            return Text(snapshot.error.toString());
+          }
+
+          // redirect to the proper page
+          return snapshot.hasData
+              ? StateBuilder(snapshot.data)
+              : MaterialApp(
+                  theme: themeDataLight,
+                  darkTheme: themeDataDark,
+                  home: LoginView());
+        } else {
+          // show loading indicator
+          return MaterialApp(
+              theme: themeDataLight,
+              darkTheme: themeDataDark,
+              home: Scaffold(body: LoadingCircle()));
+        }
+      },
+    );
   }
-
-  // Get the stored UDID, in order to preserve the favorites if the user either
-  // upgraded the system or reinstalled the app
-  _uid = prefs?.getString('uid');
-
-  // Check if we already stored an uuid
-  if (_uid == null) {
-    /// Firebase Login.
-    final FirebaseAuth _fireBaseAuth =
-        FirebaseAuth.fromApp(Firestore.instance.app);
-    FirebaseUser user;
-    try {
-      user = await _fireBaseAuth.signInAnonymously();
-    } catch (e) {
-      user = null;
-    }
-
-    if (user != null) {
-      _uid = user.uid;
-      prefs.setString('uid', _uid);
-    }
-  }
-  debugProfileBuildsEnabled = true;
-  final Set<Favorite> favorites = <Favorite>{};
-  for (String f in _favoritesList) {
-    favorites.add(Favorite(f));
-  }
-  runApp(StateBuilder(
-      enableDarkMode: _enableDarkMode,
-      favoritesSet: favorites,
-      textSize: _textSize,
-      blurSettings: _blurSettings,
-      uid: _uid));
 }
 
-class StateBuilder extends StatefulWidget {
-  const StateBuilder(
-      {@required this.enableDarkMode,
-      @required this.favoritesSet,
-      @required this.textSize,
-      @required this.blurSettings,
-      @required this.uid});
-
-  final bool enableDarkMode;
-  final Set<Favorite> favoritesSet;
-  final double textSize;
-  final int blurSettings;
-  final String uid;
-
+class LoadingCircle extends StatelessWidget {
   @override
-  State<StateBuilder> createState() => StateBuilderState();
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        child: const CircularProgressIndicator(),
+        alignment: const Alignment(0.0, 0.0),
+      ),
+    );
+  }
 }
 
-class StateBuilderState extends State<StateBuilder> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+class StateBuilder extends StatelessWidget {
+  const StateBuilder(this.firebaseUser);
+  final FirebaseUser firebaseUser;
 
-  // Check if we are running debug mode
-  bool get isInDebugMode {
-    bool inDebugMode = false;
-    assert(inDebugMode = true);
-    return inDebugMode;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _firebaseMessaging.configure(onResume: (Map<String, dynamic> map) {
-      final Map<String, String> data = map['data'];
-      print('onResume: ' + data.toString());
-      final String collection = data['collection'];
-      final String id = data['id'];
-      print(collection + '/' + id);
-      //final snapshot = await Firestore.instance.collection(collection).document(id).get();
-      //print(snapshot.data);
-      //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
-    }, onMessage: (Map<String, dynamic> map) {
-      final Map<String, String> data = map['data'];
-      print('onMessage: ' + data.toString());
-      final String collection = data['collection'];
-      final String id = data['id'];
-      print(collection + '/' + id);
-      //final snapshot = await Firestore.instance.collection(collection).document(id).get();
-      //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
-    }, onLaunch: (Map<String, dynamic> map) {
-      final Map<String, String> data = map['data'];
-      print('onLaunch: ' + data.toString());
-      final String collection = data['collection'];
-      final String id = data['id'];
-      print(collection + '/' + id);
-      //final snapshot = await Firestore.instance.collection(collection).document(id).get();
-      //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextCardView(data: snapshot.data, store: store)));
-    });
-    if (isInDebugMode) {
-      _firebaseMessaging.subscribeToTopic('debug');
-      _firebaseMessaging.getToken().then((String token) => print(token));
-      print('udid: ' + widget.uid.toString());
-      print('favorites: ' + widget.favoritesSet.toString());
-    }
-    FavoritesHelper(userId: widget.uid).syncDatabase(widget.favoritesSet);
+  Future<List<dynamic>> getInfo() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool _enableDarkMode = prefs?.getBool('isDark') ?? false;
+    final List<String> _favoritesSettings =
+        prefs?.getStringList('favorites') ?? <String>[];
+    final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
+    final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
+    final List<dynamic> result = <dynamic>[
+      _enableDarkMode,
+      _favoritesSettings,
+      _textSize,
+      _blurSettings
+    ];
+    return result;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: <ChangeNotifierProvider<dynamic>>[
-        ChangeNotifierProvider<FavoritesProvider>(
-            builder: (_) => FavoritesProvider(
-                widget.favoritesSet, FavoritesHelper(userId: widget.uid))),
-        ChangeNotifierProvider<ThemeProvider>(
-            builder: (_) => ThemeProvider(widget.enableDarkMode)),
-        ChangeNotifierProvider<BlurProvider>(
-            builder: (_) => BlurProvider(widget.blurSettings)),
-        ChangeNotifierProvider<TextSizeProvider>(
-            builder: (_) => TextSizeProvider(widget.textSize)),
-        ChangeNotifierProvider<QueryInfoProvider>(
-          builder: (_) => QueryInfoProvider(),
-        )
-      ],
-      child: Consumer<ThemeProvider>(
-        builder: (BuildContext context, ThemeProvider provider, _) {
-          ThemeData overrideTheme;
-          final ThemeData dark =
-              themeDataDark.copyWith(primaryColor: provider.darkPrimaryColor);
-          final ThemeData light =
-              themeDataLight.copyWith(primaryColor: provider.lightPrimaryColor);
+    return FutureBuilder<List<dynamic>>(
+        future: getInfo(),
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snap) {
+          if (snap.hasData) {
+            final Set<Favorite> _favoritesSet = <Favorite>{};
+            for (String f in snap.data[1]) {
+              _favoritesSet.add(Favorite(f));
+            }
+            final FavoritesHelper _helper =
+                FavoritesHelper(userId: firebaseUser.uid);
+            _helper.syncDatabase(_favoritesSet);
+            return MultiProvider(
+              providers: <ChangeNotifierProvider<dynamic>>[
+                ChangeNotifierProvider<FavoritesProvider>(
+                    builder: (_) => FavoritesProvider(_favoritesSet, _helper)),
+                ChangeNotifierProvider<ThemeProvider>(
+                    builder: (_) => ThemeProvider(snap.data[0])),
+                ChangeNotifierProvider<BlurProvider>(
+                    builder: (_) => BlurProvider(snap.data[3])),
+                ChangeNotifierProvider<TextSizeProvider>(
+                    builder: (_) => TextSizeProvider(snap.data[2])),
+                ChangeNotifierProvider<QueryInfoProvider>(
+                  builder: (_) => QueryInfoProvider(),
+                )
+              ],
+              child: Builder(
+                builder: (BuildContext context) {
+                  ThemeData overrideTheme;
+                  final ThemeData dark = themeDataDark;
+                  final ThemeData light = themeDataLight;
 
-          if (provider.isDarkMode) {
-            overrideTheme = dark;
-          } else {
-            overrideTheme = light;
+                  if (Provider.of<ThemeProvider>(context).isDarkMode) {
+                    overrideTheme = dark;
+                  } else {
+                    overrideTheme = light;
+                  }
+                  return MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    darkTheme: dark,
+                    theme: overrideTheme,
+                    home: MainView(),
+                  );
+                },
+              ),
+            );
           }
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            darkTheme: dark,
-            theme: overrideTheme,
-            home: MainView(),
+          return MultiProvider(
+            providers: <Provider<dynamic>>[
+              Provider<FavoritesProvider>(
+                  builder: (_) => FavoritesProvider(<Favorite>{}, null)),
+              Provider<ThemeProvider>(builder: (_) => ThemeProvider(false)),
+              Provider<BlurProvider>(builder: (_) => BlurProvider(1)),
+              Provider<TextSizeProvider>(builder: (_) => TextSizeProvider(4.5)),
+              Provider<QueryInfoProvider>(
+                builder: (_) => QueryInfoProvider(),
+              )
+            ],
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              darkTheme: themeDataDark,
+              theme: themeDataLight,
+              home: MainView(),
+            ),
           );
-        },
-      ),
-    );
+        });
   }
 }
