@@ -42,6 +42,11 @@ class FavoritesProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void logout() {
+    _favoritesSet.clear();
+    settingsSync();
+  }
+
   Future<Content> getContent(Favorite favorite) async {
     final DocumentSnapshot documentSnapshot =
         await Firestore.instance.document(favorite.textPath).get();

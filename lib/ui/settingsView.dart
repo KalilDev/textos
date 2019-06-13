@@ -159,7 +159,10 @@ class SettingsView extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.exit_to_app),
           title: Text(textLogout, style: styleSettings),
-          onTap: () => Provider.of<AuthService>(context).logout(),
+          onTap: () {
+            Provider.of<FavoritesProvider>(context).logout();
+            Provider.of<AuthService>(context).logout();
+          },
         ),
       ];
     }
