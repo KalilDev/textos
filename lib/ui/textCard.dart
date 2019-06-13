@@ -107,7 +107,7 @@ class ContentCard extends StatelessWidget {
                     ))
                 : _TextWidget(
                     textContent: content,
-                    textSize: Provider.of<TextSizeProvider>(context).textSize),
+                    textSize: Provider.of<TextStyleProvider>(context).textSize),
       ],
     );
   }
@@ -172,7 +172,7 @@ class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
                                       Container(
                                         width: double.infinity,
                                         child: RichText(
-                                            textAlign: TextAlign.justify,
+                                            textAlign: Provider.of<TextStyleProvider>(context).textAlign,
                                             text: TextSpan(
                                                 children: formattedText(
                                                     widget.textContent.text,

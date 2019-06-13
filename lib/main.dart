@@ -79,11 +79,13 @@ class StateBuilder extends StatelessWidget {
         prefs?.getStringList('favorites') ?? <String>[];
     final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
     final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
+    final int _textAlign = prefs?.getInt('textAlign') ?? 0;
     final List<dynamic> result = <dynamic>[
       _enableDarkMode,
       _favoritesSettings,
+      _blurSettings,
       _textSize,
-      _blurSettings
+      _textAlign
     ];
     return result;
   }
@@ -108,9 +110,9 @@ class StateBuilder extends StatelessWidget {
                 ListenableProvider<ThemeProvider>(
                     builder: (_) => ThemeProvider(snap.data[0])),
                 ListenableProvider<BlurProvider>(
-                    builder: (_) => BlurProvider(snap.data[3])),
-                ListenableProvider<TextSizeProvider>(
-                    builder: (_) => TextSizeProvider(snap.data[2])),
+                    builder: (_) => BlurProvider(snap.data[2])),
+                ListenableProvider<TextStyleProvider>(
+                    builder: (_) => TextStyleProvider(snap.data[3], snap.data[4])),
                 ListenableProvider<QueryInfoProvider>(
                   builder: (_) => QueryInfoProvider(),
                 )

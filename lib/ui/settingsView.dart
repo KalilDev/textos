@@ -13,7 +13,7 @@ class SettingsView extends StatelessWidget {
     Provider.of<FavoritesProvider>(context).clear();
     Provider.of<BlurProvider>(context).clearSettings();
     Provider.of<ThemeProvider>(context).reset();
-    Provider.of<TextSizeProvider>(context).reset();
+    Provider.of<TextStyleProvider>(context).reset();
   }
 
   @override
@@ -37,7 +37,7 @@ class SettingsView extends StatelessWidget {
       return <Widget>[
         Text(textTema, style: styleDescription),
         SwitchListTile(
-            title: Text(textTextTheme, style: styleSettings),
+            title: Text(textDarkTheme, style: styleSettings),
             secondary: const Icon(TextIcons.theme_light_dark),
             value: Provider.of<ThemeProvider>(context).isDarkMode
                 ? true
@@ -69,17 +69,31 @@ class SettingsView extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   DecreaseButton(
-                    value: Provider.of<TextSizeProvider>(context).textSize,
+                    value: Provider.of<TextStyleProvider>(context).textSize,
                     onDecrease: () =>
-                        Provider.of<TextSizeProvider>(context).decrease(),
+                        Provider.of<TextStyleProvider>(context).decrease(),
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
                   IncreaseButton(
-                    value: Provider.of<TextSizeProvider>(context).textSize,
+                    value: Provider.of<TextStyleProvider>(context).textSize,
                     onIncrease: () =>
-                        Provider.of<TextSizeProvider>(context).increase(),
+                        Provider.of<TextStyleProvider>(context).increase(),
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
+                ],
+              ),
+            )),
+        ListTile(
+            leading: const Icon(Icons.short_text),
+            title: Text(textTextAlignment, style: styleSettings),
+            trailing: Container(
+              width: 192,
+              child: Row(
+                children: <Widget>[
+                  IconButton(tooltip: textTooltipAlignLeft, icon: const Icon(TextIcons.format_align_left), onPressed: () => Provider.of<TextStyleProvider>(context).textAlign = TextAlign.left),
+                  IconButton(tooltip: textTooltipAlignCenter, icon: const Icon(TextIcons.format_align_center), onPressed: () => Provider.of<TextStyleProvider>(context).textAlign = TextAlign.center),
+                  IconButton(tooltip: textTooltipAlignRight, icon: const Icon(TextIcons.format_align_right), onPressed: () => Provider.of<TextStyleProvider>(context).textAlign = TextAlign.right),
+                  IconButton(tooltip: textTooltipAlignJustify, icon: const Icon(TextIcons.format_align_justify), onPressed: () => Provider.of<TextStyleProvider>(context).textAlign = TextAlign.justify),
                 ],
               ),
             )),
@@ -101,7 +115,7 @@ class SettingsView extends StatelessWidget {
       return <Widget>[
         Text(textBlur, style: styleDescription),
         SwitchListTile(
-            title: Text(textTextBlurButtons, style: styleSettings),
+            title: Text(textBlurButtons, style: styleSettings),
             secondary: const Icon(Icons.blur_circular),
             value: Provider.of<BlurProvider>(context).buttonsBlur,
             activeColor: Theme.of(context).primaryColor,
@@ -109,7 +123,7 @@ class SettingsView extends StatelessWidget {
             onChanged: (bool map) =>
                 Provider.of<BlurProvider>(context).toggleButtonsBlur()),
         SwitchListTile(
-            title: Text(textTextBlurText, style: styleSettings),
+            title: Text(textBlurText, style: styleSettings),
             secondary: const Icon(Icons.blur_on),
             value: Provider.of<BlurProvider>(context).textsBlur,
             activeColor: Theme.of(context).primaryColor,
@@ -139,12 +153,12 @@ class SettingsView extends StatelessWidget {
         ),
         ListTile(
           leading: const Icon(TextIcons.vanish),
-          title: Text(textTextTrash, style: styleSettings),
+          title: Text(textRestore, style: styleSettings),
           onTap: () => cleanAll(context),
         ),
         ListTile(
           leading: const Icon(Icons.exit_to_app),
-          title: Text('Logout', style: styleSettings),
+          title: Text(textLogout, style: styleSettings),
           onTap: () => Provider.of<AuthService>(context).logout(),
         ),
       ];

@@ -20,7 +20,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
-    _isList = true;
+    _isList = false;
     super.initState();
   }
 
@@ -75,32 +75,36 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
     return Scaffold(
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) => Backdrop(
-            frontAction: AnimatedBuilder(animation: _tabController.animation, builder: (BuildContext context, _) {
-              return _tabController.animation.value.round() == 2
-                  ? Stack(
-                children: <Widget>[
-                  Center(
-                    child: Container(
-                        decoration: BoxDecoration(
-                            color:
-                            Theme.of(context).primaryColor.withAlpha(90),
-                            shape: BoxShape.circle),
-                        height: 2 * 42 / 3,
-                        width: 2 * 42 / 3),
-                  ),
-                  Material(
-                    borderRadius: BorderRadius.circular(80.0),
-                    color: Colors.transparent,
-                    clipBehavior: Clip.antiAlias,
-                    child: IconButton(
-                        icon: const Icon(Icons.list),
-                        tooltip: 'Alterar entre lista e paginas',
-                        onPressed: () => setState(() => _isList = !_isList)),
-                  ),
-                ],
-              )
-                  : SizedBox();
-            }),
+            frontAction: AnimatedBuilder(
+                animation: _tabController.animation,
+                builder: (BuildContext context, _) {
+                  return _tabController.animation.value.round() == 2
+                      ? Stack(
+                          children: <Widget>[
+                            Center(
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .primaryColor
+                                          .withAlpha(90),
+                                      shape: BoxShape.circle),
+                                  height: 2 * 42 / 3,
+                                  width: 2 * 42 / 3),
+                            ),
+                            Material(
+                              borderRadius: BorderRadius.circular(80.0),
+                              color: Colors.transparent,
+                              clipBehavior: Clip.antiAlias,
+                              child: IconButton(
+                                  icon: const Icon(Icons.list),
+                                  tooltip: textTooltipTabPageToggle,
+                                  onPressed: () =>
+                                      setState(() => _isList = !_isList)),
+                            ),
+                          ],
+                        )
+                      : SizedBox();
+                }),
             frontTitle: RepaintBoundary(
                 child: AnimatedBuilder(
                     animation: _tabController.animation,
@@ -122,11 +126,22 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                     constraints: constraints)
               ],
             )),
-            backTitle: const Text(textConfigs),
+            backTitle: const Text(textSettings),
             backLayer: SettingsView(),
             frontHeading: Container(
                 height: spacerSize,
-                child: Center(child: const Icon(Icons.keyboard_arrow_down)))),
+                child: Stack(
+                  children: <Widget>[
+                    Center(
+                        child: Container(
+                            decoration: ShapeDecoration(
+                                shape: CircleBorder(),
+                                color: Color.alphaBlend(Theme.of(context).primaryColor.withAlpha(90), Theme.of(context).backgroundColor)),
+                            height: 2 * 42 / 3,
+                            width: 2 * 42 / 3)),
+                    Center(child: const Icon(Icons.keyboard_arrow_down)),
+                  ],
+                ))),
       ),
       bottomNavigationBar: RepaintBoundary(
         child: AnimatedBuilder(

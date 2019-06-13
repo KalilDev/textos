@@ -142,7 +142,7 @@ class _TextsViewState extends State<TextsView> {
                         itemCount: _slideList.length + 1);
                   }
 
-                  return AnimatedSwitcher(duration: Duration(milliseconds: 200), child: widget.isList ? listView() : pageView(),);
+                  return AnimatedSwitcher(duration: durationAnimationShort, child: widget.isList ? listView() : pageView(),);
                 },
               );
             }

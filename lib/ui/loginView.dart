@@ -21,7 +21,7 @@ class _LoginViewState extends State<LoginView> {
 
   Widget buildButton(bool enabled, {VoidCallback onPressed, Widget child}) {
     return AnimatedSwitcher(
-      duration: Duration(milliseconds: 200),
+      duration: durationAnimationShort,
       child: enabled
           ? RaisedButton(
               child: Container(
@@ -51,7 +51,7 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Textos do Kalil',
+            textAppName,
             style: Theme.of(context).accentTextTheme.title.copyWith(
               fontWeight: FontWeight.bold,
                 color: getTextColor(0.87,
@@ -67,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
                 child: Column(children: <Widget>[
                   const SizedBox(height: 20.0),
                   Text(
-                    'Login',
+                    textLogin,
                     style: TextStyle(fontSize: 20),
                   ),
                   const SizedBox(height: 20.0),
@@ -75,14 +75,14 @@ class _LoginViewState extends State<LoginView> {
                       onSaved: (String value) => _email = value,
                       keyboardType: TextInputType.emailAddress,
                       decoration:
-                          InputDecoration(labelText: 'Endereço de Email')),
+                          InputDecoration(labelText: textEmail)),
                   TextFormField(
                       onSaved: (String value) => _password = value,
                       obscureText: true,
-                      decoration: InputDecoration(labelText: 'Senha')),
+                      decoration: InputDecoration(labelText: textPassword)),
                   if (_isCreatingUser)
                     AnimatedSwitcher(
-                      duration: Duration(milliseconds: 200),
+                      duration: durationAnimationShort,
                       child: Form(
                           key: _userCreateKey,
                           child: Column(
@@ -91,18 +91,18 @@ class _LoginViewState extends State<LoginView> {
                               TextFormField(
                                   onSaved: (String value) => _firstName = value,
                                   decoration:
-                                      InputDecoration(labelText: 'Nome')),
+                                      InputDecoration(labelText: textName)),
                               TextFormField(
                                   onSaved: (String value) => _lastName = value,
                                   decoration:
-                                      InputDecoration(labelText: 'Sobrenome')),
+                                      InputDecoration(labelText: textSurname)),
                             ],
                           )),
                     ),
                   const SizedBox(height: 20.0),
                   buildButton(
                     !_isCreatingUser,
-                    child: const Text('Login'),
+                    child: const Text(textLogin),
                     onPressed: () async {
                       // save the fields..
                       final FormState form = _formKey.currentState;
@@ -123,7 +123,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                   buildButton(
                     _isCreatingUser,
-                    child: const Text('Criar Usuario'),
+                    child: const Text(textNewUser),
                     onPressed: () async {
                       // save the fields..
                       final FormState form = _formKey.currentState;
@@ -153,9 +153,8 @@ class _LoginViewState extends State<LoginView> {
                       child: Container(
                           width: double.infinity,
                           child:
-                              Center(child: const Text('Entrar anonimamente'))),
-                      onPressed: () => _buildConfirmationDialog(context,
-                                  'Você realmente quer entrar anonimamente? Se faze-lo, não poderá postar nada, incluindo comentarios')
+                              Center(child: const Text(textLoginAnonymously))),
+                      onPressed: () => _buildConfirmationDialog(context, textAnonyConsequences)
                               .then<bool>((bool b) async {
                             if (b)
                               try {
@@ -176,7 +175,7 @@ class _LoginViewState extends State<LoginView> {
                             children: <Widget>[
                               Center(
                                   child:
-                                      const Text('Fazer login com o Google')),
+                                      const Text(textLoginWithGoogle)),
                             ],
                           )),
                       onPressed: () async {
@@ -195,11 +194,11 @@ class _LoginViewState extends State<LoginView> {
     return showDialog<bool>(
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Erro'),
+          title: const Text(textError),
           content: Text(_message.replaceAll('Exception: ', '')),
           actions: <Widget>[
             FlatButton(
-                child: const Text('Ok'),
+                child: const Text(textOk),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 })
@@ -214,16 +213,16 @@ class _LoginViewState extends State<LoginView> {
     return showDialog<bool>(
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirmar'),
+          title: const Text(textConfirm),
           content: Text(_message),
           actions: <Widget>[
             FlatButton(
-                child: const Text('Sim'),
+                child: const Text(textYes),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 }),
             FlatButton(
-                child: const Text('Não'),
+                child: const Text(textNo),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 })

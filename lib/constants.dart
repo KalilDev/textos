@@ -1,187 +1,215 @@
 import 'package:flutter/material.dart';
 
-// Text
+/// Main Views
 const String textFilter = 'FILTRO';
 const String textAllTag = 'Todos';
-const String textTema = 'Tema';
-const String textConfigs = 'Configurações';
+const String textNoFavs = 'Não há nenhum texto nos favoritos';
+const String textNoTexts = 'Não há nenhum texto nesta categoria';
+
+/// Login Screen
+const String textAppName = 'Textos do Kalil';
+const String textLogin = 'Login';
+const String textEmail = 'Endereço de Email';
+const String textPassword = 'Senha';
+const String textName = 'Nome';
+const String textSurname = 'Sobrenome';
+const String textNewUser = 'Criar Usuario';
+const String textLoginAnonymously = 'Entrar anonimamente';
+const String textAnonyConsequences = 'Você realmente quer entrar anonimamente? Se faze-lo, não poderá postar nada, incluindo comentarios';
+const String textLoginWithGoogle = 'Fazer login com o Google';
+const String textError = 'Erro';
+const String textOk = 'Ooops';
+const String textConfirm = 'Confirmar';
+const String textYes = 'Sim';
+const String textNo = 'Não';
+
+/// Tabs
+const String textAuthors = 'Autores';
+const String textTexts = 'Textos';
 const String textFavs = 'Favoritos';
+const String textSettings = 'Configurações';
+
+/// Settings
 const String textTextSize = 'Tamanho do texto';
-const String textTextTheme = 'Tema Escuro';
-const String textTextTrash = 'Restaurar o Padrão';
-const String textTextBlurButtons = 'Borrar os botões';
-const String textTextBlurText = 'Borrar fundo dos textos';
+const String textDarkTheme = 'Tema Escuro';
+const String textRestore = 'Restaurar o Padrão';
+const String textBlurButtons = 'Borrar os botões';
+const String textBlurText = 'Borrar fundo dos textos';
 const String textText = 'Texto';
 const String textCleanFavs = 'Limpar Favoritos';
 const String textBlur = 'Borrado';
 const String textMisc = 'Miscelânea';
-const String textAuthors = 'Autores';
-const String textTexts = 'Textos';
-const String textNoFavs = 'Não há nenhum texto nos favoritos';
-const String textNoTexts = 'Não há nenhum texto nesta categoria';
+const String textTema = 'Tema';
+const String textTextAlignment = 'Alinhamento do texto';
+const String textLogout = 'Sair';
+
+/// Tooltips
+const String textTooltipTabPageToggle = 'Alterar entre lista e paginas';
+const String textTooltipBackdropToggle = 'Abrir/fechar as configurações';
+const String textTooltipAlignLeft = 'Alinhar à Esquerda';
+const String textTooltipAlignCenter = 'Centralizar';
+const String textTooltipAlignRight = 'Alinhar à Direita';
+const String textTooltipAlignJustify = 'Justificar';
 
 // Theme Light
-const Color themeBackgroundLight = Colors.white;
-const Color themeForegroundLight = Colors.black;
-const ColorScheme colorSchemeLight = ColorScheme(
+const Color _themeBackgroundLight = Colors.white;
+const Color _themeForegroundLight = Colors.black;
+const ColorScheme _colorSchemeLight = ColorScheme(
     primary: Color(0xFF3F51B5),
     primaryVariant: Color(0xFF002984),
     secondary: Color(0xff3f8cb5),
     secondaryVariant: Color(0xFF005f85),
-    surface: themeBackgroundLight,
-    background: themeBackgroundLight,
+    surface: _themeBackgroundLight,
+    background: _themeBackgroundLight,
     error: Color(0xFFB00020),
-    onPrimary: themeBackgroundLight,
-    onSecondary: themeForegroundLight,
-    onSurface: themeForegroundLight,
-    onBackground: themeForegroundLight,
-    onError: themeBackgroundLight,
+    onPrimary: _themeBackgroundLight,
+    onSecondary: _themeForegroundLight,
+    onSurface: _themeForegroundLight,
+    onBackground: _themeForegroundLight,
+    onError: _themeBackgroundLight,
     brightness: Brightness.light);
 
 final ThemeData themeDataLight = ThemeData(
-    colorScheme: colorSchemeLight,
+    colorScheme: _colorSchemeLight,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: colorSchemeLight.background,
+    scaffoldBackgroundColor: _colorSchemeLight.background,
     accentColorBrightness: Brightness.dark,
-    accentColor: colorSchemeLight.secondary,
-    canvasColor: colorSchemeLight.background,
-    dividerColor: colorSchemeLight.onBackground.withAlpha(70),
+    accentColor: _colorSchemeLight.secondary,
+    canvasColor: _colorSchemeLight.background,
+    dividerColor: _colorSchemeLight.onBackground.withAlpha(70),
     primaryColorBrightness: Brightness.dark,
-    primaryColor: colorSchemeLight.primary,
-    backgroundColor: themeBackgroundLight,
-    textTheme: textThemeMuli.apply(
+    primaryColor: _colorSchemeLight.primary,
+    backgroundColor: _colorSchemeLight.background,
+    textTheme: textThemePrimary.apply(
         bodyColor: getTextColor(0.87,
-            bg: colorSchemeLight.background,
-            main: colorSchemeLight.onBackground),
+            bg: _colorSchemeLight.background,
+            main: _colorSchemeLight.onBackground),
         displayColor: getTextColor(0.87,
-            bg: colorSchemeLight.background,
-            main: colorSchemeLight.onBackground)),
-    primaryTextTheme: textThemeMuli.apply(
+            bg: _colorSchemeLight.background,
+            main: _colorSchemeLight.onBackground)),
+    primaryTextTheme: textThemePrimary.apply(
         bodyColor: getTextColor(0.87,
-            bg: colorSchemeLight.background,
-            main: colorSchemeLight.onBackground),
+            bg: _colorSchemeLight.background,
+            main: _colorSchemeLight.onBackground),
         displayColor: getTextColor(0.87,
-            bg: colorSchemeLight.background,
-            main: colorSchemeLight.onBackground)),
-    accentTextTheme: textThemeMerriweather.apply(
+            bg: _colorSchemeLight.background,
+            main: _colorSchemeLight.onBackground)),
+    accentTextTheme: textThemeSecondary.apply(
         bodyColor: getTextColor(0.87,
-            bg: colorSchemeLight.background,
-            main: colorSchemeLight.onBackground),
+            bg: _colorSchemeLight.background,
+            main: _colorSchemeLight.onBackground),
         displayColor: getTextColor(0.87,
-            bg: colorSchemeLight.background,
-            main: colorSchemeLight.onBackground)));
+            bg: _colorSchemeLight.background,
+            main: _colorSchemeLight.onBackground)));
 
 // Theme Dark
-//const Color themeBackgroundDark = Color(0xFF121212);
-//const Color themeBackgroundDark = Color(4280098081);
-const Color themeBackgroundDark = Color(4278979857);
-//const Color themeBackgroundDark = Colors.black;
-const Color themeForegroundDark = Colors.white;
-const ColorScheme colorSchemeDark = ColorScheme(
+const Color _themeBackgroundDark = Color(0xFF0C0D11);
+const Color _themeForegroundDark = Colors.white;
+const ColorScheme _colorSchemeDark = ColorScheme(
     primary: Color(0xFF9fa8da),
     primaryVariant: Color(0xFF6f79a8),
     secondary: Color(0xff9fc5da),
     secondaryVariant: Color(0xFF6f94a8),
-    surface: themeBackgroundDark,
-    background: themeBackgroundDark,
+    surface: _themeBackgroundDark,
+    background: _themeBackgroundDark,
     error: Color(0xFFCF6679),
-    onPrimary: themeBackgroundDark,
-    onSecondary: themeBackgroundDark,
-    onSurface: themeForegroundDark,
-    onBackground: themeForegroundDark,
-    onError: themeBackgroundDark,
+    onPrimary: _themeBackgroundDark,
+    onSecondary: _themeBackgroundDark,
+    onSurface: _themeForegroundDark,
+    onBackground: _themeForegroundDark,
+    onError: _themeBackgroundDark,
     brightness: Brightness.dark);
 
 final ThemeData themeDataDark = ThemeData(
-    colorScheme: colorSchemeDark,
-    brightness: colorSchemeDark.brightness,
-    scaffoldBackgroundColor: colorSchemeDark.background,
-    accentColor: colorSchemeDark.secondary,
+    colorScheme: _colorSchemeDark,
+    brightness: _colorSchemeDark.brightness,
+    scaffoldBackgroundColor: _colorSchemeDark.background,
+    accentColor: _colorSchemeDark.secondary,
     accentColorBrightness: Brightness.light,
-    canvasColor: colorSchemeDark.background,
-    dividerColor: colorSchemeDark.onBackground.withAlpha(70),
-    primaryColor: colorSchemeDark.primary,
+    canvasColor: _colorSchemeDark.background,
+    dividerColor: _colorSchemeDark.onBackground.withAlpha(70),
+    primaryColor: _colorSchemeDark.primary,
     primaryColorBrightness: Brightness.light,
-    backgroundColor: colorSchemeDark.background,
-    textTheme: textThemeMuli.apply(
+    backgroundColor: _colorSchemeDark.background,
+    textTheme: textThemePrimary.apply(
         bodyColor: getTextColor(0.87,
-            bg: colorSchemeDark.background, main: colorSchemeDark.onBackground),
+            bg: _colorSchemeDark.background, main: _colorSchemeDark.onBackground),
         displayColor: getTextColor(0.87,
-            bg: colorSchemeDark.background,
-            main: colorSchemeDark.onBackground)),
-    primaryTextTheme: textThemeMuli.apply(
+            bg: _colorSchemeDark.background,
+            main: _colorSchemeDark.onBackground)),
+    primaryTextTheme: textThemePrimary.apply(
         bodyColor: getTextColor(0.87,
-            bg: colorSchemeDark.background, main: colorSchemeDark.onBackground),
+            bg: _colorSchemeDark.background, main: _colorSchemeDark.onBackground),
         displayColor: getTextColor(0.87,
-            bg: colorSchemeDark.background,
-            main: colorSchemeDark.onBackground)),
-    accentTextTheme: textThemeMerriweather.apply(
+            bg: _colorSchemeDark.background,
+            main: _colorSchemeDark.onBackground)),
+    accentTextTheme: textThemeSecondary.apply(
         bodyColor: getTextColor(0.87,
-            bg: colorSchemeDark.background, main: colorSchemeDark.onBackground),
+            bg: _colorSchemeDark.background, main: _colorSchemeDark.onBackground),
         displayColor: getTextColor(0.87,
-            bg: colorSchemeDark.background,
-            main: colorSchemeDark.onBackground)));
+            bg: _colorSchemeDark.background,
+            main: _colorSchemeDark.onBackground)));
 
 // BaseTextStyles
-final TextStyle _baseTextStyleMerriweather =
+final TextStyle _baseTextStyleSecondary =
 TextStyle(fontFamily: 'Merriweather');
-final TextStyle _baseTextStyleMuli = TextStyle(fontFamily: 'Muli');
+final TextStyle _baseTextStylePrimary = TextStyle(fontFamily: 'Muli');
 
 // TextTheme
-final TextTheme textThemeMuli = TextTheme(
+final TextTheme textThemePrimary = TextTheme(
   display4:
-      _baseTextStyleMuli.copyWith(fontSize: 112.0, fontWeight: FontWeight.w100),
+      _baseTextStylePrimary.copyWith(fontSize: 112.0, fontWeight: FontWeight.w100),
   display3:
-      _baseTextStyleMuli.copyWith(fontSize: 56.0, fontWeight: FontWeight.w400),
+      _baseTextStylePrimary.copyWith(fontSize: 56.0, fontWeight: FontWeight.w400),
   display2:
-      _baseTextStyleMuli.copyWith(fontSize: 45.0, fontWeight: FontWeight.w400),
+      _baseTextStylePrimary.copyWith(fontSize: 45.0, fontWeight: FontWeight.w400),
   display1:
-      _baseTextStyleMuli.copyWith(fontSize: 34.0, fontWeight: FontWeight.w400),
+      _baseTextStylePrimary.copyWith(fontSize: 34.0, fontWeight: FontWeight.w400),
   headline:
-      _baseTextStyleMuli.copyWith(fontSize: 24.0, fontWeight: FontWeight.w400),
+      _baseTextStylePrimary.copyWith(fontSize: 24.0, fontWeight: FontWeight.w400),
   title:
-      _baseTextStyleMuli.copyWith(fontSize: 20.0, fontWeight: FontWeight.w500),
+      _baseTextStylePrimary.copyWith(fontSize: 20.0, fontWeight: FontWeight.w500),
   subhead:
-      _baseTextStyleMuli.copyWith(fontSize: 16.0, fontWeight: FontWeight.w400),
+      _baseTextStylePrimary.copyWith(fontSize: 16.0, fontWeight: FontWeight.w400),
   body2:
-      _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+      _baseTextStylePrimary.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
   body1:
-      _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w400),
+      _baseTextStylePrimary.copyWith(fontSize: 14.0, fontWeight: FontWeight.w400),
   caption:
-      _baseTextStyleMuli.copyWith(fontSize: 12.0, fontWeight: FontWeight.w400),
+      _baseTextStylePrimary.copyWith(fontSize: 12.0, fontWeight: FontWeight.w400),
   button:
-      _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+      _baseTextStylePrimary.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
   subtitle:
-      _baseTextStyleMuli.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
+      _baseTextStylePrimary.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
   overline:
-      _baseTextStyleMuli.copyWith(fontSize: 10.0, fontWeight: FontWeight.w400),
+      _baseTextStylePrimary.copyWith(fontSize: 10.0, fontWeight: FontWeight.w400),
 );
-final TextTheme textThemeMerriweather = TextTheme(
-  display4: _baseTextStyleMerriweather.copyWith(
+final TextTheme textThemeSecondary = TextTheme(
+  display4: _baseTextStyleSecondary.copyWith(
       fontSize: 112.0, fontWeight: FontWeight.w100),
-  display3: _baseTextStyleMerriweather.copyWith(
+  display3: _baseTextStyleSecondary.copyWith(
       fontSize: 56.0, fontWeight: FontWeight.w400),
-  display2: _baseTextStyleMerriweather.copyWith(
+  display2: _baseTextStyleSecondary.copyWith(
       fontSize: 45.0, fontWeight: FontWeight.w400),
-  display1: _baseTextStyleMerriweather.copyWith(
+  display1: _baseTextStyleSecondary.copyWith(
       fontSize: 34.0, fontWeight: FontWeight.w400),
-  headline: _baseTextStyleMerriweather.copyWith(
+  headline: _baseTextStyleSecondary.copyWith(
       fontSize: 24.0, fontWeight: FontWeight.w400),
-  title: _baseTextStyleMerriweather.copyWith(
+  title: _baseTextStyleSecondary.copyWith(
       fontSize: 20.0, fontWeight: FontWeight.w500),
-  subhead: _baseTextStyleMerriweather.copyWith(
+  subhead: _baseTextStyleSecondary.copyWith(
       fontSize: 16.0, fontWeight: FontWeight.w400),
-  body2: _baseTextStyleMerriweather.copyWith(
+  body2: _baseTextStyleSecondary.copyWith(
       fontSize: 14.0, fontWeight: FontWeight.w500),
-  body1: _baseTextStyleMerriweather.copyWith(
+  body1: _baseTextStyleSecondary.copyWith(
       fontSize: 14.0, fontWeight: FontWeight.w400),
-  caption: _baseTextStyleMerriweather.copyWith(
+  caption: _baseTextStyleSecondary.copyWith(
       fontSize: 12.0, fontWeight: FontWeight.w400),
-  button: _baseTextStyleMerriweather.copyWith(
+  button: _baseTextStyleSecondary.copyWith(
       fontSize: 14.0, fontWeight: FontWeight.w500),
-  subtitle: _baseTextStyleMerriweather.copyWith(
+  subtitle: _baseTextStyleSecondary.copyWith(
       fontSize: 14.0, fontWeight: FontWeight.w500),
-  overline: _baseTextStyleMerriweather.copyWith(
+  overline: _baseTextStyleSecondary.copyWith(
       fontSize: 10.0, fontWeight: FontWeight.w400),
 );
 

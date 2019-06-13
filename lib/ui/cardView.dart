@@ -46,12 +46,12 @@ class CardView extends StatelessWidget {
                               isBlurred: Provider.of<BlurProvider>(context)
                                   .buttonsBlur,
                               onDecrease: () =>
-                                  Provider.of<TextSizeProvider>(context)
+                                  Provider.of<TextStyleProvider>(context)
                                       .decrease(),
                               onIncrease: () =>
-                                  Provider.of<TextSizeProvider>(context)
+                                  Provider.of<TextStyleProvider>(context)
                                       .increase(),
-                              value: Provider.of<TextSizeProvider>(context)
+                              value: Provider.of<TextStyleProvider>(context)
                                   .textSize))
                           : const SizedBox(),
                       content.hasMusic

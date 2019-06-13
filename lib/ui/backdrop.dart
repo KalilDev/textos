@@ -6,10 +6,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:kalil_widgets/constants.dart';
+import 'package:textos/constants.dart';
 
 const double _kFrontClosedHeight = 56.0; // front layer height when closed
-const double _kBackAppBarHeight = 42; // back layer (options) appbar height
+const double _kBackAppBarHeight = 42.0; // back layer (options) appbar height
 
 class _TappableWhileStatusIs extends StatefulWidget {
   const _TappableWhileStatusIs(
@@ -235,7 +235,7 @@ class _BackdropState extends State<Backdrop>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: durationAnimationMedium,
       value: 1.0,
       vsync: this,
     );
@@ -346,7 +346,7 @@ class _BackdropState extends State<Backdrop>
         ),
         trailing: IconButton(
           onPressed: _toggleFrontLayer,
-          tooltip: 'Toggle options page',
+          tooltip: textTooltipBackdropToggle,
           icon: AnimatedIcon(
             icon: AnimatedIcons.close_menu,
             progress: _controller,
