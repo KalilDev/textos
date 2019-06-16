@@ -103,7 +103,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                             ),
                           ],
                         )
-                      : SizedBox();
+                      : const SizedBox();
                 }),
             frontTitle: RepaintBoundary(
                 child: AnimatedBuilder(

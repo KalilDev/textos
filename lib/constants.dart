@@ -218,13 +218,6 @@ const String placeholderTitle = 'Titulo';
 const String placeholderText = 'Texto';
 const String placeholderDate = '01/01/1970';
 const String placeholderImg = 'https://i.imgur.com/95fvCBU.jpg';
-const Map<String, dynamic> placeholderTagMetadata = <String, dynamic>{
-  'title': 'Textos do ',
-  'authorName': 'Kalil',
-  'collection': 'stories',
-  'type': 'texts',
-  'tags': <String>[],
-};
 
 // Animation durations
 const Duration durationAnimationShort = Duration(milliseconds: 200);

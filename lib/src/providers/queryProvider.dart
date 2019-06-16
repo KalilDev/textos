@@ -5,10 +5,13 @@ import 'package:textos/constants.dart';
 class QueryInfoProvider with ChangeNotifier {
   String _collection;
   String _tag;
+  int _currentPage;
 
-  String get collection => _collection != null ? _collection : 'stories';
+  String get collection => _collection ?? 'stories';
 
-  String get tag => _tag != null ? _tag : textAllTag;
+  String get tag => _tag ?? textAllTag;
+
+  int get currentPage => _currentPage ?? 0;
 
   set collection(String newCollection) {
     _collection = newCollection;
@@ -17,6 +20,11 @@ class QueryInfoProvider with ChangeNotifier {
 
   set tag(String newTag) {
     _tag = newTag;
+    notifyListeners();
+  }
+
+  set currentPage(int newPage) {
+    _currentPage = newPage;
     notifyListeners();
   }
 }

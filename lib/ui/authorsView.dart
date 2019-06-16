@@ -17,13 +17,8 @@ class AuthorsView extends StatefulWidget {
   _AuthorsViewState createState() => _AuthorsViewState();
 }
 
-class _AuthorsViewState extends State<AuthorsView>
-    with AutomaticKeepAliveClientMixin {
+class _AuthorsViewState extends State<AuthorsView> {
   Stream<Iterable<Map<String, dynamic>>> _tagStream;
-
-  @override
-  bool get wantKeepAlive => true;
-
   @override
   void initState() {
     _tagStream = Firestore.instance
@@ -40,47 +35,46 @@ class _AuthorsViewState extends State<AuthorsView>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       body: StreamBuilder<Iterable<Map<String, dynamic>>>(
         stream: _tagStream,
         builder: (BuildContext context,
             AsyncSnapshot<Iterable<Map<String, dynamic>>> snapshot) {
-          _metadataList = snapshot.hasData
-              ? _metadataList = snapshot.data.toList()
-              : _metadataList = <Map<String, dynamic>>[placeholderTagMetadata];
-          return ListenableProvider<TextPageProvider>(
-            builder: (_) => TextPageProvider(),
-            child: Consumer<TextPageProvider>(
-              builder: (BuildContext context, TextPageProvider provider, _) => TransformerPageView(
-                itemCount: _metadataList.length,
-                scrollDirection: Axis.vertical,
-                viewportFraction: 0.90,
-                curve: Curves.decelerate,
-                onPageChanged: (int page) {
-                  provider.currentPage = page;
-                  Provider.of<QueryInfoProvider>(context).collection = _metadataList[page]['collection'];
-                  Provider.of<QueryInfoProvider>(context).tag = null;
-                  SystemSound.play(SystemSoundType.click);
-                  HapticFeedback.lightImpact();
-                },
-                transformer:
-                    PageTransformerBuilder(builder: (_, TransformInfo info) {
-                  if (widget.isVisible || provider.currentPage == info.index) {
-                    final Map<String, dynamic> data = _metadataList[info.index];
-                    return _AuthorPage(
-                      info: info,
-                      tags: data['tags'],
-                      title: data['title'],
-                      authorName: data['authorName'],
-                    );
-                  } else {
-                    return Container();
-                  }
-                }),
-              ),
-            ),
-          );
+          if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false)) {
+            _metadataList = snapshot.data.toList();
+            return TransformerPageView(
+              itemCount: _metadataList.length,
+              scrollDirection: Axis.vertical,
+              viewportFraction: 0.90,
+              curve: Curves.decelerate,
+              onPageChanged: (int page) {
+                Provider.of<QueryInfoProvider>(context).currentPage = page;
+                Provider.of<QueryInfoProvider>(context).collection =
+                    _metadataList[page]['collection'];
+                Provider.of<QueryInfoProvider>(context).tag = null;
+                SystemSound.play(SystemSoundType.click);
+                HapticFeedback.lightImpact();
+              },
+              index: Provider.of<QueryInfoProvider>(context).currentPage,
+              transformer:
+                  PageTransformerBuilder(builder: (_, TransformInfo info) {
+                  final Map<String, dynamic> data = _metadataList[info.index];
+                  return _AuthorPage(
+                    info: info,
+                    tags: data['tags'],
+                    title: data['title'],
+                    authorName: data['authorName'],
+                  );
+              }),
+            );
+          } else if (snapshot.hasError || (snapshot.hasData && (snapshot?.data?.isEmpty ?? true))){
+            return Center(
+              child: Text(textAppName,
+                  style: Theme.of(context).accentTextTheme.display1),
+            );
+          } else {
+            return Container();
+          }
         },
       ),
     );
