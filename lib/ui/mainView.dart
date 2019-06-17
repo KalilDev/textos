@@ -19,7 +19,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    _tabController = TabController(length: 3, vsync: this);
     _isList = false;
     super.initState();
   }
@@ -27,13 +27,13 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
   String get currentTitle {
     switch (_tabController.animation.value.round()) {
       case 0:
-        return textFavs;
-        break;
-      case 1:
         return textAuthors;
         break;
-      case 2:
+      case 1:
         return textTexts;
+        break;
+      case 2:
+        return textFavs;
         break;
       default:
         return 'App';
@@ -78,7 +78,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
             frontAction: AnimatedBuilder(
                 animation: _tabController.animation,
                 builder: (BuildContext context, _) {
-                  return _tabController.animation.value.round() == 2
+                  return _tabController.animation.value.round() == 1
                       ? Stack(
                           children: <Widget>[
                             Center(
@@ -114,16 +114,16 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
               controller: _tabController,
               children: <Widget>[
                 _renderChild(
-                    FavoritesView(spacerSize: spacerSize, isList: _isList),
-                    constraints: constraints),
-                _renderChild(
                     AuthorsView(
                       isVisible: _tabController.animation.value.floor() == 1 ||
                           _tabController.animation.value.ceil() == 1,
                     ),
                     constraints: constraints),
                 _renderChild(TextsView(spacerSize: spacerSize, isList: _isList),
-                    constraints: constraints)
+                    constraints: constraints),
+                _renderChild(
+                    FavoritesView(spacerSize: spacerSize, isList: _isList),
+                    constraints: constraints),
               ],
             )),
             backTitle: const Text(textSettings),
@@ -161,10 +161,6 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                       backgroundColor: Theme.of(context).primaryColor,
                       items: const <BottomNavigationBarItem>[
                         BottomNavigationBarItem(
-                            activeIcon: Icon(TextIcons.heart_multiple),
-                            icon: Icon(TextIcons.heart_multiple_outline),
-                            title: Text(textFavs)),
-                        BottomNavigationBarItem(
                             activeIcon: Icon(TextIcons.account_group),
                             icon: Icon(TextIcons.account_group_outline),
                             title: Text(textAuthors)),
@@ -172,6 +168,10 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                             activeIcon: Icon(TextIcons.book_open_page_variant),
                             icon: Icon(TextIcons.book_open_variant),
                             title: Text(textTexts)),
+                        BottomNavigationBarItem(
+                            activeIcon: Icon(TextIcons.heart_multiple),
+                            icon: Icon(TextIcons.heart_multiple_outline),
+                            title: Text(textFavs)),
                       ]),
                   SlideTransition(
                       position: Tween<Offset>(
@@ -183,9 +183,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                         child: Container(
                           margin: const EdgeInsets.only(top: 54.0),
                           decoration: BoxDecoration(
-                              color: Color.alphaBlend(
-                                  Theme.of(context).accentColor.withAlpha(120),
-                                  Theme.of(context).backgroundColor),
+                              color: Theme.of(context).backgroundColor,
                               borderRadius: BorderRadius.circular(1.0)),
                           height: 2.0,
                         ),

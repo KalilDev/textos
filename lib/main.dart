@@ -16,14 +16,15 @@ import 'src/model/favorite.dart';
 // TODO(KalilDev): Let authors upload texts from the app
 // TODO(KalilDev): Make tapping the notification open the respective text
 
-void main() => runApp(
+void main() {
+  runApp(
       ChangeNotifierProvider<AuthService>(
         child: MyApp(),
         builder: (BuildContext context) {
           return AuthService();
         },
       ),
-    );
+    );}
 
 class MyApp extends StatelessWidget {
   @override
@@ -79,7 +80,7 @@ class StateBuilder extends StatelessWidget {
         prefs?.getStringList('favorites') ?? <String>[];
     final double _textSize = prefs?.getDouble('textSize') ?? 4.5;
     final int _blurSettings = prefs?.getInt('blurSettings') ?? 1;
-    final int _textAlign = prefs?.getInt('textAlign') ?? 0;
+    final int _textAlign = prefs?.getInt('textAlign') ?? 3;
     final List<dynamic> result = <dynamic>[
       _enableDarkMode,
       _favoritesSettings,

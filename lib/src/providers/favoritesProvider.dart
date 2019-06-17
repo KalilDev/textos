@@ -58,7 +58,19 @@ class FavoritesProvider with ChangeNotifier {
   void toggle(Favorite favorite) {
     isFavorite(favorite) ? remove(favorite) : add(favorite);
   }
-
+  
+  void reorder(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex)
+      newIndex -= 1;
+    final Favorite item = _favoritesSet.elementAt(oldIndex);
+    final List<Favorite> favList = _favoritesSet.toList();
+    favList.removeAt(oldIndex);
+    favList.insert(newIndex, item);
+    _favoritesSet = favList.toSet();
+    settingsSync();
+    notifyListeners();
+  }
+  
   Future<void> settingsSync() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<String> strings = <String>[];
