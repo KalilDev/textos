@@ -10,10 +10,12 @@ import 'textCard.dart';
 class CardView extends StatelessWidget {
   const CardView({
     Key key,
+    @required this.heroTag,
     @required this.content,
   }) : super(key: key);
 
   final Content content;
+  final Object heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class CardView extends StatelessWidget {
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            ContentCard(content: content),
+            ContentCard(content: content, heroTag: heroTag),
             Align(
               alignment: Alignment.bottomCenter,
               child: LayoutBuilder(

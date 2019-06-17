@@ -14,7 +14,9 @@ import 'package:transformer_page_view/transformer_page_view.dart';
 import 'textCard.dart';
 
 class TextsView extends StatefulWidget {
-  const TextsView({@required this.spacerSize, @required this.isList});
+  const TextsView(
+      {@required this.spacerSize,
+      @required this.isList});
   final double spacerSize;
   final bool isList;
   @override
@@ -107,9 +109,11 @@ class _TextsViewState extends State<TextsView> {
                                     (Widget child, TransformInfo info) {
                                   final Map<String, dynamic> data =
                                       _slideList[info.index];
+                                  final Content content = Content.fromData(data);
                                   return _TextPage(
+                                      heroTag: 'pageViewItem' + content.textPath,
                                       info: info,
-                                      textContent: Content.fromData(data),
+                                      textContent: content,
                                       indexController: _indexController);
                                 }),
                                 onPageChanged: (int page) {
@@ -124,25 +128,41 @@ class _TextsViewState extends State<TextsView> {
 
                   Widget listView() {
                     return ListView.separated(
-                      separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 10.0,),
-                        itemBuilder: (BuildContext context, int index) =>
-                        index == 0
-                            ? SizedBox(height: widget.spacerSize)
-                            : Container(height: 100.0,child: ContentCard.sliver(
-                                content: Content.fromData(_slideList[index - 1]),
-                                callBack: () {
-                                  HapticFeedback.heavyImpact();
-                                  Navigator.push(
-                                      context,
-                                      FadeRoute<void>(
-                                          builder: (BuildContext context) => CardView(
-                                            content: Content.fromData(_slideList[index - 1]),
-                                          )));
-                                })),
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index == 0)
+                            return SizedBox(height: widget.spacerSize);
+                          final Content content = Content.fromData(
+                              _slideList[index - 1]);
+
+                          final String heroTag = 'listViewItem' + content.textPath;
+                          Container(
+                              height: 100.0,
+                              child: ContentCard.sliver(
+                                  content: content,
+                                  heroTag: heroTag,
+                                  callBack: () {
+                                    HapticFeedback.heavyImpact();
+                                    Navigator.push(
+                                        context,
+                                        FadeRoute<void>(
+                                            builder: (BuildContext context) =>
+                                                CardView(
+                                                  heroTag: heroTag,
+                                                  content: content,
+                                                )));
+                                  }));
+                        },
                         itemCount: _slideList.length + 1);
                   }
 
-                  return AnimatedSwitcher(duration: durationAnimationShort, child: widget.isList ? listView() : pageView(),);
+                  return AnimatedSwitcher(
+                    duration: durationAnimationShort,
+                    child: widget.isList ? listView() : pageView(),
+                  );
                 },
               );
             }
@@ -164,19 +184,19 @@ class _TextsViewState extends State<TextsView> {
 
 class _TextPage extends StatelessWidget {
   const _TextPage(
-      {@required this.info, @required this.textContent, this.indexController});
+      {@required this.info, @required this.textContent, this.indexController, @required this.heroTag});
 
   final Content textContent;
   final TransformInfo info;
   final IndexController indexController;
+  final Object heroTag;
 
   @override
   Widget build(BuildContext context) {
     if ((Provider.of<TextPageProvider>(context).currentPage - info.index)
                 .abs() <
             2 !=
-        true)
-      return Container();
+        true) return Container();
 
     final bool active = info.position.round() == 0.0 && info.position >= -0.30;
     // Animated Properties
@@ -200,6 +220,7 @@ class _TextPage extends StatelessWidget {
                 child: Stack(
                   children: <Widget>[
                     ContentCard.withParallax(
+                        heroTag: heroTag,
                         position: info.position, content: textContent),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),
@@ -238,8 +259,7 @@ class _TextPage extends StatelessWidget {
           ],
         ),
         onTap: () async {
-          if (indexController != null)
-            indexController.move(info.index);
+          if (indexController != null) indexController.move(info.index);
 
           if (active) {
             HapticFeedback.heavyImpact();
@@ -247,6 +267,7 @@ class _TextPage extends StatelessWidget {
                 context,
                 FadeRoute<void>(
                     builder: (BuildContext context) => CardView(
+                        heroTag: heroTag,
                           content: textContent,
                         )));
           }

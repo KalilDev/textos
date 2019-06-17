@@ -10,21 +10,22 @@ import 'package:textos/src/textUtils.dart';
 import 'package:transformer_page_view/parallax.dart';
 
 class ContentCard extends StatelessWidget {
-  const ContentCard({@required this.content})
+  const ContentCard({@required this.content, @required this.heroTag})
       : position = null,
         isSliver = false,
         callBack = null;
   const ContentCard.withParallax(
-      {@required this.content, @required this.position})
+      {@required this.content, @required this.position, @required this.heroTag})
       : isSliver = false,
         callBack = null;
-  const ContentCard.sliver({@required this.content, @required this.callBack})
+  const ContentCard.sliver({@required this.content, @required this.callBack, @required this.heroTag})
       : position = null,
         isSliver = true;
   final Content content;
   final double position;
   final bool isSliver;
   final VoidCallback callBack;
+  final Object heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class ContentCard extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Hero(
-            tag: 'image' + content.textPath,
+            tag: 'image' + heroTag.toString(),
             child: position != null
                 ? Container(
                     height: double.infinity,
@@ -63,7 +64,7 @@ class ContentCard extends StatelessWidget {
                 : ImageBackground(
                     img: content.imgUrl,
                     enabled: false,
-                    key: Key('image' + content.textPath))),
+                    key: Key('image' + heroTag.toString()))),
         position != null
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
@@ -75,7 +76,7 @@ class ContentCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20)),
                         margin: const EdgeInsets.all(8.0),
                         child: Hero(
-                            tag: 'body' + content.textPath,
+                            tag: 'body' + heroTag.toString(),
                             child: BlurOverlay.roundedRect(
                                 radius: 15,
                                 enabled: Provider.of<BlurProvider>(context)
@@ -90,7 +91,7 @@ class ContentCard extends StatelessWidget {
               )
             : isSliver
                 ? Hero(
-                    tag: 'body' + content.textPath,
+                    tag: 'body' + heroTag.toString(),
                     child: BlurOverlay.roundedRect(
                       radius: 20.0,
                       color: Theme.of(context).backgroundColor.withAlpha(120),
@@ -106,6 +107,7 @@ class ContentCard extends StatelessWidget {
                       ),
                     ))
                 : _TextWidget(
+          heroTag: heroTag,
                     textContent: content,
                     textSize: Provider.of<TextStyleProvider>(context).textSize),
       ],
@@ -114,11 +116,12 @@ class ContentCard extends StatelessWidget {
 }
 
 class _TextWidget extends ImplicitlyAnimatedWidget {
-  const _TextWidget({@required this.textContent, @required this.textSize})
+  const _TextWidget({@required this.textContent, @required this.textSize, @required this.heroTag})
       : super(duration: durationAnimationShort);
 
   final Content textContent;
   final double textSize;
+  final Object heroTag;
 
   @override
   __TextWidgetState createState() => __TextWidgetState();
@@ -149,7 +152,7 @@ class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(20)),
                 child: Hero(
-                  tag: 'body' + widget.textContent.textPath,
+                  tag: 'body' + widget.heroTag.toString(),
                   child: BlurOverlay.roundedRect(
                     enabled: Provider.of<BlurProvider>(context).textsBlur,
                     radius: 20,

@@ -115,8 +115,8 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
               children: <Widget>[
                 _renderChild(
                     AuthorsView(
-                      isVisible: _tabController.animation.value.floor() == 1 ||
-                          _tabController.animation.value.ceil() == 1,
+                      isVisible: _tabController.animation.value.floor() == 0 ||
+                          _tabController.animation.value.ceil() == 0,
                     ),
                     constraints: constraints),
                 _renderChild(TextsView(spacerSize: spacerSize, isList: _isList),

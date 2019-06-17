@@ -10,15 +10,17 @@ import 'package:textos/text_icons_icons.dart';
 
 import 'cardView.dart';
 import 'textCard.dart';
+
 class FavoritesView extends StatelessWidget {
   const FavoritesView({@required this.spacerSize, @required this.isList});
   final double spacerSize;
   final bool isList;
 
   List<Widget> _childrenBuilder(Iterable<Favorite> favs) {
-    List<Widget> list = <Widget>[];
+    final List<Widget> list = <Widget>[];
     for (Favorite fav in favs) {
-      list.add(_FavoriteItem(favorite: fav, key: Key('reorderableTile' + fav.textId)));
+      list.add(_FavoriteItem(
+          favorite: fav, key: Key('reorderableTile' + fav.textId)));
     }
     return list;
   }
@@ -28,7 +30,8 @@ class FavoritesView extends StatelessWidget {
     return Scaffold(
         body: Provider.of<FavoritesProvider>(context).favoritesSet.isNotEmpty
             ? ReorderableListView(
-                children: _childrenBuilder(Provider.of<FavoritesProvider>(context).favoritesSet),
+                children: _childrenBuilder(
+                    Provider.of<FavoritesProvider>(context).favoritesSet),
                 padding: EdgeInsets.fromLTRB(4.0, spacerSize, 4.0, 4.0),
                 onReorder: Provider.of<FavoritesProvider>(context).reorder)
             : LayoutBuilder(
@@ -50,29 +53,34 @@ class FavoritesView extends StatelessWidget {
 class _FavoriteItem extends StatelessWidget {
   _FavoriteItem({Key key, @required this.favorite}) : super(key: key);
   final Favorite favorite;
-  
+
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: FutureBuilder<Content>(
-                future: Provider.of<FavoritesProvider>(context)
-                    .getContent(favorite),
-                builder: (BuildContext context,
-                    AsyncSnapshot<Content> snap) {
-                  if (snap.hasData == false)
-                    return Container();
-                  return Container(margin: EdgeInsets.only(bottom: 12.0),height: 100.0,child: ContentCard.sliver(content: snap.data, callBack: () {
-                  HapticFeedback.heavyImpact();
-                  Navigator.push(
-                      context,
-                      DurationMaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              CardView(
-                                content: snap.data,
-                              )));
-                },));
-                }
-            ),
+          future: Provider.of<FavoritesProvider>(context).getContent(favorite),
+          builder: (BuildContext context, AsyncSnapshot<Content> snap) {
+            final String heroTag = 'favoriteItem' + favorite.textPath;
+
+            return Container(
+                margin: const EdgeInsets.only(bottom: 12.0),
+                height: 100.0,
+                child: ContentCard.sliver(
+                  content: Content.fromFav(favorite),
+                  heroTag: heroTag,
+                  callBack: () async {
+                    final Content fullContent = snap.data != null ? snap.data : await Provider.of<FavoritesProvider>(context).getContent(favorite);
+                    HapticFeedback.heavyImpact();
+                    Navigator.push(
+                        context,
+                        DurationMaterialPageRoute<void>(
+                            builder: (BuildContext context) => CardView(
+                                  content: fullContent,
+                                  heroTag: heroTag,
+                                )));
+                  },
+                ));
+          }),
     );
   }
 }
