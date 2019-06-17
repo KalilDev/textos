@@ -55,6 +55,11 @@ class SettingsView extends StatelessWidget {
                     ? null
                     : (bool map) =>
                         Provider.of<ThemeProvider>(context).toggleDarkMode()),
+        ListTile(
+          leading: const Icon(Icons.style),
+          title: Text('Alterar tema', style: styleSettings),
+          onTap: () => Provider.of<ThemeProvider>(context).changeTheme(),
+        ),
       ];
     }
 

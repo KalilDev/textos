@@ -69,38 +69,7 @@ const ColorScheme _colorSchemeLight = ColorScheme(
     onError: _themeBackgroundLight,
     brightness: Brightness.light);
 
-final ThemeData themeDataLight = ThemeData(
-    colorScheme: _colorSchemeLight,
-    brightness: Brightness.light,
-    scaffoldBackgroundColor: _colorSchemeLight.background,
-    accentColorBrightness: Brightness.dark,
-    accentColor: _colorSchemeLight.secondary,
-    canvasColor: _colorSchemeLight.background,
-    dividerColor: _colorSchemeLight.onBackground.withAlpha(70),
-    primaryColorBrightness: Brightness.dark,
-    primaryColor: _colorSchemeLight.primary,
-    backgroundColor: _colorSchemeLight.background,
-    textTheme: textThemePrimary.apply(
-        bodyColor: getTextColor(0.87,
-            bg: _colorSchemeLight.background,
-            main: _colorSchemeLight.onBackground),
-        displayColor: getTextColor(0.87,
-            bg: _colorSchemeLight.background,
-            main: _colorSchemeLight.onBackground)),
-    primaryTextTheme: textThemePrimary.apply(
-        bodyColor: getTextColor(0.87,
-            bg: _colorSchemeLight.background,
-            main: _colorSchemeLight.onBackground),
-        displayColor: getTextColor(0.87,
-            bg: _colorSchemeLight.background,
-            main: _colorSchemeLight.onBackground)),
-    accentTextTheme: textThemeSecondary.apply(
-        bodyColor: getTextColor(0.87,
-            bg: _colorSchemeLight.background,
-            main: _colorSchemeLight.onBackground),
-        displayColor: getTextColor(0.87,
-            bg: _colorSchemeLight.background,
-            main: _colorSchemeLight.onBackground)));
+final ThemeData themeDataLight = themeFromScheme(_colorSchemeLight);
 
 // Theme Dark
 const Color _themeBackgroundDark = Color(0xFF0C0D11);
@@ -120,35 +89,7 @@ const ColorScheme _colorSchemeDark = ColorScheme(
     onError: _themeBackgroundDark,
     brightness: Brightness.dark);
 
-final ThemeData themeDataDark = ThemeData(
-    colorScheme: _colorSchemeDark,
-    brightness: _colorSchemeDark.brightness,
-    scaffoldBackgroundColor: _colorSchemeDark.background,
-    accentColor: _colorSchemeDark.secondary,
-    accentColorBrightness: Brightness.light,
-    canvasColor: _colorSchemeDark.background,
-    dividerColor: _colorSchemeDark.onBackground.withAlpha(70),
-    primaryColor: _colorSchemeDark.primary,
-    primaryColorBrightness: Brightness.light,
-    backgroundColor: _colorSchemeDark.background,
-    textTheme: textThemePrimary.apply(
-        bodyColor: getTextColor(0.87,
-            bg: _colorSchemeDark.background, main: _colorSchemeDark.onBackground),
-        displayColor: getTextColor(0.87,
-            bg: _colorSchemeDark.background,
-            main: _colorSchemeDark.onBackground)),
-    primaryTextTheme: textThemePrimary.apply(
-        bodyColor: getTextColor(0.87,
-            bg: _colorSchemeDark.background, main: _colorSchemeDark.onBackground),
-        displayColor: getTextColor(0.87,
-            bg: _colorSchemeDark.background,
-            main: _colorSchemeDark.onBackground)),
-    accentTextTheme: textThemeSecondary.apply(
-        bodyColor: getTextColor(0.87,
-            bg: _colorSchemeDark.background, main: _colorSchemeDark.onBackground),
-        displayColor: getTextColor(0.87,
-            bg: _colorSchemeDark.background,
-            main: _colorSchemeDark.onBackground)));
+final ThemeData themeDataDark = themeFromScheme(_colorSchemeDark);
 
 // BaseTextStyles
 final TextStyle _baseTextStyleSecondary =
@@ -238,3 +179,33 @@ const String aboutGreeting =
 // MD Compliance
 Color getTextColor(double percent, {Color bg, Color main}) =>
     Color.alphaBlend(main.withAlpha((255 * percent).round()), bg);
+Brightness inverseBrightness(Brightness b) => b == Brightness.dark ? Brightness.light : Brightness.dark;
+ThemeData themeFromScheme(ColorScheme scheme) => ThemeData(
+    colorScheme: scheme,
+    brightness: scheme.brightness,
+    scaffoldBackgroundColor: scheme.background,
+    accentColor: scheme.secondary,
+    accentColorBrightness: scheme.onSecondary != scheme.background ? scheme.brightness : inverseBrightness(scheme.brightness),
+    canvasColor: scheme.background,
+    dividerColor: scheme.onBackground.withAlpha(70),
+    primaryColor: scheme.primary,
+    primaryColorBrightness: scheme.onPrimary != scheme.background ? scheme.brightness : inverseBrightness(scheme.brightness),
+    backgroundColor: scheme.background,
+    textTheme: textThemePrimary.apply(
+        bodyColor: getTextColor(0.87,
+            bg: scheme.background, main: scheme.onBackground),
+        displayColor: getTextColor(0.87,
+            bg: scheme.background,
+            main: scheme.onBackground)),
+    primaryTextTheme: textThemePrimary.apply(
+        bodyColor: getTextColor(0.87,
+            bg: scheme.background, main: scheme.onBackground),
+        displayColor: getTextColor(0.87,
+            bg: scheme.background,
+            main: scheme.onBackground)),
+    accentTextTheme: textThemeSecondary.apply(
+        bodyColor: getTextColor(0.87,
+            bg: scheme.background, main: scheme.onBackground),
+        displayColor: getTextColor(0.87,
+            bg: scheme.background,
+            main: scheme.onBackground)));

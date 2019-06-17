@@ -118,13 +118,13 @@ class StateBuilder extends StatelessWidget {
                   builder: (_) => QueryInfoProvider(),
                 )
               ],
-              child: Builder(
-                builder: (BuildContext context) {
+              child: Consumer<ThemeProvider>(
+                builder: (BuildContext context, ThemeProvider provider, _) {
                   ThemeData overrideTheme;
-                  final ThemeData dark = themeDataDark;
-                  final ThemeData light = themeDataLight;
+                  final ThemeData dark = themeFromScheme(themeDataDark.colorScheme.copyWith(secondary: provider.darkTheme.secondary, secondaryVariant: provider.darkTheme.secondaryVariant, onSecondary: provider.darkTheme.onSecondary));
+                  final ThemeData light = themeFromScheme(themeDataLight.colorScheme.copyWith(secondary: provider.lightTheme.secondary, secondaryVariant: provider.lightTheme.secondaryVariant, onSecondary: provider.lightTheme.onSecondary));
 
-                  if (Provider.of<ThemeProvider>(context).isDarkMode) {
+                  if (provider.isDarkMode) {
                     overrideTheme = dark;
                   } else {
                     overrideTheme = light;
