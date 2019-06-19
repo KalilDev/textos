@@ -22,8 +22,7 @@ class Content {
     }
     favoriteCount = data['favoriteCount'] ?? 0;
     music = data['music'];
-    text = data['text']
-        .toString();
+    text = data['text'];
   }
 
   String title;
@@ -34,7 +33,7 @@ class Content {
   String music;
   int favoriteCount;
 
-  bool get hasText => text != 'null';
+  bool get hasText => text != null;
   bool get hasMusic => music != null;
 
   Favorite get favorite => Favorite(title + ';' + textPath + ';' + imgUrl);

@@ -36,7 +36,7 @@ class ContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget getText() {
+    Widget buildTitle() {
       if (content.title.length > 30 && isSliver) {
         return Container(
             child: Marquee(
@@ -45,7 +45,7 @@ class ContentCard extends StatelessWidget {
                 blankSpace: 25,
                 pauseAfterRound: const Duration(seconds: 1),
                 velocity: 60.0),
-            height: Theme.of(context).accentTextTheme.display1.fontSize);
+            height: Theme.of(context).accentTextTheme.display1.fontSize*1.2);
       } else {
         return Text(
           content.title,
@@ -64,12 +64,12 @@ class ContentCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Spacer(),
-          if (lineCount > 0)
+          if (lineCount > 0 && (content.text != null || content.hasMusic))
             RichText(
                 maxLines: lineCount,
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                    children: formattedText(content.text, style: text))),
+                    children: formattedText(content.text ?? 'Musica ▶', style: text))),
           Spacer(),
           if (heightForText > 0) Text(content.date, style: date),
           if (heightForText > 0)
@@ -80,90 +80,102 @@ class ContentCard extends StatelessWidget {
       );
     }
 
+    Widget buildParallaxBackground() {
+      return Container(
+          height: double.infinity,
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: ParallaxImage.cachedNetwork(
+                content.imgUrl,
+                position: position,
+              )));
+    }
+
+    Widget buildParallaxContent() {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(20.0),
+        child: Align(
+            alignment: Alignment.center,
+            child: Material(
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20)),
+                margin: const EdgeInsets.all(8.0),
+                child: Hero(
+                    tag: 'body' + heroTag.toString(),
+                    child: BlurOverlay.roundedRect(
+                        radius: 15,
+                        enabled: Provider.of<BlurProvider>(context)
+                            .textsBlur,
+                        child: ParallaxContainer(
+                            translationFactor: 75,
+                            position: position,
+                            child: buildTitle()))),
+              ),
+              color: Colors.transparent,
+            )),
+      );
+    }
+
+    Widget buildSliver() {
+      return Hero(
+        tag: 'body' + heroTag.toString(),
+        child: BlurOverlay.roundedRect(
+            radius: 20.0,
+            color: Provider.of<BlurProvider>(context).textsBlur ? Theme.of(context).backgroundColor.withAlpha(120) : Theme.of(context).backgroundColor.withAlpha(150),
+            enabled: Provider.of<BlurProvider>(context).textsBlur,
+            child: Material(
+                borderRadius: BorderRadius.circular(20.0),
+                clipBehavior: Clip.antiAlias,
+                color: Colors.transparent,
+                child: InkWell(
+                  child: Container(
+                      child: Center(
+                        child: Row(
+                          children: <Widget>[
+                        Expanded(
+                        child: AnimatedSwitcher(
+                          duration: durationAnimationMedium,
+                          transitionBuilder: (Widget child, Animation<double> animation) => SizeTransition(axisAlignment: 1.0,sizeFactor: animation, child: child),
+                          child: (content.date != null) ? Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: buildTitle(),
+                              ),
+                              Expanded(
+                                  child: Center(
+                                    child: LayoutBuilder(
+                                        builder: extraTextBuilder),
+                                  )),
+                            ],
+                          )
+                              : Center(child: buildTitle()),
+                        ),
+                      ),
+                      if (trailing != null) trailing
+                  ],
+                ))),
+        onTap: callBack,
+      ),
+      ),
+      ));
+    }
+
     return Stack(
       children: <Widget>[
         Hero(
             tag: 'image' + heroTag.toString(),
             child: position != null
-                ? Container(
-                    height: double.infinity,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: ParallaxImage.cachedNetwork(
-                          content.imgUrl,
-                          position: position,
-                        )))
+                ? buildParallaxBackground()
                 : ImageBackground(
                     img: content.imgUrl,
                     enabled: false,
                     key: Key('image' + heroTag.toString()))),
         position != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Align(
-                    alignment: Alignment.center,
-                    child: Material(
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        margin: const EdgeInsets.all(8.0),
-                        child: Hero(
-                            tag: 'body' + heroTag.toString(),
-                            child: BlurOverlay.roundedRect(
-                                radius: 15,
-                                enabled: Provider.of<BlurProvider>(context)
-                                    .textsBlur,
-                                child: ParallaxContainer(
-                                    translationFactor: 75,
-                                    position: position,
-                                    child: getText()))),
-                      ),
-                      color: Colors.transparent,
-                    )),
-              )
+            ? buildParallaxContent()
             : isSliver
-                ? Hero(
-                    tag: 'body' + heroTag.toString(),
-                    child: BlurOverlay.roundedRect(
-                      radius: 20.0,
-                      color: Theme.of(context).backgroundColor.withAlpha(120),
-                      enabled: Provider.of<BlurProvider>(context).textsBlur,
-                      child: Material(
-                        borderRadius: BorderRadius.circular(20.0),
-                        clipBehavior: Clip.antiAlias,
-                        color: Colors.transparent,
-                        child: InkWell(
-                          child: Container(
-                              child: Center(
-                                  child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: AnimatedSwitcher(
-                                  duration: durationAnimationMedium,
-                                  transitionBuilder: (Widget child, Animation<double> animation) => SizeTransition(axisAlignment: 1.0,sizeFactor: animation, child: child),
-                                  child: (content.date != null && content.text != null) ? Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 4.0),
-                                        child: getText(),
-                                      ),
-                                      Expanded(
-                                          child: Center(
-                                            child: LayoutBuilder(
-                                                builder: extraTextBuilder),
-                                          )),
-                                    ],
-                                  )
-                                  : Center(child: getText()),
-                                ),
-                              ),
-                              if (trailing != null) trailing
-                            ],
-                          ))),
-                          onTap: callBack,
-                        ),
-                      ),
-                    ))
+                ? buildSliver()
                 : _TextWidget(
                     heroTag: heroTag,
                     textContent: content,
@@ -201,6 +213,53 @@ class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
+    List<Widget> buildTextColumn() {
+      return <Widget>[
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: SingleChildScrollView(
+              child: Column(children: <Widget>[
+                Text(widget.textContent.title,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .accentTextTheme
+                        .display1),
+                const SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  width: double.infinity,
+                  child: RichText(
+                      textAlign:
+                      Provider.of<TextStyleProvider>(
+                          context)
+                          .textAlign,
+                      text: TextSpan(
+                          children: formattedText(
+                              widget.textContent.text,
+                              style: textTheme.body1.copyWith(
+                                  fontSize:
+                                  _textSize.evaluate(
+                                      animation) *
+                                      4.5)))),
+                ),
+                SizedBox(
+                    height: 56,
+                    child: Center(
+                        child: Text(
+                            widget.textContent.date,
+                            style: textTheme.title))),
+                widget.textContent.hasMusic
+                    ? const SizedBox(height: 56)
+                    : const SizedBox(),
+              ]),
+            ),
+          ),
+        ),
+      ];
+    }
+
     return GestureDetector(
         onTap: () {
           SystemSound.play(SystemSoundType.click);
@@ -219,50 +278,7 @@ class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
                     radius: 20,
                     child: Column(
                       children: widget.textContent.hasText
-                          ? <Widget>[
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  child: SingleChildScrollView(
-                                    child: Column(children: <Widget>[
-                                      Text(widget.textContent.title,
-                                          textAlign: TextAlign.center,
-                                          style: Theme.of(context)
-                                              .accentTextTheme
-                                              .display1),
-                                      const SizedBox(
-                                        height: 8,
-                                      ),
-                                      Container(
-                                        width: double.infinity,
-                                        child: RichText(
-                                            textAlign:
-                                                Provider.of<TextStyleProvider>(
-                                                        context)
-                                                    .textAlign,
-                                            text: TextSpan(
-                                                children: formattedText(
-                                                    widget.textContent.text,
-                                                    style: textTheme.body1.copyWith(
-                                                        fontSize:
-                                                            _textSize.evaluate(
-                                                                    animation) *
-                                                                4.5)))),
-                                      ),
-                                      SizedBox(
-                                          height: 56,
-                                          child: Center(
-                                              child: Text(
-                                                  widget.textContent.date,
-                                                  style: textTheme.title))),
-                                      widget.textContent.hasMusic
-                                          ? const SizedBox(height: 56)
-                                          : const SizedBox(),
-                                    ]),
-                                  ),
-                                ),
-                              ),
-                            ]
+                          ? buildTextColumn()
                           : <Widget>[
                               Text(widget.textContent.title,
                                   textAlign: TextAlign.center,

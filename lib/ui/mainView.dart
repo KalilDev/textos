@@ -136,7 +136,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                         child: Container(
                             decoration: ShapeDecoration(
                                 shape: CircleBorder(),
-                                color: Color.alphaBlend(Theme.of(context).primaryColor.withAlpha(90), Theme.of(context).backgroundColor)),
+                                color: Color.alphaBlend(Theme.of(context).accentColor.withAlpha(90), Theme.of(context).backgroundColor)),
                             height: 2 * 42 / 3,
                             width: 2 * 42 / 3)),
                     Center(child: const Icon(Icons.keyboard_arrow_down)),

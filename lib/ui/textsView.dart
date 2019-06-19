@@ -167,7 +167,7 @@ class _TextsViewState extends State<TextsView> {
                                     HapticFeedback.heavyImpact();
                                     Navigator.push(
                                         context,
-                                        FadeRoute<void>(
+                                        DurationMaterialPageRoute<void>(
                                             builder: (BuildContext context) =>
                                                 CardView(
                                                   heroTag: heroTag,

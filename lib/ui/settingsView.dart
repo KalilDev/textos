@@ -91,58 +91,61 @@ class SettingsView extends StatelessWidget {
             )),
         ListTile(
             leading: const Icon(Icons.short_text),
-            title: Text(textTextAlignment, style: styleSettings),
-            trailing: IconTheme(
-              data: Theme.of(context).iconTheme,
-              child: Container(
-                width: 192,
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                        tooltip: textTooltipAlignLeft,
-                        icon: Icon(
-                          TextIcons.format_align_left,
+            title: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Align(alignment: Alignment.centerLeft, child: Text(textTextAlignment, style: styleSettings)),
+                IconTheme(
+                  data: Theme.of(context).iconTheme,
+                  child: Row(
+                    children: <Widget>[
+                      Spacer(),
+                      IconButton(
+                          tooltip: textTooltipAlignLeft,
+                          icon: Icon(
+                            TextIcons.format_align_left,
+                            color: Provider.of<TextStyleProvider>(context)
+                                .textAlign ==
+                                TextAlign.left
+                                ? Theme.of(context).accentColor
+                                : null,
+                          ),
+                          onPressed: () => Provider.of<TextStyleProvider>(context)
+                              .textAlign = TextAlign.left),
+                      IconButton(
+                          tooltip: textTooltipAlignCenter,
+                          icon: const Icon(TextIcons.format_align_center),
                           color: Provider.of<TextStyleProvider>(context)
-                                      .textAlign ==
-                                  TextAlign.left
+                              .textAlign ==
+                              TextAlign.center
                               ? Theme.of(context).accentColor
                               : null,
-                        ),
-                        onPressed: () => Provider.of<TextStyleProvider>(context)
-                            .textAlign = TextAlign.left),
-                    IconButton(
-                        tooltip: textTooltipAlignCenter,
-                        icon: const Icon(TextIcons.format_align_center),
-                        color: Provider.of<TextStyleProvider>(context)
-                            .textAlign ==
-                            TextAlign.center
-                            ? Theme.of(context).accentColor
-                            : null,
-                        onPressed: () => Provider.of<TextStyleProvider>(context)
-                            .textAlign = TextAlign.center),
-                    IconButton(
-                        tooltip: textTooltipAlignRight,
-                        icon: const Icon(TextIcons.format_align_right),
-                        color: Provider.of<TextStyleProvider>(context)
-                            .textAlign ==
-                            TextAlign.right
-                            ? Theme.of(context).accentColor
-                            : null,
-                        onPressed: () => Provider.of<TextStyleProvider>(context)
-                            .textAlign = TextAlign.right),
-                    IconButton(
-                        tooltip: textTooltipAlignJustify,
-                        icon: const Icon(TextIcons.format_align_justify),
-                        color: Provider.of<TextStyleProvider>(context)
-                            .textAlign ==
-                            TextAlign.justify
-                            ? Theme.of(context).accentColor
-                            : null,
-                        onPressed: () => Provider.of<TextStyleProvider>(context)
-                            .textAlign = TextAlign.justify),
-                  ],
+                          onPressed: () => Provider.of<TextStyleProvider>(context)
+                              .textAlign = TextAlign.center),
+                      IconButton(
+                          tooltip: textTooltipAlignRight,
+                          icon: const Icon(TextIcons.format_align_right),
+                          color: Provider.of<TextStyleProvider>(context)
+                              .textAlign ==
+                              TextAlign.right
+                              ? Theme.of(context).accentColor
+                              : null,
+                          onPressed: () => Provider.of<TextStyleProvider>(context)
+                              .textAlign = TextAlign.right),
+                      IconButton(
+                          tooltip: textTooltipAlignJustify,
+                          icon: const Icon(TextIcons.format_align_justify),
+                          color: Provider.of<TextStyleProvider>(context)
+                              .textAlign ==
+                              TextAlign.justify
+                              ? Theme.of(context).accentColor
+                              : null,
+                          onPressed: () => Provider.of<TextStyleProvider>(context)
+                              .textAlign = TextAlign.justify),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             )),
       ];
     }
@@ -221,7 +224,7 @@ class SettingsView extends StatelessWidget {
               : const EdgeInsets.only(top: 5.0),
           decoration: BoxDecoration(
               color: Color.alphaBlend(
-                  Theme.of(context).primaryColor.withAlpha(40),
+                  Theme.of(context).primaryColor.withAlpha(20),
                   Theme.of(context).backgroundColor),
               borderRadius: BorderRadius.circular(20.0)),
           padding: const EdgeInsets.symmetric(vertical: 4.0),
