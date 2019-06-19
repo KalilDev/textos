@@ -15,7 +15,8 @@ const String textName = 'Nome';
 const String textSurname = 'Sobrenome';
 const String textNewUser = 'Criar Usuario';
 const String textLoginAnonymously = 'Entrar anonimamente';
-const String textAnonyConsequences = 'Você realmente quer entrar anonimamente? Se faze-lo, não poderá postar nada, incluindo comentarios';
+const String textAnonyConsequences =
+    'Você realmente quer entrar anonimamente? Se faze-lo, não poderá postar nada, incluindo comentarios';
 const String textLoginWithGoogle = 'Fazer login com o Google';
 const String textError = 'Erro';
 const String textOk = 'Ooops';
@@ -92,38 +93,37 @@ const ColorScheme _colorSchemeDark = ColorScheme(
 final ThemeData themeDataDark = themeFromScheme(_colorSchemeDark);
 
 // BaseTextStyles
-final TextStyle _baseTextStyleSecondary =
-TextStyle(fontFamily: 'Merriweather');
+final TextStyle _baseTextStyleSecondary = TextStyle(fontFamily: 'Merriweather');
 final TextStyle _baseTextStylePrimary = TextStyle(fontFamily: 'Muli');
 
 // TextTheme
 final TextTheme textThemePrimary = TextTheme(
-  display4:
-      _baseTextStylePrimary.copyWith(fontSize: 112.0, fontWeight: FontWeight.w100),
-  display3:
-      _baseTextStylePrimary.copyWith(fontSize: 56.0, fontWeight: FontWeight.w400),
-  display2:
-      _baseTextStylePrimary.copyWith(fontSize: 45.0, fontWeight: FontWeight.w400),
-  display1:
-      _baseTextStylePrimary.copyWith(fontSize: 34.0, fontWeight: FontWeight.w400),
-  headline:
-      _baseTextStylePrimary.copyWith(fontSize: 24.0, fontWeight: FontWeight.w400),
-  title:
-      _baseTextStylePrimary.copyWith(fontSize: 20.0, fontWeight: FontWeight.w500),
-  subhead:
-      _baseTextStylePrimary.copyWith(fontSize: 16.0, fontWeight: FontWeight.w400),
-  body2:
-      _baseTextStylePrimary.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
-  body1:
-      _baseTextStylePrimary.copyWith(fontSize: 14.0, fontWeight: FontWeight.w400),
-  caption:
-      _baseTextStylePrimary.copyWith(fontSize: 12.0, fontWeight: FontWeight.w400),
-  button:
-      _baseTextStylePrimary.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
-  subtitle:
-      _baseTextStylePrimary.copyWith(fontSize: 14.0, fontWeight: FontWeight.w500),
-  overline:
-      _baseTextStylePrimary.copyWith(fontSize: 10.0, fontWeight: FontWeight.w400),
+  display4: _baseTextStylePrimary.copyWith(
+      fontSize: 112.0, fontWeight: FontWeight.w100),
+  display3: _baseTextStylePrimary.copyWith(
+      fontSize: 56.0, fontWeight: FontWeight.w400),
+  display2: _baseTextStylePrimary.copyWith(
+      fontSize: 45.0, fontWeight: FontWeight.w400),
+  display1: _baseTextStylePrimary.copyWith(
+      fontSize: 34.0, fontWeight: FontWeight.w400),
+  headline: _baseTextStylePrimary.copyWith(
+      fontSize: 24.0, fontWeight: FontWeight.w400),
+  title: _baseTextStylePrimary.copyWith(
+      fontSize: 20.0, fontWeight: FontWeight.w500),
+  subhead: _baseTextStylePrimary.copyWith(
+      fontSize: 16.0, fontWeight: FontWeight.w400),
+  body2: _baseTextStylePrimary.copyWith(
+      fontSize: 14.0, fontWeight: FontWeight.w500),
+  body1: _baseTextStylePrimary.copyWith(
+      fontSize: 14.0, fontWeight: FontWeight.w400),
+  caption: _baseTextStylePrimary.copyWith(
+      fontSize: 12.0, fontWeight: FontWeight.w400),
+  button: _baseTextStylePrimary.copyWith(
+      fontSize: 14.0, fontWeight: FontWeight.w500),
+  subtitle: _baseTextStylePrimary.copyWith(
+      fontSize: 14.0, fontWeight: FontWeight.w500),
+  overline: _baseTextStylePrimary.copyWith(
+      fontSize: 10.0, fontWeight: FontWeight.w400),
 );
 final TextTheme textThemeSecondary = TextTheme(
   display4: _baseTextStyleSecondary.copyWith(
@@ -179,33 +179,35 @@ const String aboutGreeting =
 // MD Compliance
 Color getTextColor(double percent, {Color bg, Color main}) =>
     Color.alphaBlend(main.withAlpha((255 * percent).round()), bg);
-Brightness inverseBrightness(Brightness b) => b == Brightness.dark ? Brightness.light : Brightness.dark;
+Brightness inverseBrightness(Brightness b) =>
+    b == Brightness.dark ? Brightness.light : Brightness.dark;
 ThemeData themeFromScheme(ColorScheme scheme) => ThemeData(
     colorScheme: scheme,
     brightness: scheme.brightness,
     scaffoldBackgroundColor: scheme.background,
     accentColor: scheme.secondary,
-    accentColorBrightness: scheme.onSecondary != scheme.background ? scheme.brightness : inverseBrightness(scheme.brightness),
+    accentColorBrightness: scheme.onSecondary != scheme.background
+        ? scheme.brightness
+        : inverseBrightness(scheme.brightness),
     canvasColor: scheme.background,
     dividerColor: scheme.onBackground.withAlpha(70),
     primaryColor: scheme.primary,
-    primaryColorBrightness: scheme.onPrimary != scheme.background ? scheme.brightness : inverseBrightness(scheme.brightness),
+    primaryColorBrightness: scheme.onPrimary != scheme.background
+        ? scheme.brightness
+        : inverseBrightness(scheme.brightness),
     backgroundColor: scheme.background,
     textTheme: textThemePrimary.apply(
         bodyColor: getTextColor(0.87,
             bg: scheme.background, main: scheme.onBackground),
         displayColor: getTextColor(0.87,
-            bg: scheme.background,
-            main: scheme.onBackground)),
+            bg: scheme.background, main: scheme.onBackground)),
     primaryTextTheme: textThemePrimary.apply(
         bodyColor: getTextColor(0.87,
             bg: scheme.background, main: scheme.onBackground),
         displayColor: getTextColor(0.87,
-            bg: scheme.background,
-            main: scheme.onBackground)),
+            bg: scheme.background, main: scheme.onBackground)),
     accentTextTheme: textThemeSecondary.apply(
         bodyColor: getTextColor(0.87,
             bg: scheme.background, main: scheme.onBackground),
         displayColor: getTextColor(0.87,
-            bg: scheme.background,
-            main: scheme.onBackground)));
+            bg: scheme.background, main: scheme.onBackground)));

@@ -152,14 +152,18 @@ class _TextsViewState extends State<TextsView> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       IconButton(
-                                          icon: Icon(favProvider
-                                                  .isFavorite(content.favorite)
-                                              ? Icons.favorite
-                                              : Icons.favorite_border,
-                                              color: favProvider
-                                                  .isFavorite(content.favorite)
-                                            ? Theme.of(context).accentColor : null),
-                                          onPressed: () => favProvider.toggle(content.favorite)),
+                                          icon: Icon(
+                                              favProvider.isFavorite(
+                                                      content.favorite)
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: favProvider.isFavorite(
+                                                      content.favorite)
+                                                  ? Theme.of(context)
+                                                      .accentColor
+                                                  : null),
+                                          onPressed: () => favProvider
+                                              .toggle(content.favorite)),
                                       Text(content.favoriteCount.toString())
                                     ],
                                   ),

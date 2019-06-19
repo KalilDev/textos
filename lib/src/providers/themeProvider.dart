@@ -41,7 +41,7 @@ class ThemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void changeTheme(){
+  void changeTheme() {
     if (_idx + 1 < _lightThemes.length) {
       _idx++;
     } else {

@@ -112,10 +112,10 @@ class AboutCreator extends StatelessWidget {
                                             style: textTheme.subtitle,
                                             textAlign: TextAlign.start),
                                         RichText(
-                                            textAlign: TextAlign.justify,
-                                            text: TextSpan(
+                                          textAlign: TextAlign.justify,
+                                          text: TextSpan(
                                               children: formattedText(aboutMe,
-                                          style: textTheme.subtitle)),
+                                                  style: textTheme.subtitle)),
                                         )
                                       ],
                                     )),
@@ -150,7 +150,8 @@ class AboutCreator extends StatelessWidget {
                                         RichText(
                                           textAlign: TextAlign.justify,
                                           text: TextSpan(
-                                              children: formattedText(aboutFlutter,
+                                              children: formattedText(
+                                                  aboutFlutter,
                                                   style: textTheme.subtitle)),
                                         )
                                       ],
@@ -164,7 +165,8 @@ class AboutCreator extends StatelessWidget {
                                         RichText(
                                           textAlign: TextAlign.center,
                                           text: TextSpan(
-                                              children: formattedText(aboutGreeting,
+                                              children: formattedText(
+                                                  aboutGreeting,
                                                   style: textTheme.subtitle)),
                                         )
                                       ],

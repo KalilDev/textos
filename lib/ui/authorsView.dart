@@ -58,16 +58,17 @@ class _AuthorsViewState extends State<AuthorsView> {
               index: Provider.of<QueryInfoProvider>(context).currentPage,
               transformer:
                   PageTransformerBuilder(builder: (_, TransformInfo info) {
-                  final Map<String, dynamic> data = _metadataList[info.index];
-                  return _AuthorPage(
-                    info: info,
-                    tags: data['tags'],
-                    title: data['title'],
-                    authorName: data['authorName'],
-                  );
+                final Map<String, dynamic> data = _metadataList[info.index];
+                return _AuthorPage(
+                  info: info,
+                  tags: data['tags'],
+                  title: data['title'],
+                  authorName: data['authorName'],
+                );
               }),
             );
-          } else if (snapshot.hasError || (snapshot.hasData && (snapshot?.data?.isEmpty ?? true))){
+          } else if (snapshot.hasError ||
+              (snapshot.hasData && (snapshot?.data?.isEmpty ?? true))) {
             return Center(
               child: Text(textAppName,
                   style: Theme.of(context).accentTextTheme.display1),

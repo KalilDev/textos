@@ -70,7 +70,10 @@ class _FavoriteItem extends StatelessWidget {
                   content: content,
                   heroTag: heroTag,
                   callBack: () async {
-                    final Content fullContent = snap.data != null ? snap.data : await Provider.of<FavoritesProvider>(context).getContent(favorite);
+                    final Content fullContent = snap.data != null
+                        ? snap.data
+                        : await Provider.of<FavoritesProvider>(context)
+                            .getContent(favorite);
                     HapticFeedback.heavyImpact();
                     Navigator.push(
                         context,

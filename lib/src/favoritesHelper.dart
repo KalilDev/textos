@@ -139,8 +139,9 @@ class FavoritesHelper {
         'textReferences': localReferences.toList(),
         'textTitles': localTitles.toList()
       });
-      batch.updateData(statsDocument,
-          <String, dynamic>{path.replaceAll('/', '_'): FieldValue.increment(incValue)});
+      batch.updateData(statsDocument, <String, dynamic>{
+        path.replaceAll('/', '_'): FieldValue.increment(incValue)
+      });
       batch.commit();
     }
   }

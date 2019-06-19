@@ -17,21 +17,28 @@ class FavoritesProvider with ChangeNotifier {
   Set<Favorite> _favoritesSet;
   FavoritesHelper _helper;
 
-  bool isFavorite(Favorite favorite) => _favoritesSet.any((Favorite fav) => fav.textId == favorite.textId);
+  bool isFavorite(Favorite favorite) =>
+      _favoritesSet.any((Favorite fav) => fav.textId == favorite.textId);
 
   Set<Favorite> get favoritesSet => _favoritesSet;
 
   void add(Favorite favorite) {
     _favoritesSet.add(favorite);
     settingsSync();
-    _helper.atomicOperation(title: favorite.textTitle, path: favorite.textPath, operation: AtomicOperation.add);
+    _helper.atomicOperation(
+        title: favorite.textTitle,
+        path: favorite.textPath,
+        operation: AtomicOperation.add);
     notifyListeners();
   }
 
   void remove(Favorite favorite) {
     _favoritesSet.removeWhere((Favorite fav) => fav.textId == favorite.textId);
     settingsSync();
-    _helper.atomicOperation(title: favorite.textTitle, path: favorite.textPath, operation: AtomicOperation.remove);
+    _helper.atomicOperation(
+        title: favorite.textTitle,
+        path: favorite.textPath,
+        operation: AtomicOperation.remove);
     notifyListeners();
   }
 
@@ -58,7 +65,7 @@ class FavoritesProvider with ChangeNotifier {
   void toggle(Favorite favorite) {
     isFavorite(favorite) ? remove(favorite) : add(favorite);
   }
-  
+
   void reorder(int oldIndex, int newIndex) {
     if (newIndex > oldIndex)
       newIndex -= 1;
@@ -70,7 +77,7 @@ class FavoritesProvider with ChangeNotifier {
     settingsSync();
     notifyListeners();
   }
-  
+
   Future<void> settingsSync() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<String> strings = <String>[];

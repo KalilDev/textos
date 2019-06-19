@@ -151,21 +151,19 @@ class _BackAppBar extends StatelessWidget {
     return IconTheme.merge(
       data: theme.primaryIconTheme.copyWith(color: color),
       child: DefaultTextStyle(
-        style: theme.accentTextTheme.title.copyWith(color: color, fontWeight: FontWeight.bold),
+        style: theme.accentTextTheme.title
+            .copyWith(color: color, fontWeight: FontWeight.bold),
         child: SizedBox(
           height: _kBackAppBarHeight,
           child: Row(
             children: <Widget>[
-          Container(
-          alignment: Alignment.center,
-            height: _kBackAppBarHeight,
-            width: _kBackAppBarHeight,
-            margin: const EdgeInsets.only(left: 10.0),
-            child: leading
-          ),
               Container(
+                  alignment: Alignment.center,
                   height: _kBackAppBarHeight,
-                  child: title),
+                  width: _kBackAppBarHeight,
+                  margin: const EdgeInsets.only(left: 10.0),
+                  child: leading),
+              Container(height: _kBackAppBarHeight, child: title),
               Spacer(),
               Container(
                 alignment: Alignment.center,
@@ -321,7 +319,8 @@ class _BackdropState extends State<Backdrop>
               color: Theme.of(context).canvasColor,
               clipper: ShapeBorderClipper(
                   shape: RoundedRectangleBorder(
-                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(_kBackAppBarHeight)))),
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(_kBackAppBarHeight)))),
               clipBehavior: Clip.antiAlias,
               child: child,
             );

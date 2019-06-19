@@ -18,13 +18,14 @@ import 'src/model/favorite.dart';
 
 void main() {
   runApp(
-      ChangeNotifierProvider<AuthService>(
-        child: MyApp(),
-        builder: (BuildContext context) {
-          return AuthService();
-        },
-      ),
-    );}
+    ChangeNotifierProvider<AuthService>(
+      child: MyApp(),
+      builder: (BuildContext context) {
+        return AuthService();
+      },
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -41,14 +42,11 @@ class MyApp extends StatelessWidget {
           // redirect to the proper page
           return snapshot.hasData
               ? StateBuilder(snapshot.data)
-              : MaterialApp(
-                  theme: themeDataDark,
-                  home: LoginView());
+              : MaterialApp(theme: themeDataDark, home: LoginView());
         } else {
           // show loading indicator
           return MaterialApp(
-              theme: themeDataDark,
-              home: Scaffold(body: LoadingCircle()));
+              theme: themeDataDark, home: Scaffold(body: LoadingCircle()));
         }
       },
     );
@@ -113,7 +111,8 @@ class StateBuilder extends StatelessWidget {
                 ListenableProvider<BlurProvider>(
                     builder: (_) => BlurProvider(snap.data[2])),
                 ListenableProvider<TextStyleProvider>(
-                    builder: (_) => TextStyleProvider(snap.data[3], snap.data[4])),
+                    builder: (_) =>
+                        TextStyleProvider(snap.data[3], snap.data[4])),
                 ListenableProvider<QueryInfoProvider>(
                   builder: (_) => QueryInfoProvider(),
                 )
@@ -121,8 +120,17 @@ class StateBuilder extends StatelessWidget {
               child: Consumer<ThemeProvider>(
                 builder: (BuildContext context, ThemeProvider provider, _) {
                   ThemeData overrideTheme;
-                  final ThemeData dark = themeFromScheme(themeDataDark.colorScheme.copyWith(secondary: provider.darkTheme.secondary, secondaryVariant: provider.darkTheme.secondaryVariant, onSecondary: provider.darkTheme.onSecondary));
-                  final ThemeData light = themeFromScheme(themeDataLight.colorScheme.copyWith(secondary: provider.lightTheme.secondary, secondaryVariant: provider.lightTheme.secondaryVariant, onSecondary: provider.lightTheme.onSecondary));
+                  final ThemeData dark = themeFromScheme(
+                      themeDataDark.colorScheme.copyWith(
+                          secondary: provider.darkTheme.secondary,
+                          secondaryVariant: provider.darkTheme.secondaryVariant,
+                          onSecondary: provider.darkTheme.onSecondary));
+                  final ThemeData light = themeFromScheme(
+                      themeDataLight.colorScheme.copyWith(
+                          secondary: provider.lightTheme.secondary,
+                          secondaryVariant:
+                              provider.lightTheme.secondaryVariant,
+                          onSecondary: provider.lightTheme.onSecondary));
 
                   if (provider.isDarkMode) {
                     overrideTheme = dark;
@@ -139,8 +147,9 @@ class StateBuilder extends StatelessWidget {
               ),
             );
           } else {
-          return MaterialApp(theme: themeDataDark,home: Scaffold(body: LoadingCircle()));
-        }
+            return MaterialApp(
+                theme: themeDataDark, home: Scaffold(body: LoadingCircle()));
+          }
         });
   }
 }

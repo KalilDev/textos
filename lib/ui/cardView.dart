@@ -38,46 +38,49 @@ class CardView extends StatelessWidget {
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  margin: const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 8.0),
+                  margin:
+                      const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 8.0),
                   child: Row(
                     children: <Widget>[
                       content.hasText
                           ? Container(
-                          margin: const EdgeInsets.only(left: 4.0),
-                          child: IncDecButton(
-                              isBlurred: Provider.of<BlurProvider>(context)
-                                  .buttonsBlur,
-                              onDecrease: () =>
-                                  Provider.of<TextStyleProvider>(context)
-                                      .decrease(),
-                              onIncrease: () =>
-                                  Provider.of<TextStyleProvider>(context)
-                                      .increase(),
-                              value: Provider.of<TextStyleProvider>(context)
-                                  .textSize))
+                              margin: const EdgeInsets.only(left: 4.0),
+                              child: IncDecButton(
+                                  isBlurred: Provider.of<BlurProvider>(context)
+                                      .buttonsBlur,
+                                  onDecrease: () =>
+                                      Provider.of<TextStyleProvider>(context)
+                                          .decrease(),
+                                  onIncrease: () =>
+                                      Provider.of<TextStyleProvider>(context)
+                                          .increase(),
+                                  value: Provider.of<TextStyleProvider>(context)
+                                      .textSize))
                           : const SizedBox(),
                       content.hasMusic
                           ? Expanded(
-                          child: Container(
-                              margin:
-                              const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: RepaintBoundary(
-                                child: PlaybackButton(
-                                  url: content.music,
-                                  isBlurred: Provider.of<BlurProvider>(context)
-                                      .buttonsBlur,
-                                ),
-                              )))
+                              child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: RepaintBoundary(
+                                    child: PlaybackButton(
+                                      url: content.music,
+                                      isBlurred:
+                                          Provider.of<BlurProvider>(context)
+                                              .buttonsBlur,
+                                    ),
+                                  )))
                           : Spacer(),
                       Container(
                         margin: const EdgeInsets.only(right: 4.0),
                         child: RepaintBoundary(
                           child: BiStateFAB(
-                            onPressed: () => Provider.of<FavoritesProvider>(context)
-                                .toggle(content.favorite),
+                            onPressed: () =>
+                                Provider.of<FavoritesProvider>(context)
+                                    .toggle(content.favorite),
                             enabledColor: Theme.of(context).accentColor,
                             isBlurred:
-                            Provider.of<BlurProvider>(context).buttonsBlur,
+                                Provider.of<BlurProvider>(context).buttonsBlur,
                             isEnabled: Provider.of<FavoritesProvider>(context)
                                 .isFavorite(content.favorite),
                             disabledColor: Theme.of(context).accentColor,

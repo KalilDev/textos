@@ -53,7 +53,7 @@ class _LoginViewState extends State<LoginView> {
           title: Text(
             textAppName,
             style: Theme.of(context).accentTextTheme.title.copyWith(
-              fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.bold,
                 color: getTextColor(0.87,
                     bg: Theme.of(context).backgroundColor,
                     main: Theme.of(context).colorScheme.onSurface)),
@@ -74,8 +74,7 @@ class _LoginViewState extends State<LoginView> {
                   TextFormField(
                       onSaved: (String value) => _email = value,
                       keyboardType: TextInputType.emailAddress,
-                      decoration:
-                          InputDecoration(labelText: textEmail)),
+                      decoration: InputDecoration(labelText: textEmail)),
                   TextFormField(
                       onSaved: (String value) => _password = value,
                       obscureText: true,
@@ -154,7 +153,8 @@ class _LoginViewState extends State<LoginView> {
                           width: double.infinity,
                           child:
                               Center(child: const Text(textLoginAnonymously))),
-                      onPressed: () => _buildConfirmationDialog(context, textAnonyConsequences)
+                      onPressed: () => _buildConfirmationDialog(
+                                  context, textAnonyConsequences)
                               .then<bool>((bool b) async {
                             if (b)
                               try {
@@ -173,9 +173,7 @@ class _LoginViewState extends State<LoginView> {
                           width: double.infinity,
                           child: Stack(
                             children: <Widget>[
-                              Center(
-                                  child:
-                                      const Text(textLoginWithGoogle)),
+                              Center(child: const Text(textLoginWithGoogle)),
                             ],
                           )),
                       onPressed: () async {

@@ -18,7 +18,12 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle styleSettings = Theme.of(context).textTheme.subhead.copyWith(color: Color.alphaBlend(Theme.of(context).accentColor.withAlpha(90), Theme.of(context).colorScheme.onBackground));
+    final TextStyle styleSettings = Theme.of(context)
+        .textTheme
+        .subhead
+        .copyWith(
+            color: Color.alphaBlend(Theme.of(context).accentColor.withAlpha(90),
+                Theme.of(context).colorScheme.onBackground));
     final TextStyle styleDescription = styleSettings.copyWith(
         color: getTextColor(0.87,
             main: Theme.of(context).colorScheme.onBackground,
@@ -94,7 +99,9 @@ class SettingsView extends StatelessWidget {
             title: Column(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Align(alignment: Alignment.centerLeft, child: Text(textTextAlignment, style: styleSettings)),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(textTextAlignment, style: styleSettings)),
                 IconTheme(
                   data: Theme.of(context).iconTheme,
                   child: Row(
@@ -105,43 +112,47 @@ class SettingsView extends StatelessWidget {
                           icon: Icon(
                             TextIcons.format_align_left,
                             color: Provider.of<TextStyleProvider>(context)
-                                .textAlign ==
-                                TextAlign.left
+                                        .textAlign ==
+                                    TextAlign.left
                                 ? Theme.of(context).accentColor
                                 : null,
                           ),
-                          onPressed: () => Provider.of<TextStyleProvider>(context)
-                              .textAlign = TextAlign.left),
+                          onPressed: () =>
+                              Provider.of<TextStyleProvider>(context)
+                                  .textAlign = TextAlign.left),
                       IconButton(
                           tooltip: textTooltipAlignCenter,
                           icon: const Icon(TextIcons.format_align_center),
                           color: Provider.of<TextStyleProvider>(context)
-                              .textAlign ==
-                              TextAlign.center
+                                      .textAlign ==
+                                  TextAlign.center
                               ? Theme.of(context).accentColor
                               : null,
-                          onPressed: () => Provider.of<TextStyleProvider>(context)
-                              .textAlign = TextAlign.center),
+                          onPressed: () =>
+                              Provider.of<TextStyleProvider>(context)
+                                  .textAlign = TextAlign.center),
                       IconButton(
                           tooltip: textTooltipAlignRight,
                           icon: const Icon(TextIcons.format_align_right),
                           color: Provider.of<TextStyleProvider>(context)
-                              .textAlign ==
-                              TextAlign.right
+                                      .textAlign ==
+                                  TextAlign.right
                               ? Theme.of(context).accentColor
                               : null,
-                          onPressed: () => Provider.of<TextStyleProvider>(context)
-                              .textAlign = TextAlign.right),
+                          onPressed: () =>
+                              Provider.of<TextStyleProvider>(context)
+                                  .textAlign = TextAlign.right),
                       IconButton(
                           tooltip: textTooltipAlignJustify,
                           icon: const Icon(TextIcons.format_align_justify),
                           color: Provider.of<TextStyleProvider>(context)
-                              .textAlign ==
-                              TextAlign.justify
+                                      .textAlign ==
+                                  TextAlign.justify
                               ? Theme.of(context).accentColor
                               : null,
-                          onPressed: () => Provider.of<TextStyleProvider>(context)
-                              .textAlign = TextAlign.justify),
+                          onPressed: () =>
+                              Provider.of<TextStyleProvider>(context)
+                                  .textAlign = TextAlign.justify),
                     ],
                   ),
                 ),

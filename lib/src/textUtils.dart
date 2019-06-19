@@ -4,10 +4,10 @@ import 'package:flutter/widgets.dart';
 
 String stringDate(DateTime time) =>
     time.day.toString() +
-        '/' +
-        time.month.toString() +
-        '/' +
-        time.year.toString();
+    '/' +
+    time.month.toString() +
+    '/' +
+    time.year.toString();
 
 Map<int, int> _iterate(List<Match> list) {
   final Map<int, int> periods = <int, int>{};
@@ -20,17 +20,16 @@ Map<int, int> _iterate(List<Match> list) {
 }
 
 List<TextSpan> formattedText(String _text, {TextStyle style}) {
-  final String text = _text.replaceAll('\^TAB', '         ').replaceAll('\^NL', '\n');
+  final String text =
+      _text.replaceAll('\^TAB', '         ').replaceAll('\^NL', '\n');
   final RegExp italicRegex = RegExp(r'\_');
   final RegExp boldRegex = RegExp(r'\*');
   final RegExp strikeRegex = RegExp(r'\~');
   final RegExp monoRegex = RegExp(r'\`');
 
-  final Map<int, int> italic =
-  _iterate(italicRegex.allMatches(text).toList());
+  final Map<int, int> italic = _iterate(italicRegex.allMatches(text).toList());
   final Map<int, int> bold = _iterate(boldRegex.allMatches(text).toList());
-  final Map<int, int> strike =
-  _iterate(strikeRegex.allMatches(text).toList());
+  final Map<int, int> strike = _iterate(strikeRegex.allMatches(text).toList());
   final Map<int, int> mono = _iterate(monoRegex.allMatches(text).toList());
 
   final Map<int, int> allMap = <int, int>{};
@@ -53,8 +52,7 @@ List<TextSpan> formattedText(String _text, {TextStyle style}) {
   do {
     if (all.length - 1 < i) {
       list.add(TextSpan(
-          text: text.substring(spanBoundary, text.length),
-          style: style));
+          text: text.substring(spanBoundary, text.length), style: style));
       return list;
     } else {
       final int startIdx = all[i];
