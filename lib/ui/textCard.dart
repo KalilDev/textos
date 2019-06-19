@@ -45,7 +45,7 @@ class ContentCard extends StatelessWidget {
                 blankSpace: 25,
                 pauseAfterRound: const Duration(seconds: 1),
                 velocity: 60.0),
-            height: Theme.of(context).accentTextTheme.display1.fontSize*1.2);
+            height: Theme.of(context).accentTextTheme.display1.fontSize * 1.2);
       } else {
         return Text(
           content.title,
@@ -65,11 +65,17 @@ class ContentCard extends StatelessWidget {
         children: <Widget>[
           Spacer(),
           if (lineCount > 0 && (content.text != null || content.hasMusic))
-            RichText(
-                maxLines: lineCount,
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                    children: formattedText(content.text ?? 'Musica ▶', style: text))),
+            SizedBox(
+                height: heightForText,
+                child: OverflowBox(
+                    alignment: Alignment.topCenter,
+                    maxHeight: double.infinity,
+                    child: RichText(
+                        maxLines: lineCount,
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                            children: formattedText(content.text ?? 'Musica ▶',
+                                style: text))))),
           Spacer(),
           if (heightForText > 0) Text(content.date, style: date),
           if (heightForText > 0)
@@ -98,15 +104,14 @@ class ContentCard extends StatelessWidget {
             alignment: Alignment.center,
             child: Material(
               child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20)),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
                 margin: const EdgeInsets.all(8.0),
                 child: Hero(
                     tag: 'body' + heroTag.toString(),
                     child: BlurOverlay.roundedRect(
                         radius: 15,
-                        enabled: Provider.of<BlurProvider>(context)
-                            .textsBlur,
+                        enabled: Provider.of<BlurProvider>(context).textsBlur,
                         child: ParallaxContainer(
                             translationFactor: 75,
                             position: position,
@@ -119,47 +124,55 @@ class ContentCard extends StatelessWidget {
 
     Widget buildSliver() {
       return Hero(
-        tag: 'body' + heroTag.toString(),
-        child: BlurOverlay.roundedRect(
+          tag: 'body' + heroTag.toString(),
+          child: BlurOverlay.roundedRect(
             radius: 20.0,
-            color: Provider.of<BlurProvider>(context).textsBlur ? Theme.of(context).backgroundColor.withAlpha(120) : Theme.of(context).backgroundColor.withAlpha(150),
+            color: Provider.of<BlurProvider>(context).textsBlur
+                ? Theme.of(context).backgroundColor.withAlpha(120)
+                : Theme.of(context).backgroundColor.withAlpha(150),
             enabled: Provider.of<BlurProvider>(context).textsBlur,
             child: Material(
-                borderRadius: BorderRadius.circular(20.0),
-                clipBehavior: Clip.antiAlias,
-                color: Colors.transparent,
-                child: InkWell(
-                  child: Container(
-                      child: Center(
+              borderRadius: BorderRadius.circular(20.0),
+              clipBehavior: Clip.antiAlias,
+              color: Colors.transparent,
+              child: InkWell(
+                child: Container(
+                    child: Center(
                         child: Row(
-                          children: <Widget>[
-                        Expanded(
-                        child: AnimatedSwitcher(
-                          duration: durationAnimationMedium,
-                          transitionBuilder: (Widget child, Animation<double> animation) => SizeTransition(axisAlignment: 1.0,sizeFactor: animation, child: child),
-                          child: (content.date != null) ? Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: buildTitle(),
-                              ),
-                              Expanded(
-                                  child: Center(
+                  children: <Widget>[
+                    Expanded(
+                      child: AnimatedSwitcher(
+                        duration: durationAnimationMedium,
+                        transitionBuilder:
+                            (Widget child, Animation<double> animation) =>
+                                SizeTransition(
+                                    axisAlignment: 1.0,
+                                    sizeFactor: animation,
+                                    child: child),
+                        child: (content.date != null)
+                            ? Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4.0),
+                                    child: buildTitle(),
+                                  ),
+                                  Expanded(
+                                      child: Center(
                                     child: LayoutBuilder(
                                         builder: extraTextBuilder),
                                   )),
-                            ],
-                          )
-                              : Center(child: buildTitle()),
-                        ),
+                                ],
+                              )
+                            : Center(child: buildTitle()),
                       ),
-                      if (trailing != null) trailing
+                    ),
+                    if (trailing != null) trailing
                   ],
                 ))),
-        onTap: callBack,
-      ),
-      ),
-      ));
+                onTap: callBack,
+              ),
+            ),
+          ));
     }
 
     return Stack(
@@ -222,9 +235,7 @@ class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
               child: Column(children: <Widget>[
                 Text(widget.textContent.title,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .accentTextTheme
-                        .display1),
+                    style: Theme.of(context).accentTextTheme.display1),
                 const SizedBox(
                   height: 8,
                 ),
@@ -232,23 +243,17 @@ class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
                   width: double.infinity,
                   child: RichText(
                       textAlign:
-                      Provider.of<TextStyleProvider>(
-                          context)
-                          .textAlign,
+                          Provider.of<TextStyleProvider>(context).textAlign,
                       text: TextSpan(
-                          children: formattedText(
-                              widget.textContent.text,
+                          children: formattedText(widget.textContent.text,
                               style: textTheme.body1.copyWith(
                                   fontSize:
-                                  _textSize.evaluate(
-                                      animation) *
-                                      4.5)))),
+                                      _textSize.evaluate(animation) * 4.5)))),
                 ),
                 SizedBox(
                     height: 56,
                     child: Center(
-                        child: Text(
-                            widget.textContent.date,
+                        child: Text(widget.textContent.date,
                             style: textTheme.title))),
                 widget.textContent.hasMusic
                     ? const SizedBox(height: 56)
