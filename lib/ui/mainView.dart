@@ -20,7 +20,7 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
-    _isList = false;
+    _isList = true;
     super.initState();
   }
 
