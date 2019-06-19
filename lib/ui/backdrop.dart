@@ -385,8 +385,20 @@ class _BackdropState extends State<Backdrop>
     );
   }
 
+  bool _willPop() {
+    if (_controller.value == 1.0) {
+      Navigator.pop(context);
+      return true;
+    } else {
+      _toggleFrontLayer();
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: _buildStack);
+    return WillPopScope(
+        onWillPop: () async => _willPop(),
+        child: LayoutBuilder(builder: _buildStack));
   }
 }
