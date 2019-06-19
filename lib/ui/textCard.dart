@@ -13,12 +13,18 @@ class ContentCard extends StatelessWidget {
   const ContentCard({@required this.content, @required this.heroTag})
       : position = null,
         isSliver = false,
-        callBack = null;
+        callBack = null,
+        trailing = null;
   const ContentCard.withParallax(
       {@required this.content, @required this.position, @required this.heroTag})
       : isSliver = false,
-        callBack = null;
-  const ContentCard.sliver({@required this.content, @required this.callBack, @required this.heroTag})
+        callBack = null,
+        trailing = null;
+  const ContentCard.sliver(
+      {@required this.content,
+      @required this.callBack,
+      @required this.heroTag,
+      this.trailing})
       : position = null,
         isSliver = true;
   final Content content;
@@ -26,6 +32,7 @@ class ContentCard extends StatelessWidget {
   final bool isSliver;
   final VoidCallback callBack;
   final Object heroTag;
+  final Widget trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +45,7 @@ class ContentCard extends StatelessWidget {
                 blankSpace: 25,
                 pauseAfterRound: const Duration(seconds: 1),
                 velocity: 60.0),
-            height: 60.0);
+            height: Theme.of(context).accentTextTheme.display1.fontSize);
       } else {
         return Text(
           content.title,
@@ -46,6 +53,31 @@ class ContentCard extends StatelessWidget {
           textAlign: TextAlign.center,
         );
       }
+    }
+
+    Widget extraTextBuilder(BuildContext context, BoxConstraints constraints) {
+      final TextStyle text = Theme.of(context).textTheme.body1;
+      final TextStyle date = Theme.of(context).textTheme.title;
+      final double heightForText = constraints.maxHeight - date.fontSize - 15.0;
+      final int lineCount = (heightForText / text.fontSize).floor();
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Spacer(),
+          if (lineCount > 0)
+            RichText(
+                maxLines: lineCount,
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    children: formattedText(content.text, style: text))),
+          Spacer(),
+          if (heightForText > 0) Text(content.date, style: date),
+          if (heightForText > 0)
+            const SizedBox(
+              height: 2.0,
+            )
+        ],
+      );
     }
 
     return Stack(
@@ -101,13 +133,39 @@ class ContentCard extends StatelessWidget {
                         clipBehavior: Clip.antiAlias,
                         color: Colors.transparent,
                         child: InkWell(
-                          child: Container(child: Center(child: getText())),
+                          child: Container(
+                              child: Center(
+                                  child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: AnimatedSwitcher(
+                                  duration: durationAnimationMedium,
+                                  transitionBuilder: (Widget child, Animation<double> animation) => SizeTransition(axisAlignment: 1.0,sizeFactor: animation, child: child),
+                                  child: (content.date != null && content.text != null) ? Column(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 4.0),
+                                        child: getText(),
+                                      ),
+                                      Expanded(
+                                          child: Center(
+                                            child: LayoutBuilder(
+                                                builder: extraTextBuilder),
+                                          )),
+                                    ],
+                                  )
+                                  : Center(child: getText()),
+                                ),
+                              ),
+                              if (trailing != null) trailing
+                            ],
+                          ))),
                           onTap: callBack,
                         ),
                       ),
                     ))
                 : _TextWidget(
-          heroTag: heroTag,
+                    heroTag: heroTag,
                     textContent: content,
                     textSize: Provider.of<TextStyleProvider>(context).textSize),
       ],
@@ -116,7 +174,10 @@ class ContentCard extends StatelessWidget {
 }
 
 class _TextWidget extends ImplicitlyAnimatedWidget {
-  const _TextWidget({@required this.textContent, @required this.textSize, @required this.heroTag})
+  const _TextWidget(
+      {@required this.textContent,
+      @required this.textSize,
+      @required this.heroTag})
       : super(duration: durationAnimationShort);
 
   final Content textContent;
@@ -175,7 +236,10 @@ class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
                                       Container(
                                         width: double.infinity,
                                         child: RichText(
-                                            textAlign: Provider.of<TextStyleProvider>(context).textAlign,
+                                            textAlign:
+                                                Provider.of<TextStyleProvider>(
+                                                        context)
+                                                    .textAlign,
                                             text: TextSpan(
                                                 children: formattedText(
                                                     widget.textContent.text,

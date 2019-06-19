@@ -61,12 +61,13 @@ class _FavoriteItem extends StatelessWidget {
           future: Provider.of<FavoritesProvider>(context).getContent(favorite),
           builder: (BuildContext context, AsyncSnapshot<Content> snap) {
             final String heroTag = 'favoriteItem' + favorite.textPath;
+            final Content content = snap.data ?? Content.fromFav(favorite);
 
             return Container(
                 margin: const EdgeInsets.only(bottom: 12.0),
                 height: 100.0,
                 child: ContentCard.sliver(
-                  content: Content.fromFav(favorite),
+                  content: content,
                   heroTag: heroTag,
                   callBack: () async {
                     final Content fullContent = snap.data != null ? snap.data : await Provider.of<FavoritesProvider>(context).getContent(favorite);
