@@ -75,36 +75,6 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
     return Scaffold(
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) => Backdrop(
-            frontAction: AnimatedBuilder(
-                animation: _tabController.animation,
-                builder: (BuildContext context, _) {
-                  return _tabController.animation.value.round() == 1
-                      ? Stack(
-                          children: <Widget>[
-                            Center(
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .primaryColor
-                                          .withAlpha(90),
-                                      shape: BoxShape.circle),
-                                  height: 2 * 42 / 3,
-                                  width: 2 * 42 / 3),
-                            ),
-                            Material(
-                              borderRadius: BorderRadius.circular(80.0),
-                              color: Colors.transparent,
-                              clipBehavior: Clip.antiAlias,
-                              child: IconButton(
-                                  icon: const Icon(Icons.list),
-                                  tooltip: textTooltipTabPageToggle,
-                                  onPressed: () =>
-                                      setState(() => _isList = !_isList)),
-                            ),
-                          ],
-                        )
-                      : const SizedBox();
-                }),
             frontTitle: RepaintBoundary(
                 child: AnimatedBuilder(
                     animation: _tabController.animation,
