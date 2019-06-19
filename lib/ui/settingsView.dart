@@ -18,7 +18,7 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle styleSettings = Theme.of(context).textTheme.subhead;
+    final TextStyle styleSettings = Theme.of(context).textTheme.subhead.copyWith(color: Color.alphaBlend(Theme.of(context).accentColor.withAlpha(90), Theme.of(context).colorScheme.onBackground));
     final TextStyle styleDescription = styleSettings.copyWith(
         color: getTextColor(0.87,
             main: Theme.of(context).colorScheme.onBackground,
@@ -44,8 +44,8 @@ class SettingsView extends StatelessWidget {
                 : MediaQuery.of(context).platformBrightness == Brightness.dark
                     ? true
                     : false,
-            activeColor: Theme.of(context).primaryColor,
-            activeTrackColor: Theme.of(context).primaryColor.withAlpha(170),
+            activeColor: Theme.of(context).accentColor,
+            activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
             inactiveThumbImage:
                 MediaQuery.of(context).platformBrightness == Brightness.dark
                     ? const AssetImage('res/baseline_lock_white_96dp.png')
@@ -69,37 +69,79 @@ class SettingsView extends StatelessWidget {
         ListTile(
             leading: const Icon(TextIcons.format_size),
             title: Text(textTextSize, style: styleSettings),
-            trailing: Container(
-              width: 96,
-              child: Row(
-                children: <Widget>[
-                  DecreaseButton(
-                    value: Provider.of<TextStyleProvider>(context).textSize,
-                    onDecrease: () =>
-                        Provider.of<TextStyleProvider>(context).decrease(),
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                  IncreaseButton(
-                    value: Provider.of<TextStyleProvider>(context).textSize,
-                    onIncrease: () =>
-                        Provider.of<TextStyleProvider>(context).increase(),
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                ],
+            trailing: IconTheme(
+              data: Theme.of(context).iconTheme,
+              child: Container(
+                width: 96,
+                child: Row(
+                  children: <Widget>[
+                    DecreaseButton(
+                      value: Provider.of<TextStyleProvider>(context).textSize,
+                      onDecrease: () =>
+                          Provider.of<TextStyleProvider>(context).decrease(),
+                    ),
+                    IncreaseButton(
+                      value: Provider.of<TextStyleProvider>(context).textSize,
+                      onIncrease: () =>
+                          Provider.of<TextStyleProvider>(context).increase(),
+                    ),
+                  ],
+                ),
               ),
             )),
         ListTile(
             leading: const Icon(Icons.short_text),
             title: Text(textTextAlignment, style: styleSettings),
-            trailing: Container(
-              width: 192,
-              child: Row(
-                children: <Widget>[
-                  IconButton(tooltip: textTooltipAlignLeft, icon: const Icon(TextIcons.format_align_left), onPressed: () => Provider.of<TextStyleProvider>(context).textAlign = TextAlign.left),
-                  IconButton(tooltip: textTooltipAlignCenter, icon: const Icon(TextIcons.format_align_center), onPressed: () => Provider.of<TextStyleProvider>(context).textAlign = TextAlign.center),
-                  IconButton(tooltip: textTooltipAlignRight, icon: const Icon(TextIcons.format_align_right), onPressed: () => Provider.of<TextStyleProvider>(context).textAlign = TextAlign.right),
-                  IconButton(tooltip: textTooltipAlignJustify, icon: const Icon(TextIcons.format_align_justify), onPressed: () => Provider.of<TextStyleProvider>(context).textAlign = TextAlign.justify),
-                ],
+            trailing: IconTheme(
+              data: Theme.of(context).iconTheme,
+              child: Container(
+                width: 192,
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                        tooltip: textTooltipAlignLeft,
+                        icon: Icon(
+                          TextIcons.format_align_left,
+                          color: Provider.of<TextStyleProvider>(context)
+                                      .textAlign ==
+                                  TextAlign.left
+                              ? Theme.of(context).accentColor
+                              : null,
+                        ),
+                        onPressed: () => Provider.of<TextStyleProvider>(context)
+                            .textAlign = TextAlign.left),
+                    IconButton(
+                        tooltip: textTooltipAlignCenter,
+                        icon: const Icon(TextIcons.format_align_center),
+                        color: Provider.of<TextStyleProvider>(context)
+                            .textAlign ==
+                            TextAlign.center
+                            ? Theme.of(context).accentColor
+                            : null,
+                        onPressed: () => Provider.of<TextStyleProvider>(context)
+                            .textAlign = TextAlign.center),
+                    IconButton(
+                        tooltip: textTooltipAlignRight,
+                        icon: const Icon(TextIcons.format_align_right),
+                        color: Provider.of<TextStyleProvider>(context)
+                            .textAlign ==
+                            TextAlign.right
+                            ? Theme.of(context).accentColor
+                            : null,
+                        onPressed: () => Provider.of<TextStyleProvider>(context)
+                            .textAlign = TextAlign.right),
+                    IconButton(
+                        tooltip: textTooltipAlignJustify,
+                        icon: const Icon(TextIcons.format_align_justify),
+                        color: Provider.of<TextStyleProvider>(context)
+                            .textAlign ==
+                            TextAlign.justify
+                            ? Theme.of(context).accentColor
+                            : null,
+                        onPressed: () => Provider.of<TextStyleProvider>(context)
+                            .textAlign = TextAlign.justify),
+                  ],
+                ),
               ),
             )),
       ];
@@ -123,16 +165,16 @@ class SettingsView extends StatelessWidget {
             title: Text(textBlurButtons, style: styleSettings),
             secondary: const Icon(Icons.blur_circular),
             value: Provider.of<BlurProvider>(context).buttonsBlur,
-            activeColor: Theme.of(context).primaryColor,
-            activeTrackColor: Theme.of(context).primaryColor.withAlpha(170),
+            activeColor: Theme.of(context).accentColor,
+            activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
             onChanged: (bool map) =>
                 Provider.of<BlurProvider>(context).toggleButtonsBlur()),
         SwitchListTile(
             title: Text(textBlurText, style: styleSettings),
             secondary: const Icon(Icons.blur_on),
             value: Provider.of<BlurProvider>(context).textsBlur,
-            activeColor: Theme.of(context).primaryColor,
-            activeTrackColor: Theme.of(context).primaryColor.withAlpha(170),
+            activeColor: Theme.of(context).accentColor,
+            activeTrackColor: Theme.of(context).accentColor.withAlpha(170),
             onChanged: (bool map) =>
                 Provider.of<BlurProvider>(context).toggleTextsBlur()),
       ];
@@ -173,11 +215,15 @@ class SettingsView extends StatelessWidget {
     }
 
     Widget buildCategory(List<Widget> children, {bool isFirst = false}) {
-      return ElevatedContainer(
-          elevation: 4.0,
+      return Container(
           margin: isFirst
-              ? const EdgeInsets.fromLTRB(3, 12.5, 3, 3)
-              : const EdgeInsets.fromLTRB(3, 5, 3, 3),
+              ? const EdgeInsets.only(top: 12.5)
+              : const EdgeInsets.only(top: 5.0),
+          decoration: BoxDecoration(
+              color: Color.alphaBlend(
+                  Theme.of(context).primaryColor.withAlpha(40),
+                  Theme.of(context).backgroundColor),
+              borderRadius: BorderRadius.circular(20.0)),
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20.0),
@@ -188,21 +234,29 @@ class SettingsView extends StatelessWidget {
           ));
     }
 
-    return Container(
-      decoration: BoxDecoration(
-          color: Color.alphaBlend(Theme.of(context).primaryColor.withAlpha(80),
-              Theme.of(context).backgroundColor)),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            buildCategory(themeWidgets(), isFirst: true),
-            buildCategory(textWidgets()),
-            buildCategory(favoriteWidgets()),
-            buildCategory(blurWidgets()),
-            buildCategory(miscWidgets()),
-            const SizedBox(height: 56.0),
-          ],
+    return ListTileTheme(
+      iconColor: Theme.of(context).accentColor,
+      child: IconTheme(
+        data: IconThemeData(
+            color: Theme.of(context).accentColor, opacity: 1.0, size: 24.0),
+        child: Container(
+          decoration: BoxDecoration(
+              color: Color.alphaBlend(
+                  Theme.of(context).primaryColor.withAlpha(90),
+                  Theme.of(context).backgroundColor)),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                buildCategory(themeWidgets(), isFirst: true),
+                buildCategory(textWidgets()),
+                buildCategory(favoriteWidgets()),
+                buildCategory(blurWidgets()),
+                buildCategory(miscWidgets()),
+                const SizedBox(height: 56.0),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -293,7 +293,7 @@ class _BackdropState extends State<Backdrop>
     final List<Widget> layers = <Widget>[
       // Back layer
       Container(
-        color: Color.alphaBlend(Theme.of(context).primaryColor.withAlpha(80),
+        color: Color.alphaBlend(Theme.of(context).primaryColor.withAlpha(90),
             Theme.of(context).backgroundColor),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

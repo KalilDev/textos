@@ -75,6 +75,7 @@ class CardView extends StatelessWidget {
                           child: BiStateFAB(
                             onPressed: () => Provider.of<FavoritesProvider>(context)
                                 .toggle(content.favorite),
+                            enabledColor: Theme.of(context).accentColor,
                             isBlurred:
                             Provider.of<BlurProvider>(context).buttonsBlur,
                             isEnabled: Provider.of<FavoritesProvider>(context)
