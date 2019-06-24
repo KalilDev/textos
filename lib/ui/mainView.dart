@@ -116,52 +116,23 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                 ))),
       ),
       bottomNavigationBar: RepaintBoundary(
-        child: AnimatedBuilder(
-          animation: _tabController.animation,
-          builder: (BuildContext context, _) => Stack(
-                children: <Widget>[
-                  BottomNavigationBar(
-                      onTap: (int idx) => _tabController.animateTo(idx),
-                      type: BottomNavigationBarType.fixed,
-                      showSelectedLabels: true,
-                      showUnselectedLabels: false,
-                      currentIndex: _tabController.animation.value.round(),
-                      selectedItemColor: Color.alphaBlend(
-                          Theme.of(context).accentColor.withAlpha(120),
-                          Theme.of(context).backgroundColor),
-                      unselectedItemColor: Theme.of(context).backgroundColor,
-                      backgroundColor: Theme.of(context).primaryColor,
-                      items: const <BottomNavigationBarItem>[
-                        BottomNavigationBarItem(
-                            activeIcon: Icon(TextIcons.account_group),
-                            icon: Icon(TextIcons.account_group_outline),
-                            title: Text(textAuthors)),
-                        BottomNavigationBarItem(
-                            activeIcon: Icon(TextIcons.book_open_page_variant),
-                            icon: Icon(TextIcons.book_open_variant),
-                            title: Text(textTexts)),
-                        BottomNavigationBarItem(
-                            activeIcon: Icon(TextIcons.heart_multiple),
-                            icon: Icon(TextIcons.heart_multiple_outline),
-                            title: Text(textFavs)),
-                      ]),
-                  SlideTransition(
-                      position: Tween<Offset>(
-                              begin: const Offset(0, 0),
-                              end: const Offset(1.0, 0.0))
-                          .animate(_tabController.animation),
-                      child: FractionallySizedBox(
-                        widthFactor: 1 / _tabController.length,
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 54.0),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).backgroundColor,
-                              borderRadius: BorderRadius.circular(1.0)),
-                          height: 2.0,
-                        ),
-                      ))
-                ],
-              ),
+        child: Container(
+          color: Theme.of(context).primaryColor,
+          child: TabBar(
+              controller: _tabController,
+              labelColor: Color.alphaBlend(
+                  Theme.of(context).accentColor.withAlpha(120),
+                  actualTheme.backgroundColor),
+              unselectedLabelColor: actualTheme.backgroundColor,
+              unselectedLabelStyle: Theme.of(context).accentTextTheme.body2,
+              indicatorSize: TabBarIndicatorSize.label,
+              indicatorColor: actualTheme.colorScheme.secondaryVariant,
+              labelStyle: Theme.of(context).accentTextTheme.body2.copyWith(fontWeight: FontWeight.bold),
+              tabs: const <Widget>[
+            Tab(text: textAuthors, icon: Icon(TextIcons.account_group)),
+            Tab(text: textTexts, icon: Icon(TextIcons.book_open_page_variant)),
+            Tab(text: textFavs, icon: Icon(TextIcons.heart_multiple)),
+          ]),
         ),
       ),
     );
