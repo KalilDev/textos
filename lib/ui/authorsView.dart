@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
@@ -24,12 +25,12 @@ class _AuthorsViewState extends State<AuthorsView> {
     _tagStream = Firestore.instance
         .collection('texts')
         .snapshots()
-        .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) => list
-            .documents
-            .map<Map<String, dynamic>>((DocumentSnapshot snap) {
-              Map<String, dynamic> data = snap.data;
+        .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) =>
+            list.documents.map<Map<String, dynamic>>((DocumentSnapshot snap) {
+              final Map<String, dynamic> data = snap.data;
               data['collection'] = snap.documentID;
-              return snap.data;}));
+              return snap.data;
+            }));
     super.initState();
   }
 
@@ -45,11 +46,13 @@ class _AuthorsViewState extends State<AuthorsView> {
           if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false)) {
             _metadataList = snapshot.data.toList();
             return TransformerPageView(
-              itemCount: _metadataList.length,
+              itemCount: _metadataList.length + 1,
               scrollDirection: Axis.vertical,
               viewportFraction: 0.90,
               curve: Curves.decelerate,
               onPageChanged: (int page) {
+                if (page == _metadataList.length)
+                  return;
                 Provider.of<QueryInfoProvider>(context).currentPage = page;
                 Provider.of<QueryInfoProvider>(context).collection =
                     _metadataList[page]['collection'];
@@ -60,6 +63,8 @@ class _AuthorsViewState extends State<AuthorsView> {
               index: Provider.of<QueryInfoProvider>(context).currentPage,
               transformer:
                   PageTransformerBuilder(builder: (_, TransformInfo info) {
+                if (info.index == _metadataList.length)
+                  return _AddPage();
                 final Map<String, dynamic> data = _metadataList[info.index];
                 return _AuthorPage(
                   info: info,
@@ -246,6 +251,113 @@ class _CustomButton extends StatelessWidget {
                     HapticFeedback.selectionClick();
                     Provider.of<QueryInfoProvider>(context).tag = queryTag;
                   })),
+    );
+  }
+}
+
+class _AddPage extends StatefulWidget {
+  @override
+  __AddPageState createState() => __AddPageState();
+}
+
+class __AddPageState extends State<_AddPage> {
+  bool _isCreating = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _title = '';
+  String _authorName = '';
+  List<String> _tags;
+  TextEditingController _titleController;
+  TextEditingController _authorNameController;
+
+  @override
+  void initState() {
+    _titleController = TextEditingController();
+    _authorNameController = TextEditingController();
+    _titleController.addListener(() => setState(() => _formKey.currentState.save()));
+    _authorNameController.addListener(() => setState(() => _formKey.currentState.save()));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _authorNameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget buildCreator() {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(_title + ' ' + _authorName, style: Theme.of(context).accentTextTheme.display1,),
+              Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextFormField(
+                        onSaved: (String value) => _title = value,
+                        controller: _titleController,
+                        decoration: InputDecoration(
+                            labelText: 'Titulo. Ex.: Textos do')),
+                    TextFormField(
+                        onSaved: (String value) => _authorName = value,
+                        controller: _authorNameController,
+                        decoration:
+                            InputDecoration(labelText: 'Nome do autor')),
+                  ],
+                ),
+              ),
+              RaisedButton(onPressed: () async {
+                final FormState form = _formKey.currentState;
+                form.save();
+                final FirebaseUser user =
+                    await Provider.of<AuthService>(context).getUser();
+                final DocumentReference document =
+                    Firestore.instance.collection('texts').document(user.uid);
+                if (form.validate()) {
+                  final DocumentSnapshot snap = await document.get();
+                  if (!snap.exists) {
+                    await document.setData(<String, dynamic>{
+                      'authorName': _authorName,
+                      'title': _title + ' ',
+                      'tags': <dynamic>[],
+                      'visible': false
+                    });
+                  }
+                }
+              }),
+              OutlineButton(
+                  onPressed: () => setState(() => _isCreating = false))
+            ],
+          ),
+        ),
+      );
+    }
+
+    return ElevatedContainer(
+      elevation: 16.0,
+      margin: const EdgeInsets.only(right: 20, top: 10, bottom: 10, left: 10.0),
+      child: Material(
+        borderRadius: BorderRadius.circular(20.0),
+        clipBehavior: Clip.antiAlias,
+        color: Colors.transparent,
+        child: _isCreating
+            ? buildCreator()
+            : InkWell(
+                onTap: () => setState(() => _isCreating = true),
+                child: Container(
+                  child: Center(
+                    child: IconButton(icon: const Icon(Icons.add), onPressed: null),
+                  ),
+                ),
+              ),
+      ),
     );
   }
 }

@@ -46,7 +46,7 @@ class FavoritesHelper {
   bool get isInDebugMode {
     bool inDebugMode = false;
     assert(inDebugMode = true);
-    return false;
+    return inDebugMode;
   }
 
   Future<void> syncDatabase(Set<Favorite> favorites) async {

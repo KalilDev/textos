@@ -136,10 +136,12 @@ class _TextsViewState extends State<TextsView> {
                             const SizedBox(
                               height: 10.0,
                             ),
-                        itemCount: _slideList.length + 1,
+                        itemCount: _slideList.length + 2,
                         itemBuilder: (BuildContext context, int index) {
                           if (index == 0)
                             return SizedBox(height: widget.spacerSize);
+                          if (index == _slideList.length + 1)
+                            return _AddItem();
                           final Content content =
                               Content.fromData(_slideList[index - 1]);
 
@@ -304,5 +306,17 @@ class _TextPage extends StatelessWidget {
                         )));
           }
         });
+  }
+}
+
+class _AddItem extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedContainer(
+      elevation: 16.0,
+      child: Center(
+        child: IconButton(icon: const Icon(Icons.add), onPressed: null),
+      ),
+    );
   }
 }
