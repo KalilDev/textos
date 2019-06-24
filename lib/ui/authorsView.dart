@@ -22,12 +22,14 @@ class _AuthorsViewState extends State<AuthorsView> {
   @override
   void initState() {
     _tagStream = Firestore.instance
-        .collection('metadata')
-        .orderBy('order')
+        .collection('texts')
         .snapshots()
         .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) => list
             .documents
-            .map<Map<String, dynamic>>((DocumentSnapshot snap) => snap.data));
+            .map<Map<String, dynamic>>((DocumentSnapshot snap) {
+              Map<String, dynamic> data = snap.data;
+              data['collection'] = snap.documentID;
+              return snap.data;}));
     super.initState();
   }
 

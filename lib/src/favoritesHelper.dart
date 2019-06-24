@@ -14,32 +14,9 @@ class FavoritesHelper {
 
   final Firestore db = Firestore.instance;
   final CollectionReference favoritesCollection =
-      Firestore.instance.collection('favorites');
+      Firestore.instance.collection('users');
   final DocumentReference statsDocument =
-      Firestore.instance.collection('favorites').document('_stats_');
-
-  Future<DocumentSnapshot> get userDocumentSnapshot async {
-    final QuerySnapshot queryResult = await favoritesCollection
-        .where('userId', isEqualTo: userId)
-        .getDocuments();
-    final List<DocumentSnapshot> snapshots = queryResult.documents;
-    if (snapshots.isEmpty) {
-      DocumentReference document;
-      document = await favoritesCollection.add(<String, dynamic>{
-        'userId': userId,
-        'textReferences': <DocumentReference>[],
-        'textTitles': <String>[]
-      });
-      return await document.get();
-    } else {
-      return snapshots[0];
-    }
-  }
-
-  Future<DocumentReference> get userDocument async {
-    final DocumentSnapshot snap = await userDocumentSnapshot;
-    return snap.reference;
-  }
+      Firestore.instance.collection('users').document('_favorites_');
 
   Map<String, int> _getDelta(
       List<DocumentReference> localReferences, List<dynamic> remoteReferences) {
@@ -69,22 +46,25 @@ class FavoritesHelper {
   bool get isInDebugMode {
     bool inDebugMode = false;
     assert(inDebugMode = true);
-    return inDebugMode;
+    return false;
   }
 
   Future<void> syncDatabase(Set<Favorite> favorites) async {
     if (userId != null && isInDebugMode == false) {
-      final DocumentSnapshot snapshot = await userDocumentSnapshot;
-      final DocumentReference document = await userDocument;
-
-      final List<dynamic> remoteReferences = snapshot.data['textReferences'];
+      final DocumentReference document = favoritesCollection.document(userId);
+      final DocumentSnapshot snapshot = await document.get();
+      List<dynamic> remoteReferences;
+      if (snapshot?.data?.isEmpty ?? true) {
+        document.setData(<String, dynamic>{'favoriteReferences': <dynamic>[]});
+        remoteReferences = <dynamic>[];
+      } else {
+        remoteReferences = snapshot?.data['favoriteReferences'] ?? <dynamic>[];
+      }
 
       final List<DocumentReference> localReferences = <DocumentReference>[];
-      final List<String> localTitles = <String>[];
       for (Favorite favorite in favorites) {
         final DocumentReference reference = db.document(favorite.textPath);
         localReferences.add(reference);
-        localTitles.add(favorite.textTitle);
       }
 
       final Map<String, int> delta =
@@ -98,8 +78,7 @@ class FavoritesHelper {
           remoteReferences.length != remoteReferences.toSet().length) {
         final WriteBatch batch = db.batch();
         batch.updateData(document, <String, dynamic>{
-          'textReferences': localReferences,
-          'textTitles': localTitles
+          'favoriteReferences': localReferences,
         });
         delta.forEach((String docPath, int delta) => batch.updateData(
             statsDocument,
@@ -113,31 +92,26 @@ class FavoritesHelper {
       {String title, String path, AtomicOperation operation}) async {
     if (userId != null && isInDebugMode == false) {
       final DocumentReference reference = db.document(path);
-      final DocumentSnapshot snapshot = await userDocumentSnapshot;
-      final DocumentReference document = await userDocument;
+      final DocumentReference document = favoritesCollection.document(userId);
+      final DocumentSnapshot snapshot = await document.get();
 
-      final List<dynamic> remoteReferences = snapshot.data['textReferences'];
-      final List<dynamic> remoteTitles = snapshot.data['textTitles'];
+      final List<dynamic> remoteReferences = snapshot.data['favoriteReferences'];
 
       final Set<DocumentReference> localReferences =
           Set<DocumentReference>.from(remoteReferences);
-      final Set<String> localTitles = Set<String>.from(remoteTitles);
 
       int incValue;
       if (operation == AtomicOperation.add) {
-        localTitles.add(title);
         localReferences.add(reference);
         incValue = 1;
       } else if (operation == AtomicOperation.remove) {
-        localTitles.remove(title);
         localReferences.remove(reference);
         incValue = -1;
       }
 
       final WriteBatch batch = db.batch();
       batch.updateData(document, <String, dynamic>{
-        'textReferences': localReferences.toList(),
-        'textTitles': localTitles.toList()
+        'favoriteReferences': localReferences.toList()
       });
       batch.updateData(statsDocument, <String, dynamic>{
         path.replaceAll('/', '_'): FieldValue.increment(incValue)

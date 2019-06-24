@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ThemeProvider with ChangeNotifier {
   ThemeProvider(bool enabled) {
     _enabled = enabled;
-    _idx = 1;
+    _idx = 2;
   }
   int _idx;
 

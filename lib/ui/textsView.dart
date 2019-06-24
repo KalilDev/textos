@@ -43,12 +43,16 @@ class _TextsViewState extends State<TextsView> {
     final QueryInfoProvider queryInfo = Provider.of<QueryInfoProvider>(context);
     if (queryInfo.tag != textAllTag) {
       _query = _db
-          .collection(queryInfo.collection)
+          .collection('texts')
+          .document(queryInfo.collection)
+          .collection('documents')
           .where('tags', arrayContains: queryInfo.tag)
           .orderBy('date', descending: true);
     } else {
       _query = _db
-          .collection(queryInfo.collection)
+          .collection('texts')
+          .document(queryInfo.collection)
+          .collection('documents')
           .orderBy('date', descending: true);
     }
   }
@@ -57,8 +61,8 @@ class _TextsViewState extends State<TextsView> {
   void initState() {
     super.initState();
     _favoritesStream = _db
-        .collection('favorites')
-        .document('_stats_')
+        .collection('users')
+        .document('_favorites_')
         .snapshots()
         .map((DocumentSnapshot documentSnapshot) => documentSnapshot.data);
     _indexController = IndexController();

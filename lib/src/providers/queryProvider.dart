@@ -7,7 +7,7 @@ class QueryInfoProvider with ChangeNotifier {
   String _tag;
   int _currentPage;
 
-  String get collection => _collection ?? 'stories';
+  String get collection => _collection ?? 'aBsVwogsjyUk7QISuKfAHOXsSdG2';
 
   String get tag => _tag ?? textAllTag;
 
