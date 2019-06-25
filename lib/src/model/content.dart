@@ -9,11 +9,13 @@ class Content {
       {@required this.title,
       @required String date,
       @required String imgUrl,
-      @required this.text,
+      @required String text,
       @required this.music,
       @required this.tags})
       : _date = date,
-        _imgUrl = imgUrl;
+        _imgUrl = imgUrl,
+        text = text.replaceAll('\n', '^NL');
+
   Content.fromFav(Favorite fav) {
     title = fav.textTitle;
     textPath = fav.textPath;
