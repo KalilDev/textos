@@ -10,7 +10,6 @@ import 'package:textos/constants.dart';
 import 'package:textos/src/model/content.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView.dart';
-import 'package:transformer_page_view/transformer_page_view.dart';
 
 import 'textCard.dart';
 import 'textCreateView.dart';
@@ -23,7 +22,6 @@ class TextsView extends StatefulWidget {
 }
 
 class _TextsViewState extends State<TextsView> {
-  IndexController _indexController;
   Stream<Map<String, dynamic>> _favoritesStream;
   Query _query;
   static Map<String, dynamic> favoritesData;
@@ -127,7 +125,6 @@ class _TextsViewState extends State<TextsView> {
         .document('_favorites_')
         .snapshots()
         .map((DocumentSnapshot documentSnapshot) => documentSnapshot.data);
-    _indexController = IndexController();
   }
 
   @override
@@ -167,13 +164,16 @@ class _TextsViewState extends State<TextsView> {
 
                         Widget listView() {
                           return ListView.builder(
-                              itemCount: _slideList.length + (_shouldDisplayAdd ? 1 : 0),
+                              itemCount: _slideList.length + (_shouldDisplayAdd ? 2 : 1),
                               itemBuilder: (BuildContext context, int index) {
-                                if (_shouldDisplayAdd && index == _slideList.length)
+                                if (index == 0)
+                                  return SizedBox(height: widget.spacerSize);
+
+                                if (_shouldDisplayAdd && index == _slideList.length + 1)
                                   return Container(padding: const EdgeInsets.symmetric(vertical: 4.0),height: 100.0 ,child: _AddItem());
 
                                 final Content content =
-                                    Content.fromData(_slideList[index]);
+                                    Content.fromData(_slideList[index - 1]);
                                 return _listViewItem(content);
                               });
                         }

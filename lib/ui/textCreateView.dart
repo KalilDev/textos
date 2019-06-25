@@ -32,20 +32,21 @@ class _TextCreateViewState extends State<TextCreateView> {
 
   Future<void> _selectDate() async {
     final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2016),
-        lastDate: DateTime.now(),
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2016),
+      lastDate: DateTime.now(),
       builder: (BuildContext dateContext, Widget child) {
         return Theme(
-          data: Theme.of(context).copyWith(primaryColorBrightness: Theme.of(context).brightness),
+          data: Theme.of(context)
+              .copyWith(primaryColorBrightness: Theme.of(context).brightness),
           child: child,
         );
-      },);
+      },
+    );
     if (picked != null) {
       String normalize(int date) {
-        if (date < 10)
-          return '0' + date.toString();
+        if (date < 10) return '0' + date.toString();
         return date.toString();
       }
 
@@ -102,25 +103,27 @@ class _TextCreateViewState extends State<TextCreateView> {
 
   Future<void> _sendText() async {
     if (_imageLoading || _musicLoading) {
-      showDialog<void>(context: context, builder: (BuildContext context) => AlertDialog(
-        title: const Text('Aguarde!'),
-        content: const Text('Aguarde o upload da foto ou da música'),
-        actions: <Widget>[
-          FlatButton(
-              child: const Text(textOk),
-              onPressed: Navigator.of(context).pop)
-        ],
-      ));
+      showDialog<void>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text('Aguarde!'),
+                content: const Text('Aguarde o upload da foto ou da música'),
+                actions: <Widget>[
+                  FlatButton(
+                      child: const Text(textOk),
+                      onPressed: Navigator.of(context).pop)
+                ],
+              ));
       return;
     }
-    if (_date == null)
-      await _selectDate();
+    if (_date == null) await _selectDate();
 
     final bool shouldUpload = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
               title: const Text('Confirmação'),
-              content: Text('O texto será postado com as seguintes informações caso queira prossiguir: \nTitulo: ${_title}\nData: ${_date}\nTags: ${_tags.toString()}\n${_imageUrl != null ? 'Imagem anexada' : 'Nenhuma imagem'}\n${_musicUrl != null ? 'Musica anexada\n' : 'Nenhuma musica'}'),
+              content: Text(
+                  'O texto será postado com as seguintes informações caso queira prossiguir: \nTitulo: ${_title}\nData: ${_date}\nTags: ${_tags.toString()}\n${_imageUrl != null ? 'Imagem anexada' : 'Nenhuma imagem'}\n${_musicUrl != null ? 'Musica anexada\n' : 'Nenhuma musica'}'),
               actions: <Widget>[
                 FlatButton(
                     child: const Text(textNo),
@@ -136,8 +139,13 @@ class _TextCreateViewState extends State<TextCreateView> {
             ));
 
     if (shouldUpload) {
-      final FirebaseUser user = await Provider.of<AuthService>(context).getUser();
-      Firestore.instance.collection('texts').document(user.uid).collection('documents').add(textContent.toData());
+      final FirebaseUser user =
+          await Provider.of<AuthService>(context).getUser();
+      Firestore.instance
+          .collection('texts')
+          .document(user.uid)
+          .collection('documents')
+          .add(textContent.toData());
       Navigator.pop(context);
     }
   }
@@ -146,22 +154,100 @@ class _TextCreateViewState extends State<TextCreateView> {
     final bool shouldPop = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text('Sair?'),
-          content: const Text('Todo o progresso será perdido!'),
-          actions: <Widget>[
-            FlatButton(
-                child: const Text(textNo),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                }),
-            FlatButton(
-                child: const Text(textYes),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                })
-          ],
-        ));
+              title: const Text('Sair?'),
+              content: const Text('Todo o progresso será perdido!'),
+              actions: <Widget>[
+                FlatButton(
+                    child: const Text(textNo),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    }),
+                FlatButton(
+                    child: const Text(textYes),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    })
+              ],
+            ));
     return shouldPop;
+  }
+
+  Widget _getTags() {
+    Future<List<dynamic>> _fetchFromDB() async {
+      final FirebaseUser user =
+          await Provider.of<AuthService>(context).getUser();
+      return Firestore.instance
+          .collection('texts')
+          .document(user.uid)
+          .get()
+          .then<List<dynamic>>((DocumentSnapshot snap) => snap.data['tags']);
+    }
+
+    List<Widget> _buildList(List<dynamic> list) {
+      Widget buildItem(String item) => Material(
+            elevation: 0.0,
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(20.0),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20.0),
+              onTap: () => setState(() {
+                    if (_tags.contains(item)) {
+                      _tags.remove(item);
+                    } else {
+                      _tags.add(item);
+                    }
+                  }),
+              child: SizedBox(
+                height: 56.0,
+                child: Row(
+                  children: <Widget>[
+                    Text('#' + item),
+                    Spacer(),
+                    Checkbox(
+                        value: _tags.contains(item),
+                        checkColor: Theme.of(context).colorScheme.onSecondary,
+                        activeColor: Theme.of(context).accentColor,
+                        onChanged: (_) {
+                          setState(() {
+                            if (_tags.contains(item)) {
+                              _tags.remove(item);
+                            } else {
+                              _tags.add(item);
+                            }
+                          });
+                        })
+                  ],
+                ),
+              ),
+            ),
+          );
+
+      List<Widget> widgets = <Widget>[];
+      for (dynamic element in list) {
+        widgets.add(buildItem(element.toString()));
+      }
+      return widgets;
+    }
+
+    return FutureBuilder<List<dynamic>>(
+        future: _fetchFromDB(),
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false))
+            return Container(
+                decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).primaryColor),
+                    borderRadius: BorderRadius.circular(20.0)),
+                margin: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Column(
+                  children: <Widget>[
+                    const Text('Tags'),
+                    ..._buildList(snapshot.data)
+                  ],
+                ));
+
+          return const SizedBox();
+        });
   }
 
   Content get textContent => Content(
@@ -193,13 +279,10 @@ class _TextCreateViewState extends State<TextCreateView> {
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         onSaved: (String text) => _text = text),
-                    TextFormField(
-                        decoration: InputDecoration(
-                            labelText: 'Tags (Separadas por vírgula)'),
-                        onSaved: (String tags) => _tags = tags.split(',')),
                   ],
                 ),
               ),
+              _getTags(),
               Row(
                 children: <Widget>[
                   Expanded(
@@ -213,7 +296,11 @@ class _TextCreateViewState extends State<TextCreateView> {
                           : const Text('Escolher Plano de fundo'),
                     ),
                   ),
-                  _imageUrl != null ? const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0),child: Icon(Icons.check)) : const SizedBox()
+                  _imageUrl != null
+                      ? const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Icon(Icons.check))
+                      : const SizedBox()
                 ],
               ),
               Row(
@@ -229,7 +316,11 @@ class _TextCreateViewState extends State<TextCreateView> {
                           : const Text('Escolher Musica'),
                     ),
                   ),
-                  _musicUrl != null ? const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0),child: Icon(Icons.check)) : const SizedBox()
+                  _musicUrl != null
+                      ? const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Icon(Icons.check))
+                      : const SizedBox()
                 ],
               ),
               OutlineButton(
