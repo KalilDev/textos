@@ -7,16 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:textos/src/model/content.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/src/textUtils.dart';
-import 'package:transformer_page_view/parallax.dart';
 
 class ContentCard extends StatelessWidget {
   const ContentCard({@required this.content, @required this.heroTag})
-      : position = null,
-        isSliver = false,
-        callBack = null,
-        trailing = null;
-  const ContentCard.withParallax(
-      {@required this.content, @required this.position, @required this.heroTag})
       : isSliver = false,
         callBack = null,
         trailing = null;
@@ -25,10 +18,8 @@ class ContentCard extends StatelessWidget {
       @required this.callBack,
       @required this.heroTag,
       this.trailing})
-      : position = null,
-        isSliver = true;
+      : isSliver = true;
   final Content content;
-  final double position;
   final bool isSliver;
   final VoidCallback callBack;
   final Object heroTag;
@@ -83,42 +74,6 @@ class ContentCard extends StatelessWidget {
               height: 2.0,
             )
         ],
-      );
-    }
-
-    Widget buildParallaxBackground() {
-      return Container(
-          height: double.infinity,
-          child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: ParallaxImage.cachedNetwork(
-                content.imgUrl,
-                position: position,
-              )));
-    }
-
-    Widget buildParallaxContent() {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(20.0),
-        child: Align(
-            alignment: Alignment.center,
-            child: Material(
-              child: Container(
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                margin: const EdgeInsets.all(8.0),
-                child: Hero(
-                    tag: 'body' + heroTag.toString(),
-                    child: BlurOverlay.roundedRect(
-                        radius: 15,
-                        enabled: Provider.of<BlurProvider>(context).textsBlur,
-                        child: ParallaxContainer(
-                            translationFactor: 75,
-                            position: position,
-                            child: buildTitle()))),
-              ),
-              color: Colors.transparent,
-            )),
       );
     }
 
@@ -179,15 +134,11 @@ class ContentCard extends StatelessWidget {
       children: <Widget>[
         Hero(
             tag: 'image' + heroTag.toString(),
-            child: position != null
-                ? buildParallaxBackground()
-                : ImageBackground(
+            child: ImageBackground(
                     img: content.imgUrl,
                     enabled: false,
                     key: Key('image' + heroTag.toString()))),
-        position != null
-            ? buildParallaxContent()
-            : isSliver
+        isSliver
                 ? buildSliver()
                 : _TextWidget(
                     heroTag: heroTag,

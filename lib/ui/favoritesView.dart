@@ -12,9 +12,8 @@ import 'cardView.dart';
 import 'textCard.dart';
 
 class FavoritesView extends StatelessWidget {
-  const FavoritesView({@required this.spacerSize, @required this.isList});
+  const FavoritesView({@required this.spacerSize});
   final double spacerSize;
-  final bool isList;
 
   List<Widget> _childrenBuilder(Iterable<Favorite> favs) {
     final List<Widget> list = <Widget>[];

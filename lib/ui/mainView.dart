@@ -15,12 +15,10 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> with TickerProviderStateMixin {
   TabController _tabController;
-  bool _isList;
 
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
-    _isList = true;
     super.initState();
   }
 
@@ -89,10 +87,10 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
                           _tabController.animation.value.ceil() == 0,
                     ),
                     constraints: constraints),
-                _renderChild(TextsView(spacerSize: spacerSize, isList: _isList),
+                _renderChild(const TextsView(spacerSize: spacerSize),
                     constraints: constraints),
                 _renderChild(
-                    FavoritesView(spacerSize: spacerSize, isList: _isList),
+                    const FavoritesView(spacerSize: spacerSize),
                     constraints: constraints),
               ],
             )),

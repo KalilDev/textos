@@ -16,9 +16,8 @@ import 'textCard.dart';
 import 'textCreateView.dart';
 
 class TextsView extends StatefulWidget {
-  const TextsView({@required this.spacerSize, @required this.isList});
+  const TextsView({@required this.spacerSize});
   final double spacerSize;
-  final bool isList;
   @override
   _TextsViewState createState() => _TextsViewState();
 }
@@ -106,41 +105,6 @@ class _TextsViewState extends State<TextsView> {
                           });
                         }
 
-                        Widget pageView() {
-                          return ListenableProvider<TextPageProvider>(
-                              builder: (_) => TextPageProvider(),
-                              child: Consumer<TextPageProvider>(
-                                builder: (BuildContext context,
-                                        TextPageProvider provider, _) =>
-                                    TransformerPageView(
-                                      pageSnapping: false,
-                                      controller: _indexController,
-                                      viewportFraction: 0.80,
-                                      curve: Curves.decelerate,
-                                      transformer: PageTransformerBuilder(
-                                          builder: (Widget child,
-                                              TransformInfo info) {
-                                        final Map<String, dynamic> data =
-                                            _slideList[info.index];
-                                        final Content content =
-                                            Content.fromData(data);
-                                        return _TextPage(
-                                            heroTag: 'pageViewItem' +
-                                                content.textPath,
-                                            info: info,
-                                            textContent: content,
-                                            indexController: _indexController);
-                                      }),
-                                      onPageChanged: (int page) {
-                                        SystemSound.play(SystemSoundType.click);
-                                        HapticFeedback.lightImpact();
-                                        provider.currentPage = page;
-                                      },
-                                      itemCount: _slideList.length,
-                                    ),
-                              ));
-                        }
-
                         Widget listView() {
                           return ListView.separated(
                               separatorBuilder:
@@ -204,13 +168,13 @@ class _TextsViewState extends State<TextsView> {
 
                         return AnimatedSwitcher(
                           duration: durationAnimationShort,
-                          child: widget.isList ? listView() : pageView(),
+                          child: listView(),
                         );
                       },
                     );
                   }
                 }
-                return _shouldDisplayAdd ? Padding(padding: EdgeInsets.all(20.0),child: _AddItem()) : Container(
+                return _shouldDisplayAdd ? Padding(padding: const EdgeInsets.all(20.0),child: _AddItem()) : Container(
                     child: Center(
                         child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -222,103 +186,6 @@ class _TextsViewState extends State<TextsView> {
                       )
                     ])));
               });
-        });
-  }
-}
-
-class _TextPage extends StatelessWidget {
-  const _TextPage(
-      {@required this.info,
-      @required this.textContent,
-      this.indexController,
-      @required this.heroTag});
-
-  final Content textContent;
-  final TransformInfo info;
-  final IndexController indexController;
-  final Object heroTag;
-
-  @override
-  Widget build(BuildContext context) {
-    if ((Provider.of<TextPageProvider>(context).currentPage - info.index)
-                .abs() <
-            2 !=
-        true) return const SizedBox();
-
-    final bool active = info.position.round() == 0.0 && info.position >= -0.30;
-    // Animated Properties
-    final double elevation = active ? 16 : 0;
-    const double vertical = 10;
-    const double k = 80;
-
-    return GestureDetector(
-        child: Stack(
-          children: <Widget>[
-            AnimatedContainer(
-              duration: durationAnimationMedium,
-              curve: Curves.decelerate,
-              margin: EdgeInsets.only(
-                  top: active ? vertical : vertical + k,
-                  bottom: vertical,
-                  right: 30),
-              child: ElevatedContainer(
-                elevation: elevation,
-                borderRadius: BorderRadius.circular(20),
-                child: Stack(
-                  children: <Widget>[
-                    ContentCard.withParallax(
-                        heroTag: heroTag,
-                        position: info.position,
-                        content: textContent),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: AnimatedSwitcher(
-                          duration: durationAnimationShort,
-                          switchInCurve: Curves.decelerate,
-                          switchOutCurve: Curves.decelerate,
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) =>
-                                  ScaleTransition(
-                                    scale: animation,
-                                    child: child,
-                                    alignment: FractionalOffset.bottomCenter,
-                                  ),
-                          child: active
-                              ? Align(
-                                  alignment: FractionalOffset.bottomCenter,
-                                  child: ExpandedFABCounter(
-                                      isEnabled: Provider.of<FavoritesProvider>(
-                                              context)
-                                          .isFavorite(textContent.favorite),
-                                      onPressed: () =>
-                                          Provider.of<FavoritesProvider>(
-                                                  context)
-                                              .toggle(textContent.favorite),
-                                      counter: textContent.favoriteCount,
-                                      isBlurred:
-                                          Provider.of<BlurProvider>(context)
-                                              .buttonsBlur))
-                              : const SizedBox()),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        onTap: () async {
-          if (indexController != null) indexController.move(info.index);
-
-          if (active) {
-            HapticFeedback.heavyImpact();
-            Navigator.push(
-                context,
-                FadeRoute<void>(
-                    builder: (BuildContext context) => CardView(
-                          heroTag: heroTag,
-                          content: textContent,
-                        )));
-          }
         });
   }
 }
