@@ -169,7 +169,7 @@ class _TextsViewState extends State<TextsView> {
                           return ListView.builder(
                               itemCount: _slideList.length + (_shouldDisplayAdd ? 1 : 0),
                               itemBuilder: (BuildContext context, int index) {
-                                if (_shouldDisplayAdd && index == _slideList.length + 1)
+                                if (_shouldDisplayAdd && index == _slideList.length)
                                   return Container(padding: const EdgeInsets.symmetric(vertical: 4.0),height: 100.0 ,child: _AddItem());
 
                                 final Content content =

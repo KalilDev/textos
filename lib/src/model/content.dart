@@ -14,7 +14,7 @@ class Content {
       @required this.tags})
       : _date = date,
         _imgUrl = imgUrl,
-        text = text.replaceAll('\n', '^NL');
+        text = text?.replaceAll('\n', '^NL');
 
   Content.fromFav(Favorite fav) {
     title = fav.textTitle;
@@ -65,6 +65,7 @@ class Content {
         'text': text,
         'tags': tags,
         'img': _imgUrl,
+        'music': music
       };
 
   Favorite get favorite => Favorite(title + ';' + textPath + ';' + imgUrl);

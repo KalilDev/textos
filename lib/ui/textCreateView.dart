@@ -101,16 +101,20 @@ class _TextCreateViewState extends State<TextCreateView> {
   }
 
   Future<void> _sendText() async {
-    if (_imageLoading || _musicLoading)
+    if (_imageLoading || _musicLoading) {
       showDialog<void>(context: context, builder: (BuildContext context) => AlertDialog(
         title: const Text('Aguarde!'),
         content: const Text('Aguarde o upload da foto ou da música'),
         actions: <Widget>[
           FlatButton(
               child: const Text(textOk),
-              onPressed: () => Navigator.of(context).pop)
+              onPressed: Navigator.of(context).pop)
         ],
       ));
+      return;
+    }
+    if (_date == null)
+      await _selectDate();
 
     final bool shouldUpload = await showDialog<bool>(
         context: context,
@@ -130,6 +134,7 @@ class _TextCreateViewState extends State<TextCreateView> {
                     })
               ],
             ));
+
     if (shouldUpload) {
       final FirebaseUser user = await Provider.of<AuthService>(context).getUser();
       Firestore.instance.collection('texts').document(user.uid).collection('documents').add(textContent.toData());
