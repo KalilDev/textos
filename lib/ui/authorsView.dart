@@ -20,6 +20,7 @@ class AuthorsView extends StatefulWidget {
 
 class _AuthorsViewState extends State<AuthorsView> {
   Stream<Iterable<Map<String, dynamic>>> _tagStream;
+  bool _shouldDisplayAdd = true;
   @override
   void initState() {
     _tagStream = Firestore.instance
@@ -39,53 +40,65 @@ class _AuthorsViewState extends State<AuthorsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<Iterable<Map<String, dynamic>>>(
-        stream: _tagStream,
-        builder: (BuildContext context,
-            AsyncSnapshot<Iterable<Map<String, dynamic>>> snapshot) {
-          if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false)) {
-            _metadataList = snapshot.data.toList();
-            return TransformerPageView(
-              itemCount: _metadataList.length + 1,
-              scrollDirection: Axis.vertical,
-              viewportFraction: 0.90,
-              curve: Curves.decelerate,
-              onPageChanged: (int page) {
-                if (page == _metadataList.length)
-                  return;
-                Provider.of<QueryInfoProvider>(context).currentPage = page;
-                Provider.of<QueryInfoProvider>(context).collection =
-                    _metadataList[page]['collection'];
-                Provider.of<QueryInfoProvider>(context).tag = null;
-                SystemSound.play(SystemSoundType.click);
-                HapticFeedback.lightImpact();
-              },
-              index: Provider.of<QueryInfoProvider>(context).currentPage,
-              transformer:
-                  PageTransformerBuilder(builder: (_, TransformInfo info) {
-                if (info.index == _metadataList.length)
-                  return _AddPage();
-                final Map<String, dynamic> data = _metadataList[info.index];
-                return _AuthorPage(
-                  info: info,
-                  tags: data['tags'],
-                  title: data['title'],
-                  authorName: data['authorName'],
+        body: StreamBuilder<Iterable<Map<String, dynamic>>>(
+      stream: _tagStream,
+      builder: (BuildContext context,
+          AsyncSnapshot<Iterable<Map<String, dynamic>>> snapshot) {
+        if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false)) {
+          _metadataList = snapshot.data.toList();
+          return FutureBuilder<FirebaseUser>(
+              future: Provider.of<AuthService>(context).getUser(),
+              builder:
+                  (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
+                if (_metadataList.any((Map<String, dynamic> data) =>
+                    user?.data?.uid == data['collection']))
+                  _shouldDisplayAdd = false;
+
+                return TransformerPageView(
+                  itemCount: _shouldDisplayAdd
+                      ? (_metadataList.length + 1)
+                      : _metadataList.length,
+                  scrollDirection: Axis.vertical,
+                  viewportFraction: 0.90,
+                  curve: Curves.decelerate,
+                  onPageChanged: (int page) {
+                    if (page == _metadataList.length && _shouldDisplayAdd)
+                      return;
+                    Provider.of<QueryInfoProvider>(context).currentPage = page;
+                    Provider.of<QueryInfoProvider>(context).collection =
+                        _metadataList[page]['collection'];
+                    Provider.of<QueryInfoProvider>(context).tag = null;
+                    SystemSound.play(SystemSoundType.click);
+                    HapticFeedback.lightImpact();
+                  },
+                  index: Provider.of<QueryInfoProvider>(context).currentPage,
+                  transformer:
+                      PageTransformerBuilder(builder: (_, TransformInfo info) {
+                    if (info.index == _metadataList.length && _shouldDisplayAdd)
+                      return _AddPage();
+
+                    final Map<String, dynamic> data = _metadataList[info.index];
+
+                    return _AuthorPage(
+                      info: info,
+                      tags: data['tags'],
+                      title: data['title'],
+                      authorName: data['authorName'],
+                    );
+                  }),
                 );
-              }),
-            );
-          } else if (snapshot.hasError ||
-              (snapshot.hasData && (snapshot?.data?.isEmpty ?? true))) {
-            return Center(
-              child: Text(textAppName,
-                  style: Theme.of(context).accentTextTheme.display1),
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
-    );
+              });
+        } else if (snapshot.hasError ||
+            (snapshot.hasData && (snapshot?.data?.isEmpty ?? true))) {
+          return Center(
+            child: Text(textAppName,
+                style: Theme.of(context).accentTextTheme.display1),
+          );
+        } else {
+          return Container();
+        }
+      },
+    ));
   }
 }
 
@@ -262,28 +275,9 @@ class _AddPage extends StatefulWidget {
 
 class __AddPageState extends State<_AddPage> {
   bool _isCreating = false;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _title = '';
-  String _authorName = '';
-  List<String> _tags;
-  TextEditingController _titleController;
-  TextEditingController _authorNameController;
-
-  @override
-  void initState() {
-    _titleController = TextEditingController();
-    _authorNameController = TextEditingController();
-    _titleController.addListener(() => setState(() => _formKey.currentState.save()));
-    _authorNameController.addListener(() => setState(() => _formKey.currentState.save()));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _authorNameController.dispose();
-    super.dispose();
-  }
+  String _title;
+  String _authorName;
+  List<String> _tags = <String>[];
 
   @override
   Widget build(BuildContext context) {
@@ -294,45 +288,51 @@ class __AddPageState extends State<_AddPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(_title + ' ' + _authorName, style: Theme.of(context).accentTextTheme.display1,),
-              Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextFormField(
-                        onSaved: (String value) => _title = value,
-                        controller: _titleController,
-                        decoration: InputDecoration(
-                            labelText: 'Titulo. Ex.: Textos do')),
-                    TextFormField(
-                        onSaved: (String value) => _authorName = value,
-                        controller: _authorNameController,
-                        decoration:
-                            InputDecoration(labelText: 'Nome do autor')),
-                  ],
-                ),
+              Text(
+                '${_title ?? 'Textos do'} ${_authorName ?? 'Kalil'}',
+                style: Theme.of(context).accentTextTheme.display1,
               ),
-              RaisedButton(onPressed: () async {
-                final FormState form = _formKey.currentState;
-                form.save();
-                final FirebaseUser user =
-                    await Provider.of<AuthService>(context).getUser();
-                final DocumentReference document =
-                    Firestore.instance.collection('texts').document(user.uid);
-                if (form.validate()) {
-                  final DocumentSnapshot snap = await document.get();
-                  if (!snap.exists) {
-                    await document.setData(<String, dynamic>{
-                      'authorName': _authorName,
-                      'title': _title + ' ',
-                      'tags': <dynamic>[],
-                      'visible': false
-                    });
-                  }
-                }
-              }),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextField(
+                      onChanged: (String title) =>
+                          setState(() => _title = title),
+                      decoration:
+                          InputDecoration(labelText: 'Titulo. Ex.: Textos do')),
+                  TextField(
+                      onChanged: (String authorName) =>
+                          setState(() => _authorName = authorName),
+                      decoration: InputDecoration(labelText: 'Nome do autor')),
+                  TextField(
+                      onChanged: (String tags) =>
+                          setState(() => _tags = tags.split(',')),
+                      decoration: InputDecoration(
+                          labelText: 'Tags (Separadas por vírgula)')),
+                ],
+              ),
+              RaisedButton(
+                  color: Theme.of(context).accentColor,
+                  child: const Text('Adicionar autor'),
+                  textColor: Theme.of(context).colorScheme.onSecondary,
+                  onPressed: () async {
+                    final FirebaseUser user =
+                        await Provider.of<AuthService>(context).getUser();
+                    final DocumentReference document = Firestore.instance
+                        .collection('texts')
+                        .document(user.uid);
+                    final DocumentSnapshot snap = await document.get();
+                    if (!snap.exists) {
+                      await document.setData(<String, dynamic>{
+                        'authorName': _authorName,
+                        'title': _title + ' ',
+                        'tags': _tags,
+                        'visible': false
+                      });
+                    }
+                  }),
               OutlineButton(
+                  child: const Text('Voltar'),
                   onPressed: () => setState(() => _isCreating = false))
             ],
           ),
@@ -353,7 +353,8 @@ class __AddPageState extends State<_AddPage> {
                 onTap: () => setState(() => _isCreating = true),
                 child: Container(
                   child: Center(
-                    child: IconButton(icon: const Icon(Icons.add), onPressed: null),
+                    child: IconButton(
+                        icon: const Icon(Icons.add), onPressed: null),
                   ),
                 ),
               ),

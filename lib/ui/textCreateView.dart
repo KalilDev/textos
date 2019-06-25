@@ -28,17 +28,18 @@ class _TextCreateViewState extends State<TextCreateView> {
   bool _musicLoading = false;
   List<String> _tags = <String>[];
 
-  GlobalKey<FormState> _formKey = GlobalKey();
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
-  Future _selectDate() async {
-    DateTime picked = await showDatePicker(
+  Future<void> _selectDate() async {
+    final DateTime picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2016),
         lastDate: DateTime.now());
     if (picked != null) {
       String normalize(int date) {
-        if (date < 10) return '0' + date.toString();
+        if (date < 10)
+          return '0' + date.toString();
         return date.toString();
       }
 
@@ -51,14 +52,14 @@ class _TextCreateViewState extends State<TextCreateView> {
   Future<String> _pickImage() async {
     final File image = await ImagePicker.pickImage(source: ImageSource.gallery);
     final dynamic result = await _uploadFile(image, _FileType.image);
-    _imageUrl = result.toString();
+    setState(() => _imageUrl = result.toString());
     return result.toString();
   }
 
   Future<String> _pickMusic() async {
     final File file = await FilePicker.getFile(type: FileType.AUDIO);
     final dynamic result = await _uploadFile(file, _FileType.music);
-    _musicUrl = result.toString();
+    setState(() => _musicUrl = result.toString());
     return result.toString();
   }
 
@@ -75,7 +76,7 @@ class _TextCreateViewState extends State<TextCreateView> {
           break;
       }
     });
-    final reference = FirebaseStorage().ref();
+    final StorageReference reference = FirebaseStorage().ref();
     final StorageUploadTask uploadTask =
         reference.child(fileName).putFile(file);
     while (uploadTask.isInProgress == true)
@@ -93,11 +94,22 @@ class _TextCreateViewState extends State<TextCreateView> {
     return await reference.child(fileName).getDownloadURL();
   }
 
-  void _sendText() async {
+  Future<void> _sendText() async {
+    if (_imageLoading || _musicLoading)
+      showDialog<void>(context: context, builder: (BuildContext context) => AlertDialog(
+        title: const Text('Aguarde!'),
+        content: const Text('Aguarde o upload da foto ou da música'),
+        actions: <Widget>[
+          FlatButton(
+              child: const Text(textOk),
+              onPressed: () => Navigator.of(context).pop)
+        ],
+      ));
+
     final bool shouldUpload = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              title: Text('Confirmação'),
+              title: const Text('Confirmação'),
               content: Text('O texto será postado com as seguintes informações caso queira prossiguir: \nTitulo: ${_title}\nData: ${_date}\nTags: ${_tags.toString()}\n${_imageUrl != null ? 'Imagem anexada' : 'Nenhuma imagem'}\n${_musicUrl != null ? 'Musica anexada\n' : 'Nenhuma musica'}'),
               actions: <Widget>[
                 FlatButton(
@@ -115,7 +127,30 @@ class _TextCreateViewState extends State<TextCreateView> {
     if (shouldUpload) {
       final FirebaseUser user = await Provider.of<AuthService>(context).getUser();
       Firestore.instance.collection('texts').document(user.uid).collection('documents').add(textContent.toData());
+      Navigator.pop(context);
     }
+  }
+
+  Future<bool> _shouldPop() async {
+    final bool shouldPop = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Sair?'),
+          content: const Text('Todo o progresso será perdido!'),
+          actions: <Widget>[
+            FlatButton(
+                child: const Text(textNo),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                }),
+            FlatButton(
+                child: const Text(textYes),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                })
+          ],
+        ));
+    return shouldPop;
   }
 
   Content get textContent => Content(
@@ -128,65 +163,89 @@ class _TextCreateViewState extends State<TextCreateView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-                    decoration: InputDecoration(labelText: 'Titulo'),
-                    onSaved: (String title) => _title = title),
-                TextFormField(
-                    decoration: InputDecoration(labelText: 'Texto'),
-                    onSaved: (String text) => _text = text),
-                TextFormField(
-                    decoration: InputDecoration(
-                        labelText: 'Tags (Separadas por vírgula)'),
-                    onSaved: (String tags) => _tags = tags.split(',')),
-              ],
-            ),
+    return WillPopScope(
+      onWillPop: _shouldPop,
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: <Widget>[
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                        decoration: InputDecoration(labelText: 'Titulo'),
+                        onSaved: (String title) => _title = title),
+                    TextFormField(
+                        decoration: InputDecoration(labelText: 'Texto'),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        onSaved: (String text) => _text = text),
+                    TextFormField(
+                        decoration: InputDecoration(
+                            labelText: 'Tags (Separadas por vírgula)'),
+                        onSaved: (String tags) => _tags = tags.split(',')),
+                  ],
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: OutlineButton(
+                      onPressed: _imageLoading ? null : _pickImage,
+                      child: _imageLoading
+                          ? const SizedBox(
+                              height: 18.0,
+                              width: 18.0,
+                              child: CircularProgressIndicator())
+                          : const Text('Escolher Plano de fundo'),
+                    ),
+                  ),
+                  _imageUrl != null ? const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0),child: Icon(Icons.check)) : const SizedBox()
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: OutlineButton(
+                      onPressed: _musicLoading ? null : _pickMusic,
+                      child: _musicLoading
+                          ? const SizedBox(
+                              height: 18.0,
+                              width: 18.0,
+                              child: CircularProgressIndicator())
+                          : const Text('Escolher Musica'),
+                    ),
+                  ),
+                  _musicUrl != null ? const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0),child: Icon(Icons.check)) : const SizedBox()
+                ],
+              ),
+              OutlineButton(
+                onPressed: _selectDate,
+                child: const Text('Selecionar Data'),
+              ),
+              RaisedButton(
+                color: Theme.of(context).primaryColor,
+                textColor: Theme.of(context).colorScheme.onPrimary,
+                onPressed: () {
+                  _formKey.currentState.save();
+                  Navigator.push<void>(
+                      context,
+                      MaterialPageRoute<void>(
+                          builder: (_) =>
+                              CardView(heroTag: 'null', content: textContent)));
+                },
+                child: const Text('Visualizar o texto'),
+              ),
+            ],
           ),
-          RaisedButton(
-            onPressed: _imageLoading ? null : _pickImage,
-            child: _imageLoading
-                ? SizedBox(
-                    height: 18.0,
-                    width: 18.0,
-                    child: CircularProgressIndicator())
-                : Text('Escolher Plano de fundo'),
-          ),
-          RaisedButton(
-            onPressed: _musicLoading ? null : _pickMusic,
-            child: _musicLoading
-                ? SizedBox(
-                    height: 18.0,
-                    width: 18.0,
-                    child: CircularProgressIndicator())
-                : Text('Escolher Musica'),
-          ),
-          RaisedButton(
-            onPressed: _selectDate,
-            child: Text('Escolher Data'),
-          ),
-          RaisedButton(
-            onPressed: () {
-              _formKey.currentState.save();
-              Navigator.push<void>(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) =>
-                          CardView(heroTag: 'null', content: textContent)));
-            },
-            child: Text('Visualizar'),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _sendText,
-        label: Text('Enviar texto'),
-        icon: Icon(Icons.check),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: _sendText,
+          label: const Text('Enviar texto'),
+          icon: const Icon(Icons.check),
+        ),
       ),
     );
   }

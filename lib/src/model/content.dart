@@ -5,11 +5,21 @@ import '../textUtils.dart';
 import 'favorite.dart';
 
 class Content {
+  Content(
+      {@required this.title,
+      @required String date,
+      @required String imgUrl,
+      @required this.text,
+      @required this.music,
+      @required this.tags})
+      : _date = date,
+        _imgUrl = imgUrl;
   Content.fromFav(Favorite fav) {
     title = fav.textTitle;
     textPath = fav.textPath;
     _imgUrl = fav.textImg;
   }
+
   Content.fromData(Map<String, dynamic> data) {
     title = data['title'] ?? placeholderTitle;
     textPath = data['path'];
@@ -20,7 +30,6 @@ class Content {
     text = data['text'];
     tags = data['tags'] ?? <dynamic>[];
   }
-  Content({@required this.title, @required String date, @required String imgUrl, @required this.text, @required this.music, @required this.tags}) : _date = date, _imgUrl = imgUrl;
 
   String title;
   String textPath;
@@ -43,17 +52,18 @@ class Content {
     }
     return stringDate(DateTime.now());
   }
+
   bool get hasText => text != null;
   bool get hasMusic => music != null;
-  bool get canFavorite => textPath!= null;
+  bool get canFavorite => textPath != null;
 
   Map<String, dynamic> toData() => <String, dynamic>{
-    'date': _date,
-    'title': title,
-    'text': text,
-    'tags': tags,
-    'img': _imgUrl,
-  };
+        'date': _date,
+        'title': title,
+        'text': text,
+        'tags': tags,
+        'img': _imgUrl,
+      };
 
   Favorite get favorite => Favorite(title + ';' + textPath + ';' + imgUrl);
 }

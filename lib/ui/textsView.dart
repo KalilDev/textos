@@ -30,6 +30,7 @@ class _TextsViewState extends State<TextsView> {
   static Map<String, dynamic> favoritesData;
   final Firestore _db = Firestore.instance;
   List<Map<String, dynamic>> _slideList;
+  bool _shouldDisplayAdd = false;
 
   Stream<Iterable<Map<String, dynamic>>> get slidesStream => _query
       .snapshots()
@@ -73,146 +74,154 @@ class _TextsViewState extends State<TextsView> {
   @override
   Widget build(BuildContext context) {
     updateQuery();
-    return StreamBuilder<Iterable<Map<String, dynamic>>>(
-        stream: slidesStream,
-        builder: (BuildContext context,
-            AsyncSnapshot<Iterable<Map<String, dynamic>>> snap) {
-          if (snap.hasData) {
-            if (snap.data.isNotEmpty) {
-              _slideList = snap.data.toList();
-              return StreamBuilder<Map<String, dynamic>>(
-                stream: _favoritesStream,
-                builder: (BuildContext context,
-                    AsyncSnapshot<Map<String, dynamic>> favoritesSnap) {
-                  if (favoritesSnap.hasData) {
-                    favoritesData = favoritesSnap.data;
-                    favoritesData
-                        .forEach((String textPath, dynamic favoriteInt) {
-                      final int targetIndex = _slideList.indexWhere(
-                          (Map<String, dynamic> element) =>
-                              element['path'] ==
-                              textPath.toString().replaceAll('_', '/'));
-                      if (targetIndex >= 0)
-                        _slideList.elementAt(targetIndex)['favoriteCount'] =
-                            favoriteInt;
-                    });
+    return FutureBuilder<FirebaseUser>(
+        future: Provider.of<AuthService>(context).getUser(),
+        builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
+          if (user?.data?.uid ==
+              Provider.of<QueryInfoProvider>(context).collection)
+            _shouldDisplayAdd = true;
+          
+          return StreamBuilder<Iterable<Map<String, dynamic>>>(
+              stream: slidesStream,
+              builder: (BuildContext context,
+                  AsyncSnapshot<Iterable<Map<String, dynamic>>> snap) {
+                if (snap.hasData) {
+                  if (snap.data.isNotEmpty) {
+                    _slideList = snap.data.toList();
+                    return StreamBuilder<Map<String, dynamic>>(
+                      stream: _favoritesStream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Map<String, dynamic>> favoritesSnap) {
+                        if (favoritesSnap.hasData) {
+                          favoritesData = favoritesSnap.data;
+                          favoritesData
+                              .forEach((String textPath, dynamic favoriteInt) {
+                            final int targetIndex = _slideList.indexWhere(
+                                (Map<String, dynamic> element) =>
+                                    element['path'] ==
+                                    textPath.toString().replaceAll('_', '/'));
+                            if (targetIndex >= 0)
+                              _slideList.elementAt(
+                                  targetIndex)['favoriteCount'] = favoriteInt;
+                          });
+                        }
+
+                        Widget pageView() {
+                          return ListenableProvider<TextPageProvider>(
+                              builder: (_) => TextPageProvider(),
+                              child: Consumer<TextPageProvider>(
+                                builder: (BuildContext context,
+                                        TextPageProvider provider, _) =>
+                                    TransformerPageView(
+                                      pageSnapping: false,
+                                      controller: _indexController,
+                                      viewportFraction: 0.80,
+                                      curve: Curves.decelerate,
+                                      transformer: PageTransformerBuilder(
+                                          builder: (Widget child,
+                                              TransformInfo info) {
+                                        final Map<String, dynamic> data =
+                                            _slideList[info.index];
+                                        final Content content =
+                                            Content.fromData(data);
+                                        return _TextPage(
+                                            heroTag: 'pageViewItem' +
+                                                content.textPath,
+                                            info: info,
+                                            textContent: content,
+                                            indexController: _indexController);
+                                      }),
+                                      onPageChanged: (int page) {
+                                        SystemSound.play(SystemSoundType.click);
+                                        HapticFeedback.lightImpact();
+                                        provider.currentPage = page;
+                                      },
+                                      itemCount: _slideList.length,
+                                    ),
+                              ));
+                        }
+
+                        Widget listView() {
+                          return ListView.separated(
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const SizedBox(
+                                        height: 10.0,
+                                      ),
+                              itemCount: _slideList.length + (_shouldDisplayAdd ? 2 : 1),
+                              itemBuilder: (BuildContext context, int index) {
+                                if (index == 0)
+                                  return SizedBox(height: widget.spacerSize);
+                                if (_shouldDisplayAdd && index == _slideList.length + 1)
+                                  return Container(height: 100.0 ,child: _AddItem());
+                                final Content content =
+                                    Content.fromData(_slideList[index - 1]);
+
+                                final String heroTag =
+                                    'listViewItem' + content.textPath;
+                                final FavoritesProvider favProvider =
+                                    Provider.of<FavoritesProvider>(context);
+                                return Container(
+                                    height: 100.0,
+                                    child: ContentCard.sliver(
+                                        content: content,
+                                        heroTag: heroTag,
+                                        trailing: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            IconButton(
+                                                icon: Icon(
+                                                    favProvider.isFavorite(
+                                                            content.favorite)
+                                                        ? Icons.favorite
+                                                        : Icons.favorite_border,
+                                                    color: favProvider
+                                                            .isFavorite(content
+                                                                .favorite)
+                                                        ? Theme.of(context)
+                                                            .accentColor
+                                                        : null),
+                                                onPressed: () => favProvider
+                                                    .toggle(content.favorite)),
+                                            Text(content.favoriteCount
+                                                .toString())
+                                          ],
+                                        ),
+                                        callBack: () {
+                                          HapticFeedback.heavyImpact();
+                                          Navigator.push(
+                                              context,
+                                              DurationMaterialPageRoute<void>(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          CardView(
+                                                            heroTag: heroTag,
+                                                            content: content,
+                                                          )));
+                                        }));
+                              });
+                        }
+
+                        return AnimatedSwitcher(
+                          duration: durationAnimationShort,
+                          child: widget.isList ? listView() : pageView(),
+                        );
+                      },
+                    );
                   }
-
-                  Widget pageView() {
-                    return ListenableProvider<TextPageProvider>(
-                        builder: (_) => TextPageProvider(),
-                        child: Consumer<TextPageProvider>(
-                          builder: (BuildContext context,
-                                  TextPageProvider provider, _) =>
-                              TransformerPageView(
-                                pageSnapping: false,
-                                controller: _indexController,
-                                viewportFraction: 0.80,
-                                curve: Curves.decelerate,
-                                transformer: PageTransformerBuilder(builder:
-                                    (Widget child, TransformInfo info) {
-                                  final Map<String, dynamic> data =
-                                      _slideList[info.index];
-                                  final Content content =
-                                      Content.fromData(data);
-                                  return _TextPage(
-                                      heroTag:
-                                          'pageViewItem' + content.textPath,
-                                      info: info,
-                                      textContent: content,
-                                      indexController: _indexController);
-                                }),
-                                onPageChanged: (int page) {
-                                  SystemSound.play(SystemSoundType.click);
-                                  HapticFeedback.lightImpact();
-                                  provider.currentPage = page;
-                                },
-                                itemCount: _slideList.length,
-                              ),
-                        ));
-                  }
-
-                  Widget listView() {
-                    return ListView.separated(
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                        itemCount: _slideList.length + 1,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index == 0)
-                            return SizedBox(height: widget.spacerSize);
-                          final Content content =
-                              Content.fromData(_slideList[index - 1]);
-
-                          final String heroTag =
-                              'listViewItem' + content.textPath;
-                          final FavoritesProvider favProvider =
-                              Provider.of<FavoritesProvider>(context);
-                          return Container(
-                              height: 100.0,
-                              child: ContentCard.sliver(
-                                  content: content,
-                                  heroTag: heroTag,
-                                  trailing: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      IconButton(
-                                          icon: Icon(
-                                              favProvider.isFavorite(
-                                                      content.favorite)
-                                                  ? Icons.favorite
-                                                  : Icons.favorite_border,
-                                              color: favProvider.isFavorite(
-                                                      content.favorite)
-                                                  ? Theme.of(context)
-                                                      .accentColor
-                                                  : null),
-                                          onPressed: () => favProvider
-                                              .toggle(content.favorite)),
-                                      Text(content.favoriteCount.toString())
-                                    ],
-                                  ),
-                                  callBack: () {
-                                    HapticFeedback.heavyImpact();
-                                    Navigator.push(
-                                        context,
-                                        DurationMaterialPageRoute<void>(
-                                            builder: (BuildContext context) =>
-                                                CardView(
-                                                  heroTag: heroTag,
-                                                  content: content,
-                                                )));
-                                  }));
-                        });
-                  }
-
-                  return AnimatedSwitcher(
-                    duration: durationAnimationShort,
-                    child: widget.isList ? listView() : pageView(),
-                  );
-                },
-              );
-            }
-          }
-          return FutureBuilder<FirebaseUser>(
-            future: Provider.of<AuthService>(context).getUser(),
-            builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
-              if (user?.data?.uid == Provider.of<QueryInfoProvider>(context).collection)
-                return _AddItem();
-              return Container(
-                child: Center(
-                    child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const <Widget>[
-                  Icon(Icons.error_outline, size: 72),
-                  Text(
-                    textNoTexts,
-                    textAlign: TextAlign.center,
-                  )
-                ])));
-            }
-          );
+                }
+                return _shouldDisplayAdd ? Padding(padding: EdgeInsets.all(20.0),child: _AddItem()) : Container(
+                    child: Center(
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const <Widget>[
+                      Icon(Icons.error_outline, size: 72),
+                      Text(
+                        textNoTexts,
+                        textAlign: TextAlign.center,
+                      )
+                    ])));
+              });
         });
   }
 }
@@ -234,8 +243,7 @@ class _TextPage extends StatelessWidget {
     if ((Provider.of<TextPageProvider>(context).currentPage - info.index)
                 .abs() <
             2 !=
-        true)
-      return const SizedBox();
+        true) return const SizedBox();
 
     final bool active = info.position.round() == 0.0 && info.position >= -0.30;
     // Animated Properties
@@ -299,8 +307,7 @@ class _TextPage extends StatelessWidget {
           ],
         ),
         onTap: () async {
-          if (indexController != null)
-            indexController.move(info.index);
+          if (indexController != null) indexController.move(info.index);
 
           if (active) {
             HapticFeedback.heavyImpact();
@@ -321,8 +328,21 @@ class _AddItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedContainer(
       elevation: 16.0,
-      child: Center(
-        child: IconButton(icon: const Icon(Icons.add), onPressed: () => Navigator.push<void>(context, MaterialPageRoute(builder: (BuildContext context) => TextCreateView()))),
+      child: Material(
+        color: Colors.transparent,
+        elevation: 0.0,
+        clipBehavior: Clip.antiAlias,
+        borderRadius: BorderRadius.circular(20.0),
+        child: InkWell(
+            onTap: () => Navigator.push<void>(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (BuildContext context) => TextCreateView())),
+          child: Center(
+            child: const Icon(
+                Icons.add),
+          ),
+        ),
       ),
     );
   }
