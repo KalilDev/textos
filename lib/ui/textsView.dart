@@ -41,7 +41,7 @@ class _TextsViewState extends State<TextsView> {
             return data;
           }));
 
-  void updateQuery() {
+  void _updateQuery() {
     final QueryInfoProvider queryInfo = Provider.of<QueryInfoProvider>(context);
     if (queryInfo.tag != textAllTag) {
       _query = _db
@@ -59,6 +59,66 @@ class _TextsViewState extends State<TextsView> {
     }
   }
 
+  Widget _listViewItem(Content content) {
+    final String heroTag =
+        'listViewItem' + content.textPath;
+    final FavoritesProvider favProvider =
+    Provider.of<FavoritesProvider>(context);
+    return Container(
+        height: 100.0,
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: ContentCard.sliver(
+            content: content,
+            heroTag: heroTag,
+            trailing: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(
+                    icon: Icon(
+                        favProvider.isFavorite(
+                            content.favorite)
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: favProvider
+                            .isFavorite(content
+                            .favorite)
+                            ? Theme.of(context)
+                            .accentColor
+                            : null),
+                    onPressed: () => favProvider
+                        .toggle(content.favorite)),
+                Text(content.favoriteCount
+                    .toString())
+              ],
+            ),
+            callBack: () {
+              HapticFeedback.heavyImpact();
+              Navigator.push(
+                  context,
+                  DurationMaterialPageRoute<void>(
+                      builder:
+                          (BuildContext context) =>
+                          CardView(
+                            heroTag: heroTag,
+                            content: content,
+                          )));
+            }));
+  }
+
+  Widget _noTextsWidget() {
+    return Container(
+        child: Center(
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const <Widget>[
+                  Icon(Icons.error_outline, size: 72),
+                  Text(
+                    textNoTexts,
+                    textAlign: TextAlign.center,
+                  )
+                ])));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -72,7 +132,7 @@ class _TextsViewState extends State<TextsView> {
 
   @override
   Widget build(BuildContext context) {
-    updateQuery();
+    _updateQuery();
     return FutureBuilder<FirebaseUser>(
         future: Provider.of<AuthService>(context).getUser(),
         builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
@@ -106,63 +166,15 @@ class _TextsViewState extends State<TextsView> {
                         }
 
                         Widget listView() {
-                          return ListView.separated(
-                              separatorBuilder:
-                                  (BuildContext context, int index) =>
-                                      const SizedBox(
-                                        height: 10.0,
-                                      ),
-                              itemCount: _slideList.length + (_shouldDisplayAdd ? 2 : 1),
+                          return ListView.builder(
+                              itemCount: _slideList.length + (_shouldDisplayAdd ? 1 : 0),
                               itemBuilder: (BuildContext context, int index) {
-                                if (index == 0)
-                                  return SizedBox(height: widget.spacerSize);
                                 if (_shouldDisplayAdd && index == _slideList.length + 1)
-                                  return Container(height: 100.0 ,child: _AddItem());
-                                final Content content =
-                                    Content.fromData(_slideList[index - 1]);
+                                  return Container(padding: const EdgeInsets.symmetric(vertical: 4.0),height: 100.0 ,child: _AddItem());
 
-                                final String heroTag =
-                                    'listViewItem' + content.textPath;
-                                final FavoritesProvider favProvider =
-                                    Provider.of<FavoritesProvider>(context);
-                                return Container(
-                                    height: 100.0,
-                                    child: ContentCard.sliver(
-                                        content: content,
-                                        heroTag: heroTag,
-                                        trailing: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            IconButton(
-                                                icon: Icon(
-                                                    favProvider.isFavorite(
-                                                            content.favorite)
-                                                        ? Icons.favorite
-                                                        : Icons.favorite_border,
-                                                    color: favProvider
-                                                            .isFavorite(content
-                                                                .favorite)
-                                                        ? Theme.of(context)
-                                                            .accentColor
-                                                        : null),
-                                                onPressed: () => favProvider
-                                                    .toggle(content.favorite)),
-                                            Text(content.favoriteCount
-                                                .toString())
-                                          ],
-                                        ),
-                                        callBack: () {
-                                          HapticFeedback.heavyImpact();
-                                          Navigator.push(
-                                              context,
-                                              DurationMaterialPageRoute<void>(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          CardView(
-                                                            heroTag: heroTag,
-                                                            content: content,
-                                                          )));
-                                        }));
+                                final Content content =
+                                    Content.fromData(_slideList[index]);
+                                return _listViewItem(content);
                               });
                         }
 
@@ -174,17 +186,7 @@ class _TextsViewState extends State<TextsView> {
                     );
                   }
                 }
-                return _shouldDisplayAdd ? Padding(padding: const EdgeInsets.all(20.0),child: _AddItem()) : Container(
-                    child: Center(
-                        child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: const <Widget>[
-                      Icon(Icons.error_outline, size: 72),
-                      Text(
-                        textNoTexts,
-                        textAlign: TextAlign.center,
-                      )
-                    ])));
+                return _shouldDisplayAdd ? Padding(padding: const EdgeInsets.all(20.0),child: _AddItem()) : _noTextsWidget();
               });
         });
   }
