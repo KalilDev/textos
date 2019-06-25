@@ -71,7 +71,7 @@ class CardView extends StatelessWidget {
                                     ),
                                   )))
                           : Spacer(),
-                      Container(
+                      content.canFavorite ? Container(
                         margin: const EdgeInsets.only(right: 4.0),
                         child: RepaintBoundary(
                           child: BiStateFAB(
@@ -86,7 +86,7 @@ class CardView extends StatelessWidget {
                             disabledColor: Theme.of(context).accentColor,
                           ),
                         ),
-                      ),
+                      ) : SizedBox(),
                     ],
                   ),
                 )),

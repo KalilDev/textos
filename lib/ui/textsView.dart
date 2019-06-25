@@ -12,6 +12,7 @@ import 'package:textos/ui/cardView.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
 import 'textCard.dart';
+import 'textCreateView.dart';
 
 class TextsView extends StatefulWidget {
   const TextsView({@required this.spacerSize, @required this.isList});
@@ -315,7 +316,7 @@ class _AddItem extends StatelessWidget {
     return ElevatedContainer(
       elevation: 16.0,
       child: Center(
-        child: IconButton(icon: const Icon(Icons.add), onPressed: null),
+        child: IconButton(icon: const Icon(Icons.add), onPressed: () => Navigator.push<void>(context, MaterialPageRoute(builder: (BuildContext context) => TextCreateView()))),
       ),
     );
   }
