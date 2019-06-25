@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/constants.dart';
@@ -138,6 +139,12 @@ class StateBuilder extends StatelessWidget {
                     overrideTheme = light;
                   }
                   return MaterialApp(
+                    locale: const Locale('pt', 'BR'),
+                    supportedLocales: const <Locale>[Locale('pt', 'BR')],
+                    localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate
+                    ],
                     debugShowCheckedModeBanner: false,
                     darkTheme: dark,
                     theme: overrideTheme,

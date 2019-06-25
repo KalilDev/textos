@@ -35,7 +35,13 @@ class _TextCreateViewState extends State<TextCreateView> {
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2016),
-        lastDate: DateTime.now());
+        lastDate: DateTime.now(),
+      builder: (BuildContext dateContext, Widget child) {
+        return Theme(
+          data: Theme.of(context).copyWith(primaryColorBrightness: Theme.of(context).brightness),
+          child: child,
+        );
+      },);
     if (picked != null) {
       String normalize(int date) {
         if (date < 10)
