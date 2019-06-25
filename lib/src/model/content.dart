@@ -18,8 +18,9 @@ class Content {
     favoriteCount = data['favoriteCount'] ?? 0;
     music = data['music'];
     text = data['text'];
+    tags = data['tags'] ?? <dynamic>[];
   }
-  Content({@required this.title, @required String date, @required String imgUrl, @required this.text}) : _date = date, _imgUrl = imgUrl;
+  Content({@required this.title, @required String date, @required String imgUrl, @required this.text, @required this.music, @required this.tags}) : _date = date, _imgUrl = imgUrl;
 
   String title;
   String textPath;
@@ -27,6 +28,7 @@ class Content {
   String text;
   String _date;
   String music;
+  List<dynamic> tags;
   int favoriteCount;
 
   String get imgUrl => _imgUrl ?? placeholderImg;
@@ -44,6 +46,14 @@ class Content {
   bool get hasText => text != null;
   bool get hasMusic => music != null;
   bool get canFavorite => textPath!= null;
+
+  Map<String, dynamic> toData() => <String, dynamic>{
+    'date': _date,
+    'title': title,
+    'text': text,
+    'tags': tags,
+    'img': _imgUrl,
+  };
 
   Favorite get favorite => Favorite(title + ';' + textPath + ';' + imgUrl);
 }

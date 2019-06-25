@@ -215,14 +215,14 @@ class _LoginViewState extends State<LoginView> {
           content: Text(_message),
           actions: <Widget>[
             FlatButton(
-                child: const Text(textYes),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                }),
-            FlatButton(
                 child: const Text(textNo),
                 onPressed: () {
                   Navigator.of(context).pop(false);
+                }),
+            FlatButton(
+                child: const Text(textYes),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
                 })
           ],
         );

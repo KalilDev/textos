@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
@@ -137,12 +138,10 @@ class _TextsViewState extends State<TextsView> {
                             const SizedBox(
                               height: 10.0,
                             ),
-                        itemCount: _slideList.length + 2,
+                        itemCount: _slideList.length + 1,
                         itemBuilder: (BuildContext context, int index) {
                           if (index == 0)
                             return SizedBox(height: widget.spacerSize);
-                          if (index == _slideList.length + 1)
-                            return _AddItem();
                           final Content content =
                               Content.fromData(_slideList[index - 1]);
 
@@ -196,17 +195,24 @@ class _TextsViewState extends State<TextsView> {
               );
             }
           }
-          return Container(
-              child: Center(
-                  child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const <Widget>[
-                Icon(Icons.error_outline, size: 72),
-                Text(
-                  textNoTexts,
-                  textAlign: TextAlign.center,
-                )
-              ])));
+          return FutureBuilder<FirebaseUser>(
+            future: Provider.of<AuthService>(context).getUser(),
+            builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
+              if (user?.data?.uid == Provider.of<QueryInfoProvider>(context).collection)
+                return _AddItem();
+              return Container(
+                child: Center(
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const <Widget>[
+                  Icon(Icons.error_outline, size: 72),
+                  Text(
+                    textNoTexts,
+                    textAlign: TextAlign.center,
+                  )
+                ])));
+            }
+          );
         });
   }
 }
