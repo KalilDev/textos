@@ -20,7 +20,8 @@ class AuthorsView extends StatefulWidget {
 
 class _AuthorsViewState extends State<AuthorsView> {
   Stream<Iterable<Map<String, dynamic>>> _tagStream;
-  bool _shouldDisplayAdd = true;
+  FirebaseUser user;
+  bool isEditing = false;
   @override
   void initState() {
     _tagStream = Firestore.instance
@@ -40,65 +41,81 @@ class _AuthorsViewState extends State<AuthorsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: StreamBuilder<Iterable<Map<String, dynamic>>>(
-      stream: _tagStream,
-      builder: (BuildContext context,
-          AsyncSnapshot<Iterable<Map<String, dynamic>>> snapshot) {
-        if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false)) {
-          _metadataList = snapshot.data.toList();
-          return FutureBuilder<FirebaseUser>(
-              future: Provider.of<AuthService>(context).getUser(),
-              builder:
-                  (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
-                if (_metadataList.any((Map<String, dynamic> data) =>
-                    user?.data?.uid == data['collection']))
-                  _shouldDisplayAdd = false;
+        body: FutureBuilder<FirebaseUser>(
+            future: Provider.of<AuthService>(context).getUser(),
+            builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
+              if (user.hasData && user?.data != null) this.user = user.data;
+              return StreamBuilder<Iterable<Map<String, dynamic>>>(
+                  stream: _tagStream,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<Iterable<Map<String, dynamic>>> snapshot) {
+                    if (snapshot.hasData &&
+                        (snapshot?.data?.isNotEmpty ?? false)) {
+                      _metadataList = snapshot.data.toList();
+                      bool shouldDisplayAdd = true;
+                      if (_metadataList.any((Map<String, dynamic> data) =>
+                          this.user?.uid == data['collection']))
+                        shouldDisplayAdd = false;
 
-                return TransformerPageView(
-                  itemCount: _shouldDisplayAdd
-                      ? (_metadataList.length + 1)
-                      : _metadataList.length,
-                  scrollDirection: Axis.vertical,
-                  viewportFraction: 0.90,
-                  curve: Curves.decelerate,
-                  onPageChanged: (int page) {
-                    if (page == _metadataList.length && _shouldDisplayAdd)
-                      return;
-                    Provider.of<QueryInfoProvider>(context).currentPage = page;
-                    Provider.of<QueryInfoProvider>(context).collection =
-                        _metadataList[page]['collection'];
-                    Provider.of<QueryInfoProvider>(context).tag = null;
-                    SystemSound.play(SystemSoundType.click);
-                    HapticFeedback.lightImpact();
-                  },
-                  index: Provider.of<QueryInfoProvider>(context).currentPage,
-                  transformer:
-                      PageTransformerBuilder(builder: (_, TransformInfo info) {
-                    if (info.index == _metadataList.length && _shouldDisplayAdd)
-                      return _AddPage();
+                      return TransformerPageView(
+                        itemCount: shouldDisplayAdd
+                            ? (_metadataList.length + 1)
+                            : _metadataList.length,
+                        scrollDirection: Axis.vertical,
+                        viewportFraction: 0.90,
+                        curve: Curves.decelerate,
+                        onPageChanged: (int page) {
+                          if (page == _metadataList.length && shouldDisplayAdd)
+                            return;
+                          Provider.of<QueryInfoProvider>(context).currentPage =
+                              page;
+                          Provider.of<QueryInfoProvider>(context).collection =
+                              _metadataList[page]['collection'];
+                          Provider.of<QueryInfoProvider>(context).tag = null;
+                          SystemSound.play(SystemSoundType.click);
+                          HapticFeedback.lightImpact();
+                        },
+                        index:
+                            Provider.of<QueryInfoProvider>(context).currentPage,
+                        transformer: PageTransformerBuilder(
+                            builder: (_, TransformInfo info) {
+                          if (info.index == _metadataList.length &&
+                              shouldDisplayAdd) return _AddPage();
 
-                    final Map<String, dynamic> data = _metadataList[info.index];
+                          final Map<String, dynamic> data =
+                              _metadataList[info.index];
 
-                    return _AuthorPage(
-                      info: info,
-                      tags: data['tags'],
-                      title: data['title'],
-                      authorName: data['authorName'],
-                    );
-                  }),
-                );
-              });
-        } else if (snapshot.hasError ||
-            (snapshot.hasData && (snapshot?.data?.isEmpty ?? true))) {
-          return Center(
-            child: Text(textAppName,
-                style: Theme.of(context).accentTextTheme.display1),
-          );
-        } else {
-          return Container();
-        }
-      },
-    ));
+                          return Stack(
+                            children: <Widget>[
+                              (isEditing && this?.user?.uid == data['collection']) ? _AddPage(data: data) : _AuthorPage(
+                                  info: info,
+                                  tags: data['tags'],
+                                  title: data['title'],
+                                  authorName: data['authorName']),
+                              if (this?.user?.uid == data['collection'])
+                                Positioned(
+                                    top: 10.0,
+                                    right: 20.0,
+                                    child: IconButton(
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () => setState(
+                                            () => isEditing = !isEditing))),
+                            ],
+                          );
+                        }),
+                      );
+                    } else if (snapshot.hasError ||
+                        (snapshot.hasData &&
+                            (snapshot?.data?.isEmpty ?? true))) {
+                      return Center(
+                        child: Text(textAppName,
+                            style: Theme.of(context).accentTextTheme.display1),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  });
+            }));
   }
 }
 
@@ -269,6 +286,8 @@ class _CustomButton extends StatelessWidget {
 }
 
 class _AddPage extends StatefulWidget {
+  const _AddPage({this.data});
+  final Map<String, dynamic> data;
   @override
   __AddPageState createState() => __AddPageState();
 }
@@ -278,6 +297,26 @@ class __AddPageState extends State<_AddPage> {
   String _title;
   String _authorName;
   final GlobalKey<__TagsBuilderState> _tagsBuilderKey = GlobalKey();
+  TextEditingController _titleController;
+  TextEditingController _authorNameController;
+
+  @override
+  void initState() {
+    if (widget?.data?.isEmpty ?? true) {
+      _isCreating = false;
+      _titleController = TextEditingController();
+      _authorNameController = TextEditingController();
+    } else {
+      _isCreating = true;
+      _title=widget.data['title'].toString();
+      if (_title.endsWith(' '))
+        _title = _title.substring(0, _title.length-1);
+      _authorName=widget.data['authorName'];
+      _titleController = TextEditingController(text: _title);
+      _authorNameController = TextEditingController(text: _authorName);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -292,16 +331,17 @@ class __AddPageState extends State<_AddPage> {
                 '${_title ?? 'Textos do'} ${_authorName ?? 'Kalil'}',
                 style: Theme.of(context).accentTextTheme.display1,
               ),
-             TextField(
-                      onChanged: (String title) =>
-                          setState(() => _title = title),
-                      decoration:
-                          InputDecoration(labelText: 'Titulo. Ex.: Textos do')),
-                  TextField(
-                      onChanged: (String authorName) =>
-                          setState(() => _authorName = authorName),
-                      decoration: InputDecoration(labelText: 'Nome do autor')),
-              _TagsBuilder(key: _tagsBuilderKey),
+              TextField(
+                  controller: _titleController,
+                  onChanged: (String title) => setState(() => _title = title),
+                  decoration:
+                      InputDecoration(labelText: 'Titulo. Ex.: Textos do')),
+              TextField(
+                  controller: _authorNameController,
+                  onChanged: (String authorName) =>
+                      setState(() => _authorName = authorName),
+                  decoration: InputDecoration(labelText: 'Nome do autor')),
+              _TagsBuilder(key: _tagsBuilderKey, data: widget.data),
               RaisedButton(
                   color: Theme.of(context).accentColor,
                   child: const Text('Adicionar autor'),
@@ -320,9 +360,16 @@ class __AddPageState extends State<_AddPage> {
                         'tags': _tagsBuilderKey.currentState.tags,
                         'visible': false
                       });
+                    } else {
+                      await document.updateData(<String, dynamic>{
+                        'authorName': _authorName,
+                        'title': _title + ' ',
+                        'tags': _tagsBuilderKey.currentState.tags,
+                        'visible': false
+                      });
                     }
                   }),
-              OutlineButton(
+              if (widget.data == null) OutlineButton(
                   child: const Text('Voltar'),
                   onPressed: () => setState(() => _isCreating = false))
             ],
@@ -355,14 +402,27 @@ class __AddPageState extends State<_AddPage> {
 }
 
 class _TagsBuilder extends StatefulWidget {
-  _TagsBuilder({Key key}) : super(key: key);
+  _TagsBuilder({Key key, this.data}) : super(key: key);
+  final Map<String, dynamic> data;
   @override
   __TagsBuilderState createState() => __TagsBuilderState();
 }
 
 class __TagsBuilderState extends State<_TagsBuilder> {
   List<String> tags = <String>[];
+  List<TextEditingController> _controllers = <TextEditingController>[];
   int get amountOfTags => tags.length + 1;
+  @override
+  void initState() {
+    if (widget?.data?.isNotEmpty ?? false) {
+      final List<dynamic> dataList = widget.data['tags'];
+      for (dynamic tag in dataList) {
+        tags.add(tag.toString());
+        _controllers.add(TextEditingController(text: tag.toString()));
+      }
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -372,6 +432,7 @@ class __TagsBuilderState extends State<_TagsBuilder> {
       while (idx < amountOfTags) {
         final int i = idx;
         widgets.add(TextField(
+            controller: _controllers.length <= i ? TextEditingController() : _controllers[i],
             onChanged: (String tag) {
               if (tags.length <= i) {
                 setState(() => tags.add(tag));
@@ -381,8 +442,7 @@ class __TagsBuilderState extends State<_TagsBuilder> {
                 setState(() => tags[i] = tag);
               }
             },
-            decoration: InputDecoration(
-                labelText: 'Tag ' + i.toString())));
+            decoration: InputDecoration(labelText: 'Tag ' + i.toString())));
         idx++;
       }
       return widgets;
