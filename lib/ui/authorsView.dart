@@ -277,7 +277,7 @@ class __AddPageState extends State<_AddPage> {
   bool _isCreating = false;
   String _title;
   String _authorName;
-  List<String> _tags = <String>[];
+  final GlobalKey<__TagsBuilderState> _tagsBuilderKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -292,10 +292,7 @@ class __AddPageState extends State<_AddPage> {
                 '${_title ?? 'Textos do'} ${_authorName ?? 'Kalil'}',
                 style: Theme.of(context).accentTextTheme.display1,
               ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  TextField(
+             TextField(
                       onChanged: (String title) =>
                           setState(() => _title = title),
                       decoration:
@@ -304,13 +301,7 @@ class __AddPageState extends State<_AddPage> {
                       onChanged: (String authorName) =>
                           setState(() => _authorName = authorName),
                       decoration: InputDecoration(labelText: 'Nome do autor')),
-                  TextField(
-                      onChanged: (String tags) =>
-                          setState(() => _tags = tags.split(',')),
-                      decoration: InputDecoration(
-                          labelText: 'Tags (Separadas por vírgula)')),
-                ],
-              ),
+              _TagsBuilder(key: _tagsBuilderKey),
               RaisedButton(
                   color: Theme.of(context).accentColor,
                   child: const Text('Adicionar autor'),
@@ -326,7 +317,7 @@ class __AddPageState extends State<_AddPage> {
                       await document.setData(<String, dynamic>{
                         'authorName': _authorName,
                         'title': _title + ' ',
-                        'tags': _tags,
+                        'tags': _tagsBuilderKey.currentState.tags,
                         'visible': false
                       });
                     }
@@ -359,6 +350,46 @@ class __AddPageState extends State<_AddPage> {
                 ),
               ),
       ),
+    );
+  }
+}
+
+class _TagsBuilder extends StatefulWidget {
+  _TagsBuilder({Key key}) : super(key: key);
+  @override
+  __TagsBuilderState createState() => __TagsBuilderState();
+}
+
+class __TagsBuilderState extends State<_TagsBuilder> {
+  List<String> tags = <String>[];
+  int get amountOfTags => tags.length + 1;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> _getChildren() {
+      final List<Widget> widgets = <Widget>[];
+      int idx = 0;
+      while (idx < amountOfTags) {
+        final int i = idx;
+        widgets.add(TextField(
+            onChanged: (String tag) {
+              if (tags.length <= i) {
+                setState(() => tags.add(tag));
+              } else {
+                if (tag.isEmpty && i == tags.length - 1)
+                  setState(() => tags.removeAt(i));
+                setState(() => tags[i] = tag);
+              }
+            },
+            decoration: InputDecoration(
+                labelText: 'Tag ' + i.toString())));
+        idx++;
+      }
+      return widgets;
+    }
+
+    return Column(
+      children: _getChildren(),
     );
   }
 }

@@ -26,7 +26,7 @@ class _TextCreateViewState extends State<TextCreateView> {
   String _musicUrl;
   bool _imageLoading = false;
   bool _musicLoading = false;
-  List<String> _tags = <String>[];
+  final List<String> _tags = <String>[];
 
   final GlobalKey<FormState> _formKey = GlobalKey();
 
@@ -46,7 +46,8 @@ class _TextCreateViewState extends State<TextCreateView> {
     );
     if (picked != null) {
       String normalize(int date) {
-        if (date < 10) return '0' + date.toString();
+        if (date < 10)
+          return '0' + date.toString();
         return date.toString();
       }
 
@@ -116,7 +117,8 @@ class _TextCreateViewState extends State<TextCreateView> {
               ));
       return;
     }
-    if (_date == null) await _selectDate();
+    if (_date == null)
+      await _selectDate();
 
     final bool shouldUpload = await showDialog<bool>(
         context: context,
@@ -222,7 +224,7 @@ class _TextCreateViewState extends State<TextCreateView> {
             ),
           );
 
-      List<Widget> widgets = <Widget>[];
+      final List<Widget> widgets = <Widget>[];
       for (dynamic element in list) {
         widgets.add(buildItem(element.toString()));
       }

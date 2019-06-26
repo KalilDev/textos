@@ -86,7 +86,7 @@ class CardView extends StatelessWidget {
                             disabledColor: Theme.of(context).accentColor,
                           ),
                         ),
-                      ) : SizedBox(),
+                      ) : const SizedBox(),
                     ],
                   ),
                 )),
