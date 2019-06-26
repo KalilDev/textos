@@ -12,16 +12,19 @@ class ContentCard extends StatelessWidget {
   const ContentCard({@required this.content, @required this.heroTag})
       : isSliver = false,
         callBack = null,
-        trailing = null;
+        trailing = null,
+        longPressCallBack = null;
   const ContentCard.sliver(
       {@required this.content,
-      @required this.callBack,
+      this.callBack,
+      this.longPressCallBack,
       @required this.heroTag,
       this.trailing})
       : isSliver = true;
   final Content content;
   final bool isSliver;
   final VoidCallback callBack;
+  final VoidCallback longPressCallBack;
   final Object heroTag;
   final Widget trailing;
 
@@ -49,8 +52,8 @@ class ContentCard extends StatelessWidget {
     Widget extraTextBuilder(BuildContext context, BoxConstraints constraints) {
       final TextStyle text = Theme.of(context).textTheme.body1;
       final TextStyle date = Theme.of(context).textTheme.title;
-      final double heightForText = constraints.maxHeight - date.fontSize - 15.0;
-      final int lineCount = (heightForText / text.fontSize).floor();
+      final double heightForText = constraints.maxHeight - date.fontSize - 7.0;
+      final int lineCount = (heightForText / (text.fontSize + 3.3)).floor();
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -125,6 +128,7 @@ class ContentCard extends StatelessWidget {
                   ],
                 ))),
                 onTap: callBack,
+                onLongPress: longPressCallBack,
               ),
             ),
           ));
@@ -135,15 +139,15 @@ class ContentCard extends StatelessWidget {
         Hero(
             tag: 'image' + heroTag.toString(),
             child: ImageBackground(
-                    img: content.imgUrl,
-                    enabled: false,
-                    key: Key('image' + heroTag.toString()))),
+                img: content.imgUrl,
+                enabled: false,
+                key: Key('image' + heroTag.toString()))),
         isSliver
-                ? buildSliver()
-                : _TextWidget(
-                    heroTag: heroTag,
-                    textContent: content,
-                    textSize: Provider.of<TextStyleProvider>(context).textSize),
+            ? buildSliver()
+            : _TextWidget(
+                heroTag: heroTag,
+                textContent: content,
+                textSize: Provider.of<TextStyleProvider>(context).textSize),
       ],
     );
   }

@@ -89,16 +89,17 @@ class _TextCreateViewState extends State<TextCreateView> {
         reference.child(fileName).putFile(file);
     while (uploadTask.isInProgress == true)
       await Future<void>.delayed(Duration(milliseconds: 200));
-    setState(() {
-      switch (type) {
-        case _FileType.image:
-          _imageLoading = false;
-          break;
-        case _FileType.music:
-          _musicLoading = false;
-          break;
-      }
-    });
+    if (mounted)
+      setState(() {
+        switch (type) {
+          case _FileType.image:
+            _imageLoading = false;
+            break;
+          case _FileType.music:
+            _musicLoading = false;
+            break;
+        }
+      });
     return await reference.child(fileName).getDownloadURL();
   }
 

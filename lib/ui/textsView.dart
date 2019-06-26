@@ -57,52 +57,6 @@ class _TextsViewState extends State<TextsView> {
     }
   }
 
-  Widget _listViewItem(Content content) {
-    final String heroTag =
-        'listViewItem' + content.textPath;
-    final FavoritesProvider favProvider =
-    Provider.of<FavoritesProvider>(context);
-    return Container(
-        height: 100.0,
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: ContentCard.sliver(
-            content: content,
-            heroTag: heroTag,
-            trailing: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                IconButton(
-                    icon: Icon(
-                        favProvider.isFavorite(
-                            content.favorite)
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color: favProvider
-                            .isFavorite(content
-                            .favorite)
-                            ? Theme.of(context)
-                            .accentColor
-                            : null),
-                    onPressed: () => favProvider
-                        .toggle(content.favorite)),
-                Text(content.favoriteCount
-                    .toString())
-              ],
-            ),
-            callBack: () {
-              HapticFeedback.heavyImpact();
-              Navigator.push(
-                  context,
-                  DurationMaterialPageRoute<void>(
-                      builder:
-                          (BuildContext context) =>
-                          CardView(
-                            heroTag: heroTag,
-                            content: content,
-                          )));
-            }));
-  }
-
   Widget _noTextsWidget() {
     return Container(
         child: Center(
@@ -170,11 +124,13 @@ class _TextsViewState extends State<TextsView> {
                                   return SizedBox(height: widget.spacerSize);
 
                                 if (_shouldDisplayAdd && index == _slideList.length + 1)
-                                  return Container(padding: const EdgeInsets.symmetric(vertical: 4.0),height: 100.0 ,child: _AddItem());
+                                  return Container(margin: const EdgeInsets.symmetric(vertical: 16.0),height: 100.0 ,child: _AddItem());
 
                                 final Content content =
                                     Content.fromData(_slideList[index - 1]);
-                                return _listViewItem(content);
+                                return _ListItem(content: content, isFavorite: Provider.of<FavoritesProvider>(context).isFavorite(
+                                    content.favorite), onFavorite: () => Provider.of<FavoritesProvider>(context)
+                                    .toggle(content.favorite));
                               });
                         }
 
@@ -214,5 +170,69 @@ class _AddItem extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _ListItem extends StatefulWidget {
+  const _ListItem({@required this.content, @required this.isFavorite, @required this.onFavorite});
+
+  final VoidCallback onFavorite;
+  final Content content;
+  final bool isFavorite;
+
+  @override
+  __ListItemState createState() => __ListItemState();
+}
+
+class __ListItemState extends State<_ListItem> {
+  bool isExtended = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final String heroTag =
+        'listViewItem' + widget.content.textPath;
+    final double height = isExtended ? 200.0 : 100.0;
+    final EdgeInsets padding = isExtended ? const EdgeInsets.symmetric(horizontal: 16.0) : EdgeInsets.zero;
+
+    return AnimatedContainer(
+        duration: durationAnimationMedium,
+        height: height,
+        margin: const EdgeInsets.symmetric(vertical: 4.0),
+        padding: padding,
+        child: ContentCard.sliver(
+          longPressCallBack: () {
+            setState(() => isExtended = !isExtended);
+          },
+            content: widget.content,
+            heroTag: heroTag,
+            trailing: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(
+                    icon: Icon(
+                        widget.isFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: widget.isFavorite
+                            ? Theme.of(context)
+                            .accentColor
+                            : null),
+                    onPressed: widget.onFavorite),
+                Text(widget.content.favoriteCount
+                    .toString())
+              ],
+            ),
+            callBack: () {
+              HapticFeedback.heavyImpact();
+              Navigator.push(
+                  context,
+                  DurationMaterialPageRoute<void>(
+                      builder:
+                          (BuildContext context) =>
+                          CardView(
+                            heroTag: heroTag,
+                            content: widget.content,
+                          )));
+            }));
   }
 }
