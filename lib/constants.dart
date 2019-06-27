@@ -64,7 +64,7 @@ const ColorScheme _colorSchemeLight = ColorScheme(
     background: _themeBackgroundLight,
     error: Color(0xFFB00020),
     onPrimary: _themeBackgroundLight,
-    onSecondary: _themeForegroundLight,
+    onSecondary: _themeBackgroundLight,
     onSurface: _themeForegroundLight,
     onBackground: _themeForegroundLight,
     onError: _themeBackgroundLight,
