@@ -7,26 +7,24 @@ import 'favorite.dart';
 class Content {
   Content(
       {@required this.title,
-      @required String date,
-      @required String imgUrl,
+      @required this.rawDate,
+      @required this.rawImgUrl,
       @required String text,
       @required this.music,
       @required this.tags})
-      : _date = date,
-        _imgUrl = imgUrl,
-        text = text?.replaceAll('\n', '^NL');
+      : text = text?.replaceAll('\n', '^NL');
 
   Content.fromFav(Favorite fav) {
     title = fav.textTitle;
     textPath = fav.textPath;
-    _imgUrl = fav.textImg;
+    rawImgUrl = fav.textImg;
   }
 
   Content.fromData(Map<String, dynamic> data) {
     title = data['title'] ?? placeholderTitle;
     textPath = data['path'];
-    _imgUrl = data['img'];
-    _date = data['date'];
+    rawImgUrl = data['img'];
+    rawDate = data['date'];
     favoriteCount = data['favoriteCount'] ?? 0;
     music = data['music'];
     text = data['text'];
@@ -35,22 +33,22 @@ class Content {
 
   String title;
   String textPath;
-  String _imgUrl;
+  String rawImgUrl;
   String text;
-  String _date;
+  String rawDate;
   String music;
   List<dynamic> tags;
   int favoriteCount;
 
-  String get imgUrl => _imgUrl ?? placeholderImg;
+  String get imgUrl => rawImgUrl ?? placeholderImg;
 
   String get date {
-    if (_date == null) {
+    if (rawDate == null) {
       return stringDate(DateTime.now());
-    } else if (_date is String) {
-      return _date.toString().contains('/')
-          ? _date
-          : stringDate(DateTime.parse(_date.toString()));
+    } else if (rawDate is String) {
+      return rawDate.toString().contains('/')
+          ? rawDate
+          : stringDate(DateTime.parse(rawDate.toString()));
     }
     return stringDate(DateTime.now());
   }
@@ -60,11 +58,11 @@ class Content {
   bool get canFavorite => textPath != null;
 
   Map<String, dynamic> toData() => <String, dynamic>{
-        'date': _date,
+        'date': rawDate,
         'title': title,
         'text': text,
         'tags': tags,
-        'img': _imgUrl,
+        'img': rawImgUrl,
         'music': music
       };
 

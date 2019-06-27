@@ -14,6 +14,9 @@ import 'package:textos/src/providers.dart';
 import 'cardView.dart';
 
 class TextCreateView extends StatefulWidget {
+  const TextCreateView({this.content});
+  final Content content;
+
   @override
   _TextCreateViewState createState() => _TextCreateViewState();
 }
@@ -26,14 +29,29 @@ class _TextCreateViewState extends State<TextCreateView> {
   String _musicUrl;
   bool _imageLoading = false;
   bool _musicLoading = false;
-  final List<String> _tags = <String>[];
+  List<String> _tags = <String>[];
+  TextEditingController _titleController;
+  TextEditingController _textController;
 
   final GlobalKey<FormState> _formKey = GlobalKey();
+
+  @override
+  void initState() {
+    if (widget.content != null) {
+      textContent = widget.content;
+      _titleController = TextEditingController(text: _title);
+      _textController = TextEditingController(text: _text);
+    } else {
+      _titleController = TextEditingController();
+      _textController = TextEditingController();
+    }
+    super.initState();
+  }
 
   Future<void> _selectDate() async {
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: _date != null ? DateTime.parse(_date) : DateTime.now(),
       firstDate: DateTime(2016),
       lastDate: DateTime.now(),
       builder: (BuildContext dateContext, Widget child) {
@@ -104,6 +122,7 @@ class _TextCreateViewState extends State<TextCreateView> {
   }
 
   Future<void> _sendText() async {
+    _formKey.currentState.save();
     if (_imageLoading || _musicLoading) {
       showDialog<void>(
           context: context,
@@ -121,7 +140,7 @@ class _TextCreateViewState extends State<TextCreateView> {
     if (_date == null)
       await _selectDate();
 
-    final bool shouldUpload = await showDialog<bool>(
+    final bool shouldUpload = widget?.content == null ? await showDialog<bool>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
               title: const Text('Confirmação'),
@@ -139,16 +158,20 @@ class _TextCreateViewState extends State<TextCreateView> {
                       Navigator.of(context).pop(true);
                     })
               ],
-            ));
+            )) : true;
 
     if (shouldUpload) {
       final FirebaseUser user =
           await Provider.of<AuthService>(context).getUser();
-      Firestore.instance
-          .collection('texts')
-          .document(user.uid)
-          .collection('documents')
-          .add(textContent.toData());
+      if (widget?.content?.textPath != null) {
+        Firestore.instance.document(widget.content.textPath).updateData(textContent.toData());
+      } else {
+        Firestore.instance
+            .collection('texts')
+            .document(user.uid)
+            .collection('documents')
+            .add(textContent.toData());
+      }
       Navigator.pop(context);
     }
   }
@@ -255,11 +278,24 @@ class _TextCreateViewState extends State<TextCreateView> {
 
   Content get textContent => Content(
       text: _text,
-      date: _date,
-      imgUrl: _imageUrl,
+      rawDate: _date,
+      rawImgUrl: _imageUrl,
       music: _musicUrl,
       title: _title,
       tags: _tags);
+
+  set textContent(Content content) {
+    final List<String> stringList = <String>[];
+    for (dynamic tag in content.tags) {
+      stringList.add(tag.toString());
+    }
+    _text = content.text;
+    _date = content.rawDate;
+    _imageUrl = content.rawImgUrl;
+    _musicUrl = content.music;
+    _title = content.title;
+    _tags = stringList;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -276,12 +312,14 @@ class _TextCreateViewState extends State<TextCreateView> {
                   children: <Widget>[
                     TextFormField(
                         decoration: InputDecoration(labelText: 'Titulo'),
-                        onSaved: (String title) => _title = title),
+                        onSaved: (String title) => _title = title,
+                        controller: _titleController,),
                     TextFormField(
                         decoration: InputDecoration(labelText: 'Texto'),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
-                        onSaved: (String text) => _text = text),
+                        onSaved: (String text) => _text = text,
+                        controller: _textController,),
                   ],
                 ),
               ),
@@ -348,7 +386,7 @@ class _TextCreateViewState extends State<TextCreateView> {
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: _sendText,
-          label: const Text('Enviar texto'),
+          label: Text(widget?.content != null ? 'Atualizar texto' : 'Enviar texto'),
           icon: const Icon(Icons.check),
         ),
       ),

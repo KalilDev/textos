@@ -27,7 +27,7 @@ class _TextsViewState extends State<TextsView> {
   static Map<String, dynamic> favoritesData;
   final Firestore _db = Firestore.instance;
   List<Map<String, dynamic>> _slideList;
-  bool _shouldDisplayAdd = false;
+  bool _isAuthor = false;
 
   Stream<Iterable<Map<String, dynamic>>> get slidesStream => _query
       .snapshots()
@@ -89,7 +89,7 @@ class _TextsViewState extends State<TextsView> {
         builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
           if (user?.data?.uid ==
               Provider.of<QueryInfoProvider>(context).collection)
-            _shouldDisplayAdd = true;
+            _isAuthor = true;
           
           return StreamBuilder<Iterable<Map<String, dynamic>>>(
               stream: slidesStream,
@@ -118,17 +118,18 @@ class _TextsViewState extends State<TextsView> {
 
                         Widget listView() {
                           return ListView.builder(
-                              itemCount: _slideList.length + (_shouldDisplayAdd ? 2 : 1),
+                              itemCount: _slideList.length + (_isAuthor ? 2 : 1),
                               itemBuilder: (BuildContext context, int index) {
                                 if (index == 0)
                                   return SizedBox(height: widget.spacerSize);
 
-                                if (_shouldDisplayAdd && index == _slideList.length + 1)
+                                if (_isAuthor && index == _slideList.length + 1)
                                   return Container(margin: const EdgeInsets.symmetric(vertical: 16.0),height: 100.0 ,child: _AddItem());
 
                                 final Content content =
                                     Content.fromData(_slideList[index - 1]);
-                                return _ListItem(content: content, isFavorite: Provider.of<FavoritesProvider>(context).isFavorite(
+
+                                return _ListItem(isAuthor: _isAuthor, content: content, isFavorite: Provider.of<FavoritesProvider>(context).isFavorite(
                                     content.favorite), onFavorite: () => Provider.of<FavoritesProvider>(context)
                                     .toggle(content.favorite));
                               });
@@ -142,7 +143,7 @@ class _TextsViewState extends State<TextsView> {
                     );
                   }
                 }
-                return _shouldDisplayAdd ? Padding(padding: const EdgeInsets.all(20.0),child: _AddItem()) : _noTextsWidget();
+                return _isAuthor ? Padding(padding: const EdgeInsets.all(20.0),child: _AddItem()) : _noTextsWidget();
               });
         });
   }
@@ -174,11 +175,12 @@ class _AddItem extends StatelessWidget {
 }
 
 class _ListItem extends StatefulWidget {
-  const _ListItem({@required this.content, @required this.isFavorite, @required this.onFavorite});
+  const _ListItem({@required this.content, @required this.isFavorite, @required this.onFavorite, @required this.isAuthor});
 
   final VoidCallback onFavorite;
   final Content content;
   final bool isFavorite;
+  final bool isAuthor;
 
   @override
   __ListItemState createState() => __ListItemState();
@@ -222,6 +224,7 @@ class __ListItemState extends State<_ListItem> {
                     .toString())
               ],
             ),
+            leading: widget.isAuthor ? IconButton(icon: Icon(Icons.edit), onPressed: () => Navigator.push<void>(context, MaterialPageRoute(builder: (BuildContext context) => TextCreateView(content: widget.content,)))) : null,
             callBack: () {
               HapticFeedback.heavyImpact();
               Navigator.push(

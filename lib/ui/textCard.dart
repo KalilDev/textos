@@ -13,13 +13,15 @@ class ContentCard extends StatelessWidget {
       : isSliver = false,
         callBack = null,
         trailing = null,
-        longPressCallBack = null;
+        longPressCallBack = null,
+        leading = null;
   const ContentCard.sliver(
       {@required this.content,
       this.callBack,
       this.longPressCallBack,
       @required this.heroTag,
-      this.trailing})
+      this.trailing,
+      this.leading})
       : isSliver = true;
   final Content content;
   final bool isSliver;
@@ -27,6 +29,7 @@ class ContentCard extends StatelessWidget {
   final VoidCallback longPressCallBack;
   final Object heroTag;
   final Widget trailing;
+  final Widget leading;
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +101,7 @@ class ContentCard extends StatelessWidget {
                     child: Center(
                         child: Row(
                   children: <Widget>[
+                    if (leading != null) leading,
                     Expanded(
                       child: AnimatedSwitcher(
                         duration: durationAnimationMedium,
