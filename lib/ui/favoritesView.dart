@@ -68,6 +68,10 @@ class _FavoriteItem extends StatelessWidget {
                 child: ContentCard.sliver(
                   content: content,
                   heroTag: heroTag,
+                  trailing: IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () => Provider.of<FavoritesProvider>(context)
+                          .remove(favorite)),
                   callBack: () async {
                     final Content fullContent = snap.data != null
                         ? snap.data
