@@ -12,6 +12,7 @@ import 'package:textos/src/model/content.dart';
 import 'package:textos/src/providers.dart';
 
 import 'cardView.dart';
+import 'kalilAppBar.dart';
 
 class TextCreateView extends StatefulWidget {
   const TextCreateView({this.content});
@@ -64,8 +65,7 @@ class _TextCreateViewState extends State<TextCreateView> {
     );
     if (picked != null) {
       String normalize(int date) {
-        if (date < 10)
-          return '0' + date.toString();
+        if (date < 10) return '0' + date.toString();
         return date.toString();
       }
 
@@ -78,16 +78,14 @@ class _TextCreateViewState extends State<TextCreateView> {
   Future<String> _pickImage() async {
     final File image = await ImagePicker.pickImage(source: ImageSource.gallery);
     final dynamic result = await _uploadFile(image, _FileType.image);
-    if (mounted)
-      setState(() => _imageUrl = result.toString());
+    if (mounted) setState(() => _imageUrl = result.toString());
     return result.toString();
   }
 
   Future<String> _pickMusic() async {
     final File file = await FilePicker.getFile(type: FileType.AUDIO);
     final dynamic result = await _uploadFile(file, _FileType.music);
-    if (mounted)
-      setState(() => _musicUrl = result.toString());
+    if (mounted) setState(() => _musicUrl = result.toString());
     return result.toString();
   }
 
@@ -96,15 +94,15 @@ class _TextCreateViewState extends State<TextCreateView> {
         file.path.split('/')[file.path.split('/').length - 1];
     if (mounted)
       setState(() {
-      switch (type) {
-        case _FileType.image:
-          _imageLoading = true;
-          break;
-        case _FileType.music:
-          _musicLoading = true;
-          break;
-      }
-    });
+        switch (type) {
+          case _FileType.image:
+            _imageLoading = true;
+            break;
+          case _FileType.music:
+            _musicLoading = true;
+            break;
+        }
+      });
     final StorageReference reference = FirebaseStorage().ref();
     final StorageUploadTask uploadTask =
         reference.child(fileName).putFile(file);
@@ -183,25 +181,27 @@ class _TextCreateViewState extends State<TextCreateView> {
   }
 
   Future<bool> _shouldPop() async {
-    if (_text != null || (_imageUrl != null || _imageLoading) || (_musicUrl != null || _musicLoading)) {
+    if (_text != null ||
+        (_imageUrl != null || _imageLoading) ||
+        (_musicUrl != null || _musicLoading)) {
       final bool shouldPop = await showDialog<bool>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            title: const Text('Sair?'),
-            content: const Text('Todo o progresso será perdido!'),
-            actions: <Widget>[
-              FlatButton(
-                  child: const Text(textNo),
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  }),
-              FlatButton(
-                  child: const Text(textYes),
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  })
-            ],
-          ));
+                title: const Text('Sair?'),
+                content: const Text('Todo o progresso será perdido!'),
+                actions: <Widget>[
+                  FlatButton(
+                      child: const Text(textNo),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      }),
+                  FlatButton(
+                      child: const Text(textYes),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      })
+                ],
+              ));
       return shouldPop;
     } else {
       return true;
@@ -290,23 +290,23 @@ class _TextCreateViewState extends State<TextCreateView> {
     final bool delete = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text('Deletar o texto'),
-          content: const Text('O texto sera apagado, sem maneira de reverter o processo'),
-          actions: <Widget>[
-            FlatButton(
-                child: const Text(textNo),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                }),
-            FlatButton(
-                child: const Text(textYes),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                })
-          ],
-        ));
-    if (delete)
-      Firestore.instance.document(widget.content.textPath).delete();
+              title: const Text('Deletar o texto'),
+              content: const Text(
+                  'O texto sera apagado, sem maneira de reverter o processo'),
+              actions: <Widget>[
+                FlatButton(
+                    child: const Text(textNo),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    }),
+                FlatButton(
+                    child: const Text(textYes),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    })
+              ],
+            ));
+    if (delete) Firestore.instance.document(widget.content.textPath).delete();
     Navigator.of(context).pop();
   }
 
@@ -323,7 +323,7 @@ class _TextCreateViewState extends State<TextCreateView> {
     for (dynamic tag in content.tags) {
       stringList.add(tag.toString());
     }
-    _text = content.text.replaceAll('^NL', '\n');
+    _text = content.text?.replaceAll('^NL', '\n');
     _date = content.rawDate;
     _imageUrl = content.rawImgUrl;
     _musicUrl = content.music;
@@ -336,6 +336,7 @@ class _TextCreateViewState extends State<TextCreateView> {
     return WillPopScope(
       onWillPop: _shouldPop,
       child: Scaffold(
+        appBar: const KalilAppBar(title: 'Editor de textos',),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ListView(
@@ -417,12 +418,14 @@ class _TextCreateViewState extends State<TextCreateView> {
                 },
                 child: const Text('Visualizar o texto'),
               ),
-              if (widget?.content?.textPath != null) RaisedButton(
-                color: Theme.of(context).colorScheme.error,
-                textColor: Theme.of(context).colorScheme.onError,
-                onPressed: _maybeDelete,
-                child: const Text('Deletar texto'),
-              )
+              if (widget?.content?.textPath != null)
+                RaisedButton(
+                  color: Theme.of(context).colorScheme.error,
+                  textColor: Theme.of(context).colorScheme.onError,
+                  onPressed: _maybeDelete,
+                  child: const Text('Deletar texto'),
+                ),
+              const SizedBox(height: 56.0)
             ],
           ),
         ),

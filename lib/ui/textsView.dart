@@ -124,7 +124,7 @@ class _TextsViewState extends State<TextsView> {
                                   return SizedBox(height: widget.spacerSize);
 
                                 if (_isAuthor && index == _slideList.length + 1)
-                                  return Container(margin: const EdgeInsets.symmetric(vertical: 16.0),height: 100.0 ,child: _AddItem());
+                                  return Container(margin: const EdgeInsets.only(bottom: 12.0),height: 100.0 ,child: _AddItem());
 
                                 final Content content =
                                     Content.fromData(_slideList[index - 1]);
@@ -153,21 +153,15 @@ class _AddItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedContainer(
-      elevation: 16.0,
-      child: Material(
-        color: Colors.transparent,
-        elevation: 0.0,
-        clipBehavior: Clip.antiAlias,
-        borderRadius: BorderRadius.circular(20.0),
-        child: InkWell(
-            onTap: () => Navigator.push<void>(
-                context,
-                MaterialPageRoute<void>(
-                    builder: (BuildContext context) => const TextCreateView())),
-          child: Center(
-            child: const Icon(
-                Icons.add),
-          ),
+      elevation: 8.0,
+      child: InkWell(
+          onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                  builder: (BuildContext context) => const TextCreateView())),
+        child: Center(
+          child: const Icon(
+              Icons.add),
         ),
       ),
     );
@@ -196,10 +190,11 @@ class __ListItemState extends State<_ListItem> {
     final double height = isExtended ? 200.0 : 100.0;
     final EdgeInsets padding = isExtended ? const EdgeInsets.symmetric(horizontal: 16.0) : EdgeInsets.zero;
 
-    return AnimatedContainer(
+    return AnimatedElevatedContainer(
         duration: durationAnimationMedium,
         height: height,
-        margin: const EdgeInsets.symmetric(vertical: 4.0),
+        elevation: 4.0,
+        margin: const EdgeInsets.only(bottom: 8.0),
         padding: padding,
         child: ContentCard.sliver(
           longPressCallBack: () {

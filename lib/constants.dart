@@ -58,8 +58,8 @@ const Color _themeForegroundLight = Colors.black;
 const ColorScheme _colorSchemeLight = ColorScheme(
     primary: Color(0xFF3F51B5),
     primaryVariant: Color(0xFF002984),
-    secondary: Color(0xff3f8cb5),
-    secondaryVariant: Color(0xFF005f85),
+    secondary: Color(0xFF683fb5),
+    secondaryVariant: Color(0xFF341384),
     surface: _themeBackgroundLight,
     background: _themeBackgroundLight,
     error: Color(0xFFB00020),
@@ -78,8 +78,8 @@ const Color _themeForegroundDark = Colors.white;
 const ColorScheme _colorSchemeDark = ColorScheme(
     primary: Color(0xFF9fa8da),
     primaryVariant: Color(0xFF6f79a8),
-    secondary: Color(0xff9fc5da),
-    secondaryVariant: Color(0xFF6f94a8),
+    secondary: Color(0xFFb49fda),
+    secondaryVariant: Color(0xFF8470a8),
     surface: _themeBackgroundDark,
     background: _themeBackgroundDark,
     error: Color(0xFFCF6679),

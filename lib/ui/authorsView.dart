@@ -89,19 +89,26 @@ class _AuthorsViewState extends State<AuthorsView> {
 
                           return Stack(
                             children: <Widget>[
-                              (isEditing && this?.user?.uid == data['collection']) ? _AddPage(data: data) : _AuthorPage(
-                                  info: info,
-                                  tags: data['tags'],
-                                  title: data['title'],
-                                  authorName: data['authorName']),
+                              AnimatedSwitcher(
+                            duration: durationAnimationMedium,
+                          child: (isEditing && this?.user?.uid == data['collection']) ? _AddPage(data: data) : _AuthorPage(
+                              info: info,
+                              tags: data['tags'],
+                              title: data['title'],
+                              authorName: data['authorName']),),
                               if (this?.user?.uid == data['collection'])
                                 Positioned(
                                     top: 10.0,
                                     right: 20.0,
-                                    child: IconButton(
-                                        icon: const Icon(Icons.edit),
-                                        onPressed: () => setState(
-                                            () => isEditing = !isEditing))),
+                                    child: Material(
+                                      clipBehavior: Clip.antiAlias,
+                                      borderRadius: BorderRadius.only(topRight: Radius.circular(20.0)),
+                                      color: Colors.transparent,
+                                      child: IconButton(
+                                          icon: const Icon(Icons.edit),
+                                          onPressed: () => setState(
+                                              () => isEditing = !isEditing)),
+                                    )),
                             ],
                           );
                         }),

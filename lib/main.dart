@@ -121,22 +121,10 @@ class StateBuilder extends StatelessWidget {
               child: Consumer<ThemeProvider>(
                 builder: (BuildContext context, ThemeProvider provider, _) {
                   ThemeData overrideTheme;
-                  final ThemeData dark = themeFromScheme(
-                      themeDataDark.colorScheme.copyWith(
-                          secondary: provider.darkTheme.secondary,
-                          secondaryVariant: provider.darkTheme.secondaryVariant,
-                          onSecondary: provider.darkTheme.onSecondary));
-                  final ThemeData light = themeFromScheme(
-                      themeDataLight.colorScheme.copyWith(
-                          secondary: provider.lightTheme.secondary,
-                          secondaryVariant:
-                              provider.lightTheme.secondaryVariant,
-                          onSecondary: provider.lightTheme.onSecondary));
-
                   if (provider.isDarkMode) {
-                    overrideTheme = dark;
+                    overrideTheme = themeDataDark;
                   } else {
-                    overrideTheme = light;
+                    overrideTheme = themeDataLight;
                   }
                   return MaterialApp(
                     locale: const Locale('pt', 'BR'),
@@ -146,7 +134,7 @@ class StateBuilder extends StatelessWidget {
                       GlobalMaterialLocalizations.delegate
                     ],
                     debugShowCheckedModeBanner: false,
-                    darkTheme: dark,
+                    darkTheme: themeDataDark,
                     theme: overrideTheme,
                     home: MainView(),
                   );

@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/providers.dart';
 
+import 'kalilAppBar.dart';
+
 class LoginView extends StatefulWidget {
   @override
   _LoginViewState createState() => _LoginViewState();
@@ -19,13 +21,20 @@ class _LoginViewState extends State<LoginView> {
   String _lastName;
   bool _isCreatingUser = false;
 
-  Widget buildButton(bool enabled, {VoidCallback onPressed, Widget child}) {
+  Widget buildButton(bool enabled,
+      {VoidCallback onPressed, Widget child, BuildContext context}) {
     return AnimatedSwitcher(
       duration: durationAnimationShort,
       child: enabled
           ? RaisedButton(
+              color: Theme.of(context).accentColor,
               child: Container(
-                  width: double.infinity, child: Center(child: child)),
+                  width: double.infinity,
+                  child: Center(
+                      child: DefaultTextStyle(
+                          style: Theme.of(context).textTheme.button.copyWith(
+                              color: Theme.of(context).colorScheme.onSecondary,),
+                          child: child))),
               onPressed: onPressed,
             )
           : OutlineButton(
@@ -38,10 +47,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = Color.alphaBlend(
-        Theme.of(context).primaryColor.withAlpha(80),
-        Theme.of(context).backgroundColor);
-
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor: Theme.of(context).primaryColor,
         systemNavigationBarIconBrightness: Brightness.dark,
@@ -49,17 +54,7 @@ class _LoginViewState extends State<LoginView> {
         statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            textAppName,
-            style: Theme.of(context).accentTextTheme.title.copyWith(
-                fontWeight: FontWeight.bold,
-                color: getTextColor(0.87,
-                    bg: Theme.of(context).backgroundColor,
-                    main: Theme.of(context).colorScheme.onSurface)),
-          ),
-          backgroundColor: color,
-        ),
+        appBar: const KalilAppBar(),
         body: Container(
             padding: const EdgeInsets.all(20.0),
             child: Form(
@@ -102,6 +97,7 @@ class _LoginViewState extends State<LoginView> {
                   buildButton(
                     !_isCreatingUser,
                     child: const Text(textLogin),
+                    context: context,
                     onPressed: () async {
                       // save the fields..
                       final FormState form = _formKey.currentState;
@@ -123,6 +119,7 @@ class _LoginViewState extends State<LoginView> {
                   buildButton(
                     _isCreatingUser,
                     child: const Text(textNewUser),
+                    context: context,
                     onPressed: () async {
                       // save the fields..
                       final FormState form = _formKey.currentState;
