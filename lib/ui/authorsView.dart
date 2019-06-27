@@ -344,6 +344,33 @@ class __AddPageState extends State<_AddPage> {
                       setState(() => _authorName = authorName),
                   decoration: InputDecoration(labelText: 'Nome do autor')),
               _TagsBuilder(key: _tagsBuilderKey, data: widget.data),
+            if (widget?.data?.containsKey('collection') ?? false) RaisedButton(
+                color: Theme.of(context).colorScheme.error,
+                child: const Text('Remover autor'),
+                textColor: Theme.of(context).colorScheme.onError,
+                onPressed: () async {
+                  final bool delete = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Apagar sua pagina'),
+                        content: const Text('Sua pagina será apagada, junto com TODOS os textos, sem possibilidade de recupera-los.'),
+                        actions: <Widget>[
+                          FlatButton(
+                              child: const Text(textNo),
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              }),
+                          FlatButton(
+                              child: const Text(textYes),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              })
+                        ],
+                      ));
+                  if (delete) Firestore.instance
+                      .collection('texts')
+                      .document(widget?.data['collection']).delete();
+                }),
               RaisedButton(
                   color: Theme.of(context).accentColor,
                   child: const Text('Adicionar autor'),
@@ -434,7 +461,7 @@ class __TagsBuilderState extends State<_TagsBuilder> {
       while (idx < amountOfTags) {
         final int i = idx;
         widgets.add(TextField(
-            controller: _controllers.length <= i ? TextEditingController() : _controllers[i],
+            controller: _controllers.length <= i ? null : _controllers[i],
             onChanged: (String tag) {
               if (tags.length <= i) {
                 setState(() => tags.add(tag));
