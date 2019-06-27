@@ -163,7 +163,7 @@ class _AddItem extends StatelessWidget {
             onTap: () => Navigator.push<void>(
                 context,
                 MaterialPageRoute<void>(
-                    builder: (BuildContext context) => TextCreateView())),
+                    builder: (BuildContext context) => const TextCreateView())),
           child: Center(
             child: const Icon(
                 Icons.add),
@@ -224,7 +224,7 @@ class __ListItemState extends State<_ListItem> {
                     .toString())
               ],
             ),
-            leading: widget.isAuthor ? IconButton(icon: Icon(Icons.edit), onPressed: () => Navigator.push<void>(context, MaterialPageRoute(builder: (BuildContext context) => TextCreateView(content: widget.content,)))) : null,
+            leading: widget.isAuthor ? IconButton(icon: const Icon(Icons.edit), onPressed: () => Navigator.push<void>(context, MaterialPageRoute<void>(builder: (BuildContext context) => TextCreateView(content: widget.content,)))) : null,
             callBack: () {
               HapticFeedback.heavyImpact();
               Navigator.push(

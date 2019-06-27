@@ -44,7 +44,8 @@ class _AuthorsViewState extends State<AuthorsView> {
         body: FutureBuilder<FirebaseUser>(
             future: Provider.of<AuthService>(context).getUser(),
             builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
-              if (user.hasData && user?.data != null) this.user = user.data;
+              if (user.hasData && user?.data != null)
+                this.user = user.data;
               return StreamBuilder<Iterable<Map<String, dynamic>>>(
                   stream: _tagStream,
                   builder: (BuildContext context,
@@ -80,7 +81,8 @@ class _AuthorsViewState extends State<AuthorsView> {
                         transformer: PageTransformerBuilder(
                             builder: (_, TransformInfo info) {
                           if (info.index == _metadataList.length &&
-                              shouldDisplayAdd) return _AddPage();
+                              shouldDisplayAdd)
+                            return const _AddPage();
 
                           final Map<String, dynamic> data =
                               _metadataList[info.index];
@@ -97,7 +99,7 @@ class _AuthorsViewState extends State<AuthorsView> {
                                     top: 10.0,
                                     right: 20.0,
                                     child: IconButton(
-                                        icon: Icon(Icons.edit),
+                                        icon: const Icon(Icons.edit),
                                         onPressed: () => setState(
                                             () => isEditing = !isEditing))),
                             ],
@@ -410,7 +412,7 @@ class _TagsBuilder extends StatefulWidget {
 
 class __TagsBuilderState extends State<_TagsBuilder> {
   List<String> tags = <String>[];
-  List<TextEditingController> _controllers = <TextEditingController>[];
+  final List<TextEditingController> _controllers = <TextEditingController>[];
   int get amountOfTags => tags.length + 1;
   @override
   void initState() {

@@ -78,21 +78,24 @@ class _TextCreateViewState extends State<TextCreateView> {
   Future<String> _pickImage() async {
     final File image = await ImagePicker.pickImage(source: ImageSource.gallery);
     final dynamic result = await _uploadFile(image, _FileType.image);
-    setState(() => _imageUrl = result.toString());
+    if (mounted)
+      setState(() => _imageUrl = result.toString());
     return result.toString();
   }
 
   Future<String> _pickMusic() async {
     final File file = await FilePicker.getFile(type: FileType.AUDIO);
     final dynamic result = await _uploadFile(file, _FileType.music);
-    setState(() => _musicUrl = result.toString());
+    if (mounted)
+      setState(() => _musicUrl = result.toString());
     return result.toString();
   }
 
   Future<dynamic> _uploadFile(File file, _FileType type) async {
     final String fileName =
         file.path.split('/')[file.path.split('/').length - 1];
-    setState(() {
+    if (mounted)
+      setState(() {
       switch (type) {
         case _FileType.image:
           _imageLoading = true;
@@ -137,34 +140,37 @@ class _TextCreateViewState extends State<TextCreateView> {
               ));
       return;
     }
-    if (_date == null)
-      await _selectDate();
+    if (_date == null) await _selectDate();
 
-    final bool shouldUpload = widget?.content == null ? await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-              title: const Text('Confirmação'),
-              content: Text(
-                  'O texto será postado com as seguintes informações caso queira prossiguir: \nTitulo: ${_title}\nData: ${_date}\nTags: ${_tags.toString()}\n${_imageUrl != null ? 'Imagem anexada' : 'Nenhuma imagem'}\n${_musicUrl != null ? 'Musica anexada\n' : 'Nenhuma musica'}'),
-              actions: <Widget>[
-                FlatButton(
-                    child: const Text(textNo),
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    }),
-                FlatButton(
-                    child: const Text(textYes),
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    })
-              ],
-            )) : true;
+    final bool shouldUpload = widget?.content == null
+        ? await showDialog<bool>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Confirmação'),
+                  content: Text(
+                      'O texto será postado com as seguintes informações caso queira prossiguir: \nTitulo: ${_title}\nData: ${_date}\nTags: ${_tags.toString()}\n${_imageUrl != null ? 'Imagem anexada' : 'Nenhuma imagem'}\n${_musicUrl != null ? 'Musica anexada\n' : 'Nenhuma musica'}'),
+                  actions: <Widget>[
+                    FlatButton(
+                        child: const Text(textNo),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        }),
+                    FlatButton(
+                        child: const Text(textYes),
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        })
+                  ],
+                ))
+        : true;
 
     if (shouldUpload) {
       final FirebaseUser user =
           await Provider.of<AuthService>(context).getUser();
       if (widget?.content?.textPath != null) {
-        Firestore.instance.document(widget.content.textPath).updateData(textContent.toData());
+        Firestore.instance
+            .document(widget.content.textPath)
+            .updateData(textContent.toData());
       } else {
         Firestore.instance
             .collection('texts')
@@ -177,25 +183,29 @@ class _TextCreateViewState extends State<TextCreateView> {
   }
 
   Future<bool> _shouldPop() async {
-    final bool shouldPop = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-              title: const Text('Sair?'),
-              content: const Text('Todo o progresso será perdido!'),
-              actions: <Widget>[
-                FlatButton(
-                    child: const Text(textNo),
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    }),
-                FlatButton(
-                    child: const Text(textYes),
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    })
-              ],
-            ));
-    return shouldPop;
+    if (_text != null || (_imageUrl != null || _imageLoading) || (_musicUrl != null || _musicLoading)) {
+      final bool shouldPop = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Sair?'),
+            content: const Text('Todo o progresso será perdido!'),
+            actions: <Widget>[
+              FlatButton(
+                  child: const Text(textNo),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  }),
+              FlatButton(
+                  child: const Text(textYes),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  })
+            ],
+          ));
+      return shouldPop;
+    } else {
+      return true;
+    }
   }
 
   Widget _getTags() {
@@ -276,6 +286,30 @@ class _TextCreateViewState extends State<TextCreateView> {
         });
   }
 
+  Future<void> _maybeDelete() async {
+    final bool delete = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Deletar o texto'),
+          content: const Text('O texto sera apagado, sem maneira de reverter o processo'),
+          actions: <Widget>[
+            FlatButton(
+                child: const Text(textNo),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                }),
+            FlatButton(
+                child: const Text(textYes),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                })
+          ],
+        ));
+    if (delete)
+      Firestore.instance.document(widget.content.textPath).delete();
+    Navigator.of(context).pop();
+  }
+
   Content get textContent => Content(
       text: _text,
       rawDate: _date,
@@ -289,7 +323,7 @@ class _TextCreateViewState extends State<TextCreateView> {
     for (dynamic tag in content.tags) {
       stringList.add(tag.toString());
     }
-    _text = content.text;
+    _text = content.text.replaceAll('^NL', '\n');
     _date = content.rawDate;
     _imageUrl = content.rawImgUrl;
     _musicUrl = content.music;
@@ -311,15 +345,17 @@ class _TextCreateViewState extends State<TextCreateView> {
                 child: Column(
                   children: <Widget>[
                     TextFormField(
-                        decoration: InputDecoration(labelText: 'Titulo'),
-                        onSaved: (String title) => _title = title,
-                        controller: _titleController,),
+                      decoration: InputDecoration(labelText: 'Titulo'),
+                      onSaved: (String title) => _title = title,
+                      controller: _titleController,
+                    ),
                     TextFormField(
-                        decoration: InputDecoration(labelText: 'Texto'),
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        onSaved: (String text) => _text = text,
-                        controller: _textController,),
+                      decoration: InputDecoration(labelText: 'Texto'),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      onSaved: (String text) => _text = text,
+                      controller: _textController,
+                    ),
                   ],
                 ),
               ),
@@ -381,12 +417,19 @@ class _TextCreateViewState extends State<TextCreateView> {
                 },
                 child: const Text('Visualizar o texto'),
               ),
+              if (widget?.content?.textPath != null) RaisedButton(
+                color: Theme.of(context).colorScheme.error,
+                textColor: Theme.of(context).colorScheme.onError,
+                onPressed: _maybeDelete,
+                child: const Text('Deletar texto'),
+              )
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: _sendText,
-          label: Text(widget?.content != null ? 'Atualizar texto' : 'Enviar texto'),
+          label: Text(
+              widget?.content != null ? 'Atualizar texto' : 'Enviar texto'),
           icon: const Icon(Icons.check),
         ),
       ),
