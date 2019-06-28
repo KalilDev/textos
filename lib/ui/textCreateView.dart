@@ -28,13 +28,14 @@ class _TextCreateViewState extends State<TextCreateView> {
   String _date;
   String _imageUrl;
   String _musicUrl;
-  bool _imageLoading = false;
-  bool _musicLoading = false;
   List<String> _tags = <String>[];
   TextEditingController _titleController;
   TextEditingController _textController;
 
   final GlobalKey<FormState> _formKey = GlobalKey();
+
+  StorageUploadTask _musicUploadTask;
+  StorageUploadTask _imageUploadTask;
 
   @override
   void initState() {
@@ -65,7 +66,8 @@ class _TextCreateViewState extends State<TextCreateView> {
     );
     if (picked != null) {
       String normalize(int date) {
-        if (date < 10) return '0' + date.toString();
+        if (date < 10)
+          return '0' + date.toString();
         return date.toString();
       }
 
@@ -75,56 +77,39 @@ class _TextCreateViewState extends State<TextCreateView> {
     }
   }
 
-  Future<String> _pickImage() async {
+  Future<void> _pickImage() async {
     final File image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    final dynamic result = await _uploadFile(image, _FileType.image);
-    if (mounted) setState(() => _imageUrl = result.toString());
-    return result.toString();
+    await _uploadFile(image, _FileType.image);
   }
 
-  Future<String> _pickMusic() async {
+  Future<void> _pickMusic() async {
     final File file = await FilePicker.getFile(type: FileType.AUDIO);
-    final dynamic result = await _uploadFile(file, _FileType.music);
-    if (mounted) setState(() => _musicUrl = result.toString());
-    return result.toString();
+    await _uploadFile(file, _FileType.music);
   }
 
-  Future<dynamic> _uploadFile(File file, _FileType type) async {
+  Future<void> _uploadFile(File file, _FileType type) async {
+    if (file == null)
+      return;
+
     final String fileName =
         file.path.split('/')[file.path.split('/').length - 1];
-    if (mounted)
-      setState(() {
-        switch (type) {
-          case _FileType.image:
-            _imageLoading = true;
-            break;
-          case _FileType.music:
-            _musicLoading = true;
-            break;
-        }
-      });
     final StorageReference reference = FirebaseStorage().ref();
     final StorageUploadTask uploadTask =
         reference.child(fileName).putFile(file);
-    while (uploadTask.isInProgress == true)
-      await Future<void>.delayed(Duration(milliseconds: 200));
-    if (mounted)
-      setState(() {
-        switch (type) {
-          case _FileType.image:
-            _imageLoading = false;
-            break;
-          case _FileType.music:
-            _musicLoading = false;
-            break;
-        }
-      });
-    return await reference.child(fileName).getDownloadURL();
+
+    switch (type) {
+      case _FileType.image:
+        setState(() => _imageUploadTask = uploadTask);
+        break;
+      case _FileType.music:
+        setState(() => _musicUploadTask = uploadTask);
+        break;
+    }
   }
 
   Future<void> _sendText() async {
     _formKey.currentState.save();
-    if (_imageLoading || _musicLoading) {
+    if (_imageUploadTask != null || _musicUploadTask != null) {
       showDialog<void>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -138,7 +123,8 @@ class _TextCreateViewState extends State<TextCreateView> {
               ));
       return;
     }
-    if (_date == null) await _selectDate();
+    if (_date == null)
+      await _selectDate();
 
     final bool shouldUpload = widget?.content == null
         ? await showDialog<bool>(
@@ -182,8 +168,8 @@ class _TextCreateViewState extends State<TextCreateView> {
 
   Future<bool> _shouldPop() async {
     if (_text != null ||
-        (_imageUrl != null || _imageLoading) ||
-        (_musicUrl != null || _musicLoading)) {
+        (_imageUrl != null || _imageUploadTask != null) ||
+        (_musicUrl != null || _musicUploadTask != null)) {
       final bool shouldPop = await showDialog<bool>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -306,7 +292,8 @@ class _TextCreateViewState extends State<TextCreateView> {
                     })
               ],
             ));
-    if (delete) Firestore.instance.document(widget.content.textPath).delete();
+    if (delete)
+      Firestore.instance.document(widget.content.textPath).delete();
     Navigator.of(context).pop();
   }
 
@@ -336,7 +323,9 @@ class _TextCreateViewState extends State<TextCreateView> {
     return WillPopScope(
       onWillPop: _shouldPop,
       child: Scaffold(
-        appBar: const KalilAppBar(title: 'Editor de textos',),
+        appBar: const KalilAppBar(
+          title: 'Editor de textos',
+        ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ListView(
@@ -361,46 +350,8 @@ class _TextCreateViewState extends State<TextCreateView> {
                 ),
               ),
               _getTags(),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: OutlineButton(
-                      onPressed: _imageLoading ? null : _pickImage,
-                      child: _imageLoading
-                          ? const SizedBox(
-                              height: 18.0,
-                              width: 18.0,
-                              child: CircularProgressIndicator())
-                          : const Text('Escolher Plano de fundo'),
-                    ),
-                  ),
-                  _imageUrl != null
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4.0),
-                          child: Icon(Icons.check))
-                      : const SizedBox()
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: OutlineButton(
-                      onPressed: _musicLoading ? null : _pickMusic,
-                      child: _musicLoading
-                          ? const SizedBox(
-                              height: 18.0,
-                              width: 18.0,
-                              child: CircularProgressIndicator())
-                          : const Text('Escolher Musica'),
-                    ),
-                  ),
-                  _musicUrl != null
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4.0),
-                          child: Icon(Icons.check))
-                      : const SizedBox()
-                ],
-              ),
+              buildUploadButton(_FileType.image),
+              buildUploadButton(_FileType.music),
               OutlineButton(
                 onPressed: _selectDate,
                 child: const Text('Selecionar Data'),
@@ -438,6 +389,134 @@ class _TextCreateViewState extends State<TextCreateView> {
       ),
     );
   }
+
+  Widget imageWidget() {
+    return _imageUploadTask == null
+        ? OutlineButton(
+            onPressed: _pickImage,
+            child: const Text('Escolher Plano de fundo'),
+          )
+        : _UploadButton(
+            uploadTask: _imageUploadTask,
+          );
+  }
+
+  Widget buildUploadButton(_FileType type) {
+    bool urlIsNull;
+    String chooseString;
+    String changeString;
+    VoidCallback nullifyURL;
+    StorageUploadTask uploadTask;
+    StringCallback setUrl;
+    switch (type) {
+      case _FileType.image:
+        {
+          urlIsNull = _imageUrl == null;
+          chooseString = 'Escolher plano de fundo';
+          changeString = 'Alterar plano de fundo';
+          nullifyURL = () => _imageUrl = null;
+          uploadTask = _imageUploadTask;
+          setUrl = (String s) {
+            _imageUrl = s;
+            _imageUploadTask = null;
+          };
+          break;
+        }
+      case _FileType.music:
+        {
+          urlIsNull = _musicUrl == null;
+          chooseString = 'Escolher música';
+          changeString = 'Alterar música';
+          nullifyURL = () => _musicUrl = null;
+          uploadTask = _musicUploadTask;
+          setUrl = (String s) {
+            _musicUrl = s;
+            _musicUploadTask = null;
+            print(s.toString());
+          };
+          break;
+        }
+    }
+
+    return uploadTask == null
+        ? Row(children: <Widget>[
+            if (!urlIsNull) IconButton(
+                icon: const Icon(Icons.cancel),
+                onPressed: () => setState(nullifyURL)),
+            Expanded(child: OutlineButton(onPressed: _pickMusic, child: Text(urlIsNull ? chooseString : changeString)))
+          ])
+        : _UploadButton(
+            uploadTask: uploadTask,
+            onFinish: () async {
+              final String url = await FirebaseStorage()
+                  .ref()
+                  .child(uploadTask.lastSnapshot.storageMetadata.path)
+                  .getDownloadURL();
+              if (mounted) {
+                setState(() {
+                  setUrl(url);
+                });
+              } else {
+                setUrl(url);
+              }
+            });
+  }
 }
+
+class _UploadButton extends StatefulWidget {
+  const _UploadButton({this.uploadTask, this.onFinish, this.text});
+  final StorageUploadTask uploadTask;
+  final VoidCallback onFinish;
+  final String text;
+
+  @override
+  _UploadButtonState createState() => _UploadButtonState();
+}
+
+class _UploadButtonState extends State<_UploadButton> {
+  StorageTaskSnapshot snapshot;
+
+  @override
+  void initState() {
+    snapshot = widget.uploadTask.lastSnapshot;
+    widget.uploadTask.events
+      ..listen((StorageTaskEvent event) {
+        if (mounted)
+          setState(() => snapshot = event.snapshot);
+        if (event.type == StorageTaskEventType.success)
+          widget.onFinish();
+      });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlineButton(
+      onPressed: () {
+        widget.uploadTask.cancel();
+        widget.onFinish();
+      },
+      child: SizedBox(
+        height: 36.0,
+        child: Stack(
+          children: <Widget>[
+            Align(
+                child: LinearProgressIndicator(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryVariant,
+                    value: (snapshot?.bytesTransferred ?? 0.0) /
+                        (snapshot?.totalByteCount ?? 1.0)),
+                alignment: Alignment.bottomCenter),
+            Center(
+              child: const Text('Cancelar'),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+typedef StringCallback = void Function(String s);
 
 enum _FileType { image, music }

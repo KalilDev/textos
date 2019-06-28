@@ -90,19 +90,24 @@ class _AuthorsViewState extends State<AuthorsView> {
                           return Stack(
                             children: <Widget>[
                               AnimatedSwitcher(
-                            duration: durationAnimationMedium,
-                          child: (isEditing && this?.user?.uid == data['collection']) ? _AddPage(data: data) : _AuthorPage(
-                              info: info,
-                              tags: data['tags'],
-                              title: data['title'],
-                              authorName: data['authorName']),),
+                                duration: durationAnimationMedium,
+                                child: (isEditing &&
+                                        this?.user?.uid == data['collection'])
+                                    ? _AddPage(data: data)
+                                    : _AuthorPage(
+                                        info: info,
+                                        tags: data['tags'],
+                                        title: data['title'],
+                                        authorName: data['authorName']),
+                              ),
                               if (this?.user?.uid == data['collection'])
                                 Positioned(
                                     top: 10.0,
                                     right: 20.0,
                                     child: Material(
                                       clipBehavior: Clip.antiAlias,
-                                      borderRadius: BorderRadius.only(topRight: Radius.circular(20.0)),
+                                      borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(20.0)),
                                       color: Colors.transparent,
                                       child: IconButton(
                                           icon: const Icon(Icons.edit),
@@ -314,10 +319,10 @@ class __AddPageState extends State<_AddPage> {
       _authorNameController = TextEditingController();
     } else {
       _isCreating = true;
-      _title=widget.data['title'].toString();
+      _title = widget.data['title'].toString();
       if (_title.endsWith(' '))
-        _title = _title.substring(0, _title.length-1);
-      _authorName=widget.data['authorName'];
+        _title = _title.substring(0, _title.length - 1);
+      _authorName = widget.data['authorName'];
       _titleController = TextEditingController(text: _title);
       _authorNameController = TextEditingController(text: _authorName);
     }
@@ -348,36 +353,42 @@ class __AddPageState extends State<_AddPage> {
                       setState(() => _authorName = authorName),
                   decoration: InputDecoration(labelText: 'Nome do autor')),
               _TagsBuilder(key: _tagsBuilderKey, data: widget.data),
-            if (widget?.data?.containsKey('collection') ?? false) RaisedButton(
-                color: Theme.of(context).colorScheme.error,
-                child: const Text('Remover autor'),
-                textColor: Theme.of(context).colorScheme.onError,
-                onPressed: () async {
-                  final bool delete = await showDialog<bool>(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        title: const Text('Apagar sua pagina'),
-                        content: const Text('Sua pagina será apagada, junto com TODOS os textos, sem possibilidade de recupera-los.'),
-                        actions: <Widget>[
-                          FlatButton(
-                              child: const Text(textNo),
-                              onPressed: () {
-                                Navigator.of(context).pop(false);
-                              }),
-                          FlatButton(
-                              child: const Text(textYes),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              })
-                        ],
-                      ));
-                  if (delete) Firestore.instance
-                      .collection('texts')
-                      .document(widget?.data['collection']).delete();
-                }),
+              if (widget?.data?.containsKey('collection') ?? false)
+                RaisedButton(
+                    color: Theme.of(context).colorScheme.error,
+                    child: const Text('Remover autor'),
+                    textColor: Theme.of(context).colorScheme.onError,
+                    onPressed: () async {
+                      final bool delete = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                                title: const Text('Apagar sua pagina'),
+                                content: const Text(
+                                    'Sua pagina será apagada, junto com TODOS os textos, sem possibilidade de recupera-los.'),
+                                actions: <Widget>[
+                                  FlatButton(
+                                      child: const Text(textNo),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      }),
+                                  FlatButton(
+                                      child: const Text(textYes),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      })
+                                ],
+                              ));
+                      if (delete)
+                        Firestore.instance
+                            .collection('texts')
+                            .document(widget?.data['collection'])
+                            .delete();
+                    }),
               RaisedButton(
                   color: Theme.of(context).accentColor,
-                  child: Text(widget?.data == null ? 'Adicionar autor' : 'Salvar alterações'),
+                  child: Text(widget?.data == null
+                      ? 'Adicionar autor'
+                      : 'Salvar alterações'),
                   textColor: Theme.of(context).colorScheme.onSecondary,
                   onPressed: () async {
                     final FirebaseUser user =
@@ -402,9 +413,10 @@ class __AddPageState extends State<_AddPage> {
                       });
                     }
                   }),
-              if (widget.data == null) OutlineButton(
-                  child: const Text('Voltar'),
-                  onPressed: () => setState(() => _isCreating = false))
+              if (widget.data == null)
+                OutlineButton(
+                    child: const Text('Voltar'),
+                    onPressed: () => setState(() => _isCreating = false))
             ],
           ),
         ),
