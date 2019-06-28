@@ -377,7 +377,7 @@ class __AddPageState extends State<_AddPage> {
                 }),
               RaisedButton(
                   color: Theme.of(context).accentColor,
-                  child: const Text('Adicionar autor'),
+                  child: Text(widget?.data == null ? 'Adicionar autor' : 'Salvar alterações'),
                   textColor: Theme.of(context).colorScheme.onSecondary,
                   onPressed: () async {
                     final FirebaseUser user =
