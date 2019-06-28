@@ -266,10 +266,7 @@ class _CustomButton extends StatelessWidget {
                   child: Text(
                     '#' + tag,
                     style: Theme.of(context).accentTextTheme.button.copyWith(
-                        color: Theme.of(context).primaryColorBrightness !=
-                                Brightness.dark
-                            ? Theme.of(context).backgroundColor
-                            : Theme.of(context).accentTextTheme.display1.color),
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                   onPressed: () {
                     HapticFeedback.selectionClick();
