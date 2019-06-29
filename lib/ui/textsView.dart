@@ -58,17 +58,18 @@ class _TextsViewState extends State<TextsView> {
   }
 
   Widget _noTextsWidget() {
-    return Container(
+    return Material(
+        color: Colors.transparent,
+        elevation: 0.0,
         child: Center(
-            child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const <Widget>[
-                  Icon(Icons.error_outline, size: 72),
-                  Text(
-                    textNoTexts,
-                    textAlign: TextAlign.center,
-                  )
-                ])));
+            child:
+                Column(mainAxisSize: MainAxisSize.min, children: const <Widget>[
+          Icon(Icons.error_outline, size: 72),
+          Text(
+            textNoTexts,
+            textAlign: TextAlign.center,
+          )
+        ])));
   }
 
   @override
@@ -90,7 +91,7 @@ class _TextsViewState extends State<TextsView> {
           if (user?.data?.uid ==
               Provider.of<QueryInfoProvider>(context).collection)
             _isAuthor = true;
-          
+
           return StreamBuilder<Iterable<Map<String, dynamic>>>(
               stream: slidesStream,
               builder: (BuildContext context,
@@ -118,32 +119,43 @@ class _TextsViewState extends State<TextsView> {
 
                         Widget listView() {
                           return ListView.builder(
-                              itemCount: _slideList.length + (_isAuthor ? 2 : 1),
+                              itemCount:
+                                  _slideList.length + (_isAuthor ? 2 : 1),
                               itemBuilder: (BuildContext context, int index) {
                                 if (index == 0)
                                   return SizedBox(height: widget.spacerSize);
 
                                 if (_isAuthor && index == _slideList.length + 1)
-                                  return Container(margin: const EdgeInsets.only(bottom: 12.0),height: 100.0 ,child: _AddItem());
+                                  return Container(
+                                      margin:
+                                          const EdgeInsets.only(bottom: 12.0),
+                                      height: 100.0,
+                                      child: _AddItem());
 
                                 final Content content =
                                     Content.fromData(_slideList[index - 1]);
 
-                                return _ListItem(isAuthor: _isAuthor, content: content, isFavorite: Provider.of<FavoritesProvider>(context).isFavorite(
-                                    content.favorite), onFavorite: () => Provider.of<FavoritesProvider>(context)
-                                    .toggle(content.favorite));
+                                return _ListItem(
+                                    isAuthor: _isAuthor,
+                                    content: content,
+                                    isFavorite:
+                                        Provider.of<FavoritesProvider>(context)
+                                            .isFavorite(content.favorite),
+                                    onFavorite: () =>
+                                        Provider.of<FavoritesProvider>(context)
+                                            .toggle(content.favorite));
                               });
                         }
 
-                        return AnimatedSwitcher(
-                          duration: durationAnimationShort,
-                          child: listView(),
-                        );
+                        return listView();
                       },
                     );
                   }
                 }
-                return _isAuthor ? Padding(padding: const EdgeInsets.all(20.0),child: _AddItem()) : _noTextsWidget();
+                return _isAuthor
+                    ? Padding(
+                        padding: const EdgeInsets.all(20.0), child: _AddItem())
+                    : _noTextsWidget();
               });
         });
   }
@@ -155,13 +167,12 @@ class _AddItem extends StatelessWidget {
     return ElevatedContainer(
       elevation: 8.0,
       child: InkWell(
-          onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                  builder: (BuildContext context) => const TextCreateView())),
+        onTap: () => Navigator.push<void>(
+            context,
+            MaterialPageRoute<void>(
+                builder: (BuildContext context) => const TextCreateView())),
         child: Center(
-          child: const Icon(
-              Icons.add),
+          child: const Icon(Icons.add),
         ),
       ),
     );
@@ -169,7 +180,11 @@ class _AddItem extends StatelessWidget {
 }
 
 class _ListItem extends StatefulWidget {
-  const _ListItem({@required this.content, @required this.isFavorite, @required this.onFavorite, @required this.isAuthor});
+  const _ListItem(
+      {@required this.content,
+      @required this.isFavorite,
+      @required this.onFavorite,
+      @required this.isAuthor});
 
   final VoidCallback onFavorite;
   final Content content;
@@ -185,10 +200,11 @@ class __ListItemState extends State<_ListItem> {
 
   @override
   Widget build(BuildContext context) {
-    final String heroTag =
-        'listViewItem' + widget.content.textPath;
+    final String heroTag = 'listViewItem' + widget.content.textPath;
     final double height = isExtended ? 200.0 : 100.0;
-    final EdgeInsets padding = isExtended ? const EdgeInsets.symmetric(horizontal: 16.0) : EdgeInsets.zero;
+    final EdgeInsets padding = isExtended
+        ? const EdgeInsets.symmetric(horizontal: 16.0)
+        : EdgeInsets.zero;
 
     return AnimatedElevatedContainer(
         duration: durationAnimationMedium,
@@ -197,9 +213,9 @@ class __ListItemState extends State<_ListItem> {
         margin: const EdgeInsets.only(bottom: 8.0),
         padding: padding,
         child: ContentCard.sliver(
-          longPressCallBack: () {
-            setState(() => isExtended = !isExtended);
-          },
+            longPressCallBack: () {
+              setState(() => isExtended = !isExtended);
+            },
             content: widget.content,
             heroTag: heroTag,
             trailing: Column(
@@ -211,23 +227,28 @@ class __ListItemState extends State<_ListItem> {
                             ? Icons.favorite
                             : Icons.favorite_border,
                         color: widget.isFavorite
-                            ? Theme.of(context)
-                            .accentColor
+                            ? Theme.of(context).accentColor
                             : null),
                     onPressed: widget.onFavorite),
-                Text(widget.content.favoriteCount
-                    .toString())
+                Text(widget.content.favoriteCount.toString())
               ],
             ),
-            leading: widget.isAuthor ? IconButton(icon: const Icon(Icons.edit), onPressed: () => Navigator.push<void>(context, MaterialPageRoute<void>(builder: (BuildContext context) => TextCreateView(content: widget.content,)))) : null,
+            leading: widget.isAuthor
+                ? IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => Navigator.push<void>(
+                        context,
+                        MaterialPageRoute<void>(
+                            builder: (BuildContext context) => TextCreateView(
+                                  content: widget.content,
+                                ))))
+                : null,
             callBack: () {
               HapticFeedback.heavyImpact();
               Navigator.push(
                   context,
                   DurationMaterialPageRoute<void>(
-                      builder:
-                          (BuildContext context) =>
-                          CardView(
+                      builder: (BuildContext context) => CardView(
                             heroTag: heroTag,
                             content: widget.content,
                           )));

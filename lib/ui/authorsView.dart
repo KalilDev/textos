@@ -41,6 +41,7 @@ class _AuthorsViewState extends State<AuthorsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         body: FutureBuilder<FirebaseUser>(
             future: Provider.of<AuthService>(context).getUser(),
             builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {

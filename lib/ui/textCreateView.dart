@@ -66,8 +66,7 @@ class _TextCreateViewState extends State<TextCreateView> {
     );
     if (picked != null) {
       String normalize(int date) {
-        if (date < 10)
-          return '0' + date.toString();
+        if (date < 10) return '0' + date.toString();
         return date.toString();
       }
 
@@ -88,8 +87,7 @@ class _TextCreateViewState extends State<TextCreateView> {
   }
 
   Future<void> _uploadFile(File file, _FileType type) async {
-    if (file == null)
-      return;
+    if (file == null) return;
 
     final String fileName =
         file.path.split('/')[file.path.split('/').length - 1];
@@ -123,8 +121,7 @@ class _TextCreateViewState extends State<TextCreateView> {
               ));
       return;
     }
-    if (_date == null)
-      await _selectDate();
+    if (_date == null) await _selectDate();
 
     final bool shouldUpload = widget?.content == null
         ? await showDialog<bool>(
@@ -292,8 +289,7 @@ class _TextCreateViewState extends State<TextCreateView> {
                     })
               ],
             ));
-    if (delete)
-      Firestore.instance.document(widget.content.textPath).delete();
+    if (delete) Firestore.instance.document(widget.content.textPath).delete();
     Navigator.of(context).pop();
   }
 
@@ -364,8 +360,8 @@ class _TextCreateViewState extends State<TextCreateView> {
                   Navigator.push<void>(
                       context,
                       MaterialPageRoute<void>(
-                          builder: (_) =>
-                              CardView(heroTag: 'null', content: textContent)));
+                          builder: (_) => CardView(
+                              heroTag: 'null', content: textContent)));
                 },
                 child: const Text('Visualizar o texto'),
               ),
@@ -440,14 +436,21 @@ class _TextCreateViewState extends State<TextCreateView> {
 
     return uploadTask == null
         ? Row(children: <Widget>[
-            if (!urlIsNull) IconButton(
-                icon: const Icon(Icons.cancel),
-                onPressed: () => setState(nullifyURL)),
-            Expanded(child: OutlineButton(onPressed: _pickMusic, child: Text(urlIsNull ? chooseString : changeString)))
+            if (!urlIsNull)
+              IconButton(
+                  icon: const Icon(Icons.cancel),
+                  onPressed: () => setState(nullifyURL)),
+            Expanded(
+                child: OutlineButton(
+                    onPressed: _pickMusic,
+                    child: Text(urlIsNull ? chooseString : changeString)))
           ])
         : _UploadButton(
             uploadTask: uploadTask,
             onFinish: () async {
+              if (uploadTask?.lastSnapshot?.storageMetadata == null)
+                return setState(() => setUrl(null));
+
               final String url = await FirebaseStorage()
                   .ref()
                   .child(uploadTask.lastSnapshot.storageMetadata.path)
@@ -483,8 +486,7 @@ class _UploadButtonState extends State<_UploadButton> {
       ..listen((StorageTaskEvent event) {
         if (mounted)
           setState(() => snapshot = event.snapshot);
-        if (event.type == StorageTaskEventType.success)
-          widget.onFinish();
+        if (event.type == StorageTaskEventType.success) widget.onFinish();
       });
     super.initState();
   }
