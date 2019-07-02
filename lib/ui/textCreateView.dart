@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:textos/bloc/bloc.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/src/model/content.dart';
 import 'package:textos/src/providers.dart';
@@ -26,16 +27,13 @@ class _TextCreateViewState extends State<TextCreateView> {
   String _title;
   String _text;
   String _date;
-  String _imageUrl;
-  String _musicUrl;
   List<String> _tags = <String>[];
   TextEditingController _titleController;
   TextEditingController _textController;
 
   final GlobalKey<FormState> _formKey = GlobalKey();
-
-  StorageUploadTask _musicUploadTask;
-  StorageUploadTask _imageUploadTask;
+  final GlobalKey<_UploadButtonState> _imageKey = GlobalKey();
+  final GlobalKey<_UploadButtonState> _musicKey = GlobalKey();
 
   @override
   void initState() {
@@ -76,38 +74,19 @@ class _TextCreateViewState extends State<TextCreateView> {
     }
   }
 
-  Future<void> _pickImage() async {
-    final File image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    await _uploadFile(image, _FileType.image);
+  Future<File> _pickImage() async {
+    final File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    return file;
   }
 
-  Future<void> _pickMusic() async {
+  Future<File> _pickMusic() async {
     final File file = await FilePicker.getFile(type: FileType.AUDIO);
-    await _uploadFile(file, _FileType.music);
-  }
-
-  Future<void> _uploadFile(File file, _FileType type) async {
-    if (file == null) return;
-
-    final String fileName =
-        file.path.split('/')[file.path.split('/').length - 1];
-    final StorageReference reference = FirebaseStorage().ref();
-    final StorageUploadTask uploadTask =
-        reference.child(fileName).putFile(file);
-
-    switch (type) {
-      case _FileType.image:
-        setState(() => _imageUploadTask = uploadTask);
-        break;
-      case _FileType.music:
-        setState(() => _musicUploadTask = uploadTask);
-        break;
-    }
+    return file;
   }
 
   Future<void> _sendText() async {
     _formKey.currentState.save();
-    if (_imageUploadTask != null || _musicUploadTask != null) {
+    if (!_imageKey.currentState.canPop && !_musicKey.currentState.canPop) {
       showDialog<void>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -129,7 +108,7 @@ class _TextCreateViewState extends State<TextCreateView> {
             builder: (BuildContext context) => AlertDialog(
                   title: const Text('Confirmação'),
                   content: Text(
-                      'O texto será postado com as seguintes informações caso queira prossiguir: \nTitulo: ${_title}\nData: ${_date}\nTags: ${_tags.toString()}\n${_imageUrl != null ? 'Imagem anexada' : 'Nenhuma imagem'}\n${_musicUrl != null ? 'Musica anexada\n' : 'Nenhuma musica'}'),
+                      'O texto será postado com as seguintes informações caso queira prossiguir: \nTitulo: ${_title}\nData: ${_date}\nTags: ${_tags.toString()}\n${_imageKey.currentState.fileUrl != null ? 'Imagem anexada' : 'Nenhuma imagem'}\n${_musicKey.currentState.fileUrl != null ? 'Musica anexada\n' : 'Nenhuma musica'}'),
                   actions: <Widget>[
                     FlatButton(
                         child: const Text(textNo),
@@ -164,9 +143,7 @@ class _TextCreateViewState extends State<TextCreateView> {
   }
 
   Future<bool> _shouldPop() async {
-    if (_text != null ||
-        (_imageUrl != null || _imageUploadTask != null) ||
-        (_musicUrl != null || _musicUploadTask != null)) {
+    if (_text != null) {
       final bool shouldPop = await showDialog<bool>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -296,8 +273,8 @@ class _TextCreateViewState extends State<TextCreateView> {
   Content get textContent => Content(
       text: _text,
       rawDate: _date,
-      rawImgUrl: _imageUrl,
-      music: _musicUrl,
+      rawImgUrl: _imageKey.currentState.fileUrl,
+      music: _musicKey.currentState.fileUrl,
       title: _title,
       tags: _tags);
 
@@ -308,8 +285,6 @@ class _TextCreateViewState extends State<TextCreateView> {
     }
     _text = content.text?.replaceAll('^NL', '\n');
     _date = content.rawDate;
-    _imageUrl = content.rawImgUrl;
-    _musicUrl = content.music;
     _title = content.title;
     _tags = stringList;
   }
@@ -360,8 +335,8 @@ class _TextCreateViewState extends State<TextCreateView> {
                   Navigator.push<void>(
                       context,
                       MaterialPageRoute<void>(
-                          builder: (_) => CardView(
-                              heroTag: 'null', content: textContent)));
+                          builder: (_) =>
+                              CardView(heroTag: 'null', content: textContent)));
                 },
                 child: const Text('Visualizar o texto'),
               ),
@@ -386,139 +361,113 @@ class _TextCreateViewState extends State<TextCreateView> {
     );
   }
 
-  Widget imageWidget() {
-    return _imageUploadTask == null
-        ? OutlineButton(
-            onPressed: _pickImage,
-            child: const Text('Escolher Plano de fundo'),
-          )
-        : _UploadButton(
-            uploadTask: _imageUploadTask,
-          );
-  }
-
   Widget buildUploadButton(_FileType type) {
-    bool urlIsNull;
     String chooseString;
     String changeString;
-    VoidCallback nullifyURL;
-    StorageUploadTask uploadTask;
-    StringCallback setUrl;
+    Function getFileFunction;
+    GlobalKey<_UploadButtonState> key;
     switch (type) {
       case _FileType.image:
         {
-          urlIsNull = _imageUrl == null;
           chooseString = 'Escolher plano de fundo';
           changeString = 'Alterar plano de fundo';
-          nullifyURL = () => _imageUrl = null;
-          uploadTask = _imageUploadTask;
-          setUrl = (String s) {
-            _imageUrl = s;
-            _imageUploadTask = null;
-          };
+          getFileFunction = _pickImage;
+          key = _imageKey;
           break;
         }
       case _FileType.music:
         {
-          urlIsNull = _musicUrl == null;
           chooseString = 'Escolher música';
           changeString = 'Alterar música';
-          nullifyURL = () => _musicUrl = null;
-          uploadTask = _musicUploadTask;
-          setUrl = (String s) {
-            _musicUrl = s;
-            _musicUploadTask = null;
-            print(s.toString());
-          };
+          getFileFunction = _pickMusic;
+          key = _musicKey;
           break;
         }
     }
 
-    return uploadTask == null
-        ? Row(children: <Widget>[
-            if (!urlIsNull)
-              IconButton(
-                  icon: const Icon(Icons.cancel),
-                  onPressed: () => setState(nullifyURL)),
-            Expanded(
-                child: OutlineButton(
-                    onPressed: _pickMusic,
-                    child: Text(urlIsNull ? chooseString : changeString)))
-          ])
-        : _UploadButton(
-            uploadTask: uploadTask,
-            onFinish: () async {
-              if (uploadTask?.lastSnapshot?.storageMetadata == null)
-                return setState(() => setUrl(null));
-
-              final String url = await FirebaseStorage()
-                  .ref()
-                  .child(uploadTask.lastSnapshot.storageMetadata.path)
-                  .getDownloadURL();
-              if (mounted) {
-                setState(() {
-                  setUrl(url);
-                });
-              } else {
-                setUrl(url);
-              }
-            });
-  }
-}
-
-class _UploadButton extends StatefulWidget {
-  const _UploadButton({this.uploadTask, this.onFinish, this.text});
-  final StorageUploadTask uploadTask;
-  final VoidCallback onFinish;
-  final String text;
-
-  @override
-  _UploadButtonState createState() => _UploadButtonState();
-}
-
-class _UploadButtonState extends State<_UploadButton> {
-  StorageTaskSnapshot snapshot;
-
-  @override
-  void initState() {
-    snapshot = widget.uploadTask.lastSnapshot;
-    widget.uploadTask.events
-      ..listen((StorageTaskEvent event) {
-        if (mounted)
-          setState(() => snapshot = event.snapshot);
-        if (event.type == StorageTaskEventType.success) widget.onFinish();
-      });
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlineButton(
-      onPressed: () {
-        widget.uploadTask.cancel();
-        widget.onFinish();
-      },
-      child: SizedBox(
-        height: 36.0,
-        child: Stack(
-          children: <Widget>[
-            Align(
-                child: LinearProgressIndicator(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.secondaryVariant,
-                    value: (snapshot?.bytesTransferred ?? 0.0) /
-                        (snapshot?.totalByteCount ?? 1.0)),
-                alignment: Alignment.bottomCenter),
-            Center(
-              child: const Text('Cancelar'),
-            )
-          ],
-        ),
-      ),
+    return BlocProvider<UploadManagerBloc>(
+      builder: (BuildContext context) =>
+          UploadManagerBloc(fileUrl: widget?.content?.music),
+      child: UploadButton(chooseString: chooseString, changeString: changeString, getFileFunction: getFileFunction, key: key),
     );
   }
 }
 
-typedef StringCallback = void Function(String s);
+class UploadButton extends StatefulWidget {
+  const UploadButton({
+    Key key,
+    @required this.chooseString,
+    @required this.changeString,
+    @required this.getFileFunction,
+  }) : super(key: key);
+
+  final String chooseString;
+  final String changeString;
+  final Function getFileFunction;
+
+  @override
+  State<UploadButton> createState() => _UploadButtonState();
+}
+
+class _UploadButtonState extends State<UploadButton> {
+  String get fileUrl => BlocProvider.of<UploadManagerBloc>(context).fileUrl;
+  bool get canPop => !(BlocProvider.of<UploadManagerBloc>(context).currentState is Uploading);
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (BuildContext context) => BlocBuilder<UploadManagerEvent,
+              UploadManagerState>(
+          bloc: BlocProvider.of<UploadManagerBloc>(context),
+          builder: (BuildContext context, UploadManagerState state) =>
+              OutlineButton(
+                  textColor: Theme.of(context).colorScheme.onBackground,
+                  child: Row(
+                    children: <Widget>[
+                      if (state is Uploaded)
+                        SizedBox(
+                            height: 42.0,
+                            width: 42.0,
+                            child: IconButton(
+                              icon: const Icon(Icons.cancel),
+                              onPressed: () =>
+                                  BlocProvider.of<UploadManagerBloc>(context)
+                                      .dispatch(Delete()),
+                            )),
+                      Spacer(),
+                      Text(state is ToUpload
+                          ? widget.chooseString
+                          : state is Uploading ? 'Cancelar' : widget.changeString),
+                      Spacer(),
+                      if (state is Uploading)
+                        SizedBox(
+                            height: 42.0,
+                            width: 42.0,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                  value: state.bytesTransferred /
+                                      state.totalByteCount),
+                            ))
+                      else
+                        if (state is Uploaded)
+                          const SizedBox(
+                              height: 42.0,
+                              width: 42.0,
+                              child: Icon(Icons.check))
+                    ],
+                  ),
+                  onPressed: () async {
+                    if (state is Uploading) {
+                      BlocProvider.of<UploadManagerBloc>(context)
+                          .dispatch(Cancel());
+                    } else {
+                      final File file = await widget.getFileFunction();
+                      BlocProvider.of<UploadManagerBloc>(context)
+                          .dispatch(Upload(file: file));
+                    }
+                  })),
+    );
+  }
+}
 
 enum _FileType { image, music }
