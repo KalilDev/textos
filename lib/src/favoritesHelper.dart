@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import 'model/favorite.dart';
+import 'package:textos/model/favorite.dart';
 
 enum AtomicOperation { add, remove }
 

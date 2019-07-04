@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:textos/model/content.dart';
+import 'package:textos/model/favorite.dart';
 import 'package:textos/src/favoritesHelper.dart';
-import 'package:textos/src/model/content.dart';
-import 'package:textos/src/model/favorite.dart';
 
 class FavoritesProvider with ChangeNotifier {
   FavoritesProvider(Set<Favorite> favorites, FavoritesHelper helper) {

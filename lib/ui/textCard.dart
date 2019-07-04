@@ -4,7 +4,7 @@ import 'package:kalil_widgets/constants.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
-import 'package:textos/src/model/content.dart';
+import 'package:textos/model/content.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/src/textUtils.dart';
 
@@ -244,7 +244,7 @@ class __TextWidgetState extends AnimatedWidgetBaseState<_TextWidget> {
                       children: widget.textContent.hasText
                           ? buildTextColumn()
                           : <Widget>[
-                              Text(widget.textContent.title,
+                              Text(widget.textContent.title ?? 'titulo',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context)
                                       .accentTextTheme

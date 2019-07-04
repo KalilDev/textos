@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:textos/constants.dart';
+import 'package:textos/model/favorite.dart';
 
-import '../textUtils.dart';
-import 'favorite.dart';
+import '../src/textUtils.dart';
 
 class Content {
   Content(
@@ -28,7 +28,11 @@ class Content {
     favoriteCount = data['favoriteCount'] ?? 0;
     music = data['music'];
     text = data['text'];
-    tags = data['tags'] ?? <dynamic>[];
+    tags = <String>[];
+    final List<dynamic> temp = data['tags'] ?? <dynamic>[];
+    for (dynamic tag in temp) {
+      tags.add(tag.toString());
+    }
   }
 
   String title;
@@ -37,7 +41,7 @@ class Content {
   String text;
   String rawDate;
   String music;
-  List<dynamic> tags;
+  List<String> tags;
   int favoriteCount;
 
   String get imgUrl => rawImgUrl ?? placeholderImg;

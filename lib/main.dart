@@ -4,12 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:textos/constants.dart';
+import 'package:textos/model/favorite.dart';
 import 'package:textos/src/favoritesHelper.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/loginView.dart';
 import 'package:textos/ui/mainView.dart';
-
-import 'src/model/favorite.dart';
 
 // TODO(KalilDev): Document the app
 // TODO(KalilDev): Implement tutorial

@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
-import './bloc.dart';
+import 'package:textos/bloc/upload_manager/bloc.dart';
 
 class UploadManagerBloc extends Bloc<UploadManagerEvent, UploadManagerState> {
   UploadManagerBloc({this.fileUrl});
@@ -24,7 +23,6 @@ class UploadManagerBloc extends Bloc<UploadManagerEvent, UploadManagerState> {
       event.file.path.split('/')[event.file.path
           .split('/')
           .length - 1];
-      _uploadTask = null;
       _uploadTask = FirebaseStorage().ref().child(fileName).putFile(event.file);
       _storageTaskSubscription?.cancel();
       _storageTaskSubscription = _uploadTask.events.listen((StorageTaskEvent event) async {

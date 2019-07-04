@@ -40,97 +40,90 @@ class _AuthorsViewState extends State<AuthorsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        body: FutureBuilder<FirebaseUser>(
-            future: Provider.of<AuthService>(context).getUser(),
-            builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
-              if (user.hasData && user?.data != null)
-                this.user = user.data;
-              return StreamBuilder<Iterable<Map<String, dynamic>>>(
-                  stream: _tagStream,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<Iterable<Map<String, dynamic>>> snapshot) {
-                    if (snapshot.hasData &&
-                        (snapshot?.data?.isNotEmpty ?? false)) {
-                      _metadataList = snapshot.data.toList();
-                      bool shouldDisplayAdd = true;
-                      if (_metadataList.any((Map<String, dynamic> data) =>
-                          this.user?.uid == data['collection']))
-                        shouldDisplayAdd = false;
+    return FutureBuilder<FirebaseUser>(
+        future: Provider.of<AuthService>(context).getUser(),
+        builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
+          if (user.hasData && user?.data != null) this.user = user.data;
+          return StreamBuilder<Iterable<Map<String, dynamic>>>(
+              stream: _tagStream,
+              builder: (BuildContext context,
+                  AsyncSnapshot<Iterable<Map<String, dynamic>>> snapshot) {
+                if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false)) {
+                  _metadataList = snapshot.data.toList();
+                  bool shouldDisplayAdd = true;
+                  if (_metadataList.any((Map<String, dynamic> data) =>
+                      this.user?.uid == data['collection']))
+                    shouldDisplayAdd = false;
 
-                      return TransformerPageView(
-                        itemCount: shouldDisplayAdd
-                            ? (_metadataList.length + 1)
-                            : _metadataList.length,
-                        scrollDirection: Axis.vertical,
-                        viewportFraction: 0.90,
-                        curve: Curves.decelerate,
-                        onPageChanged: (int page) {
-                          if (page == _metadataList.length && shouldDisplayAdd)
-                            return;
-                          Provider.of<QueryInfoProvider>(context).currentPage =
-                              page;
-                          Provider.of<QueryInfoProvider>(context).collection =
-                              _metadataList[page]['collection'];
-                          Provider.of<QueryInfoProvider>(context).tag = null;
-                          SystemSound.play(SystemSoundType.click);
-                          HapticFeedback.lightImpact();
-                        },
-                        index:
-                            Provider.of<QueryInfoProvider>(context).currentPage,
-                        transformer: PageTransformerBuilder(
-                            builder: (_, TransformInfo info) {
-                          if (info.index == _metadataList.length &&
-                              shouldDisplayAdd)
-                            return const _AddPage();
+                  return TransformerPageView(
+                    itemCount: shouldDisplayAdd
+                        ? (_metadataList.length + 1)
+                        : _metadataList.length,
+                    scrollDirection: Axis.vertical,
+                    viewportFraction: 0.90,
+                    curve: Curves.decelerate,
+                    onPageChanged: (int page) {
+                      if (page == _metadataList.length && shouldDisplayAdd)
+                        return;
+                      Provider.of<QueryInfoProvider>(context).currentPage =
+                          page;
+                      Provider.of<QueryInfoProvider>(context).collection =
+                          _metadataList[page]['collection'];
+                      Provider.of<QueryInfoProvider>(context).tag = null;
+                      SystemSound.play(SystemSoundType.click);
+                      HapticFeedback.lightImpact();
+                    },
+                    index: Provider.of<QueryInfoProvider>(context).currentPage,
+                    transformer: PageTransformerBuilder(
+                        builder: (_, TransformInfo info) {
+                      if (info.index == _metadataList.length &&
+                          shouldDisplayAdd) return const _AddPage();
 
-                          final Map<String, dynamic> data =
-                              _metadataList[info.index];
+                      final Map<String, dynamic> data =
+                          _metadataList[info.index];
 
-                          return Stack(
-                            children: <Widget>[
-                              AnimatedSwitcher(
-                                duration: durationAnimationMedium,
-                                child: (isEditing &&
-                                        this?.user?.uid == data['collection'])
-                                    ? _AddPage(data: data)
-                                    : _AuthorPage(
-                                        info: info,
-                                        tags: data['tags'],
-                                        title: data['title'],
-                                        authorName: data['authorName']),
-                              ),
-                              if (this?.user?.uid == data['collection'])
-                                Positioned(
-                                    top: 10.0,
-                                    right: 20.0,
-                                    child: Material(
-                                      clipBehavior: Clip.antiAlias,
-                                      borderRadius: const BorderRadius.only(
-                                          topRight: Radius.circular(20.0)),
-                                      color: Colors.transparent,
-                                      child: IconButton(
-                                          icon: const Icon(Icons.edit),
-                                          onPressed: () => setState(
-                                              () => isEditing = !isEditing)),
-                                    )),
-                            ],
-                          );
-                        }),
+                      return Stack(
+                        children: <Widget>[
+                          AnimatedSwitcher(
+                            duration: durationAnimationMedium,
+                            child: (isEditing &&
+                                    this?.user?.uid == data['collection'])
+                                ? _AddPage(data: data)
+                                : _AuthorPage(
+                                    info: info,
+                                    tags: data['tags'],
+                                    title: data['title'],
+                                    authorName: data['authorName']),
+                          ),
+                          if (this?.user?.uid == data['collection'])
+                            Positioned(
+                                top: 10.0,
+                                right: 20.0,
+                                child: Material(
+                                  clipBehavior: Clip.antiAlias,
+                                  borderRadius: const BorderRadius.only(
+                                      topRight: Radius.circular(20.0)),
+                                  color: Colors.transparent,
+                                  child: IconButton(
+                                      icon: const Icon(Icons.edit),
+                                      onPressed: () => setState(
+                                          () => isEditing = !isEditing)),
+                                )),
+                        ],
                       );
-                    } else if (snapshot.hasError ||
-                        (snapshot.hasData &&
-                            (snapshot?.data?.isEmpty ?? true))) {
-                      return Center(
-                        child: Text(textAppName,
-                            style: Theme.of(context).accentTextTheme.display1),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  });
-            }));
+                    }),
+                  );
+                } else if (snapshot.hasError ||
+                    (snapshot.hasData && (snapshot?.data?.isEmpty ?? true))) {
+                  return Center(
+                    child: Text(textAppName,
+                        style: Theme.of(context).accentTextTheme.display1),
+                  );
+                } else {
+                  return Container();
+                }
+              });
+        });
   }
 }
 
@@ -321,8 +314,7 @@ class __AddPageState extends State<_AddPage> {
     } else {
       _isCreating = true;
       _title = widget.data['title'].toString();
-      if (_title.endsWith(' '))
-        _title = _title.substring(0, _title.length - 1);
+      if (_title.endsWith(' ')) _title = _title.substring(0, _title.length - 1);
       _authorName = widget.data['authorName'];
       _titleController = TextEditingController(text: _title);
       _authorNameController = TextEditingController(text: _authorName);

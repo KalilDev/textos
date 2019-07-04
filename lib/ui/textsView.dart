@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
-import 'package:textos/src/model/content.dart';
+import 'package:textos/model/content.dart';
 import 'package:textos/src/providers.dart';
 import 'package:textos/ui/cardView.dart';
 

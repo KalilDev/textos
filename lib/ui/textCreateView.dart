@@ -1,46 +1,51 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:textos/bloc/bloc.dart';
+import 'package:textos/bloc/database_text_add/bloc.dart';
+import 'package:textos/bloc/tag_manager/bloc.dart';
+import 'package:textos/bloc/upload_manager/bloc.dart';
 import 'package:textos/constants.dart';
-import 'package:textos/src/model/content.dart';
-import 'package:textos/src/providers.dart';
+import 'package:textos/model/content.dart';
 
 import 'cardView.dart';
 import 'kalilAppBar.dart';
 
-class TextCreateView extends StatefulWidget {
+class TextCreateView extends StatelessWidget {
   const TextCreateView({this.content});
   final Content content;
 
   @override
-  _TextCreateViewState createState() => _TextCreateViewState();
+  Widget build(BuildContext context) {
+    return BlocProvider<DatabaseTextAddBloc>(
+      builder: (BuildContext context) =>
+          DatabaseTextAddBloc.fromContent(content: content),
+      child: _TextCreateView(
+        content: content,
+      ),
+    );
+  }
 }
 
-class _TextCreateViewState extends State<TextCreateView> {
-  String _title;
-  String _text;
-  String _date;
-  List<String> _tags = <String>[];
+class _TextCreateView extends StatefulWidget {
+  const _TextCreateView({this.content});
+  final Content content;
+
+  @override
+  __TextCreateViewState createState() => __TextCreateViewState();
+}
+
+class __TextCreateViewState extends State<_TextCreateView> {
   TextEditingController _titleController;
   TextEditingController _textController;
-
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  final GlobalKey<_UploadButtonState> _imageKey = GlobalKey();
-  final GlobalKey<_UploadButtonState> _musicKey = GlobalKey();
 
   @override
   void initState() {
     if (widget.content != null) {
-      textContent = widget.content;
-      _titleController = TextEditingController(text: _title);
-      _textController = TextEditingController(text: _text);
+      _titleController = TextEditingController(text: widget.content.title);
+      _textController = TextEditingController(text: widget.content.text);
     } else {
       _titleController = TextEditingController();
       _textController = TextEditingController();
@@ -49,9 +54,12 @@ class _TextCreateViewState extends State<TextCreateView> {
   }
 
   Future<void> _selectDate() async {
+    final DatabaseTextAddBloc bloc =
+        BlocProvider.of<DatabaseTextAddBloc>(context);
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: _date != null ? DateTime.parse(_date) : DateTime.now(),
+      initialDate:
+          bloc.date != null ? DateTime.parse(bloc.date) : DateTime.now(),
       firstDate: DateTime(2016),
       lastDate: DateTime.now(),
       builder: (BuildContext dateContext, Widget child) {
@@ -62,16 +70,9 @@ class _TextCreateViewState extends State<TextCreateView> {
         );
       },
     );
-    if (picked != null) {
-      String normalize(int date) {
-        if (date < 10) return '0' + date.toString();
-        return date.toString();
-      }
-
-      _date = picked.year.toString() +
-          normalize(picked.month) +
-          normalize(picked.day);
-    }
+    if (picked != null)
+      bloc.dispatch(
+          DateChanged(year: picked.year, month: picked.month, day: picked.day));
   }
 
   Future<File> _pickImage() async {
@@ -85,8 +86,9 @@ class _TextCreateViewState extends State<TextCreateView> {
   }
 
   Future<void> _sendText() async {
-    _formKey.currentState.save();
-    if (!_imageKey.currentState.canPop && !_musicKey.currentState.canPop) {
+    final DatabaseTextAddBloc bloc =
+    BlocProvider.of<DatabaseTextAddBloc>(context);
+    if (!bloc.canPop) {
       showDialog<void>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -100,7 +102,8 @@ class _TextCreateViewState extends State<TextCreateView> {
               ));
       return;
     }
-    if (_date == null) await _selectDate();
+    if (bloc.date == null) await _selectDate();
+    print(bloc.currentState);
 
     final bool shouldUpload = widget?.content == null
         ? await showDialog<bool>(
@@ -108,7 +111,7 @@ class _TextCreateViewState extends State<TextCreateView> {
             builder: (BuildContext context) => AlertDialog(
                   title: const Text('Confirmação'),
                   content: Text(
-                      'O texto será postado com as seguintes informações caso queira prossiguir: \nTitulo: ${_title}\nData: ${_date}\nTags: ${_tags.toString()}\n${_imageKey.currentState.fileUrl != null ? 'Imagem anexada' : 'Nenhuma imagem'}\n${_musicKey.currentState.fileUrl != null ? 'Musica anexada\n' : 'Nenhuma musica'}'),
+                      'O texto será postado com as seguintes informações caso queira prossiguir: \nTitulo: ${bloc.title}\nData: ${bloc.date}\nTags: ${bloc.tags.toString()}\n${bloc.photoUrl != null ? 'Imagem anexada' : 'Nenhuma imagem'}\n${bloc.musicUrl != null ? 'Musica anexada\n' : 'Nenhuma musica'}'),
                   actions: <Widget>[
                     FlatButton(
                         child: const Text(textNo),
@@ -124,26 +127,16 @@ class _TextCreateViewState extends State<TextCreateView> {
                 ))
         : true;
 
-    if (shouldUpload) {
-      final FirebaseUser user =
-          await Provider.of<AuthService>(context).getUser();
-      if (widget?.content?.textPath != null) {
-        Firestore.instance
-            .document(widget.content.textPath)
-            .updateData(textContent.toData());
-      } else {
-        Firestore.instance
-            .collection('texts')
-            .document(user.uid)
-            .collection('documents')
-            .add(textContent.toData());
-      }
+    if (shouldUpload ?? false) {
+      bloc.upload();
       Navigator.pop(context);
     }
   }
 
   Future<bool> _shouldPop() async {
-    if (_text != null) {
+    final DatabaseTextAddBloc bloc =
+    BlocProvider.of<DatabaseTextAddBloc>(context);
+    if (bloc.text != null) {
       final bool shouldPop = await showDialog<bool>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -169,80 +162,60 @@ class _TextCreateViewState extends State<TextCreateView> {
   }
 
   Widget _getTags() {
-    Future<List<dynamic>> _fetchFromDB() async {
-      final FirebaseUser user =
-          await Provider.of<AuthService>(context).getUser();
-      return Firestore.instance
-          .collection('texts')
-          .document(user.uid)
-          .get()
-          .then<List<dynamic>>((DocumentSnapshot snap) => snap.data['tags']);
-    }
+    final DatabaseTextAddBloc databaseBloc =
+    BlocProvider.of<DatabaseTextAddBloc>(context);
 
-    List<Widget> _buildList(List<dynamic> list) {
-      Widget buildItem(String item) => Material(
-            elevation: 0.0,
-            color: Colors.transparent,
+    Widget buildItem(String item) => Material(
+          elevation: 0.0,
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(20.0),
+          child: InkWell(
             borderRadius: BorderRadius.circular(20.0),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(20.0),
-              onTap: () => setState(() {
-                    if (_tags.contains(item)) {
-                      _tags.remove(item);
-                    } else {
-                      _tags.add(item);
-                    }
-                  }),
-              child: SizedBox(
-                height: 56.0,
-                child: Row(
-                  children: <Widget>[
-                    Text('#' + item),
-                    Spacer(),
-                    Checkbox(
-                        value: _tags.contains(item),
-                        checkColor: Theme.of(context).colorScheme.onSecondary,
-                        activeColor: Theme.of(context).accentColor,
-                        onChanged: (_) {
-                          setState(() {
-                            if (_tags.contains(item)) {
-                              _tags.remove(item);
-                            } else {
-                              _tags.add(item);
-                            }
-                          });
-                        })
-                  ],
-                ),
+            onTap: () => databaseBloc.tagManager.dispatch(ToggleTag(tag: item)),
+            child: SizedBox(
+              height: 56.0,
+              child: Row(
+                children: <Widget>[
+                  Text('#' + item),
+                  Spacer(),
+                  Checkbox(
+                      value: databaseBloc.tags.contains(item),
+                      checkColor: Theme.of(context).colorScheme.onSecondary,
+                      activeColor: Theme.of(context).accentColor,
+                      onChanged: (_) => databaseBloc.tagManager
+                          .dispatch(ToggleTag(tag: item)))
+                ],
               ),
             ),
-          );
-
-      final List<Widget> widgets = <Widget>[];
-      for (dynamic element in list) {
-        widgets.add(buildItem(element.toString()));
-      }
-      return widgets;
-    }
-
-    return FutureBuilder<List<dynamic>>(
-        future: _fetchFromDB(),
-        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-          if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false))
-            return Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).primaryColor),
-                    borderRadius: BorderRadius.circular(20.0)),
-                margin: const EdgeInsets.symmetric(vertical: 16.0),
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Column(
-                  children: <Widget>[
-                    const Text('Tags'),
-                    ..._buildList(snapshot.data)
-                  ],
-                ));
-
-          return const SizedBox();
+          ),
+        );
+    return BlocBuilder<TagManagerEvent, TagManagerState>(
+        bloc: databaseBloc.tagManager,
+        builder: (BuildContext context, TagManagerState state) {
+          if (state is TagLoadingState &&
+              (databaseBloc.tagManager.activeTags?.isEmpty ?? true))
+            return const SizedBox(
+                height: 56.0,
+                width: 56.0,
+                child: Center(child: CircularProgressIndicator()));
+          return Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).primaryColor),
+                  borderRadius: BorderRadius.circular(20.0)),
+              margin: const EdgeInsets.symmetric(vertical: 16.0),
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Column(
+                children: <Widget>[
+                  const Text('Tags'),
+                  for (String tag in databaseBloc.tagManager?.allTags ?? databaseBloc.tags)
+                    buildItem(tag),
+                  if (state is TagLoadingState)
+                    const SizedBox(
+                        height: 56.0,
+                        width: 56.0,
+                        child: Center(child: CircularProgressIndicator()))
+                ],
+              ));
         });
   }
 
@@ -266,31 +239,16 @@ class _TextCreateViewState extends State<TextCreateView> {
                     })
               ],
             ));
-    if (delete) Firestore.instance.document(widget.content.textPath).delete();
+    if (delete)
+      BlocProvider.of<DatabaseTextAddBloc>(context).delete();
     Navigator.of(context).pop();
-  }
-
-  Content get textContent => Content(
-      text: _text,
-      rawDate: _date,
-      rawImgUrl: _imageKey.currentState.fileUrl,
-      music: _musicKey.currentState.fileUrl,
-      title: _title,
-      tags: _tags);
-
-  set textContent(Content content) {
-    final List<String> stringList = <String>[];
-    for (dynamic tag in content.tags) {
-      stringList.add(tag.toString());
-    }
-    _text = content.text?.replaceAll('^NL', '\n');
-    _date = content.rawDate;
-    _title = content.title;
-    _tags = stringList;
   }
 
   @override
   Widget build(BuildContext context) {
+    final DatabaseTextAddBloc bloc =
+        BlocProvider.of<DatabaseTextAddBloc>(context);
+
     return WillPopScope(
       onWillPop: _shouldPop,
       child: Scaffold(
@@ -301,24 +259,23 @@ class _TextCreateViewState extends State<TextCreateView> {
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: <Widget>[
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Titulo'),
-                      onSaved: (String title) => _title = title,
-                      controller: _titleController,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Texto'),
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      onSaved: (String text) => _text = text,
-                      controller: _textController,
-                    ),
-                  ],
-                ),
+              Column(
+                children: <Widget>[
+                  TextField(
+                    decoration: InputDecoration(labelText: 'Titulo'),
+                    onChanged: (String title) =>
+                        bloc.dispatch(TitleChanged(title)),
+                    controller: _titleController,
+                  ),
+                  TextField(
+                    decoration: InputDecoration(labelText: 'Texto'),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    onChanged: (String text) =>
+                        bloc.dispatch(TextChanged(text)),
+                    controller: _textController,
+                  ),
+                ],
               ),
               _getTags(),
               buildUploadButton(_FileType.image),
@@ -331,12 +288,11 @@ class _TextCreateViewState extends State<TextCreateView> {
                 color: Theme.of(context).primaryColor,
                 textColor: Theme.of(context).colorScheme.onPrimary,
                 onPressed: () {
-                  _formKey.currentState.save();
                   Navigator.push<void>(
                       context,
                       MaterialPageRoute<void>(
-                          builder: (_) =>
-                              CardView(heroTag: 'null', content: textContent)));
+                          builder: (_) => CardView(
+                              heroTag: 'null', content: bloc.content)));
                 },
                 child: const Text('Visualizar o texto'),
               ),
@@ -352,7 +308,7 @@ class _TextCreateViewState extends State<TextCreateView> {
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: _sendText,
+          onPressed: () => _sendText(),
           label: Text(
               widget?.content != null ? 'Atualizar texto' : 'Enviar texto'),
           icon: const Icon(Icons.check),
@@ -365,14 +321,15 @@ class _TextCreateViewState extends State<TextCreateView> {
     String chooseString;
     String changeString;
     Function getFileFunction;
-    GlobalKey<_UploadButtonState> key;
+    UploadManagerBloc bloc;
     switch (type) {
       case _FileType.image:
         {
           chooseString = 'Escolher plano de fundo';
           changeString = 'Alterar plano de fundo';
           getFileFunction = _pickImage;
-          key = _imageKey;
+          bloc =
+              BlocProvider.of<DatabaseTextAddBloc>(context).photoUploadManager;
           break;
         }
       case _FileType.music:
@@ -380,15 +337,18 @@ class _TextCreateViewState extends State<TextCreateView> {
           chooseString = 'Escolher música';
           changeString = 'Alterar música';
           getFileFunction = _pickMusic;
-          key = _musicKey;
+          bloc =
+              BlocProvider.of<DatabaseTextAddBloc>(context).musicUploadManager;
           break;
         }
     }
 
     return BlocProvider<UploadManagerBloc>(
-      builder: (BuildContext context) =>
-          UploadManagerBloc(fileUrl: widget?.content?.music),
-      child: UploadButton(chooseString: chooseString, changeString: changeString, getFileFunction: getFileFunction, key: key),
+      builder: (BuildContext context) => bloc,
+      child: UploadButton(
+          chooseString: chooseString,
+          changeString: changeString,
+          getFileFunction: getFileFunction),
     );
   }
 }
@@ -410,9 +370,6 @@ class UploadButton extends StatefulWidget {
 }
 
 class _UploadButtonState extends State<UploadButton> {
-  String get fileUrl => BlocProvider.of<UploadManagerBloc>(context).fileUrl;
-  bool get canPop => !(BlocProvider.of<UploadManagerBloc>(context).currentState is Uploading);
-
   @override
   Widget build(BuildContext context) {
     return Builder(
@@ -437,7 +394,9 @@ class _UploadButtonState extends State<UploadButton> {
                       Spacer(),
                       Text(state is ToUpload
                           ? widget.chooseString
-                          : state is Uploading ? 'Cancelar' : widget.changeString),
+                          : state is Uploading
+                              ? 'Cancelar'
+                              : widget.changeString),
                       Spacer(),
                       if (state is Uploading)
                         SizedBox(
