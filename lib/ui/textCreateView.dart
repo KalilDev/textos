@@ -102,7 +102,8 @@ class __TextCreateViewState extends State<_TextCreateView> {
               ));
       return;
     }
-    if (bloc.date == null) await _selectDate();
+    if (bloc.date == null)
+      await _selectDate();
     print(bloc.currentState);
 
     final bool shouldUpload = widget?.content == null
@@ -264,7 +265,7 @@ class __TextCreateViewState extends State<_TextCreateView> {
                   TextField(
                     decoration: InputDecoration(labelText: 'Titulo'),
                     onChanged: (String title) =>
-                        bloc.dispatch(TitleChanged(title)),
+                        bloc.dispatch(TitleChanged(title: title)),
                     controller: _titleController,
                   ),
                   TextField(
@@ -272,7 +273,7 @@ class __TextCreateViewState extends State<_TextCreateView> {
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     onChanged: (String text) =>
-                        bloc.dispatch(TextChanged(text)),
+                        bloc.dispatch(TextChanged(text: text)),
                     controller: _textController,
                   ),
                 ],

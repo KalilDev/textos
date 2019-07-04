@@ -17,17 +17,17 @@ class Upload extends UploadManagerEvent {
   Upload({@required this.file}) : super(<dynamic>[file]);
   final File file;
   @override
-  String toString() => "Upload: " + file.path;
+  String toString() => 'Upload: ' + file.path;
 }
 
 class Cancel extends UploadManagerEvent {
   @override
-  String toString() => "Cancel";
+  String toString() => 'Cancel upload';
 }
 
 class Delete extends UploadManagerEvent {
   @override
-  String toString() => "Delete";
+  String toString() => 'Delete';
 }
 
 class UpdateProgress extends UploadManagerEvent {
@@ -36,5 +36,5 @@ class UpdateProgress extends UploadManagerEvent {
   final int totalByteCount;
 
   @override
-  String toString() => "Update Progress: " + (bytesTransferred / totalByteCount).toString();
+  String toString() => 'Update Progress: ' + (bytesTransferred / totalByteCount).toString();
 }

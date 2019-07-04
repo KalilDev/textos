@@ -171,8 +171,8 @@ class _AddItem extends StatelessWidget {
             context,
             MaterialPageRoute<void>(
                 builder: (BuildContext context) => const TextCreateView())),
-        child: Center(
-          child: const Icon(Icons.add),
+        child: const Center(
+          child: Icon(Icons.add),
         ),
       ),
     );

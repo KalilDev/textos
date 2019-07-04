@@ -43,7 +43,8 @@ class _AuthorsViewState extends State<AuthorsView> {
     return FutureBuilder<FirebaseUser>(
         future: Provider.of<AuthService>(context).getUser(),
         builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
-          if (user.hasData && user?.data != null) this.user = user.data;
+          if (user.hasData && user?.data != null)
+            this.user = user.data;
           return StreamBuilder<Iterable<Map<String, dynamic>>>(
               stream: _tagStream,
               builder: (BuildContext context,
@@ -77,7 +78,8 @@ class _AuthorsViewState extends State<AuthorsView> {
                     transformer: PageTransformerBuilder(
                         builder: (_, TransformInfo info) {
                       if (info.index == _metadataList.length &&
-                          shouldDisplayAdd) return const _AddPage();
+                          shouldDisplayAdd)
+                        return const _AddPage();
 
                       final Map<String, dynamic> data =
                           _metadataList[info.index];
@@ -314,7 +316,8 @@ class __AddPageState extends State<_AddPage> {
     } else {
       _isCreating = true;
       _title = widget.data['title'].toString();
-      if (_title.endsWith(' ')) _title = _title.substring(0, _title.length - 1);
+      if (_title.endsWith(' '))
+        _title = _title.substring(0, _title.length - 1);
       _authorName = widget.data['authorName'];
       _titleController = TextEditingController(text: _title);
       _authorNameController = TextEditingController(text: _authorName);

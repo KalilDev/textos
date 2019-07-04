@@ -17,7 +17,6 @@ class UploadManagerBloc extends Bloc<UploadManagerEvent, UploadManagerState> {
   Stream<UploadManagerState> mapEventToState(
     UploadManagerEvent event,
   ) async* {
-    print(event.toString());
     if (event is Upload) {
       final String fileName =
       event.file.path.split('/')[event.file.path

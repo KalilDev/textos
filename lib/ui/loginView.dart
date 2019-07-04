@@ -149,7 +149,7 @@ class _LoginViewState extends State<LoginView> {
                       child: Container(
                           width: double.infinity,
                           child:
-                              Center(child: const Text(textLoginAnonymously))),
+                              const Center(child: Text(textLoginAnonymously))),
                       onPressed: () => _buildConfirmationDialog(
                                   context, textAnonyConsequences)
                               .then<bool>((bool b) async {
@@ -169,8 +169,8 @@ class _LoginViewState extends State<LoginView> {
                       child: Container(
                           width: double.infinity,
                           child: Stack(
-                            children: <Widget>[
-                              Center(child: const Text(textLoginWithGoogle)),
+                            children: const <Widget>[
+                              Center(child: Text(textLoginWithGoogle)),
                             ],
                           )),
                       onPressed: () async {
