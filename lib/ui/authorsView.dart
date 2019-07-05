@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/constants.dart';
+import 'package:textos/model/author.dart';
 import 'package:textos/src/providers.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
@@ -19,7 +20,7 @@ class AuthorsView extends StatefulWidget {
 }
 
 class _AuthorsViewState extends State<AuthorsView> {
-  Stream<Iterable<Map<String, dynamic>>> _tagStream;
+  Stream<Iterable<Author>> _tagStream;
   FirebaseUser user;
   bool isEditing = false;
   @override
@@ -27,16 +28,14 @@ class _AuthorsViewState extends State<AuthorsView> {
     _tagStream = Firestore.instance
         .collection('texts')
         .snapshots()
-        .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) =>
-            list.documents.map<Map<String, dynamic>>((DocumentSnapshot snap) {
-              final Map<String, dynamic> data = snap.data;
-              data['collection'] = snap.documentID;
-              return snap.data;
+        .map<Iterable<Author>>((QuerySnapshot list) =>
+            list.documents.map<Author>((DocumentSnapshot snap) {
+                return Author.fromFirestore(snap.data, snap.documentID);
             }));
     super.initState();
   }
 
-  List<Map<String, dynamic>> _metadataList;
+  List<Author> _metadataList;
 
   @override
   Widget build(BuildContext context) {
@@ -45,15 +44,15 @@ class _AuthorsViewState extends State<AuthorsView> {
         builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
           if (user.hasData && user?.data != null)
             this.user = user.data;
-          return StreamBuilder<Iterable<Map<String, dynamic>>>(
+          return StreamBuilder<Iterable<Author>>(
               stream: _tagStream,
               builder: (BuildContext context,
-                  AsyncSnapshot<Iterable<Map<String, dynamic>>> snapshot) {
+                  AsyncSnapshot<Iterable<Author>> snapshot) {
                 if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false)) {
                   _metadataList = snapshot.data.toList();
                   bool shouldDisplayAdd = true;
-                  if (_metadataList.any((Map<String, dynamic> data) =>
-                      this.user?.uid == data['collection']))
+                  if (_metadataList.any((Author author) =>
+                      this.user?.uid == author.authorID))
                     shouldDisplayAdd = false;
 
                   return TransformerPageView(
@@ -69,7 +68,7 @@ class _AuthorsViewState extends State<AuthorsView> {
                       Provider.of<QueryInfoProvider>(context).currentPage =
                           page;
                       Provider.of<QueryInfoProvider>(context).collection =
-                          _metadataList[page]['collection'];
+                          _metadataList[page].authorID;
                       Provider.of<QueryInfoProvider>(context).tag = null;
                       SystemSound.play(SystemSoundType.click);
                       HapticFeedback.lightImpact();
@@ -81,7 +80,7 @@ class _AuthorsViewState extends State<AuthorsView> {
                           shouldDisplayAdd)
                         return const _AddPage();
 
-                      final Map<String, dynamic> data =
+                      final Author data =
                           _metadataList[info.index];
 
                       return Stack(
@@ -89,15 +88,13 @@ class _AuthorsViewState extends State<AuthorsView> {
                           AnimatedSwitcher(
                             duration: durationAnimationMedium,
                             child: (isEditing &&
-                                    this?.user?.uid == data['collection'])
-                                ? _AddPage(data: data)
+                                    this?.user?.uid == data.authorID)
+                                ? _AddPage(author: data)
                                 : _AuthorPage(
                                     info: info,
-                                    tags: data['tags'],
-                                    title: data['title'],
-                                    authorName: data['authorName']),
+                                    author: data),
                           ),
-                          if (this?.user?.uid == data['collection'])
+                          if (this?.user?.uid == data.authorID)
                             Positioned(
                                 top: 10.0,
                                 right: 20.0,
@@ -132,14 +129,10 @@ class _AuthorsViewState extends State<AuthorsView> {
 class _AuthorPage extends StatefulWidget {
   const _AuthorPage(
       {@required this.info,
-      this.tags = const <String>[],
-      this.title = 'Textos do ',
-      this.authorName = 'Kalil'});
+      @required this.author});
 
   final TransformInfo info;
-  final List<dynamic> tags;
-  final String title;
-  final String authorName;
+  final Author author;
 
   @override
   _AuthorPageState createState() => _AuthorPageState();
@@ -155,11 +148,11 @@ class _AuthorPageState extends State<_AuthorPage> {
       position: widget.info.position,
     ));
 
-    for (dynamic tag in widget.tags) {
+    for (String tag in widget.author.tags) {
       widgets.add(_CustomButton(
         isCurrent: widget.info.position.round() == 0.0,
         tag: tag,
-        index: widget.tags.indexOf(tag) + 1.0,
+        index: widget.author.tags.indexOf(tag) + 1.0,
         position: widget.info.position,
       ));
     }
@@ -190,7 +183,7 @@ class _AuthorPageState extends State<_AuthorPage> {
                       position: -widget.info.position,
                       translationFactor: 100,
                       child: Text(
-                        widget.title + widget.authorName,
+                        widget.author.title + widget.author.authorName,
                         style: Theme.of(context).accentTextTheme.display1,
                       ),
                     ),
@@ -293,8 +286,8 @@ class _CustomButton extends StatelessWidget {
 }
 
 class _AddPage extends StatefulWidget {
-  const _AddPage({this.data});
-  final Map<String, dynamic> data;
+  const _AddPage({this.author});
+  final Author author;
   @override
   __AddPageState createState() => __AddPageState();
 }
@@ -309,16 +302,16 @@ class __AddPageState extends State<_AddPage> {
 
   @override
   void initState() {
-    if (widget?.data?.isEmpty ?? true) {
+    if (widget?.author == null) {
       _isCreating = false;
       _titleController = TextEditingController();
       _authorNameController = TextEditingController();
     } else {
       _isCreating = true;
-      _title = widget.data['title'].toString();
+      _title = widget.author.title;
       if (_title.endsWith(' '))
         _title = _title.substring(0, _title.length - 1);
-      _authorName = widget.data['authorName'];
+      _authorName = widget.author.authorName;
       _titleController = TextEditingController(text: _title);
       _authorNameController = TextEditingController(text: _authorName);
     }
@@ -348,8 +341,8 @@ class __AddPageState extends State<_AddPage> {
                   onChanged: (String authorName) =>
                       setState(() => _authorName = authorName),
                   decoration: InputDecoration(labelText: 'Nome do autor')),
-              _TagsBuilder(key: _tagsBuilderKey, data: widget.data),
-              if (widget?.data?.containsKey('collection') ?? false)
+              _TagsBuilder(key: _tagsBuilderKey, tags: widget.author.tags),
+              if (widget?.author?.authorID != null)
                 RaisedButton(
                     color: Theme.of(context).colorScheme.error,
                     child: const Text('Remover autor'),
@@ -377,12 +370,12 @@ class __AddPageState extends State<_AddPage> {
                       if (delete)
                         Firestore.instance
                             .collection('texts')
-                            .document(widget?.data['collection'])
+                            .document(widget?.author?.authorID)
                             .delete();
                     }),
               RaisedButton(
                   color: Theme.of(context).accentColor,
-                  child: Text(widget?.data == null
+                  child: Text(widget?.author == null
                       ? 'Adicionar autor'
                       : 'Salvar alterações'),
                   textColor: Theme.of(context).colorScheme.onSecondary,
@@ -409,7 +402,7 @@ class __AddPageState extends State<_AddPage> {
                       });
                     }
                   }),
-              if (widget.data == null)
+              if (widget.author == null)
                 OutlineButton(
                     child: const Text('Voltar'),
                     onPressed: () => setState(() => _isCreating = false))
@@ -443,8 +436,8 @@ class __AddPageState extends State<_AddPage> {
 }
 
 class _TagsBuilder extends StatefulWidget {
-  _TagsBuilder({Key key, this.data}) : super(key: key);
-  final Map<String, dynamic> data;
+  _TagsBuilder({Key key, this.tags}) : super(key: key);
+  final List<String> tags;
   @override
   __TagsBuilderState createState() => __TagsBuilderState();
 }
@@ -455,9 +448,8 @@ class __TagsBuilderState extends State<_TagsBuilder> {
   int get amountOfTags => tags.length + 1;
   @override
   void initState() {
-    if (widget?.data?.isNotEmpty ?? false) {
-      final List<dynamic> dataList = widget.data['tags'];
-      for (dynamic tag in dataList) {
+    if (widget?.tags?.isNotEmpty ?? false) {
+      for (String tag in widget.tags) {
         tags.add(tag.toString());
         _controllers.add(TextEditingController(text: tag.toString()));
       }
