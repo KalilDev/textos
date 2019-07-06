@@ -13,72 +13,80 @@ import 'package:transformer_page_view/transformer_page_view.dart';
 class AuthorsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DatabaseStreamManagerEvent, DatabaseStreamManagerState>(bloc: BlocProvider.of<DatabaseStreamManagerBloc>(context), builder: (BuildContext context, DatabaseStreamManagerState state) {
-      final DatabaseStreamManagerBloc streamManagerBloc = BlocProvider.of<DatabaseStreamManagerBloc>(context);
-      if (state is LoadedAuthorsStream) {
+    return BlocBuilder<DatabaseStreamManagerEvent, DatabaseStreamManagerState>(
+        bloc: BlocProvider.of<DatabaseStreamManagerBloc>(context),
+        builder: (BuildContext context, DatabaseStreamManagerState state) {
+          final DatabaseStreamManagerBloc streamManagerBloc =
+              BlocProvider.of<DatabaseStreamManagerBloc>(context);
+          if (state is LoadedAuthorsStream) {
+            return StreamBuilder<Iterable<Author>>(
+                stream: streamManagerBloc.authorStream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<Iterable<Author>> snapshot) {
+                  final Iterable<Author> authorsData =
+                      snapshot.data ?? Iterable<Author>.empty();
+                  bool shouldDisplayAdd = true;
+                  if (authorsData.any((Author author) => author.canEdit))
+                    shouldDisplayAdd = false;
 
-        return StreamBuilder<Iterable<Author>>(
-            stream: streamManagerBloc.authorStream,
-            builder: (BuildContext context,
-                AsyncSnapshot<Iterable<Author>> snapshot) {
-              final Iterable<Author> authorsData = snapshot.data ?? Iterable<Author>.empty();
-              bool shouldDisplayAdd = true;
-              if (authorsData.any((Author author) => author.canEdit))
-                shouldDisplayAdd = false;
-
-              return TransformerPageView(
-                itemCount: shouldDisplayAdd
-                    ? (authorsData.length + 1)
-                    : authorsData.length,
-                scrollDirection: Axis.vertical,
-                viewportFraction: 0.90,
-                curve: Curves.decelerate,
-                onPageChanged: (int page) {
-                  if (page == authorsData.length && shouldDisplayAdd)
-                    return;
-                  Provider.of<QueryInfoProvider>(context).currentPage =
-                      page;
-                  Provider.of<QueryInfoProvider>(context).collection =
-              authorsData.elementAt(page).authorID;
-                  Provider.of<QueryInfoProvider>(context).tag = null;
-                  SystemSound.play(SystemSoundType.click);
-                  HapticFeedback.lightImpact();
-                },
-                index: Provider.of<QueryInfoProvider>(context).currentPage,
-                transformer: PageTransformerBuilder(
-                    builder: (_, TransformInfo info) {
-                      final Author data = authorsData.elementAt(info.index);
+                  return TransformerPageView(
+                    itemCount: shouldDisplayAdd
+                        ? (authorsData.length + 1)
+                        : authorsData.length,
+                    scrollDirection: Axis.vertical,
+                    viewportFraction: 0.90,
+                    curve: Curves.decelerate,
+                    onPageChanged: (int page) {
+                      if (page == authorsData.length && shouldDisplayAdd)
+                        return;
+                      Provider.of<QueryInfoProvider>(context).currentPage =
+                          page;
+                      Provider.of<QueryInfoProvider>(context).collection =
+                          authorsData.elementAt(page).authorID;
+                      Provider.of<QueryInfoProvider>(context).tag = null;
+                      SystemSound.play(SystemSoundType.click);
+                      HapticFeedback.lightImpact();
+                    },
+                    index: Provider.of<QueryInfoProvider>(context).currentPage,
+                    transformer: PageTransformerBuilder(
+                        builder: (_, TransformInfo info) {
                       WidgetBuilder child;
                       bool hasBloc;
                       bool showEdit;
                       DatabaseAuthorAddBloc bloc;
+                      if (info.index == authorsData.length) {
+                        bloc = DatabaseAuthorAddBloc();
+                        child = (BuildContext context) => InkWell(
+                              onTap: () {
+                                final AuthorEditingBloc bloc =
+                                    BlocProvider.of<AuthorEditingBloc>(context);
+                                if (bloc.currentState is ShowingChild) {
+                                  bloc.dispatch(ShowEditing());
+                                } else {
+                                  bloc.dispatch(ShowChild());
+                                }
+                              },
+                              child: Container(
+                                child: Center(
+                                  child: IconButton(
+                                      icon: const Icon(Icons.add),
+                                      onPressed: null),
+                                ),
+                              ),
+                            );
+                        hasBloc = true;
+                        showEdit = false;
+                      }
+                      final Author data = authorsData.elementAt(info.index);
+
                       if (data?.authorID != null) {
-                        child = (BuildContext context) => _AuthorPage(info: info, author: data);
+                        child = (BuildContext context) =>
+                            _AuthorPage(info: info, author: data);
                         hasBloc = data.canEdit;
                         showEdit = hasBloc;
                         bloc = hasBloc
                             ? DatabaseAuthorAddBloc(author: data)
                             : null;
-                      } else if (info.index == authorsData.length) {
-                        bloc = DatabaseAuthorAddBloc();
-                        child = (BuildContext context) => InkWell(
-                          onTap: () {
-                            final AuthorEditingBloc bloc = BlocProvider.of<AuthorEditingBloc>(context);
-                            if (bloc.currentState is ShowingChild) {
-                              bloc.dispatch(ShowEditing());
-                            } else {
-                              bloc.dispatch(ShowChild());
-                            }
-                          },
-                          child: Container(
-                            child: Center(
-                              child: IconButton(
-                                  icon: const Icon(Icons.add), onPressed: null),
-                            ),
-                          ),
-                        );
-                        hasBloc = true;
-                        showEdit = false;
                       }
 
                       if (hasBloc) {
@@ -93,65 +101,65 @@ class AuthorsView extends StatelessWidget {
                               )
                             ],
                             child: Stack(
-                                children: <Widget>[
-                                _AddPage(author: data, child: Builder(builder: child)),
-                            if (showEdit)
-                        Positioned(
-                            top: 10.0,
-                            right: 20.0,
-                            child: Material(
-                                clipBehavior: Clip.antiAlias,
-                                borderRadius: const BorderRadius.only(
-                                    topRight: Radius.circular(20.0)),
-                                color: Colors.transparent,
-                                child: Builder(
-                                  builder: (BuildContext context) =>
-                                      BlocBuilder<AuthorEditingEvent,
-                                          AuthorEditingState>(
-                                        bloc: BlocProvider.of<
-                                            AuthorEditingBloc>(
-                                            context),
-                                        builder: (BuildContext
-                                        context,
-                                            AuthorEditingState
-                                            state) =>
-                                            IconButton(
-                                              icon: const Icon(
-                                                  Icons.edit),
-                                              onPressed: () {
-                                                print(bloc.hashCode);
-                                                if (state
-                                                is ShowingChild) {
-                                                  BlocProvider.of<
-                                                      AuthorEditingBloc>(
-                                                      context)
-                                                      .dispatch(
-                                                      ShowEditing());
-                                                } else {
-                                                  BlocProvider.of<
-                                                      AuthorEditingBloc>(
-                                                      context)
-                                                      .dispatch(
-                                                      ShowChild());
-                                                }
-                                              },
-                                            ),
-                                      ),
-                                ))),
-                      ],
-                      ));
+                              children: <Widget>[
+                                _AddPage(
+                                    author: data,
+                                    child: Builder(builder: child)),
+                                if (showEdit)
+                                  Positioned(
+                                      top: 10.0,
+                                      right: 20.0,
+                                      child: Material(
+                                          clipBehavior: Clip.antiAlias,
+                                          borderRadius: const BorderRadius.only(
+                                              topRight: Radius.circular(20.0)),
+                                          color: Colors.transparent,
+                                          child: Builder(
+                                            builder: (BuildContext context) =>
+                                                BlocBuilder<AuthorEditingEvent,
+                                                    AuthorEditingState>(
+                                                  bloc: BlocProvider.of<
+                                                          AuthorEditingBloc>(
+                                                      context),
+                                                  builder: (BuildContext
+                                                              context,
+                                                          AuthorEditingState
+                                                              state) =>
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                            Icons.edit),
+                                                        onPressed: () {
+                                                          print(bloc.hashCode);
+                                                          if (state
+                                                              is ShowingChild) {
+                                                            BlocProvider.of<
+                                                                        AuthorEditingBloc>(
+                                                                    context)
+                                                                .dispatch(
+                                                                    ShowEditing());
+                                                          } else {
+                                                            BlocProvider.of<
+                                                                        AuthorEditingBloc>(
+                                                                    context)
+                                                                .dispatch(
+                                                                    ShowChild());
+                                                          }
+                                                        },
+                                                      ),
+                                                ),
+                                          ))),
+                              ],
+                            ));
                       } else {
-                      return Builder(builder: child);
+                        return Builder(builder: child);
                       }
                     }),
-              );
-            });
-
-      } else {
-        return Center(child: const CircularProgressIndicator());
-      }
-    });
-
+                  );
+                });
+          } else {
+            return Center(child: const CircularProgressIndicator());
+          }
+        });
   }
 }
 
@@ -331,9 +339,11 @@ class __AddPageState extends State<_AddPage> {
       _titleController = TextEditingController();
       _authorNameController = TextEditingController();
     } else {
-      final String title = widget.author.title.substring(0, widget.author.title.length - 2);
+      final String title =
+          widget.author.title.substring(0, widget.author.title.length - 2);
       _titleController = TextEditingController(text: widget.author.title);
-      _authorNameController = TextEditingController(text: widget.author.authorName);
+      _authorNameController =
+          TextEditingController(text: widget.author.authorName);
     }
     super.initState();
   }
@@ -369,7 +379,8 @@ class __AddPageState extends State<_AddPage> {
                       BlocProvider.of<DatabaseAuthorAddBloc>(context)
                           .dispatch(AuthorNameUpdate(authorName: authorName)),
                   decoration: InputDecoration(labelText: 'Nome do autor')),
-              _TagsBuilder(key: _tagsBuilderKey, initialTags: widget.author.tags),
+              _TagsBuilder(
+                  key: _tagsBuilderKey, initialTags: widget.author.tags),
               if (widget?.author?.authorID != null)
                 RaisedButton(
                     color: Theme.of(context).colorScheme.error,
@@ -396,8 +407,8 @@ class __AddPageState extends State<_AddPage> {
                                 ],
                               ));
                       if (delete)
-      BlocProvider.of<DatabaseAuthorAddBloc>(context)
-          .dispatch(AuthorDelete());
+                        BlocProvider.of<DatabaseAuthorAddBloc>(context)
+                            .dispatch(AuthorDelete());
                     }),
               RaisedButton(
                   color: Theme.of(context).accentColor,
@@ -405,7 +416,9 @@ class __AddPageState extends State<_AddPage> {
                       ? 'Adicionar autor'
                       : 'Salvar alterações'),
                   textColor: Theme.of(context).colorScheme.onSecondary,
-                  onPressed: () => BlocProvider.of<DatabaseAuthorAddBloc>(context).dispatch(AuthorUpload())),
+                  onPressed: () =>
+                      BlocProvider.of<DatabaseAuthorAddBloc>(context)
+                          .dispatch(AuthorUpload())),
               if (widget.author == null)
                 OutlineButton(
                     child: const Text('Voltar'),
@@ -467,7 +480,8 @@ class __TagsBuilderState extends State<_TagsBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final DatabaseAuthorAddBloc bloc = BlocProvider.of<DatabaseAuthorAddBloc>(context);
+    final DatabaseAuthorAddBloc bloc =
+        BlocProvider.of<DatabaseAuthorAddBloc>(context);
     print(bloc.tags);
     List<Widget> _getChildren() {
       final List<Widget> widgets = <Widget>[];
@@ -494,8 +508,8 @@ class __TagsBuilderState extends State<_TagsBuilder> {
     return BlocBuilder<DatabaseAuthorAddEvent, DatabaseAuthorAddState>(
       bloc: BlocProvider.of<DatabaseAuthorAddBloc>(context),
       builder: (BuildContext context, DatabaseAuthorAddState state) => Column(
-        children: _getChildren(),
-      ),
+            children: _getChildren(),
+          ),
     );
   }
 }

@@ -1,11 +1,12 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:textos/bloc/database_stream_manager/bloc.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/model/content.dart';
 import 'package:textos/src/providers.dart';
@@ -22,40 +23,7 @@ class TextsView extends StatefulWidget {
 }
 
 class _TextsViewState extends State<TextsView> {
-  Stream<Map<String, dynamic>> _favoritesStream;
-  Query _query;
-  static Map<String, dynamic> favoritesData;
-  final Firestore _db = Firestore.instance;
-  List<Map<String, dynamic>> _slideList;
-  bool _isAuthor = false;
-
-  Stream<Iterable<Map<String, dynamic>>> get slidesStream => _query
-      .snapshots()
-      .map<Iterable<Map<String, dynamic>>>((QuerySnapshot list) =>
-          list.documents.map<Map<String, dynamic>>((DocumentSnapshot doc) {
-            final Map<String, dynamic> data = doc.data;
-            data['path'] = doc.reference.path;
-            data['favoriteCount'] = 0;
-            return data;
-          }));
-
-  void _updateQuery() {
-    final QueryInfoProvider queryInfo = Provider.of<QueryInfoProvider>(context);
-    if (queryInfo.tag != textAllTag) {
-      _query = _db
-          .collection('texts')
-          .document(queryInfo.collection)
-          .collection('documents')
-          .where('tags', arrayContains: queryInfo.tag)
-          .orderBy('date', descending: true);
-    } else {
-      _query = _db
-          .collection('texts')
-          .document(queryInfo.collection)
-          .collection('documents')
-          .orderBy('date', descending: true);
-    }
-  }
+  Stream<Map<String, int>> _favoritesStream;
 
   Widget _noTextsWidget() {
     return Material(
@@ -75,88 +43,77 @@ class _TextsViewState extends State<TextsView> {
   @override
   void initState() {
     super.initState();
-    _favoritesStream = _db
+    _favoritesStream = Firestore.instance
         .collection('users')
         .document('_favorites_')
         .snapshots()
-        .map((DocumentSnapshot documentSnapshot) => documentSnapshot.data);
+        .map<Map<String, int>>((DocumentSnapshot documentSnapshot) =>
+            Map<String, int>.from(documentSnapshot.data));
+    _favoritesStream.listen((Map<String, int> data) =>
+        BlocProvider.of<DatabaseAuthorStreamManagerBloc>(context)
+            .favoritesData = data);
   }
 
   @override
   Widget build(BuildContext context) {
-    _updateQuery();
-    return FutureBuilder<FirebaseUser>(
-        future: Provider.of<AuthService>(context).getUser(),
-        builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
-          if (user?.data?.uid ==
-              Provider.of<QueryInfoProvider>(context).collection)
-            _isAuthor = true;
+    final DatabaseAuthorStreamManagerBloc bloc =
+        BlocProvider.of<DatabaseAuthorStreamManagerBloc>(context);
+    return BlocBuilder<DatabaseAuthorStreamManagerEvent,
+            DatabaseAuthorStreamManagerState>(
+        bloc: BlocProvider.of<DatabaseAuthorStreamManagerBloc>(context),
+        builder:
+            (BuildContext context, DatabaseAuthorStreamManagerState state) {
+          if (state is LoadedTextsStream)
+            return StreamBuilder<Iterable<Content>>(
+                stream:
+                    BlocProvider.of<DatabaseAuthorStreamManagerBloc>(context)
+                        .textsStream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<Iterable<Content>> snap) {
+                  if (snap.hasData) {
+                    if (snap.data.isNotEmpty) {
+                      Widget listView() {
+                        return ListView.builder(
+                            itemCount:
+                                snap.data.length + (bloc.canEdit ? 2 : 1),
+                            itemBuilder: (BuildContext context, int index) {
+                              if (index == 0)
+                                return SizedBox(height: widget.spacerSize);
 
-          return StreamBuilder<Iterable<Map<String, dynamic>>>(
-              stream: slidesStream,
-              builder: (BuildContext context,
-                  AsyncSnapshot<Iterable<Map<String, dynamic>>> snap) {
-                if (snap.hasData) {
-                  if (snap.data.isNotEmpty) {
-                    _slideList = snap.data.toList();
-                    return StreamBuilder<Map<String, dynamic>>(
-                      stream: _favoritesStream,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<Map<String, dynamic>> favoritesSnap) {
-                        if (favoritesSnap.hasData) {
-                          favoritesData = favoritesSnap.data;
-                          favoritesData
-                              .forEach((String textPath, dynamic favoriteInt) {
-                            final int targetIndex = _slideList.indexWhere(
-                                (Map<String, dynamic> element) =>
-                                    element['path'] ==
-                                    textPath.toString().replaceAll('_', '/'));
-                            if (targetIndex >= 0)
-                              _slideList.elementAt(
-                                  targetIndex)['favoriteCount'] = favoriteInt;
-                          });
-                        }
+                              if (bloc.canEdit && index == snap.data.length + 1)
+                                return Container(
+                                    margin: const EdgeInsets.only(bottom: 12.0),
+                                    height: 100.0,
+                                    child: _AddItem());
 
-                        Widget listView() {
-                          return ListView.builder(
-                              itemCount:
-                                  _slideList.length + (_isAuthor ? 2 : 1),
-                              itemBuilder: (BuildContext context, int index) {
-                                if (index == 0)
-                                  return SizedBox(height: widget.spacerSize);
+                              return _ListItem(
+                                  isAuthor: bloc.canEdit,
+                                  content: snap.data.elementAt(index),
+                                  isFavorite: Provider.of<FavoritesProvider>(
+                                          context)
+                                      .isFavorite(
+                                          snap.data.elementAt(index).favorite),
+                                  onFavorite: () =>
+                                      Provider.of<FavoritesProvider>(context)
+                                          .toggle(snap.data
+                                              .elementAt(index)
+                                              .favorite));
+                            });
+                      }
 
-                                if (_isAuthor && index == _slideList.length + 1)
-                                  return Container(
-                                      margin:
-                                          const EdgeInsets.only(bottom: 12.0),
-                                      height: 100.0,
-                                      child: _AddItem());
-
-                                final Content content =
-                                    Content.fromData(_slideList[index - 1]);
-
-                                return _ListItem(
-                                    isAuthor: _isAuthor,
-                                    content: content,
-                                    isFavorite:
-                                        Provider.of<FavoritesProvider>(context)
-                                            .isFavorite(content.favorite),
-                                    onFavorite: () =>
-                                        Provider.of<FavoritesProvider>(context)
-                                            .toggle(content.favorite));
-                              });
-                        }
-
-                        return listView();
-                      },
-                    );
+                      return listView();
+                    } else {
+                      return _noTextsWidget();
+                    }
                   }
-                }
-                return _isAuthor
-                    ? Padding(
-                        padding: const EdgeInsets.all(20.0), child: _AddItem())
-                    : _noTextsWidget();
-              });
+                  return bloc.canEdit
+                      ? Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: _AddItem())
+                      : _noTextsWidget();
+                });
+
+          return Center(child:  CircularProgressIndicator());
         });
   }
 }

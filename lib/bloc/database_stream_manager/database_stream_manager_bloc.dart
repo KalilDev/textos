@@ -11,6 +11,7 @@ class DatabaseStreamManagerBloc
     extends Bloc<DatabaseStreamManagerEvent, DatabaseStreamManagerState> {
   Stream<Iterable<Author>> authorStream;
   String userID;
+  Map<String, DatabaseAuthorStreamManagerBloc> _textBlocList = <String, DatabaseAuthorStreamManagerBloc>{};
 
   @override
   DatabaseStreamManagerState get initialState {
@@ -34,6 +35,10 @@ class DatabaseStreamManagerBloc
       });
     });
     return LoadingAuthorsStream();
+  }
+
+  DatabaseAuthorStreamManagerBloc getTextBloc(String authorID, {String tag}) {
+    return _textBlocList.putIfAbsent(authorID, () => DatabaseAuthorStreamManagerBloc(authorID, initialTag: tag));
   }
 
   @override

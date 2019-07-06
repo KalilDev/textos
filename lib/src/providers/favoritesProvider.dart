@@ -59,7 +59,7 @@ class FavoritesProvider with ChangeNotifier {
         await Firestore.instance.document(favorite.textPath).get();
     final Map<String, dynamic> data = documentSnapshot.data;
     data['path'] = favorite.textPath;
-    return Content.fromData(data);
+    return Content.fromFirestore(data, textPath: favorite.textPath);
   }
 
   void toggle(Favorite favorite) {

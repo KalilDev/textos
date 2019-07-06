@@ -11,7 +11,9 @@ class Content {
       @required this.rawImgUrl,
       @required String text,
       @required this.music,
-      @required this.tags})
+      @required this.tags,
+      this.favoriteCount,
+      this.textPath})
       : text = text?.replaceAll('\n', '^NL');
 
   Content.fromFav(Favorite fav) {
@@ -20,19 +22,20 @@ class Content {
     rawImgUrl = fav.textImg;
   }
 
-  Content.fromData(Map<String, dynamic> data) {
-    title = data['title'] ?? placeholderTitle;
-    textPath = data['path'];
-    rawImgUrl = data['img'];
-    rawDate = data['date'];
-    favoriteCount = data['favoriteCount'] ?? 0;
-    music = data['music'];
-    text = data['text'];
-    tags = <String>[];
-    final List<dynamic> temp = data['tags'] ?? <dynamic>[];
-    for (dynamic tag in temp) {
-      tags.add(tag.toString());
-    }
+  factory Content.fromFirestore(Map<String, dynamic> data,
+      {String authorID, String textPath}) {
+    assert(authorID == null || textPath == null);
+    return Content(
+      title: data['title'] ?? placeholderTitle,
+      textPath:
+          authorID != null ? ('texts/' + authorID + '/documents') : textPath,
+      rawImgUrl: data['img'],
+      rawDate: data['date'],
+      favoriteCount: data['favoriteCount'] ?? 0,
+      music: data['music'],
+      text: data['text'],
+      tags: List<String>.from(data['tags']),
+    );
   }
 
   String title;
@@ -71,4 +74,24 @@ class Content {
       };
 
   Favorite get favorite => Favorite(title + ';' + textPath + ';' + imgUrl);
+
+  Content copyWith(
+      {String title,
+      String rawDate,
+      String rawImgUrl,
+      String text,
+      String music,
+      List<String> tags,
+      int favoriteCount,
+      String textPath}) {
+    return Content(
+        title: title ?? this.title,
+        rawDate: rawDate ?? this.rawDate,
+        rawImgUrl: rawImgUrl ?? this.rawImgUrl,
+        text: text ?? this.text,
+        music: music ?? this.music,
+        tags: tags ?? this.tags,
+        textPath: textPath ?? this.textPath,
+        favoriteCount: favoriteCount ?? this.favoriteCount);
+  }
 }
