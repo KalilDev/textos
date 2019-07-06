@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:textos/bloc/database_text_add/bloc.dart';
-import 'package:textos/bloc/tag_manager/bloc.dart';
-import 'package:textos/bloc/upload_manager/bloc.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/model/content.dart';
 

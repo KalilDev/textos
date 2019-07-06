@@ -6,8 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
 import '../../model/content.dart';
-import '../tag_manager/bloc.dart';
-import '../upload_manager/bloc.dart';
 import 'bloc.dart';
 
 class DatabaseTextAddBloc

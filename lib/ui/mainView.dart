@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:textos/bloc/database_stream_manager/bloc.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/text_icons_icons.dart';
 import 'package:textos/ui/authorsView.dart';
@@ -82,9 +84,9 @@ class _MainViewState extends State<MainView> with TickerProviderStateMixin {
               controller: _tabController,
               children: <Widget>[
                 _renderChild(
-                    AuthorsView(
-                      isVisible: _tabController.animation.value.floor() == 0 ||
-                          _tabController.animation.value.ceil() == 0,
+                    BlocProvider<DatabaseStreamManagerBloc>(
+                      builder: (BuildContext context) => DatabaseStreamManagerBloc(),
+                      child: AuthorsView(),
                     ),
                     constraints: constraints),
                 _renderChild(const TextsView(spacerSize: spacerSize),

@@ -39,3 +39,5 @@ class AuthorTagModify extends DatabaseAuthorAddEvent {
 
 class AuthorUpload extends DatabaseAuthorAddEvent {}
 class UploadFinished extends DatabaseAuthorAddEvent {}
+
+class AuthorDelete extends DatabaseAuthorAddEvent {}

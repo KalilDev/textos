@@ -1,3 +1,9 @@
 export 'database_text_add_bloc.dart';
 export 'database_text_add_event.dart';
 export 'database_text_add_state.dart';
+export 'tag_manager_bloc.dart';
+export 'tag_manager_event.dart';
+export 'tag_manager_state.dart';
+export 'upload_manager_bloc.dart';
+export 'upload_manager_event.dart';
+export 'upload_manager_state.dart';

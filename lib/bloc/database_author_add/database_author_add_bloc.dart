@@ -64,6 +64,13 @@ class DatabaseAuthorAddBloc
     dispatch(UploadFinished());
   }
 
+  Future<void> _delete() async {
+    await Firestore.instance
+        .collection('texts')
+        .document(authorID)
+        .delete();
+  }
+
   @override
   Stream<DatabaseAuthorAddState> mapEventToState(
     DatabaseAuthorAddEvent event,
@@ -101,7 +108,11 @@ class DatabaseAuthorAddBloc
     }
 
     if (event is UploadFinished) {
-      
+
+    }
+
+    if (event is AuthorDelete) {
+      _delete();
     }
   }
 }

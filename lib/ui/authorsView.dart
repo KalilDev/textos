@@ -1,94 +1,65 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kalil_widgets/kalil_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:textos/bloc/database_author_add/bloc.dart';
+import 'package:textos/bloc/database_stream_manager/bloc.dart';
 import 'package:textos/constants.dart';
 import 'package:textos/model/author.dart';
 import 'package:textos/src/providers.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
-class AuthorsView extends StatefulWidget {
-  const AuthorsView({@required this.isVisible});
-  final bool isVisible;
-
-  @override
-  _AuthorsViewState createState() => _AuthorsViewState();
-}
-
-class _AuthorsViewState extends State<AuthorsView> {
-  Stream<Iterable<Author>> _tagStream;
-  FirebaseUser user;
-  @override
-  void initState() {
-    _tagStream = Firestore.instance
-        .collection('texts')
-        .snapshots()
-        .map<Iterable<Author>>((QuerySnapshot list) =>
-            list.documents.map<Author>((DocumentSnapshot snap) {
-              return Author.fromFirestore(snap.data, snap.documentID);
-            }));
-    super.initState();
-  }
-
-  List<Author> _metadataList;
-
+class AuthorsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<FirebaseUser>(
-        future: Provider.of<AuthService>(context).getUser(),
-        builder: (BuildContext context, AsyncSnapshot<FirebaseUser> user) {
-          if (user.hasData && user?.data != null) this.user = user.data;
-          return StreamBuilder<Iterable<Author>>(
-              stream: _tagStream,
-              builder: (BuildContext context,
-                  AsyncSnapshot<Iterable<Author>> snapshot) {
-                if (snapshot.hasData && (snapshot?.data?.isNotEmpty ?? false)) {
-                  _metadataList = snapshot.data.toList();
-                  bool shouldDisplayAdd = true;
-                  if (_metadataList.any(
-                      (Author author) => this.user?.uid == author.authorID))
-                    shouldDisplayAdd = false;
+    return BlocBuilder<DatabaseStreamManagerEvent, DatabaseStreamManagerState>(bloc: BlocProvider.of<DatabaseStreamManagerBloc>(context), builder: (BuildContext context, DatabaseStreamManagerState state) {
+      final DatabaseStreamManagerBloc streamManagerBloc = BlocProvider.of<DatabaseStreamManagerBloc>(context);
+      if (state is LoadedAuthorsStream) {
 
-                  return TransformerPageView(
-                    itemCount: shouldDisplayAdd
-                        ? (_metadataList.length + 1)
-                        : _metadataList.length,
-                    scrollDirection: Axis.vertical,
-                    viewportFraction: 0.90,
-                    curve: Curves.decelerate,
-                    onPageChanged: (int page) {
-                      if (page == _metadataList.length && shouldDisplayAdd)
-                        return;
-                      Provider.of<QueryInfoProvider>(context).currentPage =
-                          page;
-                      Provider.of<QueryInfoProvider>(context).collection =
-                          _metadataList[page].authorID;
-                      Provider.of<QueryInfoProvider>(context).tag = null;
-                      SystemSound.play(SystemSoundType.click);
-                      HapticFeedback.lightImpact();
-                    },
-                    index: Provider.of<QueryInfoProvider>(context).currentPage,
-                    transformer: PageTransformerBuilder(
-                        builder: (_, TransformInfo info) {
-                      final Author data = _metadataList?.elementAt(info.index);
+        return StreamBuilder<Iterable<Author>>(
+            stream: streamManagerBloc.authorStream,
+            builder: (BuildContext context,
+                AsyncSnapshot<Iterable<Author>> snapshot) {
+              final Iterable<Author> authorsData = snapshot.data ?? Iterable<Author>.empty();
+              bool shouldDisplayAdd = true;
+              if (authorsData.any((Author author) => author.canEdit))
+                shouldDisplayAdd = false;
+
+              return TransformerPageView(
+                itemCount: shouldDisplayAdd
+                    ? (authorsData.length + 1)
+                    : authorsData.length,
+                scrollDirection: Axis.vertical,
+                viewportFraction: 0.90,
+                curve: Curves.decelerate,
+                onPageChanged: (int page) {
+                  if (page == authorsData.length && shouldDisplayAdd)
+                    return;
+                  Provider.of<QueryInfoProvider>(context).currentPage =
+                      page;
+                  Provider.of<QueryInfoProvider>(context).collection =
+              authorsData.elementAt(page).authorID;
+                  Provider.of<QueryInfoProvider>(context).tag = null;
+                  SystemSound.play(SystemSoundType.click);
+                  HapticFeedback.lightImpact();
+                },
+                index: Provider.of<QueryInfoProvider>(context).currentPage,
+                transformer: PageTransformerBuilder(
+                    builder: (_, TransformInfo info) {
+                      final Author data = authorsData.elementAt(info.index);
                       WidgetBuilder child;
                       bool hasBloc;
                       bool showEdit;
                       DatabaseAuthorAddBloc bloc;
                       if (data?.authorID != null) {
                         child = (BuildContext context) => _AuthorPage(info: info, author: data);
-                        hasBloc = data.authorID == this.user?.uid;
+                        hasBloc = data.canEdit;
                         showEdit = hasBloc;
                         bloc = hasBloc
                             ? DatabaseAuthorAddBloc(author: data)
                             : null;
-                      } else if (info.index == _metadataList.length) {
+                      } else if (info.index == authorsData.length) {
                         bloc = DatabaseAuthorAddBloc();
                         child = (BuildContext context) => InkWell(
                           onTap: () {
@@ -122,69 +93,65 @@ class _AuthorsViewState extends State<AuthorsView> {
                               )
                             ],
                             child: Stack(
-                              children: <Widget>[
+                                children: <Widget>[
                                 _AddPage(author: data, child: Builder(builder: child)),
-                                if (showEdit)
-                                  Positioned(
-                                      top: 10.0,
-                                      right: 20.0,
-                                      child: Material(
-                                          clipBehavior: Clip.antiAlias,
-                                          borderRadius: const BorderRadius.only(
-                                              topRight: Radius.circular(20.0)),
-                                          color: Colors.transparent,
-                                          child: Builder(
-                                            builder: (BuildContext context) =>
-                                                BlocBuilder<AuthorEditingEvent,
-                                                    AuthorEditingState>(
-                                                  bloc: BlocProvider.of<
-                                                          AuthorEditingBloc>(
-                                                      context),
-                                                  builder: (BuildContext
-                                                              context,
-                                                          AuthorEditingState
-                                                              state) =>
-                                                      IconButton(
-                                                        icon: const Icon(
-                                                            Icons.edit),
-                                                        onPressed: () {
-                                                          print(bloc.hashCode);
-                                                          if (state
-                                                              is ShowingChild) {
-                                                            BlocProvider.of<
-                                                                        AuthorEditingBloc>(
-                                                                    context)
-                                                                .dispatch(
-                                                                    ShowEditing());
-                                                          } else {
-                                                            BlocProvider.of<
-                                                                        AuthorEditingBloc>(
-                                                                    context)
-                                                                .dispatch(
-                                                                    ShowChild());
-                                                          }
-                                                        },
-                                                      ),
-                                                ),
-                                          ))),
-                              ],
-                            ));
+                            if (showEdit)
+                        Positioned(
+                            top: 10.0,
+                            right: 20.0,
+                            child: Material(
+                                clipBehavior: Clip.antiAlias,
+                                borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(20.0)),
+                                color: Colors.transparent,
+                                child: Builder(
+                                  builder: (BuildContext context) =>
+                                      BlocBuilder<AuthorEditingEvent,
+                                          AuthorEditingState>(
+                                        bloc: BlocProvider.of<
+                                            AuthorEditingBloc>(
+                                            context),
+                                        builder: (BuildContext
+                                        context,
+                                            AuthorEditingState
+                                            state) =>
+                                            IconButton(
+                                              icon: const Icon(
+                                                  Icons.edit),
+                                              onPressed: () {
+                                                print(bloc.hashCode);
+                                                if (state
+                                                is ShowingChild) {
+                                                  BlocProvider.of<
+                                                      AuthorEditingBloc>(
+                                                      context)
+                                                      .dispatch(
+                                                      ShowEditing());
+                                                } else {
+                                                  BlocProvider.of<
+                                                      AuthorEditingBloc>(
+                                                      context)
+                                                      .dispatch(
+                                                      ShowChild());
+                                                }
+                                              },
+                                            ),
+                                      ),
+                                ))),
+                      ],
+                      ));
                       } else {
-                        return Builder(builder: child);
+                      return Builder(builder: child);
                       }
                     }),
-                  );
-                } else if (snapshot.hasError ||
-                    (snapshot.hasData && (snapshot?.data?.isEmpty ?? true))) {
-                  return Center(
-                    child: Text(textAppName,
-                        style: Theme.of(context).accentTextTheme.display1),
-                  );
-                } else {
-                  return Container();
-                }
-              });
-        });
+              );
+            });
+
+      } else {
+        return Center(child: const CircularProgressIndicator());
+      }
+    });
+
   }
 }
 
@@ -364,6 +331,7 @@ class __AddPageState extends State<_AddPage> {
       _titleController = TextEditingController();
       _authorNameController = TextEditingController();
     } else {
+      final String title = widget.author.title.substring(0, widget.author.title.length - 2);
       _titleController = TextEditingController(text: widget.author.title);
       _authorNameController = TextEditingController(text: widget.author.authorName);
     }
@@ -428,10 +396,8 @@ class __AddPageState extends State<_AddPage> {
                                 ],
                               ));
                       if (delete)
-                        Firestore.instance
-                            .collection('texts')
-                            .document(widget?.author?.authorID)
-                            .delete();
+      BlocProvider.of<DatabaseAuthorAddBloc>(context)
+          .dispatch(AuthorDelete());
                     }),
               RaisedButton(
                   color: Theme.of(context).accentColor,
